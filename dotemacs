@@ -1,0 +1,427 @@
+; -*- mode: lisp -*-
+;; Add path to plugins
+(add-to-list 'load-path "~/.emacs.d/plugins/")
+(let ((default-directory "~/.emacs.d/plugins/"))
+      (normal-top-level-add-to-load-path 
+       '("multiple-cursors.el" 
+	 "expand-region.el"
+	 "auto-complete.d")))
+
+
+;; Load sunburst theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+
+;;(load-theme 'sunburst t)
+
+;;============================ Modes ===========================================
+;; Enable multiple cursor
+(require 'multiple-cursors)
+;; Enable expand-region
+(require 'expand-region)
+
+;; Add Cuda Syntax
+(autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
+(setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
+
+(autoload 'glsl-mode "glsl-mode" nil t)
+   (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+   (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+
+(autoload 'cython-mode "cython-mode.el" "Cython mode" t)
+   ;;(autoload 'cython-mode "cython-mode" nil t)
+   ;; (add-to-list 'auto-mode-alist '("\\.pyx\\'" . cython-mode))
+   ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
+
+;; Indent using spaces
+(setq c-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq objc-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq c++-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+
+;;; set the default mode for .h files to c++-mode
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
+;;; Enable subword-mode which makes it easier to work with camelCase words.
+(add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
+
+;;; Enable <> to be seen by the paranthesis matching
+(modify-syntax-entry ?< "(>" c-mode-syntax-table)
+
+;;============================= Auto complete ==================================
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "/job/HOME/fredriks/.emacs.d/plugins/ac-dict")
+(ac-config-default)
+
+ (define-key ac-completing-map "\t" 'ac-expand)
+ (define-key ac-completing-map "\r" nil)
+
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (make-local-variable 'ac-ignores)
+            (add-to-list 'ac-ignores "//")))
+
+;;; backup/autosave
+(defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+(defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+(setq backup-directory-alist (list (cons ".*" backup-dir)))
+(setq auto-save-list-file-prefix autosave-dir)
+(setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+
+;;========================== Functions =========================================
+;;; http://www.stringify.com/2006/apr/24/rename/
+;;; Rename current file and buffer 
+;;; Much like save-as but removes the old file
+(defun rename-current-file-or-buffer ()
+  (interactive)
+  (if (not (buffer-file-name))
+      (call-interactively 'rename-buffer)
+    (let ((file (buffer-file-name)))
+      (with-temp-buffer
+        (set-buffer (dired-noselect file))
+        (dired-do-rename)
+        (kill-buffer nil))))
+  nil)
+
+(defun revert-all-buffers ()
+    "Refreshes all open buffers from their respective files."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (not (buffer-modified-p)))
+          (revert-buffer t t t) )))
+    (message "Refreshed open files.") )
+
+;; From:
+;; http://www.masteringemacs.org/articles/2010/12/22/fixing-mark-commands-transient-mark-mode/
+(defun push-mark-no-activate ()
+  "Pushes `point' to `mark-ring' and does not activate the region
+Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
+  (interactive)
+  (push-mark (point) t nil)
+  (message "Pushed mark to ring"))
+(global-set-key (kbd "C-`") 'push-mark-no-activate)
+
+(defun jump-to-mark ()
+  "Jumps to the local mark, respecting the `mark-ring' order.
+This is the same as using \\[set-mark-command] with the prefix argument."
+  (interactive)
+  (set-mark-command 1))
+(global-set-key (kbd "M-`") 'jump-to-mark)
+
+(defun exchange-point-and-mark-no-activate ()
+  "Identical to \\[exchange-point-and-mark] but will not activate the region."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark nil))
+(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+
+;; (defun counter (x skip)
+;; "given "
+;; )
+;;============================ Switching buffers ===============================
+;; http://xahlee.org/emacs/effective_emacs.html
+(defun next-user-buffer ()
+  "Switch to the next user buffer.
+User buffers are those whose name does not start with *."
+  (interactive)
+  (next-buffer)
+  (let ((i 0))
+    (while (and (string-match "^*" (buffer-name)) (< i 50))
+      (setq i (1+ i)) (next-buffer) )))
+
+(defun previous-user-buffer ()
+  "Switch to the previous user buffer.
+User buffers are those whose name does not start with *."
+  (interactive)
+  (previous-buffer)
+  (let ((i 0))
+    (while (and (string-match "^*" (buffer-name)) (< i 50))
+      (setq i (1+ i)) (previous-buffer) )))
+
+(defun next-emacs-buffer ()
+  "Switch to the next emacs buffer.
+Emacs buffers are those whose name starts with *."
+  (interactive)
+  (next-buffer)
+  (let ((i 0))
+    (while (and (not (string-match "^*" (buffer-name))) (< i 50))
+      (setq i (1+ i)) (next-buffer) )))
+
+(defun previous-emacs-buffer ()
+  "Switch to the previous emacs buffer.
+Emacs buffers are those whose name starts with *."
+  (interactive)
+  (previous-buffer)
+  (let ((i 0))
+    (while (and (not (string-match "^*" (buffer-name))) (< i 50))
+      (setq i (1+ i)) (previous-buffer) )))
+
+;;============================== Uniquify ======================================
+(defun uniquify-all-lines-region (start end)
+  "Find duplicate lines in region START to END keeping first occurrence."
+  (interactive "*r")
+  (save-excursion
+  (let ((end (copy-marker end)))
+    (while
+	(progn
+	  (goto-char start)
+	  (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
+      (replace-match "\\1\n\\2")))))
+
+(defun uniquify-all-lines-buffer ()
+  "Delete duplicate lines in buffer and keep first occurrence."
+  (interactive "*")
+  (uniquify-all-lines-region (point-min) (point-max)))
+
+;; =========================== Move text =======================================
+;; http://stackoverflow.com/questions/2423834/move-line-region-up-and-down-in-emacs
+;; by sanityinc
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (forward-line -1))
+      (move-to-column column t)))))
+
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+;;============================== Highlight =====================================
+
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
+;;  '(custom-safe-themes (quote ("4486a999a2398eb0572389b6cb629eed1b0370d6a1d93f56859f5026b0343b5a" "e93135352a2ace905499b20b101c75bea34b9aa97c5138113e6a6de9f1b9111c" "a248938bf83f85a79197bfd99b51f2a549e39b0657786eb299ce05da1b44b516" default))))
+
+;; ;; (custom-set-faces
+;; ;;  ;; custom-set-faces was added by Custom.
+;; ;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;; ;;  ;; Your init file should contain only one such instance.
+;; ;;  ;; If there is more than one, they won't work right.
+;; ;;  '(hi-blue ((t (:foreground "color-106"))))
+;; ;;  '(hi-blue-b ((t (:foreground "color-245" :weight bold))))
+;; ;;  '(hi-green ((t (:foreground "color-100"))))
+;; ;;  '(hi-pink ((t (:foreground "color-94"))))
+;; ;;  '(hi-yellow ((t (:foreground "color-130")))))
+(defface hi-orange
+  '((t (:foreground "orange")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-grey
+  '((t (:foreground "brightblack")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defun setup-build()
+"Spawns multiple shells called cyclone, build and misc"
+(interactive)
+(shell)
+(rename-buffer "cyclone")
+(split-window-right)
+(shell)
+(rename-buffer "misc")
+(shell)
+(rename-buffer "build") )
+
+(defun highlight-dd-logger() 
+  "Highlight DD_LOGGER"
+  (interactive)
+  ( highlight-regexp "^\\+-.*\\]:" 'hi-blue )
+  ( highlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" 'hi-green )
+  ( highlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" 'hi-pink )
+  ( highlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" 'hi-yellow )
+  ( highlight-regexp "^\\(| \\)\\{3\\}" 'hi-pink )
+  ( highlight-regexp "^\\(| \\)\\{2\\}" 'hi-green )
+  ( highlight-regexp "^\\(| \\)\\{1\\}" 'hi-blue )
+  ( highlight-regexp "[0-9]+\\.[0-9]+[a-z]+" 'hi-blue-b ))
+
+(defun unhighlight-dd-logger() 
+  "Unhighlight DD_LOGGER"
+  (interactive)
+  ( unhighlight-regexp "^\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{3\\}" )
+  ( unhighlight-regexp "^\\(| \\)\\{2\\}" )
+  ( unhighlight-regexp "^\\(| \\)\\{1\\}" )
+  ( unhighlight-regexp "[0-9]+\\.[0-9]+\\w" ))
+
+(defun highlight-build() 
+  "Highlight paranthesis, error, warning and 
+const to easier find them when building."
+  (interactive)
+  ( highlight-regexp "[()]"    'hi-red-b )
+  ( highlight-regexp "warning" 'hi-green-b )
+  ( highlight-regexp "error"   'hi-red-b )
+  ( highlight-regexp "const "  'hi-black-b )
+  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange ))
+
+;; (defface hi-red-b
+;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
+;;     (t (:weight bold :foreground "red")))
+;;   "Face for hi-lock mode."
+;;   :group 'hi-lock-faces)
+
+;; Highlight matching brackets
+(show-paren-mode 1)
+;;==============================================================================
+
+;; ;; Set up readline-autocomplete
+;; (add-to-list 'load-path "~/.emacs.d/plugins/readline-complete")
+
+;; (setq explicit-shell-file-name "tcsh")
+;; (setq explicit-csh-args '("-c" "export EMACS=; stty echo; tcsh"))
+;; (setq comint-process-echoes t)
+
+;; (require 'readline-complete)
+
+;; (add-to-list 'ac-modes 'shell-mode)
+;; (add-hook 'shell-mode-hook 'ac-rlc-setup-sources)
+
+;; ==================== GNU plot mode ==========================================
+;; Lines enabling gnuplot-mode
+
+(add-to-list 'Info-default-directory-list "/job/HOME/fredriks/.emacs.d/plugins/gnuplot")
+
+;; move the files gnuplot.el to someplace in your lisp load-path or
+;; use a line like
+(setq load-path (append (list "/job/HOME/fredriks/.emacs.d/plugins/gnuplot") load-path))
+
+;; these lines enable the use of gnuplot mode
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+
+;; this line automatically causes all files with the .gp extension to
+;; be loaded into gnuplot mode
+(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+
+;; end of line for gnuplot-mode
+;; ========================= CUA mode ==========================================
+;; Annoying thing when cua-mode is enable. Highlighting with the mouse
+;; becomes a pain. Due to that in cua-mode the highlight selection
+;; follows the cursor when scrolling.
+;; (cua-mode t) ;; 
+;; (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+;; (setq cua-enable-cua-keys nil) ;; disable windows shortcuts
+;; (cua-selection-mode nil )
+(set-variable 'shift-select-mode t)
+
+;;=========================== Cosmetics ========================================
+;; arg >= 1 enable the menu bar. Menu bar is the File, Edit, Options,
+;; Buffers, Tools, Emacs-Lisp, Help
+;; Disable menu bar mode
+(menu-bar-mode 0)
+;; Disable tool bar mode
+(tool-bar-mode 0)
+
+;; Disable scroll bar mode
+(scroll-bar-mode 0)
+
+;;enable column-number-mode
+(column-number-mode 1)
+
+;; Disable echo in shell
+(setq comint-process-echoes t)
+
+;;; height 88 <- my default value
+(set-face-attribute 'default nil :height 90)
+;; Use ibuffer instead of list-buffers
+(defalias 'list-buffers 'ibuffer)
+;; Create new line if end of buffer when pressing C-n
+(setq next-line-add-newlines t)
+;; ============================ Key bindings ===================================
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+;; GUI
+(global-set-key (kbd "<f5>") 'menu-bar-mode)
+(global-set-key (kbd "<f6>") 'tool-bar-mode)
+
+;; Navigation
+(global-set-key [M-left] 'windmove-left)   ; move to left windnow
+(global-set-key [M-right] 'windmove-right) ;  move to right window
+(global-set-key [M-up] 'windmove-up)       ; move to upper window
+(global-set-key [M-down] 'windmove-down)   ; move to downer window
+
+(global-set-key (kbd "M-g") 'goto-line)
+
+;; Text edit
+(global-set-key (kbd "M-r") 'replace-string)
+
+(global-set-key [M-S-up] 'move-text-up)
+(global-set-key [M-S-down] 'move-text-down)
+
+;; Buffers
+(global-set-key (kbd "C-c r") 'revert-all-buffers)
+(global-set-key "\C-cR" 'rename-current-file-or-buffer)
+
+(global-set-key (kbd "<C-prior>") 'previous-user-buffer) ; Ctrl+PageUp
+(global-set-key (kbd "<C-next>") 'next-user-buffer) ; Ctrl+PageDown
+(global-set-key (kbd "<C-S-prior>") 'previous-emacs-buffer) ; Ctrl+Shift+PageUp
+(global-set-key (kbd "<C-S-next>") 'next-emacs-buffer) ; Ctrl+Shift+PageDown
+
+(global-set-key (kbd "<f12>") 'compile) ; compile
+(global-set-key (kbd "<f11>") 'recompile) ; recompile
+;; C++
+;; Switch between header and implementation
+(add-hook 'c-mode-common-hook
+  (lambda() 
+    (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
+
+;; (add-hook 'c-mode-common-hook
+;;   (lambda() 
+;;     (local-set-key  (kbd "\C-c \C-x") 'uncomment-region)))
+
+;; Misc
+;; This line binds the function-9 key so that it opens a buffer into
+;; gnuplot mode 
+(global-set-key [(f9)] 'gnuplot-make-buffer)
+
+;; Multiple cursor key bindings
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-+") 'mc/mark-next-like-this)
+
+;; Expand-region key bindings
+(global-set-key (kbd "C-=") 'er/expand-region)
+;; =============================================================================
