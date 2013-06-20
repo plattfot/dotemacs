@@ -416,6 +416,7 @@ const to easier find them when building."
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 ;; Align 
 (global-set-key (kbd "C-x C-a") 'align-regexp)
+(global-set-key (kbd "C-x a") 'align)
 
 ;; Multiple cursor key bindings
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
