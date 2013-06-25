@@ -415,7 +415,8 @@ const to easier find them when building."
 ;; gnuplot mode 
 (global-set-key [(f9)] 'gnuplot-make-buffer)
 ;; Align 
-(global-set-key (kbd "C-x C-a") 'align-regexp)
+;;; Cannot run gdb when this keybinding is set.
+;; (global-set-key (kbd "C-x C-a") 'align-regexp)
 (global-set-key (kbd "C-x a") 'align)
 
 ;; Multiple cursor key bindings
