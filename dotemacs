@@ -12,6 +12,8 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
 
+;; Hyper key in gtk and in an xterm!
+(define-key key-translation-map [8711] 'event-apply-hyper-modifier)
 ;;(load-theme 'sunburst t)
 
 ;;============================ Modes ===========================================
@@ -53,8 +55,8 @@
 ;;; Enable subword-mode which makes it easier to work with camelCase words.
 (add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
 
-;;; Enable <> to be seen by the paranthesis matching
-(modify-syntax-entry ?< "(>" c-mode-syntax-table)
+;; ;;; Enable <> to be seen by the paranthesis matching
+;; (modify-syntax-entry ?< "(>" c-mode-syntax-table)
 
 ;;============================= Auto complete ==================================
 (require 'auto-complete-config)
