@@ -7,6 +7,10 @@
 	 "expand-region.el"
 	 "auto-complete.d")))
 
+;; Reuse frames if the buffer is already open.
+(setq-default display-buffer-reuse-frames t)
+;; ; Set cursor color to white
+(set-cursor-color "#ffffff") 
 
 ;; Load sunburst theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
@@ -15,7 +19,7 @@
 ;; Hyper key in gtk and in an xterm!
 (define-key key-translation-map [8711] 'event-apply-hyper-modifier)
 ;;(load-theme 'sunburst t)
-
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 ;;============================ Modes ===========================================
 ;; Enable multiple cursor
 (require 'multiple-cursors)
@@ -296,6 +300,34 @@ const to easier find them when building."
   ( highlight-regexp "const "  'hi-black-b )
   ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange ))
 
+(defun highlight-versions( input )
+  "Highlight important versions when building with pybuild."
+  (interactive "sEnter name of packages to highlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (downcase word) "/[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  )
+(defun unhighlight-versions(input)
+  "Unhighlight versions that was highlighted with highlight-versions."
+  (interactive "sEnter name of packages to unhighlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (unhighlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+"))
+    )
+  )
+(defun highlight-usual-vers()
+  "Highlights the most common versions openvdb, boost and houdini"
+  (interactive)
+  (highlight-versions "openvdb boost houdini"))
 ;; (defface hi-red-b
 ;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
 ;;     (t (:weight bold :foreground "red")))
@@ -364,7 +396,7 @@ const to easier find them when building."
 (setq comint-process-echoes t)
 
 ;;; height 88 <- my default value
-(set-face-attribute 'default nil :height 90)
+(set-face-attribute 'default nil :height 92)
 ;; Use ibuffer instead of list-buffers
 (defalias 'list-buffers 'ibuffer)
 ;; Create new line if end of buffer when pressing C-n
