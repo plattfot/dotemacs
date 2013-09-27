@@ -5,7 +5,8 @@
       (normal-top-level-add-to-load-path 
        '("multiple-cursors.el" 
 	 "expand-region.el"
-	 "auto-complete.d")))
+	 "auto-complete.d"
+	 "rainbow-mode")))
 
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
@@ -25,6 +26,10 @@
 (require 'multiple-cursors)
 ;; Enable expand-region
 (require 'expand-region)
+;; Enable buffer mode
+(require 'buffer-move)
+;; Enable rainbow mode
+(require 'rainbow-mode)
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -52,6 +57,14 @@
     (function (lambda ()
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
+
+(add-hook 'c-mode-common-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+    (local-set-key (kbd "C-c <down>")  'hs-show-all)
+    (hs-minor-mode t)))
 
 ;;; set the default mode for .h files to c++-mode
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -83,6 +96,20 @@
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
 ;;========================== Functions =========================================
+;; http://www.emacswiki.org/emacs/HexColour
+;; Color hex color tags with their color.
+;; Not working
+;; (defvar hexcolour-keywords
+;;    '(("#[[:xdigit:]]\{6\}"
+;;       (0 (put-text-property (match-beginning 0)
+;;                             (match-end 0)
+;; 			    'face (list :background 
+;; 				        (match-string-no-properties 0)))))))
+;; (defun hexcolour-add-to-font-lock ()
+;;   (font-lock-add-keywords nil hexcolour-keywords))
+
+;; (add-hook 'emacs-lisp-mode 'hexcolour-add-to-font-lock)
+
 ;;; http://www.stringify.com/2006/apr/24/rename/
 ;;; Rename current file and buffer 
 ;;; Much like save-as but removes the old file
@@ -225,6 +252,75 @@ Emacs buffers are those whose name starts with *."
   arg lines up."
   (interactive "*p")
   (move-text-internal (- arg)))
+;; =========================== Source BuildConfig ===============================
+(defun get-version-from-build-config(name path)
+"Gets the version from the BuildConfig file"
+;; Pick the first in the list
+(car 
+ ;; Remove newlines and convert the string to a list if there's more
+ ;; than one version.
+ (split-string 
+  (shell-command-to-string 
+   ;; Look for the string matching the name.
+   (concat "grep -iE ^" name "_version " path "BuildConfig.cent6_64"
+	   ;; Extract only the version number from the string.
+	   " | grep -oE '[0-9]+\.[0-9]+\.[0-9_a-z]+'"
+	   )
+   )
+  )
+ )
+)
+
+;; =========================== Replace define ===================================
+(defun replace-define()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <var> with <content> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the first with the second.
+      (replace-regexp (concat "\\_<"(nth 1 line)"\\_>") (nth 2 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+
+(defun replace-define-undo()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <content> with <var> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the second with the first
+      (replace-string (nth 2 line) (nth 1 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+;; ============================ Boilerplate ====================================
+(defun insert-boilerplate()
+"Insert DD's boilerplate. Reads from file to avoid copyright issues."
+(interactive)
+(insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt" ))
+
 ;;============================== Highlight =====================================
 
 ;; (custom-set-variables
@@ -254,17 +350,6 @@ Emacs buffers are those whose name starts with *."
   '((t (:foreground "brightblack")))
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
-
-(defun setup-build()
-"Spawns multiple shells called cyclone, build and misc"
-(interactive)
-(shell)
-(rename-buffer "cyclone")
-(split-window-right)
-(shell)
-(rename-buffer "misc")
-(shell)
-(rename-buffer "build") )
 
 (defun highlight-dd-logger() 
   "Highlight DD_LOGGER"
@@ -328,6 +413,21 @@ const to easier find them when building."
   "Highlights the most common versions openvdb, boost and houdini"
   (interactive)
   (highlight-versions "openvdb boost houdini"))
+
+
+(defun setup-build()
+"Spawns multiple shells called cyclone, build and misc"
+(interactive)
+(shell)
+(rename-buffer "cyclone")
+(highlight-build)
+(split-window-right)
+(shell)
+(rename-buffer "misc")
+(shell)
+(rename-buffer "build")
+(highlight-build) )
+
 ;; (defface hi-red-b
 ;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
 ;;     (t (:weight bold :foreground "red")))
@@ -420,8 +520,8 @@ const to easier find them when building."
 ;; Text edit
 (global-set-key (kbd "M-r") 'replace-string)
 
-(global-set-key [M-S-up] 'move-text-up)
-(global-set-key [M-S-down] 'move-text-down)
+(global-set-key [C-S-up] 'move-text-up)
+(global-set-key [C-S-down] 'move-text-down)
 
 ;; Buffers
 (global-set-key (kbd "C-c r") 'revert-all-buffers)
@@ -431,6 +531,11 @@ const to easier find them when building."
 (global-set-key (kbd "<C-next>") 'next-user-buffer) ; Ctrl+PageDown
 (global-set-key (kbd "<C-S-prior>") 'previous-emacs-buffer) ; Ctrl+Shift+PageUp
 (global-set-key (kbd "<C-S-next>") 'next-emacs-buffer) ; Ctrl+Shift+PageDown
+
+(global-set-key (kbd "<M-S-up>")     'buf-move-up)
+(global-set-key (kbd "<M-S-down>")   'buf-move-down)
+(global-set-key (kbd "<M-S-left>")   'buf-move-left)
+(global-set-key (kbd "<M-S-right>")  'buf-move-right)
 
 (global-set-key (kbd "<f12>") 'compile) ; compile
 (global-set-key (kbd "<f11>") 'recompile) ; recompile
@@ -469,4 +574,19 @@ const to easier find them when building."
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "M-h") 'backward-kill-word)
 
+;; ============================ Registers ======================================
+
+(set-register ?e (cons 'file "~/dotemacs/dotemacs"))
+
+(set-register ?o 
+	      (cons 'file 
+		    (concat "/tools/package/openvdb/"
+			    (get-version-from-build-config
+			     "openvdb"
+			     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+			    "/core/include/openvdb/")
+		    )
+	      )
+
 ;; =============================================================================
+
