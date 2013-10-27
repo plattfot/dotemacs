@@ -5,7 +5,8 @@
       (normal-top-level-add-to-load-path 
        '("multiple-cursors.el" 
 	 "expand-region.el"
-	 "auto-complete.d")))
+	 "auto-complete.d"
+	 "android-mode")))
 
 
 ;; Load sunburst theme
@@ -19,7 +20,8 @@
 (require 'multiple-cursors)
 ;; Enable expand-region
 (require 'expand-region)
-
+;; Enable android mode
+(require 'android-mode)
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
 (setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
@@ -34,6 +36,8 @@
    ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
 
 ;; Indent using spaces
+;; (setq-default indent-tabs-mode nil)
+;; (setq-default tab-width 2)
 (setq c-mode-hook
     (function (lambda ()
                 (setq indent-tabs-mode nil)
@@ -46,6 +50,10 @@
     (function (lambda ()
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
+(setq python-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
 
 ;;; set the default mode for .h files to c++-mode
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -54,7 +62,9 @@
 (add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
 
 ;;; Enable <> to be seen by the paranthesis matching
-(modify-syntax-entry ?< "(>" c-mode-syntax-table)
+(modify-syntax-entry ?< "(>" c-mode-syntax-table) 
+
+(setq tramp-default-method "ssh")
 
 ;;============================= Auto complete ==================================
 (require 'auto-complete-config)
