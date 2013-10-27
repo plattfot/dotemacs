@@ -54,6 +54,10 @@
     (function (lambda ()
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
+(setq sh-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
 
 ;;; set the default mode for .h files to c++-mode
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
