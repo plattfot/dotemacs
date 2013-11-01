@@ -6,7 +6,8 @@
        '("multiple-cursors.el" 
 	 "expand-region.el"
 	 "auto-complete.d"
-	 "rainbow-mode")))
+	 "rainbow-mode"
+	 "evil-numbers")))
 
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
@@ -30,6 +31,11 @@
 (require 'buffer-move)
 ;; Enable rainbow mode
 (require 'rainbow-mode)
+;; Enable tramp
+(require 'tramp)
+(setq tramp-default-method "ssh")
+;; Enable evil numbers
+(require 'evil-numbers)
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -96,6 +102,35 @@
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
 ;;========================== Functions =========================================
+;; Function from http://www.emacswiki.org/emacs/CamelCase
+ (defun un-camelcase-string (s &optional sep start)
+   "Convert CamelCase string S to lower case with word separator SEP.
+    Default for SEP is a hyphen \"-\".
+    If third argument START is non-nil, convert words after that
+    index in STRING."
+   (let ((case-fold-search nil))
+     (while (string-match "[A-Z]" s (or start 1))
+       (setq s (replace-match (concat (or sep "-") 
+				      (downcase (match-string 0 s))) 
+			      t nil s)))
+     (downcase s)))
+
+;; http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs,
+;; Author mk-fg
+(defun duplicate-line ()
+    "Clone line at cursor, leaving the latter intact."
+    (interactive)
+    (save-excursion
+    	(let ((kill-read-only-ok t) deactivate-mark)
+    		(toggle-read-only 1)
+    		(kill-whole-line)
+    		(toggle-read-only 0)
+    		(yank))))
+
+(defun clear-shell ()
+   (interactive)
+   (let ((comint-buffer-maximum-size 0))
+     (comint-truncate-buffer)))
 ;; http://www.emacswiki.org/emacs/HexColour
 ;; Color hex color tags with their color.
 ;; Not working
@@ -321,6 +356,26 @@ Emacs buffers are those whose name starts with *."
 (interactive)
 (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt" ))
 
+;; =========================== Attach Houdini ==================================
+(defun attach-houdini () 
+"prints attach <proc number> into the buffer"
+(interactive)
+(insert-string 
+ (concat "attach " 
+	 (car 
+	  (split-string 
+	   (shell-command-to-string
+	    (concat "ps aux | grep houdini | "
+		    "grep -v \"grep houdini\" | "
+		    "grep \"houdini-bin\" | "
+		    "grep -oE \"$USER\s*[0-9]+\" |"
+		    " grep -oE \"[0-9]+\"")
+	    )
+	   )
+	  )
+	 )
+ )
+)
 ;;============================== Highlight =====================================
 
 ;; (custom-set-variables
@@ -573,10 +628,19 @@ const to easier find them when building."
 ;; Map backspace to Ctrl-h and ctrl+backspace to meta+h
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "M-h") 'backward-kill-word)
+;; Clear shell
+(global-set-key (kbd "<f8>") 'clear-shell)
+
+;; Key bindings for in/decrementing numbers
+(global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
 ;; ============================ Registers ======================================
 
 (set-register ?e (cons 'file "~/dotemacs/dotemacs"))
+(set-register ?f (cons 'file (concat "/dd/dept/software/users/fredriks/swdevl/"
+				     "CoreLibs/Math/Geometry/include/VDB/"
+				     "FieldImpl.hpp")))
 
 (set-register ?o 
 	      (cons 'file 
