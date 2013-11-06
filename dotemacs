@@ -6,15 +6,22 @@
        '("multiple-cursors.el" 
 	 "expand-region.el"
 	 "auto-complete.d"
-	 "android-mode")))
+	 "android-mode"
+	 "evil-numbers")))
 
+;; Reuse frames if the buffer is already open.
+(setq-default display-buffer-reuse-frames t)
+;; ; Set cursor color to white
+(set-cursor-color "#ffffff") 
 
 ;; Load sunburst theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
 
+;; Hyper key in gtk and in an xterm!
+(define-key key-translation-map [8711] 'event-apply-hyper-modifier)
 ;;(load-theme 'sunburst t)
-
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 ;;============================ Modes ===========================================
 ;; Enable multiple cursor
 (require 'multiple-cursors)
@@ -22,6 +29,14 @@
 (require 'expand-region)
 ;; Enable android mode
 (require 'android-mode)
+;; Enable buffer mode
+(require 'buffer-move)
+;; Enable tramp
+;; (require 'tramp)
+;; (setq tramp-default-method "ssh")
+;; Enable evil numbers
+(require 'evil-numbers)
+
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
 (setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
@@ -59,16 +74,22 @@
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
 
+(add-hook 'c-mode-common-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+    (local-set-key (kbd "C-c <down>")  'hs-show-all)
+    (hs-minor-mode t)))
+
 ;;; set the default mode for .h files to c++-mode
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 ;;; Enable subword-mode which makes it easier to work with camelCase words.
 (add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
 
-;;; Enable <> to be seen by the paranthesis matching
-(modify-syntax-entry ?< "(>" c-mode-syntax-table) 
-
-(setq tramp-default-method "ssh")
+;; ;;; Enable <> to be seen by the paranthesis matching
+;; (modify-syntax-entry ?< "(>" c-mode-syntax-table)
 
 ;;============================= Auto complete ==================================
 (require 'auto-complete-config)
@@ -91,6 +112,49 @@
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
 ;;========================== Functions =========================================
+;; Function from http://www.emacswiki.org/emacs/CamelCase
+ (defun un-camelcase-string (s &optional sep start)
+   "Convert CamelCase string S to lower case with word separator SEP.
+    Default for SEP is a hyphen \"-\".
+    If third argument START is non-nil, convert words after that
+    index in STRING."
+   (let ((case-fold-search nil))
+     (while (string-match "[A-Z]" s (or start 1))
+       (setq s (replace-match (concat (or sep "-") 
+				      (downcase (match-string 0 s))) 
+			      t nil s)))
+     (downcase s)))
+
+;; http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs,
+;; Author mk-fg
+(defun duplicate-line ()
+    "Clone line at cursor, leaving the latter intact."
+    (interactive)
+    (save-excursion
+    	(let ((kill-read-only-ok t) deactivate-mark)
+    		(toggle-read-only 1)
+    		(kill-whole-line)
+    		(toggle-read-only 0)
+    		(yank))))
+
+(defun clear-shell ()
+   (interactive)
+   (let ((comint-buffer-maximum-size 0))
+     (comint-truncate-buffer)))
+;; http://www.emacswiki.org/emacs/HexColour
+;; Color hex color tags with their color.
+;; Not working
+;; (defvar hexcolour-keywords
+;;    '(("#[[:xdigit:]]\{6\}"
+;;       (0 (put-text-property (match-beginning 0)
+;;                             (match-end 0)
+;; 			    'face (list :background 
+;; 				        (match-string-no-properties 0)))))))
+;; (defun hexcolour-add-to-font-lock ()
+;;   (font-lock-add-keywords nil hexcolour-keywords))
+
+;; (add-hook 'emacs-lisp-mode 'hexcolour-add-to-font-lock)
+
 ;;; http://www.stringify.com/2006/apr/24/rename/
 ;;; Rename current file and buffer 
 ;;; Much like save-as but removes the old file
@@ -233,6 +297,95 @@ Emacs buffers are those whose name starts with *."
   arg lines up."
   (interactive "*p")
   (move-text-internal (- arg)))
+;; =========================== Source BuildConfig ===============================
+(defun get-version-from-build-config(name path)
+"Gets the version from the BuildConfig file"
+;; Pick the first in the list
+(car 
+ ;; Remove newlines and convert the string to a list if there's more
+ ;; than one version.
+ (split-string 
+  (shell-command-to-string 
+   ;; Look for the string matching the name.
+   (concat "grep -iE ^" name "_version " path "BuildConfig.cent6_64"
+	   ;; Extract only the version number from the string.
+	   " | grep -oE '[0-9]+\.[0-9]+\.[0-9_a-z]+'"
+	   )
+   )
+  )
+ )
+)
+
+;; =========================== Replace define ===================================
+(defun replace-define()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <var> with <content> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the first with the second.
+      (replace-regexp (concat "\\_<"(nth 1 line)"\\_>") (nth 2 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+
+(defun replace-define-undo()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <content> with <var> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the second with the first
+      (replace-string (nth 2 line) (nth 1 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+;; ============================ Boilerplate ====================================
+(defun insert-boilerplate()
+"Insert DD's boilerplate. Reads from file to avoid copyright issues."
+(interactive)
+(insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt" ))
+
+;; =========================== Attach Houdini ==================================
+(defun attach-houdini () 
+"prints attach <proc number> into the buffer"
+(interactive)
+(insert-string 
+ (concat "attach " 
+	 (car 
+	  (split-string 
+	   (shell-command-to-string
+	    (concat "ps aux | grep houdini | "
+		    "grep -v \"grep houdini\" | "
+		    "grep \"houdini-bin\" | "
+		    "grep -oE \"$USER\s*[0-9]+\" |"
+		    " grep -oE \"[0-9]+\"")
+	    )
+	   )
+	  )
+	 )
+ )
+)
 ;;============================== Highlight =====================================
 
 ;; (custom-set-variables
@@ -262,17 +415,6 @@ Emacs buffers are those whose name starts with *."
   '((t (:foreground "brightblack")))
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
-
-(defun setup-build()
-"Spawns multiple shells called cyclone, build and misc"
-(interactive)
-(shell)
-(rename-buffer "cyclone")
-(split-window-right)
-(shell)
-(rename-buffer "misc")
-(shell)
-(rename-buffer "build") )
 
 (defun highlight-dd-logger() 
   "Highlight DD_LOGGER"
@@ -307,6 +449,49 @@ const to easier find them when building."
   ( highlight-regexp "error"   'hi-red-b )
   ( highlight-regexp "const "  'hi-black-b )
   ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange ))
+
+(defun highlight-versions( input )
+  "Highlight important versions when building with pybuild."
+  (interactive "sEnter name of packages to highlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (downcase word) "/[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  )
+(defun unhighlight-versions(input)
+  "Unhighlight versions that was highlighted with highlight-versions."
+  (interactive "sEnter name of packages to unhighlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (unhighlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+"))
+    )
+  )
+(defun highlight-usual-vers()
+  "Highlights the most common versions openvdb, boost and houdini"
+  (interactive)
+  (highlight-versions "openvdb boost houdini"))
+
+
+(defun setup-build()
+"Spawns multiple shells called cyclone, build and misc"
+(interactive)
+(shell)
+(rename-buffer "cyclone")
+(highlight-build)
+(split-window-right)
+(shell)
+(rename-buffer "misc")
+(shell)
+(rename-buffer "build")
+(highlight-build) )
 
 ;; (defface hi-red-b
 ;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
@@ -376,7 +561,7 @@ const to easier find them when building."
 (setq comint-process-echoes t)
 
 ;;; height 88 <- my default value
-(set-face-attribute 'default nil :height 90)
+(set-face-attribute 'default nil :height 92)
 ;; Use ibuffer instead of list-buffers
 (defalias 'list-buffers 'ibuffer)
 ;; Create new line if end of buffer when pressing C-n
@@ -400,8 +585,8 @@ const to easier find them when building."
 ;; Text edit
 (global-set-key (kbd "M-r") 'replace-string)
 
-(global-set-key [M-S-up] 'move-text-up)
-(global-set-key [M-S-down] 'move-text-down)
+(global-set-key [C-S-up] 'move-text-up)
+(global-set-key [C-S-down] 'move-text-down)
 
 ;; Buffers
 (global-set-key (kbd "C-c r") 'revert-all-buffers)
@@ -411,6 +596,11 @@ const to easier find them when building."
 (global-set-key (kbd "<C-next>") 'next-user-buffer) ; Ctrl+PageDown
 (global-set-key (kbd "<C-S-prior>") 'previous-emacs-buffer) ; Ctrl+Shift+PageUp
 (global-set-key (kbd "<C-S-next>") 'next-emacs-buffer) ; Ctrl+Shift+PageDown
+
+(global-set-key (kbd "<M-S-up>")     'buf-move-up)
+(global-set-key (kbd "<M-S-down>")   'buf-move-down)
+(global-set-key (kbd "<M-S-left>")   'buf-move-left)
+(global-set-key (kbd "<M-S-right>")  'buf-move-right)
 
 (global-set-key (kbd "<f12>") 'compile) ; compile
 (global-set-key (kbd "<f11>") 'recompile) ; recompile
@@ -428,6 +618,10 @@ const to easier find them when building."
 ;; This line binds the function-9 key so that it opens a buffer into
 ;; gnuplot mode 
 (global-set-key [(f9)] 'gnuplot-make-buffer)
+;; Align 
+;;; Cannot run gdb when this keybinding is set.
+;; (global-set-key (kbd "C-x C-a") 'align-regexp)
+(global-set-key (kbd "C-x a") 'align)
 
 ;; Multiple cursor key bindings
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
@@ -438,4 +632,35 @@ const to easier find them when building."
 
 ;; Expand-region key bindings
 (global-set-key (kbd "C-=") 'er/expand-region)
+;; -- Make emacs behave more lite unix. --
+(global-set-key (kbd "C-?") 'help-command)
+(global-set-key (kbd "M-?") 'mark-paragraph)
+;; Map backspace to Ctrl-h and ctrl+backspace to meta+h
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "M-h") 'backward-kill-word)
+;; Clear shell
+(global-set-key (kbd "<f8>") 'clear-shell)
+
+;; Key bindings for in/decrementing numbers
+(global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
+
+;; ============================ Registers ======================================
+
+(set-register ?e (cons 'file "~/dotemacs/dotemacs"))
+(set-register ?f (cons 'file (concat "/dd/dept/software/users/fredriks/swdevl/"
+				     "CoreLibs/Math/Geometry/include/VDB/"
+				     "FieldImpl.hpp")))
+
+(set-register ?o 
+	      (cons 'file 
+		    (concat "/tools/package/openvdb/"
+			    (get-version-from-build-config
+			     "openvdb"
+			     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+			    "/core/include/openvdb/")
+		    )
+	      )
+
 ;; =============================================================================
+
