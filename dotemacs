@@ -103,17 +103,31 @@
 
 ;;========================== Functions =========================================
 ;; Function from http://www.emacswiki.org/emacs/CamelCase
- (defun un-camelcase-string (s &optional sep start)
-   "Convert CamelCase string S to lower case with word separator SEP.
-    Default for SEP is a hyphen \"-\".
-    If third argument START is non-nil, convert words after that
-    index in STRING."
+;; Modified to be able to call it from emacs
+(defun split-name (s)
+  (split-string
    (let ((case-fold-search nil))
-     (while (string-match "[A-Z]" s (or start 1))
-       (setq s (replace-match (concat (or sep "-") 
-				      (downcase (match-string 0 s))) 
-			      t nil s)))
-     (downcase s)))
+     (downcase
+      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
+   "[^A-Za-z0-9]+"))
+(defun camelcase  (s) (mapconcat 'capitalize (split-name s) ""))
+(defun underscore (s) (mapconcat 'downcase   (split-name s) "_"))
+(defun dasherize  (s) (mapconcat 'downcase   (split-name s) "-"))
+(defun colonize   (s) (mapconcat 'capitalize (split-name s) "::"))
+
+(defun camelscore (s)
+  (cond ((string-match-p "\:"s)	(camelcase s))
+	((string-match-p "-" s) (colonize s))
+	((string-match-p "_" s)	(dasherize s))
+	(t                      (underscore s)) ))
+(defun camelscore-word-at-point ()
+  (interactive)
+  (let* ((case-fold-search nil)
+	 (beg (and (skip-chars-backward "[:alnum:]:_-") (point)))
+	 (end (and (skip-chars-forward  "[:alnum:]:_-") (point)))
+	 (txt (buffer-substring beg end))
+	 (cml (camelscore txt)) )
+    (if cml (progn (delete-region beg end) (insert cml))) ))
 
 ;; http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs,
 ;; Author mk-fg
@@ -469,10 +483,20 @@ const to easier find them when building."
   (interactive)
   (highlight-versions "openvdb boost houdini"))
 
+;; Functions for quickly set up the work environment
+(defun setup-work ()
+  "Splits the window into three equivalent buffers and set the cwd to swdevl"
+  (interactive)
+  (cd "~/fredriks/swdevl")
+  (delete-other-windows)
+  (split-window-horizontally)
+  (split-window-horizontally)
+  (balance-windows) )
 
 (defun setup-build()
 "Spawns multiple shells called cyclone, build and misc"
 (interactive)
+(cd "~/fredriks/swdevl")
 (shell)
 (rename-buffer "cyclone")
 (highlight-build)
@@ -596,6 +620,8 @@ const to easier find them when building."
 (global-set-key (kbd "<f11>") 'recompile) ; recompile
 ;; C++
 ;; Switch between header and implementation
+(setq ff-search-directories
+      '("." "../src" "../include"))
 (add-hook 'c-mode-common-hook
   (lambda() 
     (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
@@ -635,9 +661,12 @@ const to easier find them when building."
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
+;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
+(global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
+
 ;; ============================ Registers ======================================
 
-(set-register ?e (cons 'file "~/dotemacs/dotemacs"))
+(set-register ?e (cons 'file "~/dotemacs/dotemacs")) 
 (set-register ?f (cons 'file (concat "/dd/dept/software/users/fredriks/swdevl/"
 				     "CoreLibs/Math/Geometry/include/VDB/"
 				     "FieldImpl.hpp")))
