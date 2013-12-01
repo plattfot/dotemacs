@@ -405,7 +405,87 @@ Emacs buffers are those whose name starts with *."
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
 (interactive)
 (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt" ))
+;; ============================ Description ====================================
+(defun insert-description ()
+"Insert description of when the file was created who's the author
+and the name of the file."
+(interactive)
+(insert (mapconcat 'identity 
+		   ( list "/**"
+			  ( concat "* \\file   " (buffer-name))
+			  "*"
+			  "* \\author Fredrik Salomonsson (fredriks@d2.com)"
+			  "*"
+			  ( concat "* \\date   " (format-time-string "%B %Y") )
+			  "*/" ) 
+		   "\n") )
+)
+;; ============================== Header =======================================
+(defun insert-header()
+"Insert boilerplate and descrition"
+(interactive)
+(insert-boilerplate)
+(goto-char (point-max))
+(next-line 1)
+(insert-description)
+)
+;; ============================== Namespace ====================================
+(setq insert-namespace-devdir "swdevl")
+(defun insert-namespace ( extra_namespaces )
+"Insert namespace based on the location on the file"
+(interactive "sAdd extra namespace (separated by space): ")
+(setq path (pwd))
+(setq end (- (length path) 1))
+(setq start (string-match insert-namespace-devdir path))
+;; Remove everything until swdevl and replace CoreLibs with DD if it exist
+(setq path (substring path start end) )
+;; Remove split it into a list and remove swdevl
+(setq path_list ( cdr ( split-string  path "/") ) )
+;; Remove CoreLibs and Common if they exist
+(setq path_list (remove "CoreLibs" path_list))
+(setq path_list (remove "Common" path_list))
+;; Add extra namespaces
+(setq extra_list (split-string extra_namespaces ) )
+(setq path_list (append path_list extra_list))
 
+;; Remove all entrys that starts with a lowercase
+(dolist (x path_list)
+  (if (= (let ((case-fold-search nil)) (string-match-p "[a-z]+" x)) 0) 
+      (setq path_list (remove x path_list) ) 
+    nil
+    )
+  )
+;; Add DD as the first namespace
+(push "DD" path_list)
+;; Create include gaurd name
+(setq include_guard (mapconcat 'upcase path_list "_"))
+(setq include_guard (concat include_guard 
+			    "_" 
+			    (upcase 
+			     (underscore 
+			      (camelcase (buffer-name))
+			      )
+			     )
+			    ) 
+      )
+;; Insert all into buffer
+(insert "#ifndef " include_guard "\n" "#define " include_guard "\n\n")
+(dolist (x path_list) (insert "namespace " x " {\n} // namespace " x "\n")
+	(search-backward "{")
+	(forward-char 2))
+(insert "\n")
+(next-line (length path_list))
+(insert "#endif")
+(previous-line (+ (length path_list) 1))
+)
+
+(defun setup-newfile ( args)
+"Adds boilerplate, description and namespaces"
+(interactive "sAdd extra namespace (separated by space): ")
+(insert-header)
+(insert "\n\n")
+(insert-namespace args)
+)
 ;; =========================== Attach Houdini ==================================
 (defun attach-houdini () 
 "prints attach <proc number> into the buffer"
@@ -427,14 +507,6 @@ Emacs buffers are those whose name starts with *."
  )
 )
 ;;============================== Highlight =====================================
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
-;;  '(custom-safe-themes (quote ("4486a999a2398eb0572389b6cb629eed1b0370d6a1d93f56859f5026b0343b5a" "e93135352a2ace905499b20b101c75bea34b9aa97c5138113e6a6de9f1b9111c" "a248938bf83f85a79197bfd99b51f2a549e39b0657786eb299ce05da1b44b516" default))))
 
 ;; ;; (custom-set-faces
 ;; ;;  ;; custom-set-faces was added by Custom.
@@ -519,6 +591,16 @@ const to easier find them when building."
   (interactive)
   (highlight-versions "openvdb boost houdini"))
 
+;; (defface hi-red-b
+;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
+;;     (t (:weight bold :foreground "red")))
+;;   "Face for hi-lock mode."
+;;   :group 'hi-lock-faces)
+
+;; Highlight matching brackets
+(show-paren-mode 1)
+
+;;==============================================================================
 ;; Functions for quickly set up the work environment
 (defun setup-work ()
   "Splits the window into three equivalent buffers and set the cwd to swdevl"
@@ -542,15 +624,6 @@ const to easier find them when building."
 (shell)
 (rename-buffer "build")
 (highlight-build) )
-
-;; (defface hi-red-b
-;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
-;;     (t (:weight bold :foreground "red")))
-;;   "Face for hi-lock mode."
-;;   :group 'hi-lock-faces)
-
-;; Highlight matching brackets
-(show-paren-mode 1)
 ;;==============================================================================
 
 ;; ;; Set up readline-autocomplete
@@ -568,11 +641,11 @@ const to easier find them when building."
 ;; ==================== GNU plot mode ==========================================
 ;; Lines enabling gnuplot-mode
 
-(add-to-list 'Info-default-directory-list "/job/HOME/fredriks/.emacs.d/plugins/gnuplot")
+(add-to-list 'Info-default-directory-list "/dd/home/fredriks/.emacs.d/plugins/gnuplot")
 
 ;; move the files gnuplot.el to someplace in your lisp load-path or
 ;; use a line like
-(setq load-path (append (list "/job/HOME/fredriks/.emacs.d/plugins/gnuplot") load-path))
+(setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
 
 ;; these lines enable the use of gnuplot mode
 (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
