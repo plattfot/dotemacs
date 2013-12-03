@@ -6,8 +6,10 @@
        '("multiple-cursors.el" 
 	 "expand-region.el"
 	 "auto-complete.d"
-	 "rainbow-mode"
-	 "evil-numbers")))
+	 "android-mode"
+	 "evil-numbers"
+	 "auto-java-complete"
+	 "yasnippet")))
 
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
@@ -23,19 +25,43 @@
 ;;(load-theme 'sunburst t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 ;;============================ Modes ===========================================
+;; Package 
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+
 ;; Enable multiple cursor
 (require 'multiple-cursors)
 ;; Enable expand-region
 (require 'expand-region)
+;; Enable android mode
+(require 'android-mode)
 ;; Enable buffer mode
 (require 'buffer-move)
-;; Enable rainbow mode
-(require 'rainbow-mode)
-;; Enable tramp
+;; Enable tramp and setup
 (require 'tramp)
 (setq tramp-default-method "ssh")
 ;; Enable evil numbers
 (require 'evil-numbers)
+;; Enable yasnippet and setup
+(require 'yasnippet) ;; not yasnippet-bundle
+(yas-global-mode 1)
+
+;; Enable haskell mode
+(require 'inf-haskell)
+(require 'haskell-mode-autoloads)
+;;(require 'haskell-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+ ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+
+;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
+;; enable java autocomplete and setup
+(require 'ajc-java-complete-config)
+(add-hook 'java-mode-hook 'ajc-java-complete-mode)
+(add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -51,6 +77,8 @@
    ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
 
 ;; Indent using spaces
+;; (setq-default indent-tabs-mode nil)
+;; (setq-default tab-width 2)
 (setq c-mode-hook
     (function (lambda ()
                 (setq indent-tabs-mode nil)
@@ -60,6 +88,14 @@
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
 (setq c++-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq python-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq sh-mode-hook
     (function (lambda ()
                 (setq indent-tabs-mode nil)
                 (setq c-indent-level 2))))
@@ -734,14 +770,24 @@ const to easier find them when building."
 
 ;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
 (global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
+;; Key bindings for Java autocomplete
+(local-set-key (kbd "C-c i") (quote ajc-import-all-unimported-class))
+(local-set-key (kbd "C-c m") (quote ajc-import-class-under-point))
 
+;; Haskell keybindings
+;;(define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer) ;; doesn't work
 ;; ============================ Registers ======================================
+(setq is_work (string= (getenv "USER") "fredriks") )
+(if is_work
+    (set-register ?e (cons 'file "~/dotemacs/dotemacs")) 
+    (set-register ?e (cons 'file "~/Dropbox/Projects/dotemacs/dotemacs")) 
+)
 
-(set-register ?e (cons 'file "~/dotemacs/dotemacs")) 
-(set-register ?f (cons 'file (concat "/dd/dept/software/users/fredriks/swdevl/"
-				     "CoreLibs/Math/Geometry/include/VDB/"
-				     "FieldImpl.hpp")))
-
+(when is_work
+  (set-register ?f (cons 'file (concat "/dd/dept/software/users/fredriks/swdevl/"
+				       "CoreLibs/Math/Geometry/include/VDB/"
+				       "FieldImpl.hpp")))
+  )
 (set-register ?o 
 	      (cons 'file 
 		    (concat "/tools/package/openvdb/"
@@ -754,3 +800,15 @@ const to easier find them when building."
 
 ;; =============================================================================
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(nxml-slash-auto-complete-flag t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
