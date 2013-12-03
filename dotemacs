@@ -413,12 +413,10 @@ and the name of the file."
 (setq path_list (append path_list extra_list))
 
 ;; Remove all entrys that starts with a lowercase
-(dolist (x path_list)
-  (if (= (let ((case-fold-search nil)) (string-match-p "[a-z]+" x)) 0) 
-      (setq path_list (remove x path_list) ) 
-    nil
-    )
-  )
+(let ((case-fold-search nil))
+  (remove-if (lambda (x) 
+	       (if (setq check (string-match-p "[a-z]+" x) ) (= check 0) nil))
+	     path_list ))
 ;; Add DD as the first namespace
 (push "DD" path_list)
 ;; Create include gaurd name
