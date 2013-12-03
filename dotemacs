@@ -8,8 +8,7 @@
 	 "auto-complete.d"
 	 "android-mode"
 	 "evil-numbers"
-	 "auto-java-complete"
-	 "yasnippet")))
+	 "auto-java-complete")))
 
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
@@ -449,10 +448,13 @@ and the name of the file."
 (setq path_list (append path_list extra_list))
 
 ;; Remove all entrys that starts with a lowercase
-(let ((case-fold-search nil))
-  (remove-if (lambda (x) 
-	       (if (setq check (string-match-p "[a-z]+" x) ) (= check 0) nil))
-	     path_list ))
+(setq path_list (let ((case-fold-search nil))
+		  (remove-if (lambda (x) 
+			       (if (setq check (string-match-p "[a-z]+" x) ) 
+				   (= check 0) 
+				 nil)
+			       )
+			     path_list )))
 ;; Add DD as the first namespace
 (push "DD" path_list)
 ;; Create include gaurd name
