@@ -5,11 +5,10 @@
       (normal-top-level-add-to-load-path 
        '("multiple-cursors.el" 
 	 "expand-region.el"
-	 "auto-complete.d"
 	 "android-mode"
 	 "evil-numbers"
 	 "auto-java-complete"
-	 "yasnippet")))
+	 )))
 
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
@@ -48,7 +47,7 @@
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas-global-mode 1)
 
-;; Enable haskell mode
+;; Enable haskell stuff
 (require 'inf-haskell)
 (require 'haskell-mode-autoloads)
 ;;(require 'haskell-mode)
@@ -56,12 +55,14 @@
  ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+(autoload 'ghc-init "ghc" nil t)
+;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 
 ;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
 ;; enable java autocomplete and setup
-(require 'ajc-java-complete-config)
-(add-hook 'java-mode-hook 'ajc-java-complete-mode)
-(add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
+;; (require 'ajc-java-complete-config)
+;; (add-hook 'java-mode-hook 'ajc-java-complete-mode)
+;; (add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -119,7 +120,6 @@
 
 ;;============================= Auto complete ==================================
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "/job/HOME/fredriks/.emacs.d/plugins/ac-dict")
 (ac-config-default)
 
  (define-key ac-completing-map "\t" 'ac-expand)
@@ -404,7 +404,7 @@ Emacs buffers are those whose name starts with *."
 (defun insert-boilerplate()
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
 (interactive)
-(insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt" ))
+(insert-file-contents "~/.emacs.d/dd/boilerplate.txt" ))
 ;; ============================ Description ====================================
 (defun insert-description ()
 "Insert description of when the file was created who's the author
@@ -486,6 +486,17 @@ and the name of the file."
 (insert "\n\n")
 (insert-namespace args)
 )
+
+;; ============================== Comment ======================================
+(defun insert-function-comment ()
+  (interactive)
+  (insert "/**")  (indent-according-to-mode)
+  (insert "\n* ") (indent-according-to-mode)
+  (insert "\n*/") (indent-according-to-mode)
+  (previous-line 1)
+  (end-of-line)
+)
+
 ;; =========================== Attach Houdini ==================================
 (defun attach-houdini () 
 "prints attach <proc number> into the buffer"
@@ -624,6 +635,26 @@ const to easier find them when building."
 (shell)
 (rename-buffer "build")
 (highlight-build) )
+
+;;==============================================================================
+;; From
+;; http://stackoverflow.com/questions/2289883/emacs-copy-matching-lines
+;; by Trey Jackson
+(defun copy-lines-matching-re (re)
+  "find all lines matching the regexp RE in the current buffer
+putting the matching lines in a buffer named *matching*"
+  (interactive "sRegexp to match: ")
+  (let ((result-buffer (get-buffer-create "*matching*")))
+    (with-current-buffer result-buffer 
+      (erase-buffer))
+    (save-match-data 
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward re nil t)
+          (princ (buffer-substring-no-properties (line-beginning-position) 
+                                                 (line-beginning-position 2))
+                 result-buffer))))
+    (pop-to-buffer result-buffer)))
 ;;==============================================================================
 
 ;; ;; Set up readline-autocomplete
@@ -689,6 +720,10 @@ const to easier find them when building."
 (defalias 'list-buffers 'ibuffer)
 ;; Create new line if end of buffer when pressing C-n
 (setq next-line-add-newlines t)
+;; =============================== Macros ======================================
+(fset 'bcws
+   [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?w ?s ?3 ?5 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+
 ;; ============================ Key bindings ===================================
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
@@ -775,7 +810,11 @@ const to easier find them when building."
 ;; Key bindings for Java autocomplete
 (local-set-key (kbd "C-c i") (quote ajc-import-all-unimported-class))
 (local-set-key (kbd "C-c m") (quote ajc-import-class-under-point))
+;; Macro keybindings
+(global-set-key (kbd "C-c B") 'bcws)
 
+;; Insert doxygen C based comment
+(global-set-key (kbd "C-c i") 'insert-function-comment)
 ;; Haskell keybindings
 ;;(define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer) ;; doesn't work
 ;; ============================ Registers ======================================
@@ -814,3 +853,4 @@ const to easier find them when building."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
