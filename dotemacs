@@ -7,9 +7,9 @@
 	 "expand-region.el"
 	 "android-mode"
 	 "evil-numbers"
-	 "auto-java-complete"
-	 )))
-
+	 "auto-java-complete")))
+;; Determine if it's work or home
+(setq is_work (string= (getenv "USER") "fredriks") )
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
 ;; ; Set cursor color to white
@@ -404,7 +404,10 @@ Emacs buffers are those whose name starts with *."
 (defun insert-boilerplate()
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
 (interactive)
-(insert-file-contents "~/.emacs.d/dd/boilerplate.txt" ))
+(if is_work
+    (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
+    (insert-file-contents "~/.emacs.d/dd/boilerplate.txt" ))
+)
 ;; ============================ Description ====================================
 (defun insert-description ()
 "Insert description of when the file was created who's the author
@@ -449,12 +452,13 @@ and the name of the file."
 (setq path_list (append path_list extra_list))
 
 ;; Remove all entrys that starts with a lowercase
-(dolist (x path_list)
-  (if (= (let ((case-fold-search nil)) (string-match-p "[a-z]+" x)) 0) 
-      (setq path_list (remove x path_list) ) 
-    nil
-    )
-  )
+(setq path_list (let ((case-fold-search nil))
+		  (remove-if (lambda (x) 
+			       (if (setq check (string-match-p "[a-z]+" x) ) 
+				   (= check 0) 
+				 nil)
+			       )
+			     path_list )))
 ;; Add DD as the first namespace
 (push "DD" path_list)
 ;; Create include gaurd name
@@ -818,7 +822,7 @@ putting the matching lines in a buffer named *matching*"
 ;; Haskell keybindings
 ;;(define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer) ;; doesn't work
 ;; ============================ Registers ======================================
-(setq is_work (string= (getenv "USER") "fredriks") )
+
 (if is_work
     (set-register ?e (cons 'file "~/dotemacs/dotemacs")) 
     (set-register ?e (cons 'file "~/Dropbox/Projects/dotemacs/dotemacs")) 
