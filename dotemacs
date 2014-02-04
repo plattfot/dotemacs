@@ -7,14 +7,16 @@
 	 "expand-region.el"
 	 "android-mode"
 	 "evil-numbers"
-	 "auto-java-complete")))
+	 ;;"auto-java-complete"
+	 "dd-log-parser")))
 ;; Determine if it's work or home
 (setq is_work (string= (getenv "USER") "fredriks") )
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
 ;; ; Set cursor color to white
 (set-cursor-color "#ffffff") 
-
+;; Dissmiss startup screen
+(setq inhibit-splash-screen t)
 ;; Load sunburst theme
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
@@ -23,13 +25,14 @@
 (define-key key-translation-map [8711] 'event-apply-hyper-modifier)
 ;;(load-theme 'sunburst t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-;;============================ Modes ===========================================
+;; ;;============================ Modes ===========================================
 ;; Package 
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
-
+;; Enable dd-log-parser
+(require 'dd-log-parser)
 ;; Enable multiple cursor
 (require 'multiple-cursors)
 ;; Enable expand-region
@@ -46,6 +49,12 @@
 ;; Enable yasnippet and setup
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas-global-mode 1)
+;; Ack stuff -- installed via emacs package manager
+;; Create shorter aliases
+(defalias 'ack 'ack-and-a-half)
+(defalias 'ack-same 'ack-and-a-half-same)
+(defalias 'ack-find-file 'ack-and-a-half-find-file)
+(defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
 
 ;; Enable haskell stuff
 (require 'inf-haskell)
@@ -58,11 +67,11 @@
 (autoload 'ghc-init "ghc" nil t)
 ;;(add-hook 'haskell-mode-hook (lambda () (ghc-init) (flymake-mode)))
 
-;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
-;; enable java autocomplete and setup
-;; (require 'ajc-java-complete-config)
-;; (add-hook 'java-mode-hook 'ajc-java-complete-mode)
-;; (add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
+;; ;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
+;; ;; enable java autocomplete and setup
+;; ;; (require 'ajc-java-complete-config)
+;; ;; (add-hook 'java-mode-hook 'ajc-java-complete-mode)
+;; ;; (add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -150,13 +159,14 @@
 	     (add-to-list 'ac-omni-completion-sources
 			  (cons "->" '(ac-source-semantic)))
 
-	     ;; ac-sources was also made buffer local in new versions of
-	     ;; autocomplete.  In my case, I want AutoComplete to use 
-	     ;; semantic and yasnippet (order matters, if reversed snippets
-	     ;; will appear before semantic tag completions).
+;; 	     ;; ac-sources was also made buffer local in new versions of
+;; 	     ;; autocomplete.  In my case, I want AutoComplete to use 
+;; 	     ;; semantic and yasnippet (order matters, if reversed snippets
+;; 	     ;; will appear before semantic tag completions).
 
-	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
-	     ))
+;; 	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
+ 	     ))
+;;============================= Backup/autosave ================================
 ;;; backup/autosave
 (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
 (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
@@ -208,19 +218,6 @@
    (interactive)
    (let ((comint-buffer-maximum-size 0))
      (comint-truncate-buffer)))
-;; http://www.emacswiki.org/emacs/HexColour
-;; Color hex color tags with their color.
-;; Not working
-;; (defvar hexcolour-keywords
-;;    '(("#[[:xdigit:]]\{6\}"
-;;       (0 (put-text-property (match-beginning 0)
-;;                             (match-end 0)
-;; 			    'face (list :background 
-;; 				        (match-string-no-properties 0)))))))
-;; (defun hexcolour-add-to-font-lock ()
-;;   (font-lock-add-keywords nil hexcolour-keywords))
-
-;; (add-hook 'emacs-lisp-mode 'hexcolour-add-to-font-lock)
 
 ;;; http://www.stringify.com/2006/apr/24/rename/
 ;;; Rename current file and buffer 
@@ -671,27 +668,26 @@ const to easier find them when building."
 (rename-buffer "build")
 (highlight-build) )
 
-;;==============================================================================
-;; From
-;; http://stackoverflow.com/questions/2289883/emacs-copy-matching-lines
-;; by Trey Jackson
-(defun copy-lines-matching-re (re)
-  "find all lines matching the regexp RE in the current buffer
-putting the matching lines in a buffer named *matching*"
-  (interactive "sRegexp to match: ")
-  (let ((result-buffer (get-buffer-create "*matching*")))
-    (with-current-buffer result-buffer 
-      (erase-buffer))
-    (save-match-data 
-      (save-excursion
-        (goto-char (point-min))
-        (while (re-search-forward re nil t)
-          (princ (buffer-substring-no-properties (line-beginning-position) 
-                                                 (line-beginning-position 2))
-                 result-buffer))))
-    (pop-to-buffer result-buffer)))
-;;==============================================================================
+;;========================== Extra MC functions ================================
+(defun mc/insert-numbers-per-line (arg)
+  "Insert increasing numbers for each cursor that are on a separate
+line, cursors on the same line will insert same number, starts at 0 or
+ARG"
+(interactive "P")
+(setq mc--current-line (line-number-at-pos)
+      mc--insert-numbers-number (or arg 0) )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase-for-diff-lines
+				     cursor)))
 
+(defun mc--insert-number-and-increase-for-diff-lines ()
+  (interactive)
+  (insert (number-to-string mc--insert-numbers-number))
+  (if (not (= mc--current-line (line-number-at-pos)))
+      (progn (setq mc--current-line (line-number-at-pos)
+		   mc--insert-numbers-number (1+ mc--insert-numbers-number)))
+    nil ))
+;;==============================================================================
 ;; ;; Set up readline-autocomplete
 ;; (add-to-list 'load-path "~/.emacs.d/plugins/readline-complete")
 
@@ -888,4 +884,4 @@ putting the matching lines in a buffer named *matching*"
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
+   
