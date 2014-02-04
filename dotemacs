@@ -669,6 +669,8 @@ const to easier find them when building."
 (highlight-build) )
 
 ;;========================== Extra MC functions ================================
+;; Based on mc/insert-numbers
+
 (defun mc/insert-dec-numbers (arg)
   "Insert decreasing numbers for each cursor, starting at number
 of cursors - 1 or ARG."
