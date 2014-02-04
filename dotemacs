@@ -669,10 +669,10 @@ const to easier find them when building."
 (highlight-build) )
 
 ;;========================== Extra MC functions ================================
-(defun mc/insert-numbers-per-line (arg)
+(defun mc/insert-same-numbers-per-line (arg)
   "Insert increasing numbers for each cursor that are on a separate
-line, cursors on the same line will insert same number, starts at 0 or
-ARG"
+line, cursors on the same line will insert the same number, starts at
+0 or ARG"
 (interactive "P")
 (setq mc--current-line (line-number-at-pos)
       mc--insert-numbers-number (or arg 0) )
@@ -682,11 +682,46 @@ ARG"
 
 (defun mc--insert-number-and-increase-for-diff-lines ()
   (interactive)
-  (insert (number-to-string mc--insert-numbers-number))
   (if (not (= mc--current-line (line-number-at-pos)))
       (progn (setq mc--current-line (line-number-at-pos)
-		   mc--insert-numbers-number (1+ mc--insert-numbers-number)))
-    nil ))
+		   mc--insert-numbers-number (1+ mc--insert-numbers-number)
+		   (insert (number-to-string mc--insert-numbers-number))))
+    (insert (number-to-string mc--insert-numbers-number)) ))
+
+(defun mc/insert-characters (char)
+  "Insert increasing character for each cursor, it starts from
+the user specified character"
+(interactive  "cSpecify letter to start from")
+(setq mc--insert-chars-char char)
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+				     cursor)))
+
+(defun mc--insert-char-and-increase ()
+  (interactive)
+  (insert mc--insert-chars-char)
+  (setq mc--insert-chars-char (1+ mc--insert-chars-char)))
+
+(defun mc/insert-same-chars-per-line (char)
+  "Insert increasing character for each cursor that are on a
+separate line, cursors on the same line will insert the same
+character, it starts from the user specified character."
+(interactive  "cSpecify letter to start from")
+(setq mc--current-line (line-number-at-pos)
+      mc--insert-chars-char char )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase-for-diff-lines
+				     cursor)))
+
+(defun mc--insert-char-and-increase-for-diff-lines ()
+  (interactive)
+  (if (not (= mc--current-line (line-number-at-pos)))
+      (progn (setq mc--current-line (line-number-at-pos)
+		   mc--insert-chars-char (1+ mc--insert-chars-char))
+	     (insert mc--insert-chars-char)
+	     )
+    (insert mc--insert-chars-char)))
+
 ;;==============================================================================
 ;; ;; Set up readline-autocomplete
 ;; (add-to-list 'load-path "~/.emacs.d/plugins/readline-complete")
@@ -885,3 +920,14 @@ ARG"
  ;; If there is more than one, they won't work right.
  )
    
+
+
+
+
+
+
+
+
+
+
+
