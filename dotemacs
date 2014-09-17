@@ -7,6 +7,7 @@
 	 "expand-region.el"
 	 "android-mode"
 	 "evil-numbers"
+	 "glsl-mode"
 	 ;;"auto-java-complete"
 	 "dd-log-parser")))
 ;; Determine if it's work or home
@@ -14,7 +15,7 @@
 ;; Reuse frames if the buffer is already open.
 (setq-default display-buffer-reuse-frames t)
 ;; ; Set cursor color to white
-(set-cursor-color "#ffffff") 
+(set-cursor-color "#ffffff")
 ;; Dissmiss startup screen
 (setq inhibit-splash-screen t)
 ;; Load sunburst theme
@@ -49,6 +50,7 @@
 ;; Enable yasnippet and setup
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas-global-mode 1)
+(setq require-final-newline nil) ;; turn off automatically add a newline in files.
 ;; Ack stuff -- installed via emacs package manager
 ;; Create shorter aliases
 (defalias 'ack 'ack-and-a-half)
@@ -78,17 +80,24 @@
 (setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
 
 (autoload 'glsl-mode "glsl-mode" nil t)
-   (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
-   (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
 
 (autoload 'cython-mode "cython-mode.el" "Cython mode" t)
    ;;(autoload 'cython-mode "cython-mode" nil t)
    ;; (add-to-list 'auto-mode-alist '("\\.pyx\\'" . cython-mode))
    ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
-
+(autoload 'mel-mode "mel-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.mel$" . mel-mode))
 ;; Indent using spaces
 ;; (setq-default indent-tabs-mode nil)
 ;; (setq-default tab-width 2)
+          
+;; (setq c-default-style "linux"
+;;       c-basic-offset 2)
 (setq c-mode-hook
     (function (lambda ()
                 (setq indent-tabs-mode nil)
@@ -428,9 +437,13 @@ Emacs buffers are those whose name starts with *."
 (defun insert-boilerplate()
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
 (interactive)
+(setq current_pos (point) )
 (if is_work
     (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
     (insert-file-contents "~/.emacs.d/dd/boilerplate.txt" ))
+;; Insert current year
+(replace-regexp "::date::" (setq year (format-time-string "%Y" (current-time))))
+(goto-char current_pos)
 )
 ;; ============================ Description ====================================
 (defun insert-description ()
@@ -457,7 +470,7 @@ and the name of the file."
 (interactive)
 (insert-boilerplate)
 (goto-char (point-max))
-(next-line 1)
+(insert "\n\n")
 (insert-description)
 )
 ;; ============================== Namespace ====================================
@@ -472,9 +485,16 @@ and the name of the file."
 (setq path (substring path start end) )
 ;; Remove split it into a list and remove swdevl
 (setq path_list ( cdr ( split-string  path "/") ) )
-;; Remove CoreLibs and Common if they exist
+;; Handle exceptions
+;; Remove CoreLibs, Common and Utility if they exist
 (setq path_list (remove "CoreLibs" path_list))
 (setq path_list (remove "Common" path_list))
+(setq path_list (remove "Utility" path_list))
+;; Captitalize houdini if it exist
+(if (setq houdini (member "houdini" path_list))
+    (setcar houdini (capitalize (car houdini)))
+  nil )
+
 ;; Add extra namespaces
 (setq extra_list (split-string extra_namespaces ) )
 (setq path_list (append path_list extra_list))
@@ -489,27 +509,37 @@ and the name of the file."
 			     path_list )))
 ;; Add DD as the first namespace
 (push "DD" path_list)
-;; Create include gaurd name
-(setq include_guard (mapconcat 'upcase path_list "_"))
-(setq include_guard (concat include_guard 
-			    "_" 
-			    (upcase 
-			     (underscore 
-			      (camelcase (buffer-name))
-			      )
-			     )
-			    ) 
-      )
-;; Insert all into buffer
-(insert "#ifndef " include_guard "\n" "#define " include_guard "\n\n")
-(dolist (x path_list) (insert "namespace " x " {\n} // namespace " x "\n")
-	(search-backward "{")
-	(forward-char 2))
-(insert "\n")
-(next-line (length path_list))
-(insert "#endif")
-(previous-line (+ (length path_list) 1))
+(let ((is_header (string-equal "h" (substring (file-name-extension (buffer-name)) 0 1))))
+  (if is_header 
+      (progn
+	;; Create include gaurd name
+	(setq include_guard (mapconcat 'upcase path_list "_"))
+	(setq include_guard (concat include_guard 
+				    "_" 
+				    (upcase 
+				     (underscore 
+				      (camelcase (buffer-name))
+				      )
+				     )
+				    ) 
+	      )
+	;; Insert all into buffer
+	(insert "#ifndef " include_guard "\n" "#define " include_guard "\n\n")
+	) nil)
+
+  (dolist (x path_list) (insert "namespace " x " {\n} // namespace " x "\n")
+	  (search-backward "{")
+	  (forward-char 2))
+  (if is_header 
+      (progn
+	(insert "\n")
+	(next-line (length path_list))
+	(insert "#endif")
+	(previous-line (+ (length path_list) 1)))
+    (progn (insert "\n") (previous-line) )
+    )
 )
+) ;; insert-namespace
 
 (defun setup-newfile ( args)
 "Adds boilerplate, description and namespaces"
@@ -528,26 +558,58 @@ and the name of the file."
   (previous-line 1)
   (end-of-line)
 )
-
+;; ============================= PID Houdini ===================================
+(defun pid-houdini ()
+"Get the pid for houdini, if more than one is running it returns
+the first encounterd."
+(interactive)
+(car 
+ (split-string 
+  (shell-command-to-string
+   (concat "ps aux | " ;; [h]oudini to not match itself
+	   "sed -nE \"s/$USER\\s+([0-9]+).*?[h]oudini-bin/\\1/p\"")
+   )))
+)
 ;; =========================== Attach Houdini ==================================
 (defun attach-houdini () 
 "prints attach <proc number> into the buffer"
 (interactive)
-(insert-string 
- (concat "attach " 
-	 (car 
-	  (split-string 
-	   (shell-command-to-string
-	    (concat "ps aux | grep houdini | "
-		    "grep -v \"grep houdini\" | "
-		    "grep \"houdini-bin\" | "
-		    "grep -oE \"$USER\s*[0-9]+\" |"
-		    " grep -oE \"[0-9]+\"")
-	    )
-	   )
-	  )
-	 )
- )
+(insert-string (concat "attach " (pid-houdini) ))
+)
+
+;; ============================ Kill Houdini ===================================
+(defun kill-houdini () 
+"kills houdini, if more than one is running it will kill the
+first on the ps list."
+(interactive)
+(shell-command (concat "kill -9 " (pid-houdini)))
+)
+
+;; ============================= PID Houdini ===================================
+(defun pid-maya ()
+"Get the pid for maya, if more than one is running it returns
+the first encounterd."
+(interactive)
+(car 
+ (split-string 
+  (shell-command-to-string
+   (concat "ps aux | " ;; [h]oudini to not match itself
+	   "sed -nE \"s/$USER\\s+([0-9]+).*?[m]aya\.bin/\\1/p\"")
+   )))
+)
+;; =========================== Attach Maya ==================================
+(defun attach-maya () 
+"prints attach <proc number> into the buffer"
+(interactive)
+(insert-string (concat "attach " (pid-maya) ))
+)
+
+;; ============================ Kill Maya ===================================
+(defun kill-maya () 
+"kills maya, if more than one is running it will kill the
+first on the ps list."
+(interactive)
+(shell-command (concat "kill -9 " (pid-maya)))
 )
 ;;============================== Highlight =====================================
 
@@ -627,6 +689,10 @@ const to easier find them when building."
   (dolist (word list) 
     (unhighlight-regexp 
      (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+"))
+    )
+  (dolist (word list) 
+    (unhighlight-regexp 
+     (concat (downcase word) "/[0-9]+\.[0-9]+\.[0-9_a-z]+") )
     )
   )
 (defun highlight-usual-vers()
@@ -875,8 +941,21 @@ character, it starts from the user specified character."
 (set-face-attribute 'default nil :height 92)
 ;; Use ibuffer instead of list-buffers
 (defalias 'list-buffers 'ibuffer)
-;; Create new line if end of buffer when pressing C-n
-(setq next-line-add-newlines t)
+;; Disable create new line if end of buffer when pressing C-n
+(setq next-line-add-newlines nil)
+
+;; Color hexvalues with their color, when in lisp-mode
+(defvar hexcolour-keywords
+  '(("#[[:xdigit:]]\\{6\\}"
+     (0 (put-text-property (match-beginning 0)
+			   (match-end 0)
+			   'face (list :background 
+				       (match-string-no-properties 0)))))))
+
+(defun hexcolour-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolour-keywords))
+
+(add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock)
 ;; =============================== Macros ======================================
 (fset 'bcws
    [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?w ?s ?3 ?5 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
@@ -896,9 +975,14 @@ character, it starts from the user specified character."
 (global-set-key [M-down] 'windmove-down)   ; move to downer window
 
 (global-set-key (kbd "M-g") 'goto-line)
+;; Text search. Swap places for normal search and regexp search
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 ;; Text edit
-(global-set-key (kbd "M-r") 'replace-string)
+(global-set-key (kbd "M-r") 'replace-regexp)
 
 (global-set-key [C-S-up] 'move-text-up)
 (global-set-key [C-S-down] 'move-text-down)
@@ -988,11 +1072,12 @@ character, it starts from the user specified character."
   )
 (set-register ?o 
 	      (cons 'file 
-		    (concat "/tools/package/openvdb/"
-			    (get-version-from-build-config
-			     "openvdb"
-			     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
-			    "/core/include/openvdb/")
+		    ;; (concat "/tools/package/openvdb/"
+		    ;; 	    (get-version-from-build-config
+		    ;; 	     "openvdb"
+		    ;; 	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    ;; 	    "/core/include/openvdb/")
+		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
 		    )
 	      )
 
@@ -1003,22 +1088,11 @@ character, it starts from the user specified character."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(nxml-slash-auto-complete-flag t))
+ '(nxml-slash-auto-complete-flag t)
+ '(safe-local-variable-values (quote ((eval progn (c-set-offset (quote inline-open) (quote 0))) (c-indent-level 4) (c-default-style "k&r") (indent-tabs-mode nil)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-   
-
-
-
-
-
-
-
-
-
-
-
