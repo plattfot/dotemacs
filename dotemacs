@@ -7,8 +7,11 @@
 	 "expand-region.el"
 	 "android-mode"
 	 "evil-numbers"
+	 "nerv"
 	 ;;"auto-java-complete"
-	 "dd-log-parser")))
+	 ;;"dd-log-parser"
+	 "multi-term"
+	 )))
 ;; Determine if it's work or home
 (setq is_work (string= (getenv "USER") "fredriks") )
 ;; Reuse frames if the buffer is already open.
@@ -31,8 +34,16 @@
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+;; Enable multi-term
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")
+(add-hook 'term-mode-hook
+          (lambda ()
+            (setq term-buffer-maximum-size 10000)
+            (yas-minor-mode -1)))
+
 ;; Enable dd-log-parser
-(require 'dd-log-parser)
+;;(require 'dd-log-parser)
 ;; Enable multiple cursor
 (require 'multiple-cursors)
 ;; Enable expand-region
@@ -49,6 +60,8 @@
 ;; Enable yasnippet and setup
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas-global-mode 1)
+;; Enable nerv
+(require 'nerv)
 ;; Ack stuff -- installed via emacs package manager
 ;; Create shorter aliases
 (defalias 'ack 'ack-and-a-half)
@@ -72,6 +85,10 @@
 ;; ;; (require 'ajc-java-complete-config)
 ;; ;; (add-hook 'java-mode-hook 'ajc-java-complete-mode)
 ;; ;; (add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
+;; Setup Processing
+(setq processing-location "/usr/bin/processing-java")
+(setq processing-application-dir "/usr/share/processing")
+(setq processing-sketchbook-dir "~/sketchbook")
 
 ;; Add Cuda Syntax
 (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
@@ -166,6 +183,19 @@
 
 ;; 	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
  	     ))
+
+(defun processing-mode-init ()
+  (make-local-variable 'ac-sources)
+  (setq ac-sources '(ac-source-dictionary ac-source-yasnippet))
+  (make-local-variable 'ac-user-dictionary)
+  (setq ac-user-dictionary (append processing-functions
+                                   processing-builtins
+                                   processing-constants)))
+
+(add-to-list 'ac-modes 'processing-mode)
+(add-hook 'processing-mode-hook 'processing-mode-init)
+
+
 ;;============================= Backup/autosave ================================
 ;;; backup/autosave
 (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
@@ -814,6 +844,14 @@ character, it starts from the user specified character."
 	(insert mc--insert-chars-char)) )))
 
 ;;==============================================================================
+;; From http://ergoemacs.org/emacs/elisp_read_file_content.html
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+;;==============================================================================
+
 ;; ;; Set up readline-autocomplete
 ;; (add-to-list 'load-path "~/.emacs.d/plugins/readline-complete")
 
@@ -876,7 +914,7 @@ character, it starts from the user specified character."
 ;; Use ibuffer instead of list-buffers
 (defalias 'list-buffers 'ibuffer)
 ;; Create new line if end of buffer when pressing C-n
-(setq next-line-add-newlines t)
+(setq next-line-add-newlines nil)
 ;; =============================== Macros ======================================
 (fset 'bcws
    [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?w ?s ?3 ?5 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
@@ -898,7 +936,7 @@ character, it starts from the user specified character."
 (global-set-key (kbd "M-g") 'goto-line)
 
 ;; Text edit
-(global-set-key (kbd "M-r") 'replace-string)
+(global-set-key (kbd "M-r") 'replace-regexp)
 
 (global-set-key [C-S-up] 'move-text-up)
 (global-set-key [C-S-down] 'move-text-down)
@@ -978,7 +1016,7 @@ character, it starts from the user specified character."
 
 (if is_work
     (set-register ?e (cons 'file "~/dotemacs/dotemacs")) 
-    (set-register ?e (cons 'file "~/Dropbox/Projects/dotemacs/dotemacs")) 
+    (set-register ?e (cons 'file "~/projects/dotemacs/dotemacs")) 
 )
 
 (when is_work
@@ -1003,22 +1041,12 @@ character, it starts from the user specified character."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(nxml-slash-auto-complete-flag t))
+ '(nxml-slash-auto-complete-flag t)
+ '(safe-local-variable-values (quote ((newfile-authors . "Fredrik Salomonsson") (newfile-project-name . "sdl") (newfile-project-name . "sdl-tutorials") (newfile-project-name . "fury") (eval setq newfile-project-name (progn (let ((path (file-name-directory (file-truename (dir-locals-find-file "."))))) (string-match ".*/\\(.*\\)/" path) (match-string-no-properties 1 path)))) (eval setq newfile-project-name (progn (let ((path (file-name-directory (file-truename (buffer-name))))) (string-match ".*/\\(.*\\)/" path) (match-string-no-properties 1 path)))) (newfile-project-name . "newfile")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-   
-
-
-
-
-
-
-
-
-
-
 
