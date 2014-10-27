@@ -27,6 +27,10 @@
   (load-user-file "gnu-plot.el")
   (load-user-file "dd-newfile.el"))
 
+;; Home
+(when (not work/is-work)
+  (load-user-file "nerv.el"))
+
 ;; Key bindings
 (load-user-file "macros.el")
 (load-user-file "keys.el")
@@ -39,7 +43,6 @@
 (load-user-file "multiple-cursors.el")
 (load-user-file "multi-term.el")
 (load-user-file "yasnippet.el")
-(load-user-file "nerv.el")
 (load-user-file "tramp.el")
 
 ;; Modes
@@ -48,7 +51,7 @@
 (load-user-file "android-mode.el")
 (load-user-file "misc-mode.el")
 
-;; Language specific.
+;; Language specific
 (load-user-file "lisp.el")
 (load-user-file "c-family.el")
 (load-user-file "haskell.el")
