@@ -1,65 +1,55 @@
 ;; -*- mode: lisp -*-
-;; <header>
+(let ((default-directory "~/.emacs.d/plugins/"))
+      (normal-top-level-add-to-load-path '("dotemacs")))
 
-(defconst user-init-dir "<path-to-init.d>")
-
-;; =============================================================================
-;; Load init files 
-;; url; http://stackoverflow.com/questions/2079095/how-to-modularize-an-emacs-configuration
-;; author: seh
-;; =============================================================================
-(defun load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))				
-
+(require 'dotemacs)
 ;; =========================== Load init files =================================
 ;; This must be loaded first.							
-(load-user-file "init.el")
-(load-user-file "auto-complete.el")
+(dotemacs/load-user-file "init.el")
+(dotemacs/load-user-file "auto-complete.el")
 
 ;; Work
-(load-user-file "work.el") ;; defines work/is-work variable
+(dotemacs/load-user-file "work.el") ;; defines work/is-work variable
 (when work/is-work
-  (load-user-file "gnu-plot.el")
-  (load-user-file "dd-newfile.el"))
+  (dotemacs/load-user-file "gnu-plot.el")
+  (dotemacs/load-user-file "dd-newfile.el"))
 
 ;; Home
 (when (not work/is-work)
-  (loadg-user-file "nerv.el"))
+  (dotemacs/load-user-file "nerv.el"))
 
 ;; Key bindings
-(load-user-file "macros.el")
-(load-user-file "keys.el")
-(load-user-file "registers.el")
+(dotemacs/load-user-file "macros.el")
+(dotemacs/load-user-file "keys.el")
+(dotemacs/load-user-file "registers.el")
 
 ;; Packages 
-(load-user-file "ack.el")
-(load-user-file "expand-region.el")
-(load-user-file "evil-numbers.el")
-(load-user-file "multiple-cursors.el")
-(load-user-file "multi-term.el")
-(load-user-file "yasnippet.el")
-(load-user-file "tramp.el")
+(dotemacs/load-user-file "ack.el")
+(dotemacs/load-user-file "expand-region.el")
+(dotemacs/load-user-file "evil-numbers.el")
+(dotemacs/load-user-file "multiple-cursors.el")
+(dotemacs/load-user-file "multi-term.el")
+(dotemacs/load-user-file "yasnippet.el")
+(dotemacs/load-user-file "tramp.el")
 
 ;; Modes
-(load-user-file "cua-mode.el")
-(load-user-file "glsl-mode.el")
-(load-user-file "android-mode.el")
-(load-user-file "misc-mode.el")
+(dotemacs/load-user-file "cua-mode.el")
+(dotemacs/load-user-file "glsl-mode.el")
+(dotemacs/load-user-file "android-mode.el")
+(dotemacs/load-user-file "misc-mode.el")
 
 ;; Language specific
-(load-user-file "lisp.el")
-(load-user-file "c-family.el")
-(load-user-file "haskell.el")
-(load-user-file "python.el")
-(load-user-file "shell.el")
+(dotemacs/load-user-file "lisp.el")
+(dotemacs/load-user-file "c-family.el")
+(dotemacs/load-user-file "haskell.el")
+(dotemacs/load-user-file "python.el")
+(dotemacs/load-user-file "shell.el")
 
 ;; Functions
-(load-user-file "text-functions.el")
-(load-user-file "debug-functions.el")
-(load-user-file "highlight-functions.el")
-(load-user-file "buffer-functions.el")
-(load-user-file "misc-functions.el")
+(dotemacs/load-user-file "text-functions.el")
+(dotemacs/load-user-file "debug-functions.el")
+(dotemacs/load-user-file "highlight-functions.el")
+(dotemacs/load-user-file "buffer-functions.el")
+(dotemacs/load-user-file "misc-functions.el")
 ;; =============================================================================
 
