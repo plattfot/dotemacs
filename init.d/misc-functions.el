@@ -31,8 +31,18 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (exchange-point-and-mark)
   (deactivate-mark nil))
 
-
-;;==============================================================================
+;; -----------------------------------------------------------------------------
+(defun run-emacs-shell-command (command)
+  "Runs the COMMMAND in a emacs shell. Works only if the current buffer is a shell."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (comint-send-input nil t ) ;; hit enter
+    )
+  )
+;; -----------------------------------------------------------------------------
 ;; From http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun get-string-from-file (filePath)
   "Return filePath's file content."

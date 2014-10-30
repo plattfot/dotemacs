@@ -42,6 +42,11 @@
 ;; Highlight matching brackets
 (show-paren-mode 1)
 
+;; Allow to fully maximize emacs under kde.
+(setq frame-resize-pixelwise t)
+;; Disable electric-indent-mode since I"m using C-j for that.
+(setq electric-indent-mode nil)
+
 ;; ;; turn off automatically add a newline in files.
 ;; (setq require-final-newline nil) 
 

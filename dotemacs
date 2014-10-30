@@ -8,6 +8,13 @@
 (dotemacs/load-user-file "init.el")
 (dotemacs/load-user-file "auto-complete.el")
 
+;; Functions
+(dotemacs/load-user-file "text-functions.el")
+(dotemacs/load-user-file "debug-functions.el")
+(dotemacs/load-user-file "highlight-functions.el")
+(dotemacs/load-user-file "buffer-functions.el")
+(dotemacs/load-user-file "misc-functions.el")
+
 ;; Work
 (dotemacs/load-user-file "work.el") ;; defines work/is-work variable
 (when work/is-work
@@ -45,11 +52,5 @@
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
 
-;; Functions
-(dotemacs/load-user-file "text-functions.el")
-(dotemacs/load-user-file "debug-functions.el")
-(dotemacs/load-user-file "highlight-functions.el")
-(dotemacs/load-user-file "buffer-functions.el")
-(dotemacs/load-user-file "misc-functions.el")
 ;; =============================================================================
 

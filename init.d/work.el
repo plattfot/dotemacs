@@ -38,7 +38,8 @@
     (delete-other-windows)
     (split-window-horizontally)
     (split-window-horizontally)
-    (balance-windows) )
+    (balance-windows)
+    (toggle-frame-fullscreen))
 
   (defun setup-build()
     "Spawns multiple shells called cyclone, build and misc"
@@ -52,7 +53,22 @@
     (rename-buffer "misc")
     (shell)
     (rename-buffer "build")
-    (highlight-build) )
+    (highlight-build)
+    (toggle-frame-maximized))
+
+  (defun setup-houdini ()
+    "Spawns two shells called h14 and h13 and move to the correct path for both."
+    (interactive)
+    (cd "~/fredriks/Houdini")
+    (delete-other-windows)
+    (shell)
+    (rename-buffer "h14")
+    (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+    (shell)
+    (rename-buffer "h13")
+    (run-emacs-shell-command "goc")
+    (toggle-frame-maximized)
+    )
 
   ;; --------------------------- Source BuildConfig ----------------------------
   (defun get-version-from-build-config (name path)

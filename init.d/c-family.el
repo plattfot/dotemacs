@@ -85,6 +85,27 @@
   )
 )
 
+;; ---------------------------- Get class scope --------------------------------
+;; Work on over the weekend.
+;; (defun get-class-scope-auto ()
+;; ;; Todo expand to add an offset so you can choose which class to use
+;; ;; if there are more.
+;; "Prints the class scope of the first class it can find in the
+;; buffer. For example class MyClass {}; is declared first it will
+;; print auto MyClass:: 
+
+;; if the class is templated, 
+;; template< typename _FirstTemplate,
+;;           typename _SecondTemplate>
+;; class MyClass {};
+;; it will print
+;; template< typename _FT, typename _ST>
+;; auto MyClass<_FT,_ST>
+;; Note that for now it wont check for name clashes i.e if you have
+;; template< typename _Two, typename _Template>
+;; it will be squashed to template< typename _T, typename _T>
+;; So if you know that you have potential name clashes turn off the name mangling.
+;;  ")
 ;; ============================= Key bindings ==================================
 ;; Hide/Show code blocks
 (add-hook 'c-mode-common-hook

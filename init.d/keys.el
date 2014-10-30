@@ -2,6 +2,7 @@
 ;; General key bindings
 ;; =============================================================================
 
+;; ============================= Key bindings ==================================
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 ;; Key bindings
@@ -41,8 +42,12 @@
 (global-set-key (kbd "M-?") 'mark-paragraph)
 
 ;; Map backspace to Ctrl-h and ctrl+backspace to meta+h
-(global-set-key (kbd "C-h") 'delete-backward-char)
+;; (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "M-h") 'backward-kill-word)
+
+;; This also maps open-line to enter
+;;(global-set-key (kbd "C-m") 'open-line)
+
 ;; Clear shell
 (global-set-key (kbd "<f8>") 'clear-shell)
 
