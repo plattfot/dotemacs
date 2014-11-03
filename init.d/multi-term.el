@@ -15,5 +15,8 @@
 	    ;; Set the buffer size of the terminal
             (setq term-buffer-maximum-size 10000)
 	    ;; Disable yasnippet, since it interfere with tab-completion
-            (yas-minor-mode -1)                   
+            (yas-minor-mode -1)      
+;; ============================= Key bindings ==================================
+	    (add-to-list 'term-bind-key-alist '("C-c j" . term-char-mode))
+	    (add-to-list 'term-bind-key-alist '("C-c k" . term-line-mode))     
 	    ))
