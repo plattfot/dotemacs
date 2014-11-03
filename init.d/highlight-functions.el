@@ -18,7 +18,7 @@
   :group 'hi-lock-faces)
 
 (defface hi-grey
-  '((t (:foreground "brightblack")))
+  '((t (:foreground "#666")))
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
 
@@ -47,15 +47,27 @@
   ( unhighlight-regexp "[0-9]+\\.[0-9]+\\w" ))
 
 (defun highlight-build() 
-  "Highlight paranthesis, error, warning and 
+  "Highlight flags, paranthesis, error, warning and 
 const to easier find them when building."
   (interactive)
+  ( highlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" 'hi-grey)
   ( highlight-regexp "[()]"    'hi-red-b )
   ( highlight-regexp "warning" 'hi-green-b )
   ( highlight-regexp "error"   'hi-red-b )
   ( highlight-regexp "const "  'hi-black-b )
-  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange ))
+  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange )
+  )
 
+(defun unhighlight-build() 
+  "Like the function name applies remove the highlights set by highlight-build."
+  (interactive)
+  ( unhighlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" )
+  ( unhighlight-regexp "[()]" )
+  ( unhighlight-regexp "warning")
+  ( unhighlight-regexp "error")
+  ( unhighlight-regexp "const ")
+  ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" )
+  )
 (defun highlight-versions( input )
   "Highlight important versions when building with pybuild."
   (interactive "sEnter name of packages to highlight (separated by space) ")
