@@ -17,6 +17,6 @@
 	    ;; Disable yasnippet, since it interfere with tab-completion
             (yas-minor-mode -1)      
 ;; ============================= Key bindings ==================================
-	    (add-to-list 'term-bind-key-alist '("C-c j" . term-char-mode))
-	    (add-to-list 'term-bind-key-alist '("C-c k" . term-line-mode))     
+	    (add-to-list 'term-bind-key-alist '("C-c C-j" . term-line-mode))     
+	    (add-to-list 'term-bind-key-alist '("C-c C-k" . term-char-mode))
 	    ))
