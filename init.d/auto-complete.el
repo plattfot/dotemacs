@@ -6,6 +6,7 @@
 (ac-config-default)
 
 (define-key ac-completing-map "\t" 'ac-expand)
+(define-key ac-completing-map "C-i" 'ac-expand)
 (define-key ac-completing-map "\r" nil)
 
 (add-hook 'c++-mode-hook

@@ -1,13 +1,15 @@
 ;; =============================================================================
 ;; Multi-term
 ;; =============================================================================
-(let ((default-directory "~/.emacs.d/plugins/"))
-      (normal-top-level-add-to-load-path '("multi-term")))
 
 ;; Enable multi-term
 (require 'multi-term)
 
-(setq multi-term-program "/bin/zsh")
+( if work/is-work 
+    (setq multi-term-program "/bin/tcsh")
+    (setq multi-term-program "/bin/zsh")
+    )
+
 (add-hook 'term-mode-hook
           (lambda ()
 	    ;; Set the buffer size of the terminal

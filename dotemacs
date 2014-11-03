@@ -35,7 +35,7 @@
 (dotemacs/load-user-file "expand-region.el")
 (dotemacs/load-user-file "evil-numbers.el")
 (dotemacs/load-user-file "multiple-cursors.el")
-(dotemacs/load-user-file "multi-term.el")
+(dotemacs/load-user-file "multi-term.el") ;; Needs work/is-work
 (dotemacs/load-user-file "yasnippet.el")
 (dotemacs/load-user-file "tramp.el")
 
@@ -48,7 +48,8 @@
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
-(dotemacs/load-user-file "haskell.el")
+(when (not work/is-work)
+  (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
 

@@ -7,9 +7,7 @@
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
 (interactive)
 (setq current_pos (point) )
-(if is_work
-    (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
-    (insert-file-contents "~/.emacs.d/dd/boilerplate.txt" ))
+(insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
 ;; Insert current year
 (replace-regexp "::date::" (setq year (format-time-string "%Y" (current-time))))
 (goto-char current_pos)
