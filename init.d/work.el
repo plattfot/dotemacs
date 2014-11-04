@@ -85,7 +85,6 @@
     (interactive)
     (cd "~/fredriks/Houdini")
     (delete-other-windows)
-    (debug)
     (create-term-and-go "h14" "go cyclone rd 1 =fx_h14 work")
     (create-term-and-go "h13" "goc")
     (toggle-frame-maximized)
