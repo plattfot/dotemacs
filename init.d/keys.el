@@ -10,6 +10,9 @@
 (global-set-key (kbd "<f5>") 'menu-bar-mode)
 (global-set-key (kbd "<f6>") 'tool-bar-mode)
 
+;; Clear shell
+(global-set-key (kbd "<f8>") 'clear-term)
+
 ;; Compile
 (global-set-key (kbd "<f12>") 'compile) ; compile
 (global-set-key (kbd "<f11>") 'recompile) ; recompile
@@ -48,6 +51,4 @@
 ;; This also maps open-line to enter
 ;;(global-set-key (kbd "C-m") 'open-line)
 
-;; Clear shell
-(global-set-key (kbd "<f8>") 'clear-shell)
 
