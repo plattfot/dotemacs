@@ -3,11 +3,6 @@
 ;; 
 ;; =============================================================================
 
-(defun clear-shell ()
-   (interactive)
-   (let ((comint-buffer-maximum-size 0))
-     (comint-truncate-buffer)))
-
 ;; From:
 ;; http://www.masteringemacs.org/articles/2010/12/22/fixing-mark-commands-transient-mark-mode/
 (defun push-mark-no-activate ()
@@ -40,8 +35,21 @@ This is the same as using \\[set-mark-command] with the prefix argument."
     (goto-char (process-mark process))
     (insert command)
     (comint-send-input nil t ) ;; hit enter
+    (term-s)
     )
   )
+;; -----------------------------------------------------------------------------
+(defun run-emacs-term-command (command)
+  "Runs the COMMMAND in a emacs term. Works only if the current buffer is a term."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (term-send-input) ;; hit enter
+    )
+  )
+
 ;; -----------------------------------------------------------------------------
 ;; From http://ergoemacs.org/emacs/elisp_read_file_content.html
 (defun get-string-from-file (filePath)
@@ -49,6 +57,17 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (with-temp-buffer
     (insert-file-contents filePath)
     (buffer-string)))
+;; -----------------------------------------------------------------------------
+(defun clear-shell ()
+   (interactive)
+   (let ((comint-buffer-maximum-size 0))
+     (comint-truncate-buffer)))
+
+;; -----------------------------------------------------------------------------
+(defun clear-term ()
+   (interactive)
+   (run-emacs-term-command "clear")
+   )
 
 ;; ============================= Key bindings ==================================
 
