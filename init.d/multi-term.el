@@ -10,6 +10,19 @@
     (setq multi-term-program "/bin/zsh")
     )
 
+;; From: http://www.emacswiki.org/emacs/ShellDirtrackByProcfs
+(defun term-resync-dirs ()
+"resync dirs as shell-resync-dirs does"
+(interactive)
+(let ((directory (file-symlink-p
+		  (format "/proc/%s/cwd"
+			  (process-id
+			   (get-buffer-process
+			    (current-buffer)))))))
+  (when (file-directory-p directory)
+    (cd directory)))
+)
+
 (add-hook 'term-mode-hook
           (lambda ()
 	    ;; Set the buffer size of the terminal
