@@ -55,7 +55,7 @@
     (rename-buffer "build")
     (highlight-build)
     (toggle-frame-maximized))
-
+(setq debug-on-error t)
   (defun setup-build-shell()
     "Spawns multiple shells called cyclone, build and misc"
     "Using shell instead of multi-term"
@@ -72,19 +72,22 @@
     (highlight-build)
     (toggle-frame-maximized))
 
+  (defun create-term-and-go (name command)
+    "Spawns a multi-term and rename it to NAME and then executes the COMMAND"
+    (multi-term)
+    (rename-buffer name)
+    (run-emacs-term-command command)
+    (term-resync-dirs)
+    )
+  
   (defun setup-houdini ()
     "Spawns two multi-terms called h14 and h13 and move to the correct path for both."
     (interactive)
     (cd "~/fredriks/Houdini")
     (delete-other-windows)
-    (multi-term)
-    (shell-resync-dirs)
-    (rename-buffer "h14")
-    (run-emacs-multi-term-command "go cyclone rd 1 =fx_h14 work")
-    (multi-term)
-    (rename-buffer "h13")
-    (run-emacs-multi-term-command "goc")
-    (shell-resync-dirs)
+    (debug)
+    (create-term-and-go "h14" "go cyclone rd 1 =fx_h14 work")
+    (create-term-and-go "h13" "goc")
     (toggle-frame-maximized)
     )
 
