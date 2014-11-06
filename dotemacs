@@ -41,10 +41,7 @@
 (dotemacs/load-user-file "tramp.el")
 
 ;; Modes
-(dotemacs/load-user-file "cua-mode.el")
-(dotemacs/load-user-file "glsl-mode.el")
-(dotemacs/load-user-file "android-mode.el")
-(dotemacs/load-user-file "misc-mode.el")
+(dotemacs/load-user-file "modes.el")
 
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
