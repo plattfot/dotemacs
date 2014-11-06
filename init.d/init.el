@@ -7,6 +7,11 @@
 ;; Add path to plugins
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
+;; To add search path to emacs use this. 
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;   (normal-top-level-add-to-load-path 
+;;    '("<plugin dir>")))
+
 ;; =============================== Variables ===================================
 (defconst dotemacs/path-to-dotemacs "~/projects/dotemacs/dotemacs")
 (defconst dotemacs/path-to-init.d "~/projects/dotemacs/init.d")
