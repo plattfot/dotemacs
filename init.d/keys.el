@@ -11,7 +11,7 @@
 (global-set-key (kbd "<f6>") 'tool-bar-mode)
 
 ;; Clear shell
-(global-set-key (kbd "<f8>") 'clear-term)
+(global-set-key (kbd "<f8>") 'clear-shell)
 
 ;; Compile
 (global-set-key (kbd "<f12>") 'compile) ; compile
