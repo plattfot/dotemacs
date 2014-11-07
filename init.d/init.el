@@ -7,6 +7,14 @@
 ;; Add path to plugins
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
+;; To add search path to emacs use this. 
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;   (normal-top-level-add-to-load-path 
+;;    '("<plugin dir>")))
+
+;; =============================== Variables ===================================
+;; Determine if it's work or home
+(defvar dotemacs/is-work (string= (getenv "USER") "fredriks") )
 ;; ================================ Package ====================================
 (require 'package)
 ;; Add melpa to the package repo

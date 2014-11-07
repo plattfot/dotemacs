@@ -30,6 +30,8 @@
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+
 
 ;; Text edit
 (global-set-key (kbd "M-r") 'replace-regexp)

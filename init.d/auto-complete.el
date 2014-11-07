@@ -42,3 +42,18 @@
 ;; 	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
  	     ))
 
+;; ------------------------ Clang auto complete --------------------------------
+(require 'auto-complete-clang-async)
+
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable "~/.emacs.d/plugins/clang-complete/clang-complete")
+  (setq ac-sources '(ac-source-clang-async))
+  (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
+  (ac-clang-launch-completion-process))
+
+(defun my-ac-config ()
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'auto-complete-mode 'ac-common-setup)
+  (global-auto-complete-mode t))
+
+(my-ac-config)

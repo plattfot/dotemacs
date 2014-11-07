@@ -1,4 +1,5 @@
 ;; -*- mode: lisp -*-
+
 (let ((default-directory "~/.emacs.d/plugins/"))
       (normal-top-level-add-to-load-path '("dotemacs")))
 
@@ -41,16 +42,13 @@
 (dotemacs/load-user-file "tramp.el")
 
 ;; Modes
-(dotemacs/load-user-file "cua-mode.el")
-(dotemacs/load-user-file "glsl-mode.el")
-(dotemacs/load-user-file "android-mode.el")
-(dotemacs/load-user-file "misc-mode.el")
+(dotemacs/load-user-file "modes.el")
 
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
-(when (not work/is-work)
-  (dotemacs/load-user-file "haskell.el"))
+;; (when (not work/is-work)
+;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
 
