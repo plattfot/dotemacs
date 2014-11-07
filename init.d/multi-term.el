@@ -5,7 +5,7 @@
 ;; Enable multi-term
 (require 'multi-term)
 
-( if work/is-work 
+( if dotemacs/is-work 
     (setq multi-term-program "/bin/tcsh")
     (setq multi-term-program "/bin/zsh")
     )

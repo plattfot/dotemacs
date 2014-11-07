@@ -6,7 +6,7 @@
 (require 'dotemacs)
 ;; =========================== Load init files =================================
 ;; This must be loaded first.							
-(dotemacs/load-user-file "init.el")
+(dotemacs/load-user-file "init.el") ;; defines dotemacs/is-work variable
 (dotemacs/load-user-file "auto-complete.el")
 
 ;; Functions
@@ -17,14 +17,14 @@
 (dotemacs/load-user-file "misc-functions.el")
 
 ;; Work
-(dotemacs/load-user-file "work.el") ;; defines work/is-work variable
-(when work/is-work
+(when dotemacs/is-work
+  (dotemacs/load-user-file "work.el")
   (dotemacs/load-user-file "gnu-plot.el")
   (dotemacs/load-user-file "dd-newfile.el")
   (dotemacs/load-user-file "gccsense.el"))
 
 ;; Home
-(when (not work/is-work)
+(when (not dotemacs/is-work)
   (dotemacs/load-user-file "nerv.el"))
 
 ;; Key bindings
@@ -37,7 +37,7 @@
 (dotemacs/load-user-file "expand-region.el")
 (dotemacs/load-user-file "evil-numbers.el")
 (dotemacs/load-user-file "multiple-cursors.el")
-(dotemacs/load-user-file "multi-term.el") ;; Needs work/is-work
+(dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
 (dotemacs/load-user-file "yasnippet.el")
 (dotemacs/load-user-file "tramp.el")
 
@@ -47,7 +47,7 @@
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
-;; (when (not work/is-work)
+;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
