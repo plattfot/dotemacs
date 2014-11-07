@@ -2,7 +2,7 @@
 ;; GNU plot
 ;; =============================================================================
 
-(add-to-list 'Info-default-directory-list "/dd/home/fredriks/.emacs.d/plugins/gnuplot")
+;; (add-to-list 'Info-default-directory-list "/dd/home/fredriks/.emacs.d/plugins/gnuplot")
 
 ;; move the files gnuplot.el to someplace in your lisp load-path or
 ;; use a line like
