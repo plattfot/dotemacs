@@ -35,7 +35,6 @@ This is the same as using \\[set-mark-command] with the prefix argument."
     (goto-char (process-mark process))
     (insert command)
     (comint-send-input nil t ) ;; hit enter
-    (term-s)
     )
   )
 ;; -----------------------------------------------------------------------------
@@ -65,7 +64,9 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 
 ;; -----------------------------------------------------------------------------
 (defun clear-term ()
+  "Delete everything in the buffer."
    (interactive)
+   (delete-region (point-min) (point-max))
    (run-emacs-term-command "clear")
    )
 
