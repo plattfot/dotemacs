@@ -7,9 +7,6 @@
 ;; Add path to plugins
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
-;; =============================== Variables ===================================
-(defconst dotemacs/path-to-dotemacs "~/projects/dotemacs/dotemacs")
-(defconst dotemacs/path-to-init.d "~/projects/dotemacs/init.d")
 ;; ================================ Package ====================================
 (require 'package)
 ;; Add melpa to the package repo
@@ -71,9 +68,6 @@
 
 ;;enable column-number-mode
 (column-number-mode 1)
-
-;; Disable echo in shell
-(setq comint-process-echoes t)
 
 ;;; height 88 <- my default value
 (set-face-attribute 'default nil :height 92)
