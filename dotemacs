@@ -19,7 +19,8 @@
 (dotemacs/load-user-file "work.el") ;; defines work/is-work variable
 (when work/is-work
   (dotemacs/load-user-file "gnu-plot.el")
-  (dotemacs/load-user-file "dd-newfile.el"))
+  (dotemacs/load-user-file "dd-newfile.el")
+  (dotemacs/load-user-file "gccsense.el"))
 
 ;; Home
 (when (not work/is-work)
