@@ -22,6 +22,13 @@
   (when (file-directory-p directory)
     (cd directory)))
 )
+;; From: http://joelmccracken.github.io/entries/switching-between-term-mode-and-line-mode-in-emacs-term/
+(defun jnm/term-toggle-mode ()
+  "Toggles term between line mode and char mode"
+  (interactive)
+  (if (term-in-line-mode)
+      (term-char-mode)
+    (term-line-mode)))
 
 (add-hook 'term-mode-hook
           (lambda ()
@@ -30,6 +37,7 @@
 	    ;; Disable yasnippet, since it interfere with tab-completion
             (yas-minor-mode -1)      
 ;; ============================= Key bindings ==================================
-	    (add-to-list 'term-bind-key-alist '("C-c C-j" . term-line-mode))     
-	    (add-to-list 'term-bind-key-alist '("C-c C-k" . term-char-mode))
+	    ;;(add-to-list 'term-bind-key-alist '("C-c C-j" . jnm/term-toggle-mode))     
+	    (define-key term-raw-map (kbd "C-y") 'term-paste)
+	    (define-key term-raw-map (kbd"C-c C-j") 'jnm/term-toggle-mode)
 	    ))
