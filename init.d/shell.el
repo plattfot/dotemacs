@@ -18,4 +18,6 @@
 	    (setq ansi-color-map (ansi-color-make-color-map))
 	    ;; Disable echo in shell/ Hangs dirs
 	    ;; (setq comint-process-echoes t) 
+            ;; Disable yas minor mode
+            (yas-minor-mode -1)      
 	    ))
