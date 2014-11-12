@@ -36,37 +36,38 @@
   (split-window-horizontally)
   (balance-windows)
   (toggle-frame-fullscreen))
-
-(defun setup-build()
-  "Spawns multiple multi-terms called cyclone, build and misc"
-  (interactive)
+(defun setup-build-fun (terminal-type)
+"Spawns multiple TERMINAL-TYPES, with the names release, cyclone,
+build and misc"
+  (cd "~/fredriks/release")
+  (funcall terminal-type)
+  (rename-buffer "release")
+  (highlight-build)
   (cd "~/fredriks/swdevl")
-  (multi-term)
+  (funcall terminal-type)
   (rename-buffer "cyclone")
   (highlight-build)
   (split-window-right)
-  (multi-term)
+  (funcall terminal-type)
   (rename-buffer "misc")
-  (multi-term)
+  (highlight-build)
+  (funcall terminal-type)
   (rename-buffer "build")
   (highlight-build)
-  (toggle-frame-maximized))
-(setq debug-on-error t)
+  (toggle-frame-maximized)
+)
+(defun setup-build()
+  "Spawns multiple multi-terms called cyclone, build and misc"
+  (interactive)
+  (setup-build-fun #'multi-term) ;; #'x short for (function x)
+)
+
 (defun setup-build-shell()
   "Spawns multiple shells called cyclone, build and misc"
   "Using shell instead of multi-term"
   (interactive)
-  (cd "~/fredriks/swdevl")
-  (shell)
-  (rename-buffer "cyclone")
-  (highlight-build)
-  (split-window-right)
-  (shell)
-  (rename-buffer "misc")
-  (shell)
-  (rename-buffer "build")
-  (highlight-build)
-  (toggle-frame-maximized))
+  (setup-build-fun #'shell) ;; #'x short for (function x)
+)
 
 (defun create-term-and-go (name command)
   "Spawns a multi-term and rename it to NAME and then executes the COMMAND"
