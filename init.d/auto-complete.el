@@ -9,6 +9,8 @@
 (define-key ac-completing-map "C-i" 'ac-expand)
 (define-key ac-completing-map "\r" nil)
 
+(add-to-list 'ac-modes 'makefile-gmake-mode)
+
 (add-hook 'c++-mode-hook
           (lambda ()
             (make-local-variable 'ac-ignores)
