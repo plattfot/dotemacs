@@ -4,7 +4,7 @@
   (let* ((col_name (match-string 1 line))
   	 (col (gethash col_name table))
   	 (data (chomp(buffer-substring-no-properties 
-  	 	      (1+ (search-forward "|")) 
+  	 	      (search-forward "|") 
   	 	      (1- (search-forward "|")))))
 	 )
  
@@ -35,10 +35,17 @@
 	     ) table)
 )
 
+(defun org/get-row-key (row_name col_re)
+  "Get the key associated with the ROW_NAME, i.e remove the column key from the row"
+  (replace-regexp-in-string col_re "" row_name)
+  )
+
 (defun org-table-pack (rows col_re)
   "Packs a Nx2 table into a RxC table where R is the unique rows
    matching the entries in ROWS and C is the columns matching the
-   COL_RE. It expects the layout of the Nx2 table to be:
+   COL_RE. ROWS can contain regexp for each entry. But not a comma
+   since that's use to sepparate the entries. It expects the
+   layout of the Nx2 table to be: 
    |<row name and col identifier>|<data>|
 
    for example:
@@ -70,15 +77,24 @@
 	;; Create the regex for identifying the rows
 	(row_re (concat "\\(" (mapconcat 'identity rows "\\|")"\\)")))
     
-    ;; Add hash table for each row
-    (dolist (row rows) (puthash row (make-hash-table :test 'str-hash) table))
- 
+    ;; ;; Add hash table for each row
+    ;; (dolist (row rows) (puthash row (make-hash-table :test 'str-hash) table))
+    ;; (while (search-forward-regexp rows (point-max) t)
+    ;;   (let ((row (mat))))
+    ;;   (when (not (gethash )))
+    ;;   )
+    ;; (goto-char  start)
     ;; Populate the table by searching each line
     (while (search-forward-regexp col_re (point-max) t)
       (let ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 	(when (string-match row_re line)
-	  (let* ((row_name (match-string 1 line)) 
-		(row (gethash row_name table)))
+	  (let* ((row_key (org/get-row-key (match-string 1 line) col_re)) 
+		 ;; Get the hash table for the row, create it if it doesn't exist 
+		 (row (if (gethash row_key table) 
+			  (gethash row_key table)
+			(progn 
+			  (puthash row_key (make-hash-table :test 'str-hash) table)
+			  (gethash row_key table)))))
 	    (org/add-column line col_re row)
 	    )
 	  )
