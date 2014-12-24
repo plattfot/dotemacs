@@ -57,3 +57,23 @@ first on the ps list."
 (interactive)
 (shell-command (concat "kill -9 " (pid-maya)))
 )
+
+;; ------------------------------ Preprocess -----------------------------------
+(defun preprocess-fix-macros ()
+"Fix expanded macros when running only the preprocess on a file,
+i.e. g++ <flags> -E <file>. Since they are expanded into a single
+line which makes them hard to debug."
+(interactive)
+ (let* ((start (if (use-region-p) (region-beginning) (point)))
+	(end (if (use-region-p) (region-end) (point-max)))
+	(regex-map '(":[ ]" ";" "{" "}[ ]"))
+	(regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|"))
+	;;(line (buffer-substring-no-properties start end))
+	)
+   ;;(setq line (replace-regexp-in-string regex "\\1\n" line))
+   (goto-char start)
+   (replace-regexp-in-string)
+   (while (search-forward-regexp regex end t)
+     (newline))
+   (indent-region start (point))
+   (goto-char start)))
