@@ -79,7 +79,7 @@ and the hash contain a list of the columns"
 
 (defun org-table-pack (rows col_re)
   "Packs a Nx2 table into a RxC table where R is the unique rows
-   matching the entries in ROWS and C is the columns matching the
+   matching the entries in ROWS_IN and C is the columns matching the
    COL_RE. ROWS can contain regexp for each entry. But not a comma
    since that's use to sepparate the entries. It expects the
    layout of the Nx2 table to be: 
@@ -103,8 +103,8 @@ and the hash contain a list of the columns"
    | r2 | 0x2 | 0x3 | 0x4 |"
   
   (interactive  
-   (list (mapcar 'chomp (split-string (read-regexp "Enter name for each entry: ") ","))
-	 (format "\\(%s\\)" (read-regexp "Enter regex for identifying columns: " ))))
+   (list (read-regexp "Enter name for each entry: ")
+	 (read-regexp "Enter regex for identifying columns: " )))
 
   ;; Switch to org-mode 
   (org-mode)
@@ -112,6 +112,8 @@ and the hash contain a list of the columns"
  
   (let* ((start (if (use-region-p) (region-beginning) (point)))
 	 (end (if (use-region-p) (region-end) (point-max)))
+	 (rows (mapcar 'chomp (split-string rows ",")))
+	 (col_re (format "\\(%s\\)" col_re))
 	 ;; Create the hash table
 	 (table (make-hash-table :test 'str-hash ))
 	 ;; Create the regex for identifying the rows
@@ -198,7 +200,7 @@ Will give
 | r1 | 0x2 | 0x7 |
 | r3 |     | 0x9 |"
 
-  (interactive (list (string-to-int (read-string "Specify column to merge: "))))
+  (interactive (list (read-string "Specify column to merge: ")))
 
   (when (not ind) (setq ind 1))
 
@@ -207,9 +209,10 @@ Will give
   ;; Setup the hash table
   (define-hash-table-test 'str-hash 'string-equal 'sxhash)
   ;; let* evaluate at point
-  (let* ((start (point))
-	 (curr  (point))
-	 (end (point-max))
+  (let* ((start (if (use-region-p) (region-beginning) (point)))
+         (curr start)
+	 (end (if (use-region-p) (region-end) (point-max)))
+         (col (string-to-int col))
 	 ;; Create the hash table
 	 (table (make-hash-table :test 'str-hash )))
     ;; Iterate from current position to eof
@@ -240,9 +243,10 @@ Will give
 (defun org-table-create-header-regexp (regex match-group)
   "Create header from matching regex"
   (interactive (list (read-string "Regex for header: ")
-		     (string-to-int (read-string "Group to match (default 0): " nil "0"))))
+		     (read-string "Group to match (default 0): " nil "0")))
   (let ((header nil)
-	(start (point)))
+	(start (point))
+	(match-group (string-to-int match-group)))
     (while (search-forward-regexp regex (point-max) t)
        (push (match-string-no-properties match-group) header)
     )
@@ -255,3 +259,4 @@ Will give
     (org-table-align)
   )
 )
+
