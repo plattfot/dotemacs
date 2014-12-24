@@ -19,5 +19,7 @@
 	    ;; Disable echo in shell/ Hangs dirs
 	    ;; (setq comint-process-echoes t) 
             ;; Disable yas minor mode
-            (yas-minor-mode -1)      
+            (yas-minor-mode -1)
+	    ;; Add go and goc to the dirtrack, Need tweak the regexp 
+	    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
 	    ))
