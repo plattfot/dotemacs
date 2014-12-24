@@ -25,6 +25,11 @@
 	      )
 
 ;; ============================= Functions ===================================
+(defun goc ()
+"Equivalent to typing go cyclone rd 1 work in the terminal"
+(interactive)
+(cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
+)
 
 ;; Functions for quickly set up the work environment
 (defun setup-work ()
@@ -120,5 +125,18 @@ build and misc"
 	     )
      ))) )
 
-
+;; pk
+(defun pk-project (name)
+  "Parse pk files an replace {{ package.project }} with NAME"
+  (interactive "sSpecify name of project: ")
+  (while (search-forward-regexp "{{[ ]*package\.project.*}}" (point-max) t )
+    (let* ((start (match-beginning 0))
+	   (end (match-end 0))
+	   (str (buffer-substring-no-properties start end))
+	   (project (if (string-match "capitalize" str) (capitalize name) name)))
+      (kill-region start end)
+      (insert project)
+      )
+    )
+)
 
