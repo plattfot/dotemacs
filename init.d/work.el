@@ -24,6 +24,16 @@
 		    )
 	      )
 
+(set-register ?m 
+	      (cons 'file 
+		    (concat "/tools/package/openmesh/"
+		    	    (get-version-from-build-config
+		    	     "openmesh"
+		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	    "/include/OpenMesh/")
+		    )
+	      )
+
 ;; ============================= Functions ===================================
 (defun goc ()
 "Equivalent to typing go cyclone rd 1 work in the terminal"
