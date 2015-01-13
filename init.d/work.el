@@ -8,38 +8,41 @@
 ;; Enable dd-log-parser
 (require 'dd-log-parser)
 
-;; ============================ Registers ====================================
-(set-register ?f (cons 'file
-		       (concat "/dd/dept/software/users/fredriks/swdevl/"
-			       "CoreLibs/Math/Geometry/include/VDB/"
-			       "FieldImpl.hpp")))
-(set-register ?o 
-	      (cons 'file 
-		    ;; (concat "/tools/package/openvdb/"
-		    ;; 	    (get-version-from-build-config
-		    ;; 	     "openvdb"
-		    ;; 	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
-		    ;; 	    "/core/include/openvdb/")
-		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
-		    )
-	      )
-
-(set-register ?m 
-	      (cons 'file 
-		    (concat "/tools/package/openmesh/"
-		    	    (get-version-from-build-config
-		    	     "openmesh"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
-		    	    "/include/OpenMesh/")
-		    )
-	      )
-
 ;; ============================= Functions ===================================
 (defun goc ()
 "Equivalent to typing go cyclone rd 1 work in the terminal"
 (interactive)
 (cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
 )
+
+(defun get-houdini-vers (&optional version-offset)
+  "Return the houdini version that is installed in /tools/package
+if VERSION-OFFSET is zero (default) it will return the latest
+version, if 1 it will return the next latest and so on. If the
+offset is less than zero or greater than the number of installed
+versions it will return the oldest version."
+  (interactive "p")
+  (when (not version-offset) (setq version-offset 0))
+  ;; Sorted by time, newest first. The last element will be empty
+  ;; hence the nbutlast command to remove it.
+  (let* ((houdini-versions (nbutlast (split-string (shell-command-to-string
+						    "ls -t /tools/package/houdini")
+						   "\n")))
+	 (total (length houdini-versions)))
+    (if (and (>= version-offset 0) (< version-offset total))
+	(nth version-offset houdini-versions)
+      (last houdini-versions)
+      )
+  ))
+
+(defun insert-houdini-vers (&optional version-offset)
+  "Insert the houdini version where the cursor is located. if
+VERSION-OFFSET is zero it will insert the latest installed
+houdini version, 1 the next latest and so on. If the offset is
+less than zero or greater than the number of installed versions
+it will return the oldest version"
+  (interactive "p")
+  (insert (get-houdini-vers  version-offset)))
 
 ;; Functions for quickly set up the work environment
 (defun setup-work ()
@@ -150,3 +153,31 @@ build and misc"
     )
 )
 
+;; ============================ Registers ====================================
+(set-register ?f (cons 'file
+		       (concat "/dd/dept/software/users/fredriks/swdevl/"
+			       "CoreLibs/Math/Geometry/include/VDB/"
+			       "FieldImpl.hpp")))
+(set-register ?o 
+	      (cons 'file 
+		    ;; (concat "/tools/package/openvdb/"
+		    ;; 	    (get-version-from-build-config
+		    ;; 	     "openvdb"
+		    ;; 	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    ;; 	    "/core/include/openvdb/")
+		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
+		    )
+	      )
+
+(set-register ?m 
+	      (cons 'file 
+		    (concat "/tools/package/openmesh/"
+		    	    (get-version-from-build-config
+		    	     "openmesh"
+		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	    "/include/OpenMesh/")
+		    )
+	      )
+
+;; ============================= Key bindings ==================================
+(global-set-key (kbd "C-i") 'insert-houdini-vers)
