@@ -1,5 +1,7 @@
 ;; -*- mode: lisp -*-
 
+;; To execute an lisp function in replace regexp do \,(<function>)
+ 
 (let ((default-directory "~/.emacs.d/plugins/"))
       (normal-top-level-add-to-load-path '("dotemacs")))
 
@@ -14,6 +16,7 @@
 (dotemacs/load-user-file "debug-functions.el")
 (dotemacs/load-user-file "highlight-functions.el")
 (dotemacs/load-user-file "buffer-functions.el")
+(dotemacs/load-user-file "file-functions.el")
 (dotemacs/load-user-file "misc-functions.el")
 
 ;; Work
@@ -40,7 +43,8 @@
 (dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
 (dotemacs/load-user-file "yasnippet.el")
 (dotemacs/load-user-file "tramp.el")
-
+(dotemacs/load-user-file "houdini.el")
+(dotemacs/load-user-file "org-mode-extra.el")
 ;; Modes
 (dotemacs/load-user-file "modes.el")
 
@@ -55,3 +59,21 @@
 
 ;; =============================================================================
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(android-mode-sdk-dir "/opt/android-sdk")
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+	   (c-set-offset
+	    (quote inline-open)
+	    (quote 0)))))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
