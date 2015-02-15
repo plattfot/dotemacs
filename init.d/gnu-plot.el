@@ -6,7 +6,10 @@
 
 ;; move the files gnuplot.el to someplace in your lisp load-path or
 ;; use a line like
-(setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
+;; (if dotemacs/is-work 
+;;     (setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
+;;   (setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
+;; )
 
 ;; these lines enable the use of gnuplot mode
 (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
