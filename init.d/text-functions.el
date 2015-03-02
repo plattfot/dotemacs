@@ -62,48 +62,11 @@
   (uniquify-all-lines-region (point-min) (point-max)))
 
 ;; --------------------------- Move text ---------------------------------------
-;; http://stackoverflow.com/questions/2423834/move-line-region-up-and-down-in-emacs
-;; by sanityinc
-(defun move-text-internal (arg)
-  (cond
-   ((and mark-active transient-mark-mode)
-    (if (> (point) (mark))
-        (exchange-point-and-mark))
-    (let ((column (current-column))
-          (text (delete-and-extract-region (point) (mark))))
-      (forward-line arg)
-      (move-to-column column t)
-      (set-mark (point))
-      (insert text)
-      (exchange-point-and-mark)
-      (setq deactivate-mark nil)))
-   (t
-    (let ((column (current-column)))
-      (beginning-of-line)
-      (when (or (> arg 0) (not (bobp)))
-        (forward-line)
-        (when (or (< arg 0) (not (eobp)))
-          (transpose-lines arg))
-        (forward-line -1))
-      (move-to-column column t)))))
-
-(defun move-text-down (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines down."
-  (interactive "*p")
-  (move-text-internal arg))
-
-(defun move-text-up (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines up."
-  (interactive "*p")
-  (move-text-internal (- arg)))
-
 ;; ============================= Key bindings ==================================
 
 ;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
 (global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
 
-;; Move line up and down.
+;; Move line up and down. Install move-text
 (global-set-key [C-S-up] 'move-text-up)
 (global-set-key [C-S-down] 'move-text-down)

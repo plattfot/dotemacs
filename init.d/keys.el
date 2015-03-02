@@ -53,4 +53,4 @@
 ;; This also maps open-line to enter
 ;;(global-set-key (kbd "C-m") 'open-line)
 
-
+(global-set-key (kbd "C-c l") 'duplicate-line)

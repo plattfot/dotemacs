@@ -260,3 +260,92 @@ Will give
   )
 )
 
+;; (defun org-table-zip (&optional ind)
+;; "Zip tables together. IND is optional and specifies which column to use as header.
+;; It assumes that the columns matches up.
+
+;; For example:
+;; (org-table-zip 1)
+
+;; On these tables:
+;; | h0 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | r2 | 0x0 | 0x1 |
+;; | r1 | 0x2 | 0x3 |
+;; | r3 |     | 0x4 | 
+
+;; | h1 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | r1 | 0x7 | 0x8 |
+;; | r2 | 0x5 | 0x6 |
+;; | r3 | 0x9 | 0x1 |
+
+;; Will give
+;; | r1 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 | 0x2 | 0x3 |
+;; | h1 | 0x7 | 0x8 |
+
+;; | r2 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 | 0x0 | 0x1 |
+;; | h1 | 0x5 | 0x6 |
+
+;; | r3 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 |     | 0x4 | 
+;; | h1 | 0x9 | 0x1 |
+;; "
+;; (interactive "p")
+;; (when (not ind) (setq ind 1))
+
+;; ;; Switch to org mode
+;; (org-mode)
+;; ;; ;; Setup the hash table
+;; ;; (define-hash-table-test 'str-hash 'string-equal 'sxhash)
+;; ;; ;; let* evaluate at point
+;; ;; (let* ((start (if (use-region-p) (region-beginning) (point)))
+;; ;;        (curr start)
+;; ;;        (end (if (use-region-p) (region-end) (point-max)))
+;; ;;        (col (string-to-int col))
+;; ;;        ;; Create the hash table
+;; ;;        (table (make-hash-table :test 'str-hash )))
+;; ;;   ;; Iterate from current position to eof
+;; ;;   (while (search-forward-regexp "^[ ]*|" end t)
+;; ;;     ;; Jump to the index field
+;; ;;     (org-table-goto-column-inclusive ind)
+;; ;;     ;;      Get the key that identify the row.
+;; ;;     (let* ((key (chomp (org-table-copy-field-to-string)))
+;; ;; 	   ;; Get the row form the table
+;; ;; 	   (row (gethash key table))
+;; ;; 	   ;; Specify local variable for the data
+;; ;; 	   (data))
+;; ;;       ;; Move to the column specified by the user
+;; ;;       (org-table-goto-column-inclusive col)
+;; ;;       ;; Copy the data from that field
+;; ;;       (setq data (org-table-copy-field-to-string))
+;; ;;       ;; Add data to row
+;; ;;       (push data row)
+;; ;;       ;; Update the row in the table
+;; ;;       (puthash key row table)
+;; ;;       )
+;; ;;     )
+;; ;;   (goto-char start)
+;; ;;   (org-table-build-simple table)
+;; ;;   )
+;; ;; let* evaluate at point
+;; (let* ((start (if (use-region-p) (region-beginning) (point)))
+;;        (end (if (use-region-p) (region-end) (point-max)))
+;;        (curr start)
+;;        (key))
+;;   (goto-char start)
+;;   ;; Goto the first line
+;;   (search-forward-regexp "^[ ]*|" end t)
+;;   (goto-char (org-table-begin))
+;;   (org-table-goto-column-inclusive ind)
+;;   (setq key (chomp (org-table-copy-field-to-string)))
+;;   (while (org-table-ne))
+  
+;;   )
+;; )
+
