@@ -22,7 +22,6 @@
 ;; Work
 (when dotemacs/is-work
   (dotemacs/load-user-file "work.el")
-  (dotemacs/load-user-file "gnu-plot.el")
   (dotemacs/load-user-file "dd-newfile.el")
   (dotemacs/load-user-file "gccsense.el"))
 
@@ -36,6 +35,7 @@
 (dotemacs/load-user-file "registers.el")
 
 ;; Packages 
+(dotemacs/load-user-file "gnu-plot.el") ;; Needs dotemacs/is-work
 (dotemacs/load-user-file "ack.el")
 (dotemacs/load-user-file "expand-region.el")
 (dotemacs/load-user-file "evil-numbers.el")
@@ -51,6 +51,7 @@
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
+(dotemacs/load-user-file "go.el")
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
