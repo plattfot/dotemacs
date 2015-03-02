@@ -61,7 +61,33 @@
   (interactive "*")
   (uniquify-all-lines-region (point-min) (point-max)))
 
-;; --------------------------- Move text ---------------------------------------
+;; --------------------------- Split at Delim ----------------------------------
+
+(defun split-at (&optional delim)
+"Split region/line at DELIM, if there are multiple matches it
+will split each one. DELIM will default to \",\" if no delim is
+given."
+(interactive "sSpecify delimiter: ")
+(when (or (string= delim "") (not delim)) (setq delim ","))
+(let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+      (end (if (use-region-p) (region-end) (point-at-eol)))
+      (regex delim))
+  (goto-char start)
+ 
+  (while (search-forward-regexp regex end t)
+    (insert "\n")
+    (setq end (1+ end))
+    )
+  (indent-region start end)
+  (goto-char start)
+  )
+)
+
+(defun split-at-comma ()
+"wrapper for split-at for use with key command"
+(interactive)
+(split-at ",")
+)
 ;; ============================= Key bindings ==================================
 
 ;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
@@ -70,3 +96,4 @@
 ;; Move line up and down. Install move-text
 (global-set-key [C-S-up] 'move-text-up)
 (global-set-key [C-S-down] 'move-text-down)
+(global-set-key (kbd "C-,") 'split-at-comma)
