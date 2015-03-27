@@ -24,8 +24,9 @@
 			  ("!=" . "// all but %s")
 			  (">=" . "// %s or later")
 			  ("<=" . "// %s or earlier")
-			  (">"  . "// earlier than %s")
-			  ("<"  . "// later than %s")))
+			  (">"  . "// later than %s")
+			  ("<"  . "// earlier than %s")
+			  ))
 
 (defun hou-get-version-list (&optional root)
   "Search the path
