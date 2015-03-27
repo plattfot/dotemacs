@@ -51,7 +51,9 @@
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
-(dotemacs/load-user-file "go.el")
+(when (not dotemacs/is-work)
+  (dotemacs/load-user-file "go.el"))
+
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
