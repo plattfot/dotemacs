@@ -26,8 +26,8 @@
   (dotemacs/load-user-file "gccsense.el"))
 
 ;; Home
-(when (not dotemacs/is-work)
-  (dotemacs/load-user-file "nerv.el"))
+;; (when (not dotemacs/is-work)
+;;   (dotemacs/load-user-file "nerv.el"))
 
 ;; Key bindings
 (dotemacs/load-user-file "macros.el")
