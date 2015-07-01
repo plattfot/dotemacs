@@ -223,13 +223,13 @@ build and misc"
 				     "Cyclone/houdini/projdeps.cent6_64"))
 			    "/toolkit/include"
 		    )))
-(set-register ?i 
+(set-register ?v 
 	      (cons 'file 
 		    (concat "/tools/package/eigen/"
 		    	    (get-version-from-build-config
 		    	     "eigen"
 		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
-		    	    "/include/eigen3/Eigen/")
+		    	    "/include/eigen3/Eigen/src")
 		    )
 	      )
 
