@@ -4,11 +4,13 @@
 ;; =============================================================================
 
 ;; ----------------------------- PID Houdini -----------------------------------
-(defun pid-houdini ()
+(defun pid-houdini (&optional index )
 "Get the pid for houdini, if more than one is running it returns
-the first encounterd."
+the one at INDEX. Where INDEX starts from 0 and up"
+
 (interactive)
-(car 
+(when (not index) (setq index 0))
+(nth index 
  (split-string 
   (shell-command-to-string
    (concat "ps aux | " ;; [h]oudini to not match itself
@@ -16,10 +18,14 @@ the first encounterd."
    )))
 )
 ;; ---------------------------- Attach Houdini ---------------------------------
-(defun attach-houdini () 
-"prints attach <proc number> into the buffer"
-(interactive)
-(insert-string (concat "attach " (pid-houdini) ))
+(defun attach-houdini (&optional index) 
+"prints attach <pid> into the buffer. INDEX is use to select
+which one if there are multiple instances running, INDEX counts from 1."
+(interactive"p")
+
+;; The default for index is one.
+(when (< index 1) (setq index 1))
+(insert-string (concat "attach " (pid-houdini (- index 1)) ))
 )
 
 ;; ---------------------------- Kill Houdini -----------------------------------
@@ -31,11 +37,12 @@ first on the ps list."
 )
 
 ;; ------------------------------ PID Maya -------------------------------------
-(defun pid-maya ()
+(defun pid-maya (&optional index)
 "Get the pid for maya, if more than one is running it returns
-the first encounterd."
+the one at INDEX. Where INDEX starts from 0 and up"
 (interactive)
-(car 
+(when (not index) (setq index 0))
+(nth index
  (split-string 
   (shell-command-to-string
    (concat "ps aux | " ;; [h]oudini to not match itself
@@ -44,10 +51,13 @@ the first encounterd."
 )
 
 ;; ----------------------------- Attach Maya -----------------------------------
-(defun attach-maya () 
-"prints attach <proc number> into the buffer"
-(interactive)
-(insert-string (concat "attach " (pid-maya) ))
+(defun attach-maya (&optional index) 
+"prints attach <pid> into the buffer. INDEX is use to select
+which one if there are multiple instances running, INDEX counts from 1."
+(interactive"p")
+;; The default for index is one.
+(when (< index 1) (setq index 1))
+(insert-string (concat "attach " (pid-maya index) ))
 )
 
 ;; ------------------------------ Kill Maya ------------------------------------
