@@ -1,8 +1,12 @@
-(defvar hou/version-list '(("14.0.132pre18" . "0x0e000084")
-			   ("14.0.132pre29" . "0x0e000084")
+(defvar hou/version-list '(("14.0.132pre40" . "0x0e000084")
 			   ("14.0.173" . "0x0e0000ad")
 			   ("14.0.201pre6" . "0x0e0000c9")
 			   ("14.0.233" . "0x0e0000e9")
+			   ("14.0.256" . "0x0e000100")
+			   ("14.0.264" . "0x0e000108")
+			   ("14.0.288" . "0x0e000120")
+			   ("14.5.105" . "0x0e050069")
+			   ("14.5.90" . "0x0e05005a")
 			   ("12.0.581" . "0x0c000245")
 			   ("12.0.634" . "0x0c00027a")
 			   ("12.0.670" . "0x0c00029e")
@@ -41,6 +45,16 @@ UT_VERSION_INT or SYS_VERSION_INT and fetch the INT version."
 	   "'s:.*?/([0-9]+\.[0-9]+\.[0-9a-z]+)/.*?(0x[0-9a-f]+):"
 	   "(\\1 . \\2):p'"))
   )
+
+(defun hou-insert-version-id (version)
+  "Insert the houdini version id for VERSION"
+  (interactive "sHoudini version: ")
+  (let ((version_assoc (assoc version hou/version-list)))
+    (when (not version_assoc)
+      (throw 'hou-tag (format "%s is not in version list" version)))
+    (insert (cdr version_assoc))
+  )
+)
 
 (defun hou-insert-if (version comp)
   "Insert an #if-else clause with the specified VERSION in int
