@@ -17,11 +17,15 @@
 (defun dasherize  (s) (mapconcat 'downcase   (split-name s) "-"))
 (defun colonize   (s) (mapconcat 'capitalize (split-name s) "::"))
 
-(defun camelscore (s)
-  (cond ((string-match-p "\:"s)	(camelcase s))
-	((string-match-p "-" s) (colonize s))
-	((string-match-p "_" s)	(dasherize s))
-	(t                      (underscore s)) ))
+(defun camelscore (str)
+  "Transform STR between different type. ForExampleThisText -> 
+for_example_this_text -> for-example-this-text -> For::Example::This::Text -> ForExampleThisText. 
+Known bug: It doesn't handle ThisIsASample ->  this_is_asample -> this-is-asample -> This::Is::Asample -> ThisIsAsample"
+  (interactive)
+  (cond ((string-match-p "\:"str) (camelcase str))
+	((string-match-p "-" str) (colonize str))
+	((string-match-p "_" str) (dasherize str))
+	(t                      (underscore str)) ))
 (defun camelscore-word-at-point ()
   (interactive)
   (let* ((case-fold-search nil)
@@ -91,7 +95,7 @@ given."
 ;; ============================= Key bindings ==================================
 
 ;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
-(global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
+;; (global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
 
 ;; Move line up and down. Install move-text
 (global-set-key [C-S-up] 'move-text-up)
