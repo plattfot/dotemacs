@@ -92,6 +92,19 @@ which one if there are multiple instances running, INDEX counts from 1."
 (insert-string (concat "attach " (pid-smeat (- index 1)) ))
 )
 
+;; ---------------------------- Abort Smeat ------------------------------------
+;; Not quite working.
+(defun smeat-abort (&optional index )
+"Sends USR1 signal to houdini which aborts the smeat client,
+INDEX is used to select which houdini instance to send to if
+multiple instances exist."
+(interactive"p")
+(when (< index 1) (setq index 1))
+(let ((hou-pid (pid-houdini index)))
+  (shell-command (concat "kill -s USR1 " hou-pid))
+)
+)
+
 ;; ------------------------------ Preprocess -----------------------------------
 (defun preprocess-fix-macros ()
 "Fix expanded macros when running only the preprocess on a file,
