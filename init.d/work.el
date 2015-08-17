@@ -122,12 +122,13 @@ build and misc"
   (cd "~/fredriks/Houdini")
   (delete-other-windows)
   (shell)
-  (rename-buffer "h14")
-  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
-  ;; (shell-resync-dirs)
-  (shell)
   (rename-buffer "h13")
   (run-emacs-shell-command "goc")
+  ;; (shell-resync-dirs)
+  (shell)
+  (rename-buffer "h14")
+  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+
   ;; (shell-resync-dirs)
   (toggle-frame-maximized)
   )
@@ -164,7 +165,7 @@ build and misc"
 (defun get-version-from-build-config (name path)
   "Gets the version from the BuildConfig file"
   ;; Pick the first in the list
-  (get-version-from-config  name (concat path "/BuildConfig.cent6_64"))
+  (get-version-from-config  name (concat path "/BuildConfig"))
 )
 
 ;; pk
@@ -193,7 +194,7 @@ build and misc"
 		    (concat "/tools/package/openvdb/"
 		    	    (get-version-from-build-config
 		    	     "openvdb"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
 		    	    "/core/include/openvdb/")
 ;;		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
 		    )
@@ -204,7 +205,7 @@ build and misc"
 		    (concat "/tools/package/openmesh/"
 		    	    (get-version-from-build-config
 		    	     "openmesh"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
 		    	    "/include/OpenMesh/")
 		    )
 	      )
@@ -220,7 +221,7 @@ build and misc"
 			    (get-version-from-config
 		    	     "houdini"
 		    	     (concat "/dd/dept/software/users/fredriks/swdevl/"
-				     "Cyclone/houdini/projdeps.cent6_64"))
+				     "cyclone/houdini/projdeps.cent6_64"))
 			    "/toolkit/include"
 		    )))
 (set-register ?v 
@@ -228,7 +229,7 @@ build and misc"
 		    (concat "/tools/package/eigen/"
 		    	    (get-version-from-build-config
 		    	     "eigen"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
 		    	    "/include/eigen3/Eigen/src")
 		    )
 	      )
