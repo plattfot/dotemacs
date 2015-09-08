@@ -122,12 +122,13 @@ build and misc"
   (cd "~/fredriks/Houdini")
   (delete-other-windows)
   (shell)
-  (rename-buffer "h14")
-  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
-  ;; (shell-resync-dirs)
-  (shell)
   (rename-buffer "h13")
   (run-emacs-shell-command "goc")
+  ;; (shell-resync-dirs)
+  (shell)
+  (rename-buffer "h14")
+  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+
   ;; (shell-resync-dirs)
   (toggle-frame-maximized)
   )
@@ -146,8 +147,8 @@ build and misc"
        "I(Frame,1) R(1,2))")))
 
 ;; --------------------------- Source BuildConfig ----------------------------
-(defun get-version-from-build-config (name path)
-  "Gets the version from the BuildConfig file"
+(defun get-version-from-config (name file)
+  "Gets the version from a file."
   ;; Pick the first in the list
   (car 
    ;; Remove newlines and convert the string to a list if there's more
@@ -155,11 +156,17 @@ build and misc"
    (split-string 
     (shell-command-to-string 
      ;; Look for the string matching the name.
-     (concat "grep -iE ^" name "_version " path "BuildConfig.cent6_64"
+     (concat "grep -iE ^" name "_version " file
 	     ;; Extract only the version number from the string.
 	     " | cut -d = -f 2"
 	     )
-     ))) )
+     ))))
+
+(defun get-version-from-build-config (name path)
+  "Gets the version from the BuildConfig file"
+  ;; Pick the first in the list
+  (get-version-from-config  name (concat path "/BuildConfig"))
+)
 
 ;; pk
 (defun pk-project (name)
@@ -169,7 +176,8 @@ build and misc"
     (let* ((start (match-beginning 0))
 	   (end (match-end 0))
 	   (str (buffer-substring-no-properties start end))
-	   (project (if (string-match "capitalize" str) (capitalize name) name)))
+	   (project (if (string-match "capitalize" str) (capitalize name) 
+		      (if (string-match "upper" str) (upcase name) name))))
       (kill-region start end)
       (insert project)
       )
@@ -186,7 +194,7 @@ build and misc"
 		    (concat "/tools/package/openvdb/"
 		    	    (get-version-from-build-config
 		    	     "openvdb"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
 		    	    "/core/include/openvdb/")
 ;;		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
 		    )
@@ -197,13 +205,32 @@ build and misc"
 		    (concat "/tools/package/openmesh/"
 		    	    (get-version-from-build-config
 		    	     "openmesh"
-		    	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
 		    	    "/include/OpenMesh/")
 		    )
 	      )
 (set-register ?c 
 	      (cons 'file 
 		    "/dd/shows/CYCLONE/RD/0001/user/work.fredriks/"
+		    )
+	      )
+
+(set-register ?h
+	      (cons 'file 
+		    (concat "/tools/package/houdini/"
+			    (get-version-from-config
+		    	     "houdini"
+		    	     (concat "/dd/dept/software/users/fredriks/swdevl/"
+				     "cyclone/houdini/projdeps.cent6_64"))
+			    "/toolkit/include"
+		    )))
+(set-register ?v 
+	      (cons 'file 
+		    (concat "/tools/package/eigen/"
+		    	    (get-version-from-build-config
+		    	     "eigen"
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
+		    	    "/include/eigen3/Eigen/src")
 		    )
 	      )
 

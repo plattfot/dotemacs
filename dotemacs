@@ -45,13 +45,16 @@
 (dotemacs/load-user-file "tramp.el")
 (dotemacs/load-user-file "houdini.el")
 (dotemacs/load-user-file "org-mode-extra.el")
+(dotemacs/load-user-file "string-inflection.el")
 ;; Modes
 (dotemacs/load-user-file "modes.el")
 
 ;; Language specific
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
-(dotemacs/load-user-file "go.el")
+(when (not dotemacs/is-work)
+  (dotemacs/load-user-file "go.el"))
+
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
