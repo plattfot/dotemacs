@@ -79,6 +79,6 @@
 
 ;;; height 88 <- my default value
 (set-face-attribute 'default nil :height 92)
-
+(set-face-attribute 'default nil :font "Hack")
 ;; Use ibuffer instead of list-buffers
 (defalias 'list-buffers 'ibuffer)
