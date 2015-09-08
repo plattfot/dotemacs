@@ -221,7 +221,7 @@ build and misc"
 			    (get-version-from-config
 		    	     "houdini"
 		    	     (concat "/dd/dept/software/users/fredriks/swdevl/"
-				     "cyclone/houdini/projdeps.cent6_64"))
+				     "cyclone/src/houdini/plugins/projdeps"))
 			    "/toolkit/include"
 		    )))
 (set-register ?v 
