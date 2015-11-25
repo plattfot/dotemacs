@@ -1,9 +1,12 @@
+;;; init.el --- emacs conf
+;;; Commentary:
 ;; =============================================================================
 ;; Init file:
 ;; Load this file first since it initialize stuff that might be needed
 ;; by other init files. For example the package manager.
 ;; =============================================================================
 
+;;; Code:
 ;; Add path to plugins
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
@@ -34,7 +37,6 @@
 (setq backup-directory-alist (list (cons ".*" backup-dir)))
 (setq auto-save-list-file-prefix autosave-dir)
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
-
 
 ;; ============================= Emacs behaviour ===============================
 ;; Reuse frames if the buffer is already open.

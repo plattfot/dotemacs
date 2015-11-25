@@ -1,33 +1,3 @@
-(defvar hou/version-list '(("15.0.000" . "0x0f000000")
-			   ("14.0.132pre40" . "0x0e000084")
-			   ("14.0.173" . "0x0e0000ad")
-			   ("14.0.201pre6" . "0x0e0000c9")
-			   ("14.0.233" . "0x0e0000e9")
-			   ("14.0.256" . "0x0e000100")
-			   ("14.0.264" . "0x0e000108")
-			   ("14.0.288" . "0x0e000120")
-			   ("14.5.105" . "0x0e050069")
-			   ("14.5.90" . "0x0e05005a")
-			   ("14.5.150" . "0x0e050096")
-			   ("14.5.162" . "0x0e0500a2")
-			   ("12.0.581" . "0x0c000245")
-			   ("12.0.634" . "0x0c00027a")
-			   ("12.0.670" . "0x0c00029e")
-			   ("12.0.683" . "0x0c0002ab")
-			   ("12.0.754" . "0x0c0002f2")
-			   ("12.1.125" . "0x0c01007d")
-			   ("12.1.185" . "0x0c0100b9")
-			   ("12.1.42" . "0x0c01002a")
-			   ("12.1.57" . "0x0c010039")
-			   ("12.5.469" . "0x0c0501d5")
-			   ("13.0.222" . "0x0d0000de")
-			   ("13.0.260" . "0x0d000104")
-			   ("13.0.376" . "0x0d000178")
-			   ("13.0.524" . "0x0d00020c")
-			   ("13.0.655" . "0x0d00028f")))
-
-
-
 (defvar hou/comp-format '(("==" . "// %s")
 			  ("!=" . "// all but %s")
 			  (">=" . "// %s or later")
@@ -35,6 +5,22 @@
 			  (">"  . "// later than %s")
 			  ("<"  . "// earlier than %s")
 			  ))
+
+(defun hou-version-to-hex (version-string)
+  "Convert VERSION-STRNG to hex, instead of looking up in a table
+better just to compute it."
+  ;; Split the string into parts, filtering out the pre
+  (let ((vers_parts (delete "" (split-string version-string "[.]\\|pre[0-9]+"))))
+    ;; If it's not three parts, i.e major, minor and build version throw error
+    (when (not (eq (length vers_parts) 3))
+      (throw 'hou-tag (format "%s is not a valid version string" version-string)))
+    
+    ;; Convert the parts to integers and then print them out in the
+    ;; format houdini is using.
+    (let ((vers_int (mapcar #'(lambda (x) (string-to-number x)) vers_parts)))
+      (format "0x%02x%02x%04x" (nth 0 vers_int) (nth 1 vers_int) (nth 2 vers_int))
+      ))
+  )
 
 (defun hou-get-version-list (&optional root)
   "Search the path
@@ -53,10 +39,8 @@ UT_VERSION_INT or SYS_VERSION_INT and fetch the INT version."
 (defun hou-insert-version-id (version)
   "Insert the houdini version id for VERSION"
   (interactive "sHoudini version: ")
-  (let ((version_assoc (assoc version hou/version-list)))
-    (when (not version_assoc)
-      (throw 'hou-tag (format "%s is not in version list" version)))
-    (insert (cdr version_assoc))
+  (let ((version_hex (hou-version-to-hex version)))
+    (insert version_hex)
   )
 )
 
@@ -91,19 +75,17 @@ clause.  Example:
 	     (kill-region (region-beginning) (region-end)))
     (setq str "")
     )
-  (let ((version_assoc (assoc version hou/version-list))
+  (let ((version_hex (hou-version-to-hex version))
 	(format_assoc (assoc comp hou/comp-format))
 	(done))
-    (when (not version_assoc)
-      (throw 'hou-tag (format "%s is not in version list" version)))
     (when (not format_assoc)
       (throw 'hou-tag (format "%s is not in comp list" comp)))
 
-    (insert "#if( UT_VERSION_INT " comp " " (cdr version_assoc) " ) "
+    (insert "#if( UT_VERSION_INT " comp " " version_hex " ) "
 	    (format (cdr format_assoc) version) "\n")
-    (setq done (point))
-    (insert str "\n#else\n" str "\n#endif")
-    (goto-char done)
+    (let ((done (point)))
+      (insert str "\n#else\n" str "\n#endif\n")
+      (goto-char done))
     )
   )
 )
