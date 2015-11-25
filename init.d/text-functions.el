@@ -92,6 +92,18 @@ given."
 (interactive)
 (split-at ",")
 )
+;; ---------------------------- Replace comment --------------------------------
+;; Not quite working!
+;; (defun replace-star-comment ()
+;;   "Replaced a 
+;; /**
+;;  * Comment
+;;  */
+;; with 
+;; /// Comment"
+;;   (interactive)
+;;   (replace-regexp "/\*\*\n[ ]+\(.*\)\n[ ]+\*/" "/// \1")
+;; )
 ;; ============================= Key bindings ==================================
 
 ;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
