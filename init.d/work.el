@@ -1,12 +1,20 @@
+
 ;; =============================================================================
 ;; Work specific stuff
 ;; =============================================================================
 
+;; Set a newer version of gdb, only works with M-x gdb, gud-gdb still
+;; defaults to the old one.
+;;(setq gud-gdb-command-name "/tools/package/gdb/7.10/bin/gdb -i=mi")
+
 (let ((default-directory "~/.emacs.d/plugins/"))
-  (normal-top-level-add-to-load-path '("dd-log-parser")))
+  (normal-top-level-add-to-load-path '("dd-log-parser"))
+  (normal-top-level-add-to-load-path '("dd-pybuild2")))
 
 ;; Enable dd-log-parser
 (require 'dd-log-parser)
+
+(require 'dd-pybuild2)
 
 ;; ============================= Functions ===================================
 (defun goc ()
@@ -116,7 +124,7 @@ build and misc"
   )
 
 (defun setup-houdini ()
-  "Spawns two shells called h14 and h13 and move to the correct path for both. "
+  "Spawns shells called h15, h14 and h13"
   "Using shell instead of multi-term"
   (interactive)
   (cd "~/fredriks/Houdini")
@@ -128,6 +136,10 @@ build and misc"
   (shell)
   (rename-buffer "h14")
   (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+
+  (shell)
+  (rename-buffer "h15")
+  (run-emacs-shell-command "go cyclone rd 1 =fx_h15 work")
 
   ;; (shell-resync-dirs)
   (toggle-frame-maximized)
@@ -165,7 +177,7 @@ build and misc"
 (defun get-version-from-build-config (name path)
   "Gets the version from the BuildConfig file"
   ;; Pick the first in the list
-  (get-version-from-config  name (concat path "/BuildConfig"))
+  (get-version-from-config  name (concat path "/BUILD.conf"))
 )
 
 ;; pk
@@ -194,7 +206,7 @@ build and misc"
 		    (concat "/tools/package/openvdb/"
 		    	    (get-version-from-build-config
 		    	     "openvdb"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
 		    	    "/core/include/openvdb/")
 ;;		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
 		    )
@@ -205,7 +217,7 @@ build and misc"
 		    (concat "/tools/package/openmesh/"
 		    	    (get-version-from-build-config
 		    	     "openmesh"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
 		    	    "/include/OpenMesh/")
 		    )
 	      )
@@ -218,10 +230,9 @@ build and misc"
 (set-register ?h
 	      (cons 'file 
 		    (concat "/tools/package/houdini/"
-			    (get-version-from-config
+			    (get-version-from-build-config
 		    	     "houdini"
-		    	     (concat "/dd/dept/software/users/fredriks/swdevl/"
-				     "cyclone/src/houdini/plugins/projdeps"))
+			     "/dd/dept/software/users/fredriks/swdevl/cyclone")
 			    "/toolkit/include"
 		    )))
 (set-register ?v 
@@ -229,7 +240,7 @@ build and misc"
 		    (concat "/tools/package/eigen/"
 		    	    (get-version-from-build-config
 		    	     "eigen"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone/")
+		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
 		    	    "/include/eigen3/Eigen/src")
 		    )
 	      )
