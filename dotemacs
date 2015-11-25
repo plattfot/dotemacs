@@ -20,10 +20,13 @@
 (dotemacs/load-user-file "misc-functions.el")
 
 ;; Work
-(when dotemacs/is-work
-  (dotemacs/load-user-file "work.el")
-  (dotemacs/load-user-file "dd-newfile.el")
-  (dotemacs/load-user-file "gccsense.el"))
+(if dotemacs/is-work
+    (progn
+      (dotemacs/load-user-file "work.el")
+      (dotemacs/load-user-file "dd-newfile.el")
+      (dotemacs/load-user-file "gccsense.el"))
+  (dotemacs/load-user-file "home.el")
+)
 
 ;; Home
 ;; (when (not dotemacs/is-work)
@@ -46,6 +49,8 @@
 (dotemacs/load-user-file "houdini.el")
 (dotemacs/load-user-file "org-mode-extra.el")
 (dotemacs/load-user-file "string-inflection.el")
+(dotemacs/load-user-file "rtags.el")
+(dotemacs/load-user-file "flycheck.el")
 ;; Modes
 (dotemacs/load-user-file "modes.el")
 
@@ -70,7 +75,9 @@
  '(android-mode-sdk-dir "/opt/android-sdk")
  '(safe-local-variable-values
    (quote
-    ((eval progn
+    ((flycheck-gcc-language-standard . c++14)
+     (flycheck-gcc-language-standard . c++11)
+     (eval progn
 	   (c-set-offset
 	    (quote inline-open)
 	    (quote 0)))))))
