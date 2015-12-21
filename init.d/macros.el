@@ -1,0 +1,10 @@
+;; =============================================================================
+;; Macros
+;; =============================================================================
+;; insert fredriks@bcws067.d2vancouver.com:fredriks/swdevl/CoreLibs
+(fset 'bcws
+   [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?w ?s ?3 ?2 ?0 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+
+;; ============================= Key bindings ==================================
+;; Macro keybindings
+(global-set-key (kbd "C-c B") 'bcws)
