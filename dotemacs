@@ -25,7 +25,10 @@
 ;; Hyper key in gtk and in an xterm!
 (define-key key-translation-map [8711] 'event-apply-hyper-modifier)
 ;;(load-theme 'sunburst t)
+;; For shell
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(setq ansi-color-names-vector
+  ["#4d4d4d" "#D81860" "#60FF60" "#f9fd75" "#4695c8" "#a78edb" "#43afce" "#f3ebe2"])
 ;; ;;============================ Modes ===========================================
 ;; Package 
 (require 'package)
@@ -47,6 +50,16 @@
 (setq tramp-default-method "ssh")
 ;; Enable evil numbers
 (require 'evil-numbers)
+
+(require 'multi-term)
+(setq multi-term-program "/bin/tcsh")
+(add-hook 'term-mode-hook
+	  (lambda ()
+	    (setq term-buffer-maximum-size 10000)
+	    (add-to-list 'term-bind-key-alist '("C-c C-j" . term-line-mode))
+	    (add-to-list 'term-bind-key-alist '("C-c C-k" . term-char-mode))
+	    (yas-minor-mode -1)
+	    ))
 ;; Enable yasnippet and setup
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas-global-mode 1)
@@ -175,6 +188,11 @@
 
 ;; 	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
  	     ))
+;;============================== Emacs settings ================================
+;; Allow to fully maximize emacs under kde.
+(setq frame-resize-pixelwise t)
+;; Disable electric-indent-mode since I"m using C-j for that.
+(setq electric-indent-mode nil)
 ;;============================= Backup/autosave ================================
 ;;; backup/autosave
 (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
@@ -380,7 +398,7 @@ Emacs buffers are those whose name starts with *."
  (split-string 
   (shell-command-to-string 
    ;; Look for the string matching the name.
-   (concat "grep -iE ^" name "_version " path "BuildConfig.cent6_64"
+   (concat "grep -iE ^" name "_version " path
 	   ;; Extract only the version number from the string.
 	   " | grep -oE '[0-9]+\.[0-9]+\.[0-9_a-z]+'"
 	   )
@@ -558,6 +576,28 @@ and the name of the file."
   (previous-line 1)
   (end-of-line)
 )
+;; ============================= Houdini functions =============================
+(defun hou-open-other-version (version)
+"Will open the same hdk file but for the version specified by
+VERSION, only works if the open buffer is an hdk file." 
+(interactive "sEnter houdini version: ")
+(let ((file-path (buffer-file-name))
+      (hou-regexp "\\(.*?/houdini/\\)[0-9]+\\.[0-9]+\\.[0-9]+\\(/.*\\)+"))
+  (if file-path 
+      (progn (if (string-match hou-regexp file-path)
+		 (progn (find-file (concat
+				    (match-string 1 file-path)
+				    version
+				    (match-string 2 file-path)
+				    ))
+			(rename-buffer (concat (file-name-nondirectory file-path)
+					       "<" version ">"))
+			)
+	       (message "File is not a houdini file")))
+    (message "File isn't saved to disk")
+    )
+  )
+)
 ;; ============================= PID Houdini ===================================
 (defun pid-houdini ()
 "Get the pid for houdini, if more than one is running it returns
@@ -718,11 +758,41 @@ const to easier find them when building."
   (delete-other-windows)
   (split-window-horizontally)
   (split-window-horizontally)
-  (balance-windows) )
+  (balance-windows)
+  (toggle-frame-fullscreen))
+
+(defun run-emacs-shell-command (command)
+  "Runs the COMMMAND in a emacs shell. Works only if the current buffer is a shell."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (comint-send-input nil t ) ;; hit enter
+    )
+  )
+
+(defun setup-houdini ()
+  "Spawns two shells called h14 and h13 and move to the correct path for both."
+  (interactive)
+  (cd "~/fredriks/Houdini")
+  (delete-other-windows)
+  (shell)
+  (rename-buffer "h14")
+  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+  (shell)
+  (rename-buffer "h13")
+  (run-emacs-shell-command "goc")
+  (toggle-frame-maximized)
+)
 
 (defun setup-build()
 "Spawns multiple shells called cyclone, build and misc"
 (interactive)
+(cd "~/fredriks/release")
+(shell)
+(rename-buffer "release")
+(highlight-build)
 (cd "~/fredriks/swdevl")
 (shell)
 (rename-buffer "cyclone")
@@ -732,7 +802,27 @@ const to easier find them when building."
 (rename-buffer "misc")
 (shell)
 (rename-buffer "build")
-(highlight-build) )
+(highlight-build)
+(toggle-frame-maximized))
+
+(defun setup-build-term()
+"Spawns multiple shells called cyclone, build and misc"
+(interactive)
+(cd "~/fredriks/release")
+(multi-term)
+(rename-buffer "release")
+(highlight-build)
+(cd "~/fredriks/swdevl")
+(multi-term)
+(rename-buffer "cyclone")
+(highlight-build)
+(split-window-right)
+(multi-term)
+(rename-buffer "misc")
+(multi-term)
+(rename-buffer "build")
+(highlight-build)
+(toggle-frame-maximized))
 
 ;;========================== Extra MC functions ================================
 ;; Based on mc/insert-numbers
@@ -1075,9 +1165,20 @@ character, it starts from the user specified character."
 		    ;; (concat "/tools/package/openvdb/"
 		    ;; 	    (get-version-from-build-config
 		    ;; 	     "openvdb"
-		    ;; 	     "/dd/dept/software/users/fredriks/swdevl/Cyclone/")
+		    ;; 	     (concat "/dd/dept/software/users/fredriks/swdevl/"
+		    ;;        "Cyclone/BuildConfig.cent6_64"))
 		    ;; 	    "/core/include/openvdb/")
 		    "~/fredriks/swdevl/private/openvdb/core/include/openvdb"
+		    )
+	      )
+(set-register ?h
+	      (cons 'file 
+		    (concat "/tools/package/houdini/"
+		    	    (get-version-from-build-config
+		    	     "houdini"
+		    	     (concat "/dd/dept/software/users/fredriks/swdevl/"
+				     "Cyclone/houdini/projdeps.cent6_64") )
+		    	    "/toolkit/include")
 		    )
 	      )
 
