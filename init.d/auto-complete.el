@@ -11,7 +11,7 @@
 (define-key ac-completing-map "\r" nil)
 
 (add-to-list 'ac-modes 'makefile-gmake-mode)
-
+(add-to-list 'ac-modes 'arduino-mode)
 (add-hook 'c++-mode-hook
           (lambda ()
             (make-local-variable 'ac-ignores)

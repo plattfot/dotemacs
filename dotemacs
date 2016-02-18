@@ -58,7 +58,8 @@
 (dotemacs/load-user-file "lisp.el")
 (dotemacs/load-user-file "c-family.el")
 (when (not dotemacs/is-work)
-  (dotemacs/load-user-file "go.el"))
+  (dotemacs/load-user-file "go.el")
+  (dotemacs/load-user-file "arduino.el"))
 
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
