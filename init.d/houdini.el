@@ -17,7 +17,7 @@ better just to compute it."
     
     ;; Convert the parts to integers and then print them out in the
     ;; format houdini is using.
-    (let ((vers_int (mapcar '(lambda (x) (string-to-number x)) vers_parts)))
+    (let ((vers_int (mapcar #'(lambda (x) (string-to-number x)) vers_parts)))
       (format "0x%02x%02x%04x" (nth 0 vers_int) (nth 1 vers_int) (nth 2 vers_int))
       ))
   )

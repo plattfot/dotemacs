@@ -1,4 +1,4 @@
-;; -*- mode: lisp -*-
+ -*- mode: lisp -*-
 
 ;; To execute an lisp function in replace regexp do \,(<function>)
  
@@ -67,26 +67,3 @@
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
-
-;; =============================================================================
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(android-mode-sdk-dir "/opt/android-sdk")
- '(safe-local-variable-values
-   (quote
-    ((flycheck-gcc-language-standard . c++14)
-     (flycheck-gcc-language-standard . c++11)
-     (eval progn
-	   (c-set-offset
-	    (quote inline-open)
-	    (quote 0)))))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
