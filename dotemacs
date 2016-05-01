@@ -59,7 +59,9 @@
 (dotemacs/load-user-file "c-family.el")
 (when (not dotemacs/is-work)
   (dotemacs/load-user-file "go.el")
-  (dotemacs/load-user-file "arduino.el"))
+  (dotemacs/load-user-file "arduino.el")
+  (dotemacs/load-user-file "sudo-edit.el")
+  (dotemacs/load-user-file "ledger.el"))
 
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))

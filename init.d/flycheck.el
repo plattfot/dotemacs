@@ -5,7 +5,7 @@
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-; Disable clang check, gcc check works better
+;; Disable clang check, gcc check works better
 (setq-default flycheck-disabled-checkers
 	      (append flycheck-disabled-checkers
 		      '(c/c++-clang)))
