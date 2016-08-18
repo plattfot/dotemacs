@@ -1,4 +1,4 @@
- -*- mode: lisp -*-
+;; -*- mode: lisp -*-
 
 ;; To execute an lisp function in replace regexp do \,(<function>)
  
