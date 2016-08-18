@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: yesterday
+# key: yesterday
+# --
+`(format-time-string "%Y/%m/%d" (yesterday-time))` $0
