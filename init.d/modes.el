@@ -27,7 +27,11 @@
 ;;   (normal-top-level-add-to-load-path 
 ;;    '("android-mode")))
 
+<<<<<<< HEAD
+;; Enable android mode
+=======
 ;; ;; Enable android mode
+>>>>>>> a89ccc6690e4ad9acd01c54293b0df3490b5151e
 ;; (require 'android-mode)
 
 ;; (custom-set-variables '(android-mode-sdk-dir "/opt/android-sdk"))
