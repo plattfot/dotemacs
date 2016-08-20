@@ -5,6 +5,27 @@
 ;; Load this file first since it initialize stuff that might be needed
 ;; by other init files. For example the package manager.
 ;; =============================================================================
+;; From http://stackoverflow.com/questions/10092322/how-to-automatically-install-emacs-packages-by-specifying-a-list-of-package-name
+
+;; ; list the packages you want
+;; (setq package-list '(package1 package2))
+
+;; ; list the repositories containing them
+;; (setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+;;                          ("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "http://marmalade-repo.org/packages/")))
+
+;; ; activate all the packages (in particular autoloads)
+;; (package-initialize)
+
+;; ; fetch the list of packages available 
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
+
+;; ; install the missing packages
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
 
 ;;; Code:
 ;; Add path to plugins
@@ -19,11 +40,11 @@
 ;; Determine if it's work or home
 (defvar dotemacs/is-work (string= (getenv "USER") "fredriks") )
 ;; ================================ Package ====================================
-(require 'package)
-;; Add melpa to the package repo
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
+;; (require 'package)
+;; ;; Add melpa to the package repo
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (package-initialize)
 
 ;; ================================= Theme =====================================
 ;; Load sunburst theme

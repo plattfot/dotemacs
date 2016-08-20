@@ -1,4 +1,4 @@
- -*- mode: lisp -*-
+;; -*- mode: lisp -*-
 
 ;; To execute an lisp function in replace regexp do \,(<function>)
  
@@ -9,6 +9,8 @@
 ;; =========================== Load init files =================================
 ;; This must be loaded first.							
 (dotemacs/load-user-file "init.el") ;; defines dotemacs/is-work variable
+(dotemacs/load-user-file "package.el") ;; setup package and install missing packages
+
 (dotemacs/load-user-file "auto-complete.el")
 
 ;; Functions

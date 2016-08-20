@@ -28,9 +28,9 @@
    '("android-mode")))
 
 ;; Enable android mode
-(require 'android-mode)
+;; (require 'android-mode)
 
-(custom-set-variables '(android-mode-sdk-dir "/opt/android-sdk"))
+;; (custom-set-variables '(android-mode-sdk-dir "/opt/android-sdk"))
 ;; -----------------------------------------------------------------------------
 
 ;; Cuda mode -------------------------------------------------------------------
