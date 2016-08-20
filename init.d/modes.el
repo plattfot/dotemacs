@@ -22,30 +22,41 @@
 (set-variable 'shift-select-mode t)
 ;; -----------------------------------------------------------------------------
 
-;; Init android mode -----------------------------------------------------------
-(let ((default-directory "~/.emacs.d/plugins/"))
-  (normal-top-level-add-to-load-path 
-   '("android-mode")))
+;; ;; Init android mode -----------------------------------------------------------
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;   (normal-top-level-add-to-load-path 
+;;    '("android-mode")))
 
+<<<<<<< HEAD
 ;; Enable android mode
+=======
+;; ;; Enable android mode
+>>>>>>> a89ccc6690e4ad9acd01c54293b0df3490b5151e
 ;; (require 'android-mode)
 
 ;; (custom-set-variables '(android-mode-sdk-dir "/opt/android-sdk"))
 ;; -----------------------------------------------------------------------------
 
-;; Cuda mode -------------------------------------------------------------------
-(autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
-(setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
-;; -----------------------------------------------------------------------------
+;; ;; Cuda mode -------------------------------------------------------------------
+;; (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
+;; (setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
+;; ;; -----------------------------------------------------------------------------
 
-;; Cython mode -----------------------------------------------------------------
-(autoload 'cython-mode "cython-mode.el" "Cython mode" t)
-   ;;(autoload 'cython-mode "cython-mode" nil t)
-   ;; (add-to-list 'auto-mode-alist '("\\.pyx\\'" . cython-mode))
-   ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
+;; ;; Cython mode -----------------------------------------------------------------
+;; (autoload 'cython-mode "cython-mode.el" "Cython mode" t)
+;;    ;;(autoload 'cython-mode "cython-mode" nil t)
+;;    ;; (add-to-list 'auto-mode-alist '("\\.pyx\\'" . cython-mode))
+;;    ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
 ;; -----------------------------------------------------------------------------
 
 ;; Mel mode --------------------------------------------------------------------
 (autoload 'mel-mode "mel-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.mel$" . mel-mode))
 ;; -----------------------------------------------------------------------------
+
+;; Org mode --------------------------------------------------------------------
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) (gnuplot . t) (sh . t) (C . t)))
+
+

@@ -2,6 +2,21 @@
 ;; Misc Functions:
 ;; 
 ;; =============================================================================
+;; From https://www.emacswiki.org/emacs/Journal but modified it to use let
+(defun yesterday-time ()
+"Provide the date/time 24 hours before the time now in the format of current-time."
+  (let* ((now-time (current-time))              ; get the time now
+	 (hi (car now-time))                    ; save off the high word
+	 (lo (car (cdr now-time)))              ; save off the low word
+	 (msecs (nth 2 now-time))               ; save off the milliseconds
+	 )
+
+    (if (< lo 20864)                      ; if the low word is too small for subtracting
+	(setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
+      (setq hi (- hi 1) lo (- lo 20864))  ; else, add 86400 seconds (in two parts)
+      )
+    (list hi lo msecs)                    ; regurgitate the new values
+    ))
 
 ;; From:
 ;; http://www.masteringemacs.org/articles/2010/12/22/fixing-mark-commands-transient-mark-mode/
