@@ -1,0 +1,90 @@
+#+TITLE: Emacs configuration
+
+Inspired by [[https://github.com/hrs/dotfiles/emacs.d][hrs]] org config
+
+* Theme
+  Using sunburst theme, 
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+#+END_SRC
+
+* Backup/Autosave
+Dump all backup/autosave files in to one directory
+
+#+BEGIN_SRC emacs-lisp
+  (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+  (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+  (setq backup-directory-alist (list (cons ".*" backup-dir)))
+  (setq auto-save-list-file-prefix autosave-dir)
+  (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+#+END_SRC
+
+* Emacs settings
+** Behaviour
+Reuse frames if the buffer is already open.
+#+BEGIN_SRC emacs-lisp
+  (setq-default display-buffer-reuse-frames t)
+#+END_SRC
+Set cursor color to white
+#+BEGIN_SRC emacs-lisp
+  (set-cursor-color "#ffffff")
+#+END_SRC
+Dissmiss startup screen
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-splash-screen t)
+#+END_SRC
+
+Highlight matching brackets
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
+#+END_SRC
+
+Allow to fully maximize emacs under kde.
+#+BEGIN_SRC emacs-lisp
+  (setq frame-resize-pixelwise t)
+#+END_SRC
+Disable electric-indent-mode since I"m using C-j for that.
+#+BEGIN_SRC emacs-lisp
+  (setq electric-indent-mode nil)
+#+END_SRC
+
+Create new line if end of buffer when pressing C-n
+#+BEGIN_SRC emacs-lisp
+  (setq next-line-add-newlines nil)
+#+END_SRC
+
+Use ibuffer instead of list-buffers.
+#+BEGIN_SRC emacs-lisp
+(defalias 'list-buffers 'ibuffer)
+#+END_SRC
+
+** Cosmetics
+arg >= 1 enable the menu bar. Menu bar is the File, Edit, Options,
+Buffers, Tools, Emacs-Lisp, Help
+
+Disable menu bar mode
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode 0)
+#+END_SRC
+
+Disable tool bar mode
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode 0)
+#+END_SRC
+
+Disable scroll bar mode
+#+BEGIN_SRC emacs-lisp
+  (scroll-bar-mode 0)
+#+END_SRC
+
+;;enable column-number-mode
+#+BEGIN_SRC emacs-lisp
+  (column-number-mode 1)
+#+END_SRC
+
+Set up font and font size
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'default nil :height 92)
+  (set-face-attribute 'default nil :font "Hack")
+#+END_SRC

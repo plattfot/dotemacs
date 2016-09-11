@@ -1,71 +1,76 @@
 ;; -*- mode: lisp -*-
 
 ;; To execute an lisp function in replace regexp do \,(<function>)
- 
+
 (let ((default-directory "~/.emacs.d/plugins/"))
       (normal-top-level-add-to-load-path '("dotemacs")))
 
 (require 'dotemacs)
-;; =========================== Load init files =================================
-;; This must be loaded first.							
-(dotemacs/load-user-file "init.el") ;; defines dotemacs/is-work variable
-(dotemacs/load-user-file "package.el") ;; setup package and install missing packages
 
-(dotemacs/load-user-file "auto-complete.el")
+(org-babel-load-file (concat dotemacs/user-init-dir "configuration.org"))
+ 
 
-;; Functions
-(dotemacs/load-user-file "text-functions.el")
-(dotemacs/load-user-file "debug-functions.el")
-(dotemacs/load-user-file "highlight-functions.el")
-(dotemacs/load-user-file "buffer-functions.el")
-(dotemacs/load-user-file "file-functions.el")
-(dotemacs/load-user-file "misc-functions.el")
+;; (require 'dotemacs)
+;; ;; =========================== Load init files =================================
+;; ;; This must be loaded first.							
+;; (dotemacs/load-user-file "init.el") ;; defines dotemacs/is-work variable
+;; (dotemacs/load-user-file "package.el") ;; setup package and install missing packages
 
-;; Work
-(if dotemacs/is-work
-    (progn
-      (dotemacs/load-user-file "work.el")
-      (dotemacs/load-user-file "dd-newfile.el")
-      (dotemacs/load-user-file "gccsense.el"))
-  (dotemacs/load-user-file "home.el")
-)
+;; (dotemacs/load-user-file "auto-complete.el")
 
-;; Home
+;; ;; Functions
+;; (dotemacs/load-user-file "text-functions.el")
+;; (dotemacs/load-user-file "debug-functions.el")
+;; (dotemacs/load-user-file "highlight-functions.el")
+;; (dotemacs/load-user-file "buffer-functions.el")
+;; (dotemacs/load-user-file "file-functions.el")
+;; (dotemacs/load-user-file "misc-functions.el")
+
+;; ;; Work
+;; (if dotemacs/is-work
+;;     (progn
+;;       (dotemacs/load-user-file "work.el")
+;;       (dotemacs/load-user-file "dd-newfile.el")
+;;       (dotemacs/load-user-file "gccsense.el"))
+;;   (dotemacs/load-user-file "home.el")
+;; )
+
+;; ;; Home
+;; ;; (when (not dotemacs/is-work)
+;; ;;   (dotemacs/load-user-file "nerv.el"))
+
+;; ;; Key bindings
+;; (dotemacs/load-user-file "macros.el")
+;; (dotemacs/load-user-file "keys.el")
+;; (dotemacs/load-user-file "registers.el")
+
+;; ;; Packages 
+;; (dotemacs/load-user-file "gnu-plot.el") ;; Needs dotemacs/is-work
+;; (dotemacs/load-user-file "ack.el")
+;; (dotemacs/load-user-file "expand-region.el")
+;; (dotemacs/load-user-file "evil-numbers.el")
+;; (dotemacs/load-user-file "multiple-cursors.el")
+;; (dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
+;; (dotemacs/load-user-file "yasnippet.el")
+;; (dotemacs/load-user-file "tramp.el")
+;; (dotemacs/load-user-file "houdini.el")
+;; (dotemacs/load-user-file "org-mode-extra.el")
+;; (dotemacs/load-user-file "string-inflection.el")
+;; (dotemacs/load-user-file "rtags.el")
+;; (dotemacs/load-user-file "flycheck.el")
+;; ;; Modes
+;; (dotemacs/load-user-file "modes.el")
+
+;; ;; Language specific
+;; (dotemacs/load-user-file "lisp.el")
+;; (dotemacs/load-user-file "c-family.el")
 ;; (when (not dotemacs/is-work)
-;;   (dotemacs/load-user-file "nerv.el"))
+;;   (dotemacs/load-user-file "go.el")
+;;   (dotemacs/load-user-file "arduino.el")
+;;   (dotemacs/load-user-file "sudo-edit.el")
+;;   (dotemacs/load-user-file "ledger.el"))
 
-;; Key bindings
-(dotemacs/load-user-file "macros.el")
-(dotemacs/load-user-file "keys.el")
-(dotemacs/load-user-file "registers.el")
-
-;; Packages 
-(dotemacs/load-user-file "gnu-plot.el") ;; Needs dotemacs/is-work
-(dotemacs/load-user-file "ack.el")
-(dotemacs/load-user-file "expand-region.el")
-(dotemacs/load-user-file "evil-numbers.el")
-(dotemacs/load-user-file "multiple-cursors.el")
-(dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
-(dotemacs/load-user-file "yasnippet.el")
-(dotemacs/load-user-file "tramp.el")
-(dotemacs/load-user-file "houdini.el")
-(dotemacs/load-user-file "org-mode-extra.el")
-(dotemacs/load-user-file "string-inflection.el")
-(dotemacs/load-user-file "rtags.el")
-(dotemacs/load-user-file "flycheck.el")
-;; Modes
-(dotemacs/load-user-file "modes.el")
-
-;; Language specific
-(dotemacs/load-user-file "lisp.el")
-(dotemacs/load-user-file "c-family.el")
-(when (not dotemacs/is-work)
-  (dotemacs/load-user-file "go.el")
-  (dotemacs/load-user-file "arduino.el")
-  (dotemacs/load-user-file "sudo-edit.el")
-  (dotemacs/load-user-file "ledger.el"))
-
-;; (when (not dotemacs/is-work)
-;;   (dotemacs/load-user-file "haskell.el"))
-(dotemacs/load-user-file "python.el")
-(dotemacs/load-user-file "shell.el")
+;; ;; (when (not dotemacs/is-work)
+;; ;;   (dotemacs/load-user-file "haskell.el"))
+;; (dotemacs/load-user-file "python.el")
+;; (dotemacs/load-user-file "shell.el")
