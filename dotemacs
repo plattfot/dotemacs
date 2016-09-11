@@ -12,6 +12,7 @@
 (dotemacs/load-user-file "package.el") ;; setup package and install missing packages
 
 (dotemacs/load-user-file "auto-complete.el")
+;;(dotemacs/load-user-file "company.el")
 
 ;; Functions
 (dotemacs/load-user-file "text-functions.el")
@@ -51,7 +52,8 @@
 (dotemacs/load-user-file "houdini.el")
 (dotemacs/load-user-file "org-mode-extra.el")
 (dotemacs/load-user-file "string-inflection.el")
-(dotemacs/load-user-file "rtags.el")
+;;(dotemacs/load-user-file "rtags.el")
+;;(dotemacs/load-user-file "gtags.el")
 (dotemacs/load-user-file "flycheck.el")
 ;; Modes
 (dotemacs/load-user-file "modes.el")
@@ -69,3 +71,18 @@
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(calendar-week-start-day 1)
+ '(custom-safe-themes
+   (quote
+    ("c882403a829de68ab34bd194264035de23e17012065631fcac29d5e05f7ebb5d" "a25c42c5e2a6a7a3b0331cad124c83406a71bc7e099b60c31dc28a1ff84e8c04" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

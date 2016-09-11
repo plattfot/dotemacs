@@ -58,3 +58,6 @@
  '((emacs-lisp . t) (gnuplot . t) (sh . t) (C . t)))
 
 
+;; Calendar --------------------------------------------------------------------
+(setq calendar-week-start-day 1)
+
