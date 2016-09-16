@@ -1,13 +1,15 @@
 ;; -*- mode: lisp -*-
 
 ;; To execute an lisp function in replace regexp do \,(<function>)
+(org-babel-load-file "~/projects/dotemacs/init.d/configuration.org")
 
-(let ((default-directory "~/.emacs.d/plugins/"))
-      (normal-top-level-add-to-load-path '("dotemacs")))
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;       (normal-top-level-add-to-load-path '("dotemacs")))
 
-(require 'dotemacs)
+;; (require 'dotemacs)
 
-(org-babel-load-file (concat dotemacs/user-init-dir "configuration.org"))
+;;(org-babel-load-file (concat dotemacs/user-init-dir "configuration.org"))
+
  
 
 ;; (require 'dotemacs)
