@@ -15,27 +15,806 @@
 (require 'dotemacs)
 ;; =========================== Load init files =================================
 ;; This must be loaded first.							
-(dotemacs/load-user-file "init.el") ;; defines dotemacs/is-work variable
-(dotemacs/load-user-file "package.el") ;; setup package and install missing packages
+;;; init.el --- emacs conf
+;;; Commentary:
+;; =============================================================================
+;; Init file:
+;; Load this file first since it initialize stuff that might be needed
+;; by other init files. For example the package manager.
+;; =============================================================================
+;; From http://stackoverflow.com/questions/10092322/how-to-automatically-install-emacs-packages-by-specifying-a-list-of-package-name
 
-(dotemacs/load-user-file "auto-complete.el")
+;; ; list the packages you want
+;; (setq package-list '(package1 package2))
+
+;; ; list the repositories containing them
+;; (setq package-archives '(("elpa" . "http://tromey.com/elpa/")
+;;                          ("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "http://marmalade-repo.org/packages/")))
+
+;; ; activate all the packages (in particular autoloads)
+;; (package-initialize)
+
+;; ; fetch the list of packages available 
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
+
+;; ; install the missing packages
+;; (dolist (package package-list)
+;;   (unless (package-installed-p package)
+;;     (package-install package)))
+
+;;; Code:
+;; Add path to plugins
+(add-to-list 'load-path "~/.emacs.d/plugins/")
+
+;; To add search path to emacs use this. 
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;   (normal-top-level-add-to-load-path 
+;;    '("<plugin dir>")))
+
+;; =============================== Variables ===================================
+;; Determine if it's work or home
+(defvar dotemacs/is-work (string= (getenv "USER") "fredriks") )
+;; ================================ Package ====================================
+;; (require 'package)
+;; ;; Add melpa to the package repo
+;; (add-to-list 'package-archives
+;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; (package-initialize)
+
+;; ================================= Theme =====================================
+;; Load sunburst theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+
+;;============================= Backup/autosave ================================
+;; backup/autosave
+(defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+(defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+(setq backup-directory-alist (list (cons ".*" backup-dir)))
+(setq auto-save-list-file-prefix autosave-dir)
+(setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+
+;; ============================= Emacs behaviour ===============================
+;; Reuse frames if the buffer is already open.
+(setq-default display-buffer-reuse-frames t)
+;; Set cursor color to white
+(set-cursor-color "#ffffff")
+;; Dissmiss startup screen
+(setq inhibit-splash-screen t)
+
+;; Highlight matching brackets
+(show-paren-mode 1)
+
+;; Allow to fully maximize emacs under kde.
+(setq frame-resize-pixelwise t)
+;; Disable electric-indent-mode since I"m using C-j for that.
+(setq electric-indent-mode nil)
+
+;; ;; turn off automatically add a newline in files.
+;; (setq require-final-newline nil) 
+
+;; ;; Hyper key in gtk and in an xterm!
+;; (define-key key-translation-map [8711] 'event-apply-hyper-modifier)
+
+;; Create new line if end of buffer when pressing C-n
+(setq next-line-add-newlines nil)
+
+;;=========================== Cosmetics ========================================
+;; arg >= 1 enable the menu bar. Menu bar is the File, Edit, Options,
+;; Buffers, Tools, Emacs-Lisp, Help
+
+;; Disable menu bar mode
+(menu-bar-mode 0)
+
+;; Disable tool bar mode
+(tool-bar-mode 0)
+
+;; Disable scroll bar mode
+(scroll-bar-mode 0)
+
+;;enable column-number-mode
+(column-number-mode 1)
+
+;;; height 88 <- my default value
+(set-face-attribute 'default nil :height 92)
+(set-face-attribute 'default nil :font "Hack")
+;; Use ibuffer instead of list-buffers
+(defalias 'list-buffers 'ibuffer)
+
+;; (dotemacs/load-user-file "package.el") ;; setup package and install missing packages
+(require 'package)
+; list the packages you want
+(setq package-list 
+      '(ag
+	async
+	auto-complete
+	buffer-move
+	evil-numbers
+	expand-region
+	flycheck
+	git-commit
+	gnuplot
+	go-autocomplete
+	ledger-mode
+	magit
+	magit-popup
+	mc-extras
+	move-text
+	multi-term
+	multiple-cursors
+	popup
+	rtags
+	string-inflection
+	sudo-edit
+	with-editor
+	yaml-mode
+	yasnippet ))
+
+;; Add melpa to the package repo
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+;; Activate all the packages (in particular autoloads)
+(package-initialize)
+
+;; Fetch the list of packages available 
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+
+;; (dotemacs/load-user-file "auto-complete.el")
+;; =============================================================================
+;; Auto complete
+;; =============================================================================
+
+(require 'auto-complete-config)
+(ac-config-default)
+
+(define-key ac-completing-map "\t" 'ac-expand)
+;; This will on occasion make emacs interpret S-c as C-c 
+;; (define-key ac-completing-map "C-i" 'ac-expand)
+(define-key ac-completing-map "\r" nil)
+
+(add-to-list 'ac-modes 'makefile-gmake-mode)
+(add-to-list 'ac-modes 'arduino-mode)
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (make-local-variable 'ac-ignores)
+            (add-to-list 'ac-ignores "//")))
+
+(add-hook 'c-mode-common-hook 
+	  '(lambda ()
+	     
+	     ;; ac-omni-completion-sources is made buffer local so
+	     ;; you need to add it to a mode hook to activate on 
+	     ;; whatever buffer you want to use it with.  This
+	     ;; example uses C mode (as you probably surmised).
+
+	     ;; auto-complete.el expects ac-omni-completion-sources to be
+	     ;; a list of cons cells where each cell's car is a regex
+	     ;; that describes the syntactical bits you want AutoComplete
+	     ;; to be aware of. The cdr of each cell is the source that will
+	     ;; supply the completion data.  The following tells autocomplete
+	     ;; to begin completion when you type in a . or a ->
+
+	     (add-to-list 'ac-omni-completion-sources
+			  (cons "\\." '(ac-source-semantic)))
+	     (add-to-list 'ac-omni-completion-sources
+			  (cons "->" '(ac-source-semantic)))
+
+;; 	     ;; ac-sources was also made buffer local in new versions of
+;; 	     ;; autocomplete.  In my case, I want AutoComplete to use 
+;; 	     ;; semantic and yasnippet (order matters, if reversed snippets
+;; 	     ;; will appear before semantic tag completions).
+
+;; 	     (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
+ 	     ))
+
+;; ------------------------ Clang auto complete --------------------------------
+;; (when (not dotemacs/is-work)
+;;   (require 'auto-complete-clang-async)
+
+;;   (defun ac-cc-mode-setup ()
+;;     (setq ac-clang-complete-executable "~/.emacs.d/plugins/clang-complete/clang-complete")
+;;     (setq ac-sources '(ac-source-clang-async))
+;;     (setq ac-clang-cflags (append '("-std=c++11") ac-clang-cflags))
+;;     (ac-clang-launch-completion-process))
+
+;;   (defun my-ac-config ()
+;;     (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+;;     (add-hook 'auto-complete-mode 'ac-common-setup)
+;;     (global-auto-complete-mode t))
+
+;;   (my-ac-config)
+;;   )
+
 ;;(dotemacs/load-user-file "company.el")
 
 ;; Functions
-(dotemacs/load-user-file "text-functions.el")
-(dotemacs/load-user-file "debug-functions.el")
-(dotemacs/load-user-file "highlight-functions.el")
-(dotemacs/load-user-file "buffer-functions.el")
-(dotemacs/load-user-file "file-functions.el")
-(dotemacs/load-user-file "misc-functions.el")
+;; (dotemacs/load-user-file "text-functions.el")
+;; =============================================================================
+;; Text Functions:
+;; lisp functions that manipulate text
+;; =============================================================================
 
-;; Work
-(if dotemacs/is-work
-    (progn
-      (dotemacs/load-user-file "work.el")
-      (dotemacs/load-user-file "dd-newfile.el")
-      (dotemacs/load-user-file "gccsense.el"))
-  (dotemacs/load-user-file "home.el")
+;; ----------------------------- Camel score -----------------------------------
+;; Function from http://www.emacswiki.org/emacs/CamelCase
+;; Modified to be able to call it from emacs
+(defun split-name (s)
+  (split-string
+   (let ((case-fold-search nil))
+     (downcase
+      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
+   "[^A-Za-z0-9]+"))
+(defun camelcase  (s) (mapconcat 'capitalize (split-name s) ""))
+(defun underscore (s) (mapconcat 'downcase   (split-name s) "_"))
+(defun dasherize  (s) (mapconcat 'downcase   (split-name s) "-"))
+(defun colonize   (s) (mapconcat 'capitalize (split-name s) "::"))
+
+(defun camelscore (str)
+  "Transform STR between different type. ForExampleThisText -> 
+for_example_this_text -> for-example-this-text -> For::Example::This::Text -> ForExampleThisText. 
+Known bug: It doesn't handle ThisIsASample ->  this_is_asample -> this-is-asample -> This::Is::Asample -> ThisIsAsample"
+  (interactive)
+  (cond ((string-match-p "\:"str) (camelcase str))
+	((string-match-p "-" str) (colonize str))
+	((string-match-p "_" str) (dasherize str))
+	(t                      (underscore str)) ))
+(defun camelscore-word-at-point ()
+  (interactive)
+  (let* ((case-fold-search nil)
+	 (beg (and (skip-chars-backward "[:alnum:]:_-") (point)))
+	 (end (and (skip-chars-forward  "[:alnum:]:_-") (point)))
+	 (txt (buffer-substring beg end))
+	 (cml (camelscore txt)) )
+    (if cml (progn (delete-region beg end) (insert cml))) ))
+
+;; ----------------------------- Dupe line -------------------------------------
+;; http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs,
+;; Author mk-fg
+(defun duplicate-line ()
+    "Clone line at cursor, leaving the latter intact."
+    (interactive)
+    (save-excursion
+    	(let ((kill-read-only-ok t) deactivate-mark)
+    		(toggle-read-only 1)
+    		(kill-whole-line)
+    		(toggle-read-only 0)
+    		(yank))))
+
+;; ----------------------------- Uniquify --------------------------------------
+(defun uniquify-all-lines-region (start end)
+  "Find duplicate lines in region START to END keeping first occurrence."
+  (interactive "*r")
+  (save-excursion
+  (let ((end (copy-marker end)))
+    (while
+	(progn
+	  (goto-char start)
+	  (re-search-forward "^\\(.*\\)\n\\(\\(.*\n\\)*\\)\\1\n" end t))
+      (replace-match "\\1\n\\2")))))
+
+(defun uniquify-all-lines-buffer ()
+  "Delete duplicate lines in buffer and keep first occurrence."
+  (interactive "*")
+  (uniquify-all-lines-region (point-min) (point-max)))
+
+;; --------------------------- Split at Delim ----------------------------------
+
+(defun split-at (&optional delim)
+"Split region/line at DELIM, if there are multiple matches it
+will split each one. DELIM will default to \",\" if no delim is
+given."
+(interactive "sSpecify delimiter: ")
+(when (or (string= delim "") (not delim)) (setq delim ","))
+(let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+      (end (if (use-region-p) (region-end) (point-at-eol)))
+      (regex delim))
+  (goto-char start)
+ 
+  (while (search-forward-regexp regex end t)
+    (insert "\n")
+    (setq end (1+ end))
+    )
+  (indent-region start end)
+  (goto-char start)
+  )
+)
+
+(defun split-at-comma ()
+"wrapper for split-at for use with key command"
+(interactive)
+(split-at ",")
+)
+;; ---------------------------- Replace comment --------------------------------
+;; Not quite working!
+;; (defun replace-star-comment ()
+;;   "Replaced a 
+;; /**
+;;  * Comment
+;;  */
+;; with 
+;; /// Comment"
+;;   (interactive)
+;;   (replace-regexp "/\*\*\n[ ]+\(.*\)\n[ ]+\*/" "/// \1")
+;; )
+;; ============================= Key bindings ==================================
+
+;; Key bindings for cycling between camelCase, underscore, dasherize and colonize
+;; (global-set-key (kbd "C-;") 'camelscore-word-at-point ) 
+
+;; Move line up and down. Install move-text
+(global-set-key [C-S-up] 'move-text-up)
+(global-set-key [C-S-down] 'move-text-down)
+(global-set-key (kbd "C-,") 'split-at-comma)
+
+;; (dotemacs/load-user-file "debug-functions.el")
+;; =============================================================================
+;; Debug Functions:
+;; Lisp functions for debugging
+;; =============================================================================
+;; ---------------------------- PID of process ---------------------------------
+(defun pid (regex &optional index)
+"Get the pid of REGEX, if more than one is running it returns one
+at INDEX. Where INDEX starts from 0 and up"
+(interactive)
+(when (not index) (setq index 0))
+(nth index 
+ (split-string 
+  (shell-command-to-string
+   (concat "ps aux | " ;; wrap first character in [ ] to not match itself
+	   "sed -nE \"s/$USER\\s+([0-9]+).*?"
+	   (concat "[" (substring regex 0 1) "]" (substring regex 1))"/\\1/p\"")
+   )))
+)
+;; ----------------------------- PID Houdini -----------------------------------
+(defun pid-houdini (&optional index )
+"Get the pid for houdini, if more than one is running it returns
+the one at INDEX. Where INDEX starts from 0 and up"
+
+(interactive)
+(when (not index) (setq index 0))
+(pid "houdini-bin" index)
+)
+;; ---------------------------- Attach Houdini ---------------------------------
+(defun attach-houdini (&optional index) 
+"prints attach <pid> into the buffer. INDEX is use to select
+which one if there are multiple instances running, INDEX counts from 1."
+(interactive"p")
+
+;; The default for index is one.
+(when (< index 1) (setq index 1))
+(insert-string (concat "attach " (pid-houdini (- index 1)) ))
+)
+
+;; ---------------------------- Kill Houdini -----------------------------------
+(defun kill-houdini () 
+"kills houdini, if more than one is running it will kill the
+first on the ps list."
+(interactive)
+(shell-command (concat "kill -9 " (pid-houdini)))
+)
+
+;; ------------------------------ PID Maya -------------------------------------
+(defun pid-maya (&optional index)
+"Get the pid for maya, if more than one is running it returns
+the one at INDEX. Where INDEX starts from 0 and up"
+(interactive)
+(when (not index) (setq index 0))
+(pid "maya\\.bin" index)
+)
+
+;; ----------------------------- Attach Maya -----------------------------------
+(defun attach-maya (&optional index) 
+"prints attach <pid> into the buffer. INDEX is use to select
+which one if there are multiple instances running, INDEX counts from 1."
+(interactive"p")
+;; The default for index is one.
+(when (< index 1) (setq index 1))
+(insert-string (concat "attach " (pid-maya index) ))
+)
+
+;; ------------------------------ Kill Maya ------------------------------------
+(defun kill-maya () 
+"kills maya, if more than one is running it will kill the
+first on the ps list."
+(interactive)
+(shell-command (concat "kill -9 " (pid-maya)))
+)
+
+;; ------------------------------ PID SMEAT ------------------------------------
+(defun pid-smeat (&optional index)
+"Get the pid for smeat, if more than one is running it returns
+the one at INDEX. Where INDEX starts from 0 and up"
+(interactive)
+(when (not index) (setq index 0))
+;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+(pid "smeat(:?[^=]+|$$)" index)
+)
+
+;; ---------------------------- Attach Smeat -----------------------------------
+(defun attach-smeat (&optional index) 
+"prints attach <pid> into the buffer. INDEX is use to select
+which one if there are multiple instances running, INDEX counts from 1."
+(interactive"p")
+
+;; The default for index is one.
+(when (< index 1) (setq index 1))
+(insert-string (concat "attach " (pid-smeat (- index 1)) ))
+)
+
+;; ---------------------------- Abort Smeat ------------------------------------
+;; Not quite working.
+(defun smeat-abort (&optional index )
+"Sends USR1 signal to houdini which aborts the smeat client,
+INDEX is used to select which houdini instance to send to if
+multiple instances exist."
+(interactive"p")
+(when (< index 1) (setq index 1))
+(let ((hou-pid (pid-houdini index)))
+  (shell-command (concat "kill -s USR1 " hou-pid))
+)
+)
+
+;; ------------------------------ Preprocess -----------------------------------
+(defun preprocess-fix-macros ()
+"Fix expanded macros when running only the preprocess on a file,
+i.e. g++ <flags> -E <file>. Since they are expanded into a single
+line which makes them hard to debug."
+(interactive)
+ (let* ((start (if (use-region-p) (region-beginning) (point)))
+	(end (if (use-region-p) (region-end) (point-max)))
+	(regex-map '(":[ ]" ";" "{" "}[ ]"))
+	(regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|")))
+   (goto-char start)
+   (while (search-forward-regexp regex end t)
+     (newline)
+     (setq end (1+ end)))
+   (indent-region start (point))
+   (goto-char start)))
+
+;; (dotemacs/load-user-file "highlight-functions.el")
+;; =============================================================================
+;; Highlight functions
+;; =============================================================================
+
+;; ;; (custom-set-faces
+;; ;;  ;; custom-set-faces was added by Custom.
+;; ;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;; ;;  ;; Your init file should contain only one such instance.
+;; ;;  ;; If there is more than one, they won't work right.
+;; ;;  '(hi-blue ((t (:foreground "color-106"))))
+;; ;;  '(hi-blue-b ((t (:foreground "color-245" :weight bold))))
+;; ;;  '(hi-green ((t (:foreground "color-100"))))
+;; ;;  '(hi-pink ((t (:foreground "color-94"))))
+;; ;;  '(hi-yellow ((t (:foreground "color-130")))))
+(defface hi-orange
+  '((t (:foreground "orange")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-grey
+  '((t (:foreground "#666")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defun highlight-dd-logger() 
+  "Highlight DD_LOGGER"
+  (interactive)
+  ( highlight-regexp "^\\+-.*\\]:" 'hi-blue )
+  ( highlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" 'hi-green )
+  ( highlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" 'hi-pink )
+  ( highlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" 'hi-yellow )
+  ( highlight-regexp "^\\(| \\)\\{3\\}" 'hi-pink )
+  ( highlight-regexp "^\\(| \\)\\{2\\}" 'hi-green )
+  ( highlight-regexp "^\\(| \\)\\{1\\}" 'hi-blue )
+  ( highlight-regexp "[0-9]+\\.[0-9]+[a-z]+" 'hi-blue-b ))
+
+(defun unhighlight-dd-logger() 
+  "Unhighlight DD_LOGGER"
+  (interactive)
+  ( unhighlight-regexp "^\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" )
+  ( unhighlight-regexp "^\\(| \\)\\{3\\}" )
+  ( unhighlight-regexp "^\\(| \\)\\{2\\}" )
+  ( unhighlight-regexp "^\\(| \\)\\{1\\}" )
+  ( unhighlight-regexp "[0-9]+\\.[0-9]+\\w" ))
+
+(defun highlight-build() 
+  "Highlight flags, paranthesis, error, warning and 
+const to easier find them when building."
+  (interactive)
+  ( highlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" 'hi-grey)
+  ( highlight-regexp "[()]"    'hi-red-b )
+  ( highlight-regexp "warning" 'hi-green-b )
+  ( highlight-regexp "error"   'hi-red-b )
+  ( highlight-regexp "const "  'hi-black-b )
+  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange )
+  )
+
+(defun unhighlight-build() 
+  "Like the function name applies remove the highlights set by highlight-build."
+  (interactive)
+  ( unhighlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" )
+  ( unhighlight-regexp "[()]" )
+  ( unhighlight-regexp "warning")
+  ( unhighlight-regexp "error")
+  ( unhighlight-regexp "const ")
+  ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" )
+  )
+(defun highlight-versions( input )
+  "Highlight important versions when building with pybuild."
+  (interactive "sEnter name of packages to highlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  (dolist (word list) 
+    (highlight-regexp 
+     (concat (downcase word) "/[0-9]+\.[0-9]+\.[0-9_a-z]+") 
+     'hi-green-b)
+    )
+  )
+
+(defun unhighlight-versions(input)
+  "Unhighlight versions that was highlighted with highlight-versions."
+  (interactive "sEnter name of packages to unhighlight (separated by space) ")
+  (setq list (split-string input))
+  (dolist (word list) 
+    (unhighlight-regexp 
+     (concat (upcase word) "_VERSION=[0-9]+\.[0-9]+\.[0-9_a-z]+"))
+    )
+  (dolist (word list) 
+    (unhighlight-regexp 
+     (concat (downcase word) "/[0-9]+\.[0-9]+\.[0-9_a-z]+") )
+    )
+  )
+
+(defun highlight-usual-vers()
+  "Highlights the most common versions openvdb, boost and houdini"
+  (interactive)
+  (highlight-versions "openvdb boost houdini"))
+
+;; (defface hi-red-b
+;;   '((((min-colors 88)) (:weight bold :foreground "red1"))
+;;     (t (:weight bold :foreground "red")))
+;;   "Face for hi-lock mode."
+;;   :group 'hi-lock-faces)
+
+
+;; (dotemacs/load-user-file "buffer-functions.el")
+;; =============================================================================
+;; Text Functions:
+;; Lisp functions that applies to buffers
+;; =============================================================================
+
+;; -------------------------------- Buffer -------------------------------------
+;; Enable buffer mode
+(require 'buffer-move)
+
+;; ---------------------------- Switching buffers ------------------------------
+;; http://xahlee.org/emacs/effective_emacs.html
+(defun next-user-buffer ()
+  "Switch to the next user buffer.
+User buffers are those whose name does not start with *."
+  (interactive)
+  (next-buffer)
+  (let ((i 0))
+    (while (and (string-match "^*" (buffer-name)) (< i 50))
+      (setq i (1+ i)) (next-buffer) )))
+
+(defun previous-user-buffer ()
+  "Switch to the previous user buffer.
+User buffers are those whose name does not start with *."
+  (interactive)
+  (previous-buffer)
+  (let ((i 0))
+    (while (and (string-match "^*" (buffer-name)) (< i 50))
+      (setq i (1+ i)) (previous-buffer) )))
+
+(defun next-emacs-buffer ()
+  "Switch to the next emacs buffer.
+Emacs buffers are those whose name starts with *."
+  (interactive)
+  (next-buffer)
+  (let ((i 0))
+    (while (and (not (string-match "^*" (buffer-name))) (< i 50))
+      (setq i (1+ i)) (next-buffer) )))
+
+(defun previous-emacs-buffer ()
+  "Switch to the previous emacs buffer.
+Emacs buffers are those whose name starts with *."
+  (interactive)
+  (previous-buffer)
+  (let ((i 0))
+    (while (and (not (string-match "^*" (buffer-name))) (< i 50))
+      (setq i (1+ i)) (previous-buffer) )))
+
+;;; http://www.stringify.com/2006/apr/24/rename/
+;;; Rename current file and buffer 
+;;; Much like save-as but removes the old file
+(defun rename-current-file-or-buffer ()
+  (interactive)
+  (if (not (buffer-file-name))
+      (call-interactively 'rename-buffer)
+    (let ((file (buffer-file-name)))
+      (with-temp-buffer
+        (set-buffer (dired-noselect file))
+        (dired-do-rename)
+        (kill-buffer nil))))
+  nil)
+
+(defun revert-all-buffers ()
+    "Refreshes all open buffers from their respective files."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (not (buffer-modified-p)))
+          (revert-buffer t t t) )))
+    (message "Refreshed open files.") )
+
+
+;; ============================= Key bindings ==================================
+
+;; Modify buffer
+(global-set-key (kbd "C-c r") 'revert-all-buffers)
+(global-set-key "\C-cR" 'rename-current-file-or-buffer)
+
+;; Flip through buffers
+(global-set-key (kbd "<C-prior>") 'previous-user-buffer) ; Ctrl+PageUp
+(global-set-key (kbd "<C-next>") 'next-user-buffer) ; Ctrl+PageDown
+(global-set-key (kbd "<C-S-prior>") 'previous-emacs-buffer) ; Ctrl+Shift+PageUp
+(global-set-key (kbd "<C-S-next>") 'next-emacs-buffer) ; Ctrl+Shift+PageDown
+
+;; Move buffers around
+(global-set-key (kbd "<M-S-up>")     'buf-move-up)
+(global-set-key (kbd "<M-S-down>")   'buf-move-down)
+(global-set-key (kbd "<M-S-left>")   'buf-move-left)
+(global-set-key (kbd "<M-S-right>")  'buf-move-right)
+
+;; (dotemacs/load-user-file "file-functions.el")
+
+(defun hou-open-other-version (version)
+"Will open the same hdk file but for the version specified by
+VERSION, only works if the open buffer is an hdk file." 
+(interactive "sEnter houdini version: ")
+(let ((file-path (buffer-file-name))
+      (hou-regexp "\\(.*?/houdini/\\)[0-9]+\\.[0-9]+\\.[0-9]+\\(/.*\\)+"))
+  (if file-path 
+      (progn (if (string-match hou-regexp file-path)
+		 (progn (find-file (concat
+				    (match-string 1 file-path)
+				    version
+				    (match-string 2 file-path)
+				    ))
+			(rename-buffer (concat (file-name-nondirectory file-path)
+					       "<" version ">"))
+			)
+	       (message "File is not a houdini file")))
+    (message "File isn't saved to disk")
+    )
+  )
+)
+
+;; (dotemacs/load-user-file "misc-functions.el")
+;; =============================================================================
+;; Misc Functions:
+;; 
+;; =============================================================================
+;; From https://www.emacswiki.org/emacs/Journal but modified it to use let
+(defun yesterday-time ()
+"Provide the date/time 24 hours before the time now in the format of current-time."
+  (let* ((now-time (current-time))              ; get the time now
+	 (hi (car now-time))                    ; save off the high word
+	 (lo (car (cdr now-time)))              ; save off the low word
+	 (msecs (nth 2 now-time))               ; save off the milliseconds
+	 )
+
+    (if (< lo 20864)                      ; if the low word is too small for subtracting
+	(setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
+      (setq hi (- hi 1) lo (- lo 20864))  ; else, add 86400 seconds (in two parts)
+      )
+    (list hi lo msecs)                    ; regurgitate the new values
+    ))
+
+;; From:
+;; http://www.masteringemacs.org/articles/2010/12/22/fixing-mark-commands-transient-mark-mode/
+(defun push-mark-no-activate ()
+  "Pushes `point' to `mark-ring' and does not activate the region
+Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
+  (interactive)
+  (push-mark (point) t nil)
+  (message "Pushed mark to ring"))
+(global-set-key (kbd "C-`") 'push-mark-no-activate)
+
+(defun jump-to-mark ()
+  "Jumps to the local mark, respecting the `mark-ring' order.
+This is the same as using \\[set-mark-command] with the prefix argument."
+  (interactive)
+  (set-mark-command 1))
+(global-set-key (kbd "M-`") 'jump-to-mark)
+
+(defun exchange-point-and-mark-no-activate ()
+  "Identical to \\[exchange-point-and-mark] but will not activate the region."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark nil))
+
+;; -----------------------------------------------------------------------------
+(defun run-emacs-shell-command (command)
+  "Runs the COMMMAND in a emacs shell. Works only if the current buffer is a shell."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (comint-send-input nil t ) ;; hit enter
+    )
+  )
+;; -----------------------------------------------------------------------------
+(defun run-emacs-term-command (command)
+  "Runs the COMMMAND in a emacs term. Works only if the current buffer is a term."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (term-send-input) ;; hit enter
+    )
+  )
+
+;; -----------------------------------------------------------------------------
+;; From http://ergoemacs.org/emacs/elisp_read_file_content.html
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+;; -----------------------------------------------------------------------------
+(defun clear-shell ()
+   (interactive)
+   (let ((comint-buffer-maximum-size 0))
+     (comint-truncate-buffer)))
+
+;; -----------------------------------------------------------------------------
+(defun clear-term ()
+  "Delete everything in the buffer."
+   (interactive)
+   (delete-region (point-min) (point-max))
+   (run-emacs-term-command "clear")
+   )
+
+;; ============================= Key bindings ==================================
+
+(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+
+
+;; ;; Work
+;; (if dotemacs/is-work
+;;     (progn
+;;       (dotemacs/load-user-file "work.el")
+;;       (dotemacs/load-user-file "dd-newfile.el")
+;;       (dotemacs/load-user-file "gccsense.el"))
+;;   (dotemacs/load-user-file "home.el")
+;; )
+(defun setup-home ()
+"Splits the session into three frames"
+(interactive)
+(delete-other-frames)
+(delete-other-windows)
+(make-frame-command)
+(make-frame-command)
 )
 
 ;; Home
@@ -43,41 +822,1222 @@
 ;;   (dotemacs/load-user-file "nerv.el"))
 
 ;; Key bindings
-(dotemacs/load-user-file "macros.el")
-(dotemacs/load-user-file "keys.el")
-(dotemacs/load-user-file "registers.el")
+;; (dotemacs/load-user-file "macros.el")
+;; =============================================================================
+;; Macros
+;; =============================================================================
+;; insert fredriks@bcws067.d2vancouver.com:fredriks/swdevl/CoreLibs
+(fset 'bcws
+   [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?b ?e ?l ?l ?w ?s ?1 ?0 ?8 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+
+;; ============================= Key bindings ==================================
+;; Macro keybindings
+(global-set-key (kbd "C-c B") 'bcws)
+
+;; (dotemacs/load-user-file "keys.el")
+;; =============================================================================
+;; General key bindings
+;; =============================================================================
+
+;; ============================= Key bindings ==================================
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+;; Key bindings
+;; GUI
+(global-set-key (kbd "<f5>") 'menu-bar-mode)
+(global-set-key (kbd "<f6>") 'tool-bar-mode)
+
+;; Clear shell
+(global-set-key (kbd "<f8>") 'clear-shell)
+
+;; Compile
+(global-set-key (kbd "<f12>") 'compile) ; compile
+(global-set-key (kbd "<f11>") 'recompile) ; recompile
+
+;; Navigation
+(global-set-key [M-left] 'windmove-left)   ; move to left windnow
+(global-set-key [M-right] 'windmove-right) ; move to right window
+(global-set-key [M-up] 'windmove-up)       ; move to upper window
+(global-set-key [M-down] 'windmove-down)   ; move to downer window
+
+(global-set-key (kbd "M-g") 'goto-line)
+
+;; Text search. Swap places for normal search and regexp search
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+
+
+;; Text edit
+(global-set-key (kbd "M-r") 'replace-regexp)
+
+;; Misc
+;; Align 
+;;; Cannot run gdb when this keybinding is set.
+;; (global-set-key (kbd "C-x C-a") 'align-regexp)
+(global-set-key (kbd "C-x a") 'align)
+
+;; ------ Make emacs behave more lite unix ------
+(global-set-key (kbd "C-?") 'help-command)
+(global-set-key (kbd "M-?") 'mark-paragraph)
+
+;; Map backspace to Ctrl-h and ctrl+backspace to meta+h
+;; (global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "M-h") 'backward-kill-word)
+
+;; This also maps open-line to enter
+;;(global-set-key (kbd "C-m") 'open-line)
+
+(global-set-key (kbd "C-c l") 'duplicate-line)
+
+;; Run magit
+(global-set-key (kbd "C-x g") 'magit-status)
+
+;; (dotemacs/load-user-file "registers.el")
+;; =============================================================================
+;; Registers
+;; =============================================================================
+
+(set-register ?e (cons 'file dotemacs/path-to-dotemacs)) 
+(set-register ?i (cons 'file dotemacs/user-init-dir)) 
+
 
 ;; Packages 
-(dotemacs/load-user-file "gnu-plot.el") ;; Needs dotemacs/is-work
-(dotemacs/load-user-file "ack.el")
-(dotemacs/load-user-file "expand-region.el")
-(dotemacs/load-user-file "evil-numbers.el")
-(dotemacs/load-user-file "multiple-cursors.el")
-(dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
-(dotemacs/load-user-file "yasnippet.el")
-(dotemacs/load-user-file "tramp.el")
-(dotemacs/load-user-file "houdini.el")
-(dotemacs/load-user-file "org-mode-extra.el")
-(dotemacs/load-user-file "string-inflection.el")
+;; (dotemacs/load-user-file "gnu-plot.el") ;; Needs dotemacs/is-work
+;; =============================================================================
+;; GNU plot
+;; =============================================================================
+
+;; (add-to-list 'Info-default-directory-list "/dd/home/fredriks/.emacs.d/plugins/gnuplot")
+
+;; move the files gnuplot.el to someplace in your lisp load-path or
+;; use a line like
+;; (if dotemacs/is-work 
+;;     (setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
+;;   (setq load-path (append (list "/dd/home/fredriks/.emacs.d/plugins/gnuplot") load-path))
+;; )
+
+;; these lines enable the use of gnuplot mode
+(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+
+;; this line automatically causes all files with the .gp extension to
+;; be loaded into gnuplot mode
+(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+
+;; ============================= Key bindings ==================================
+
+;; This line binds the function-9 key so that it opens a buffer into
+;; gnuplot mode 
+(global-set-key [(f9)] 'gnuplot-make-buffer)
+
+;; (dotemacs/load-user-file "ack.el")
+;; =============================================================================
+;; Ack
+;; =============================================================================
+
+;; Ack stuff -- installed via emacs package manager
+;; Create shorter aliases
+(defalias 'ack 'ack-and-a-half)
+(defalias 'ack-same 'ack-and-a-half-same)
+(defalias 'ack-find-file 'ack-and-a-half-find-file)
+(defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
+
+;; (dotemacs/load-user-file "expand-region.el")
+;; =============================================================================
+;; Init expand-region 
+;; =============================================================================
+;; Swap for package install
+
+;; Enable expand region
+(require 'expand-region)
+
+;; ============================= Key bindings ==================================
+;; Expand region
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+;; (dotemacs/load-user-file "evil-numbers.el")
+;; =============================================================================
+;; Init evil-numbers 
+;; =============================================================================
+;; Swap for package install
+
+;; Add the plugin to the search path
+(let ((default-directory "~/.emacs.d/plugins/"))
+      (normal-top-level-add-to-load-path 
+       '("evil-numbers")))
+
+;; Enable evil numbers
+(require 'evil-numbers)
+
+;; ============================= Key bindings ==================================
+;; In/decrementing numbers
+(global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
+
+;; (dotemacs/load-user-file "multiple-cursors.el")
+;; =============================================================================
+;; Init multiple-cursors 
+;; =============================================================================
+;; Swap for package install
+
+;; Enable multiple cursor
+(require 'multiple-cursors)
+
+;;========================== Extra MC functions ================================
+;; Based on mc/insert-numbers
+
+(defun mc/insert-dec-numbers (arg)
+  "Insert decreasing numbers for each cursor, starting at number
+of cursors - 1 or ARG."
+  (interactive "P")
+  (setq mc--insert-numbers-number (or arg (1- (mc/num-cursors))))
+  (mc/for-each-cursor-ordered
+   (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease cursor)))
+
+(defun mc--insert-number-and-decrease ()
+  (interactive)
+  (insert (number-to-string mc--insert-numbers-number))
+  (setq mc--insert-numbers-number (1- mc--insert-numbers-number)))
+
+(defun mc/insert-same-numbers-per-line (arg)
+  "Insert increasing numbers for each cursor that are on a separate
+line, cursors on the same line will insert the same number, starts at
+0 or ARG"
+(interactive "P")
+(setq mc--current-line nil
+      mc--insert-numbers-number (or arg 0) )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase-for-diff-lines
+				     cursor)))
+
+(defun mc/insert-dec-same-numbers-per-line (arg)
+  "Insert decreasing numbers for each cursor that are on a
+separate line, cursors on the same line will insert the same
+number, starts at number of cursors - 1 or ARG"
+(interactive "P")
+(setq mc--current-line nil
+      mc--insert-numbers-number (or arg (1- (mc/num-cursors))) )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease-for-diff-lines
+				     cursor)))
+
+(defun mc--insert-number-and-increase-for-diff-lines ()
+(interactive)
+(mc--insert-number-and-change-for-diff-lines '1+))
+
+(defun mc--insert-number-and-decrease-for-diff-lines ()
+(interactive)
+(mc--insert-number-and-change-for-diff-lines '1-))
+
+(defun mc--insert-number-and-change-for-diff-lines (change)
+  (interactive)
+  (if (not mc--current-line) 
+      ;; If first time init mc--current-line
+      (progn (setq mc--current-line (line-number-at-pos))
+	     (insert (number-to-string mc--insert-numbers-number)))
+    ;; Else compare lines and set accordingly
+    (progn  
+      ;; If current-line and the line is it on are different change
+      ;; and insert.
+      (if (not (= mc--current-line (line-number-at-pos)))
+	  (progn 
+	    (setq mc--current-line (line-number-at-pos)
+		  mc--insert-numbers-number 
+		  (funcall change mc--insert-numbers-number))
+	    (insert (number-to-string mc--insert-numbers-number)))
+	;; Else insert number.
+	(insert (number-to-string mc--insert-numbers-number)) ))))
+
+(defun mc/insert-characters (char)
+  "Insert increasing character for each cursor, it starts from
+the user specified character"
+(interactive  "cSpecify letter to start from")
+(setq mc--insert-chars-char char)
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+				     cursor)))
+
+(defun mc/insert-dec-characters (char)
+  "Insert decreasing character for each cursor, it starts from
+the user specified character"
+(interactive  "cSpecify letter to start from")
+(setq mc--insert-chars-char char)
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+				     cursor)))
+
+(defun mc--insert-char-and-increase ()
+  (interactive)
+  (mc--insert-char-and-change '1+))
+
+(defun mc--insert-char-and-decrease ()
+  (interactive)
+  (mc--insert-char-and-change '1-))
+
+(defun mc--insert-char-and-change (change)
+  (interactive)
+  (insert mc--insert-chars-char)
+  (setq mc--insert-chars-char (funcall change mc--insert-chars-char)))
+
+
+(defun mc/insert-same-chars-per-line (char)
+  "Insert increasing character for each cursor that are on a
+separate line, cursors on the same line will insert the same
+character, it starts from the user specified character."
+(interactive  "cSpecify letter to start from")
+(setq mc--current-line nil
+      mc--insert-chars-char char )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase-for-diff-lines
+				     cursor)))
+
+(defun mc/insert-dec-same-chars-per-line (char)
+  "Insert decreasing character for each cursor that are on a
+separate line, cursors on the same line will insert the same
+character, it starts from the user specified character."
+(interactive  "cSpecify letter to start from")
+(setq mc--current-line nil
+      mc--insert-chars-char char )
+(mc/for-each-cursor-ordered
+ (mc/execute-command-for-fake-cursor 'mc--insert-char-and-decrease-for-diff-lines
+				     cursor)))
+
+(defun mc--insert-char-and-increase-for-diff-lines ()
+  (interactive)
+  (mc--insert-char-and-change-for-diff-lines '1+))
+
+(defun mc--insert-char-and-decrease-for-diff-lines ()
+  (interactive)
+  (mc--insert-char-and-change-for-diff-lines '1-))
+
+(defun mc--insert-char-and-change-for-diff-lines ( change )
+  (interactive)
+  (if (not mc--current-line) 
+      ;; If first time init mc--current-line
+      (progn (setq mc--current-line (line-number-at-pos))
+	     (insert mc--insert-chars-char))
+    ;; Else compare lines and set accordingly.
+    (progn  
+      ;; If current-line and the line is it on is different increment
+      ;; and insert.
+      (if (not (= mc--current-line (line-number-at-pos)))
+	  (progn (setq mc--current-line (line-number-at-pos)
+		       mc--insert-chars-char 
+		       (funcall change mc--insert-chars-char))
+		 (insert mc--insert-chars-char))
+	;; Else insert char.
+	(insert mc--insert-chars-char)) )))
+
+;; ============================= Key bindings ==================================
+;; Multiple cursor key bindings
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-+") 'mc/mark-next-like-this)
+
+;; (dotemacs/load-user-file "multi-term.el") ;; Needs dotemacs/is-work
+;; =============================================================================
+;; Multi-term
+;; =============================================================================
+
+;; Enable multi-term
+(require 'multi-term)
+
+( if dotemacs/is-work 
+    (setq multi-term-program "/bin/tcsh")
+    (setq multi-term-program "/bin/zsh")
+    )
+
+;; From: http://www.emacswiki.org/emacs/ShellDirtrackByProcfs
+(defun term-resync-dirs ()
+"resync dirs as shell-resync-dirs does"
+(interactive)
+(let ((directory (file-symlink-p
+		  (format "/proc/%s/cwd"
+			  (process-id
+			   (get-buffer-process
+			    (current-buffer)))))))
+  (when (file-directory-p directory)
+    (cd directory)))
+)
+;; From: http://joelmccracken.github.io/entries/switching-between-term-mode-and-line-mode-in-emacs-term/
+(defun jnm/term-toggle-mode ()
+  "Toggles term between line mode and char mode"
+  (interactive)
+  (if (term-in-line-mode)
+      (term-char-mode)
+    (term-line-mode)))
+
+(add-hook 'term-mode-hook
+          (lambda ()
+	    ;; Set the buffer size of the terminal
+            (setq term-buffer-maximum-size 10000)
+	    ;; Disable yasnippet, since it interfere with tab-completion
+            (yas-minor-mode -1)      
+;; ============================= Key bindings ==================================
+	    ;;(add-to-list 'term-bind-key-alist '("C-c C-j" . jnm/term-toggle-mode))     
+	    (define-key term-raw-map (kbd "C-y") 'term-paste)
+	    (define-key term-raw-map (kbd"C-c C-j") 'jnm/term-toggle-mode)
+	    ))
+
+;; (dotemacs/load-user-file "yasnippet.el")
+;; =============================================================================
+;; Init yasnippet
+;; =============================================================================
+
+;; Enable yasnippet and setup
+(require 'yasnippet) ;; not yasnippet-bundle
+(yas-global-mode 1)
+
+;; ;;(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
+;; ;; enable java autocomplete and setup
+;; ;; (require 'ajc-java-complete-config)
+;; ;; (add-hook 'java-mode-hook 'ajc-java-complete-mode)
+;; ;; (add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
+
+;; ============================= Key bindings ==================================
+;; (define-key yas-minor-mode-map (kbd "<tab>") nil)
+;; (define-key yas-minor-mode-map (kbd "TAB") nil)
+;; (define-key yas-minor-mode-map (kbd "C-o") 'yas-expand)
+
+
+;; (dotemacs/load-user-file "tramp.el")
+;; =============================================================================
+;; TRAMP
+;; =============================================================================
+
+;; Enable tramp and setup
+(require 'tramp)
+(setq tramp-default-method "ssh")
+
+;; (dotemacs/load-user-file "houdini.el")
+(defvar hou/comp-format '(("==" . "// %s")
+			  ("!=" . "// all but %s")
+			  (">=" . "// %s or later")
+			  ("<=" . "// %s or earlier")
+			  (">"  . "// later than %s")
+			  ("<"  . "// earlier than %s")
+			  ))
+
+(defun hou-version-to-hex (version-string)
+  "Convert VERSION-STRNG to hex, instead of looking up in a table
+better just to compute it."
+  ;; Split the string into parts, filtering out the pre
+  (let ((vers_parts (delete "" (split-string version-string "[.]\\|pre[0-9]+"))))
+    ;; If it's not three parts, i.e major, minor and build version throw error
+    (when (not (eq (length vers_parts) 3))
+      (throw 'hou-tag (format "%s is not a valid version string" version-string)))
+    
+    ;; Convert the parts to integers and then print them out in the
+    ;; format houdini is using.
+    (let ((vers_int (mapcar #'(lambda (x) (string-to-number x)) vers_parts)))
+      (format "0x%02x%02x%04x" (nth 0 vers_int) (nth 1 vers_int) (nth 2 vers_int))
+      ))
+  )
+
+(defun hou-get-version-list (&optional root)
+  "Search the path
+ROOT/*/toolkit/include/{UT,SYS}/{UT,SYS}_Version.h for
+UT_VERSION_INT or SYS_VERSION_INT and fetch the INT version."
+  (when (not root) (setq root "/tools/package/houdini"))
+  (shell-command-to-string
+   (concat "grep -E \"SYS_VERSION_FULL_INT|UT_VERSION_INT\" "
+	   root
+	   "/*/toolkit/include/{SYS/SYS,UT/UT}_Version.h"
+	   "| sed -En "
+	   "'s:.*?/([0-9]+\.[0-9]+\.[0-9a-z]+)/.*?(0x[0-9a-f]+):"
+	   "(\\1 . \\2):p'"))
+  )
+
+(defun hou-insert-version-id (version)
+  "Insert the houdini version id for VERSION"
+  (interactive "sHoudini version: ")
+  (let ((version_hex (hou-version-to-hex version)))
+    (insert version_hex)
+  )
+)
+
+(defun hou-insert-if (version comp)
+  "Insert an #if-else clause with the specified VERSION in int
+format with the COMP being either ==, <=, >=, !=, < or > . If a
+region is active it will place that in both the ifdef and else
+clause.  Example:
+(hou-insert-ifdef \"14.0.173\" \"==\") will insert this
+#if( UT_VERSION_INT == 0x0e0000ad ) // 14.0.173
+<Cursor>
+#else
+#endif
+
+(hou-insert-ifdef \"14.0.173\" \">=\") will insert this
+#if( UT_VERSION_INT >= 0x0e0000ad ) // 14.0.173 or later
+<Cursor>
+#else
+#endif
+
+(hou-insert-ifdef \"14.0.173\" \"<=\") will insert this
+#if( UT_VERSION_INT <= 0x0e0000ad ) // 14.0.173 or earlier
+<Cursor>
+#else
+#endif
+
+" 
+(interactive "sHoudini version: \nsCompare operator: ")
+(let ((str))
+  (if (region-active-p)
+      (progn (setq str (buffer-substring-no-properties (region-beginning) (region-end)))
+	     (kill-region (region-beginning) (region-end)))
+    (setq str "")
+    )
+  (let ((version_hex (hou-version-to-hex version))
+	(format_assoc (assoc comp hou/comp-format))
+	(done))
+    (when (not format_assoc)
+      (throw 'hou-tag (format "%s is not in comp list" comp)))
+
+    (insert "#if( UT_VERSION_INT " comp " " version_hex " ) "
+	    (format (cdr format_assoc) version) "\n")
+    (let ((done (point)))
+      (insert str "\n#else\n" str "\n#endif\n")
+      (goto-char done))
+    )
+  )
+)
+
+;; Following the same naming convention as gtest
+;; eq -> ==
+;; ne -> !=
+;; lt -> <
+;; le -> <=
+;; gt -> >
+;; ge -> >=
+
+(defun hou-insert-if-eq (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and =="
+(interactive "sHoudini version: ")
+(hou-insert-if version "==")
+)
+
+(defun hou-insert-if-ne (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and !="
+(interactive "sHoudini version: ")
+(hou-insert-if version "!=")
+)
+
+(defun hou-insert-if-lt (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and <"
+(interactive "sHoudini version: ")
+(hou-insert-if version "<")
+)
+
+(defun hou-insert-if-le (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and <="
+(interactive "sHoudini version: ")
+(hou-insert-if version "<=")
+)
+
+(defun hou-insert-if-gt (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and >"
+(interactive "sHoudini version: ")
+(hou-insert-if version ">")
+)
+
+(defun hou-insert-if-ge (version)
+"Wrapper for calling hou-insert-if with arguments VERSION and >="
+(interactive "sHoudini version: ")
+(hou-insert-if version ">=")
+)
+
+;; (dotemacs/load-user-file "org-mode-extra.el")
+(defun org/add-column (line key table)
+"Add the second column to the table"
+(when (string-match key line)
+  (let* ((col_name (match-string 1 line))
+  	 (col (gethash col_name table))
+  	 (data (chomp(buffer-substring-no-properties 
+  	 	      (search-forward "|") 
+  	 	      (1- (search-forward "|")))))
+	 )
+ 
+     ;; Add data to column
+    (push data col)
+    ;; Update the column in the table
+    (puthash col_name col table)
+    )
+  )
+)
+;; From http://stackoverflow.com/questions/17066169/retrieve-keys-from-hash-table-sorted-by-the-values-efficiently
+(defun org/hash-table-keys (hash-table)
+  (let ((keys ()))
+    (maphash (lambda (k v) (push k keys)) hash-table)
+    keys))
+
+(defun org-table-build (table)
+  "Build a table from TABLE, assume that TABLE consist of a
+hash to each row that in turn has a hash to each column"
+  (let ((header nil)
+	(start-header (point)))
+    (maphash (lambda (row cols)
+	       (insert "|" row "|")
+	       ;; Sort the keys 
+	       (let ((keys (sort (org/hash-table-keys cols)
+				 (lambda (k0 k1) (string<  k0 k1)))))
+		 ;; Select the row with most columns to be the header
+		 (when (> (length  keys) (length  header)) (setq header keys))
+		 ;; Iterate over the row and insert the columns
+		 (dolist (key keys)
+		   (insert (car (gethash key cols)) "|")
+		   )
+		 )
+	       ;; 
+	       (newline)
+	       ) table)
+    (newline)
+
+    ;; Create Header
+    (goto-char start-header)
+    (insert "| |")
+    (dolist (col header) (insert col "|"))
+    (newline)
+    (insert "|-+-|")
+    (newline)
+    (goto-char start-header)
+    (org-table-align)
+    )
+  )
+
+(defun org-table-build-simple (table)
+  "Build a table from TABLE assume that it has a hash to each row
+and the hash contain a list of the columns" 
+  (let ((start_build (point))
+	(end))
+    (maphash (lambda (row cols) 
+	       (insert "|" row "|") 
+	       (insert (mapconcat 'identity (nreverse cols) "|") "|")
+	       (newline)) 
+	     table )
+    (goto-char start_build)
+    (org-table-align)
+    (setq end (org-table-end))
+    (goto-char end)
+  )
+)
+
+(defun org/get-row-key (row_name col_re)
+  "Get the key associated with the ROW_NAME, i.e remove the column key from the row"
+  (replace-regexp-in-string col_re "" row_name)
+  )
+
+(defun org-table-pack (rows col_re)
+  "Packs a Nx2 table into a RxC table where R is the unique rows
+   matching the entries in ROWS_IN and C is the columns matching the
+   COL_RE. ROWS can contain regexp for each entry. But not a comma
+   since that's use to sepparate the entries. It expects the
+   layout of the Nx2 table to be: 
+   |<row name and col identifier>|<data>|
+
+   for example:
+   This command:
+   (org/pack-table \"r1,r2\" \"c[0-9]+\")
+   
+   On this table:
+   | r1c1| 0x1 |
+   | r1c0| 0x0 |
+   | r2c0| 0x2 |
+   | c1r2| 0x3 |
+   | r2c2| 0x4 |
+   
+   Will give:
+   |    |  c0 |  c1 |  c2 |
+   |----+-----+-----+-----|
+   | r1 | 0x0 | 0x1 |     |
+   | r2 | 0x2 | 0x3 | 0x4 |"
+  
+  (interactive  
+   (list (read-regexp "Enter name for each entry: ")
+	 (read-regexp "Enter regex for identifying columns: " )))
+
+  ;; Switch to org-mode 
+  (org-mode)
+  (define-hash-table-test 'str-hash 'string-equal 'sxhash)
+ 
+  (let* ((start (if (use-region-p) (region-beginning) (point)))
+	 (end (if (use-region-p) (region-end) (point-max)))
+	 (rows (mapcar 'chomp (split-string rows ",")))
+	 (col_re (format "\\(%s\\)" col_re))
+	 ;; Create the hash table
+	 (table (make-hash-table :test 'str-hash ))
+	 ;; Create the regex for identifying the rows
+	 (row_re (concat "\\(" (mapconcat 'identity rows "\\|")"\\)")))
+
+    ;; Go to the beginning of the region
+    (goto-char start)
+    ;; Populate the table by searching each line
+    (while (search-forward-regexp col_re end t)
+      (let ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+	(when (string-match row_re line)
+	  (let* ((row_key (org/get-row-key (match-string 1 line) col_re)) 
+		 ;; Get the hash table for the row, create it if it doesn't exist 
+		 (row (if (gethash row_key table) 
+			  (gethash row_key table)
+			(progn 
+			  (puthash row_key (make-hash-table :test 'str-hash) table)
+			  (gethash row_key table)))))
+	    (org/add-column line col_re row)
+	    )
+	  )
+	)
+      )
+    (goto-char start)
+    (org-table-build table)
+    (goto-char start)
+    )
+)
+
+(defun org-table-copy-field-to-string ()
+    "Copy field to string"
+  (buffer-substring-no-properties 
+   (1+ (search-backward-regexp "[|+]")) 
+   (1- (search-forward-regexp "[|+]" nil t 2)))
+)
+;; Modified org-table-goto-column to include |-----+ cells
+(defun org-table-goto-column-inclusive (n &optional on-delim force)
+  "Move the cursor to the Nth column in the current table line, including separator fields.
+With optional argument ON-DELIM, stop with point before the left delimiter
+of the field.
+If there are less than N fields, just go to after the last delimiter.
+However, when FORCE is non-nil, create new columns if necessary."
+  (interactive "p")
+  (beginning-of-line 1)
+  (when (> n 0)
+    (while (and (> (setq n (1- n)) -1)
+		(or (search-forward-regexp "[|+]" (point-at-eol) t)
+		    (and force
+			 (progn (end-of-line 1)
+				(skip-chars-backward "^|")
+				(insert " | ")
+				t)))))
+    (when (and force (not (looking-at ".*|")))
+      (save-excursion (end-of-line 1) (insert " | ")))
+    (if on-delim
+	(backward-char 1)
+      (if (looking-at " ") (forward-char 1)))))
+
+(defun org-table-merge (col &optional ind)
+  " Merge column specified by COL from all the tables in the file.
+IND specifies what column to use as reference, it defaults to the first column (0),
+Note that the entries used as keys, the ind column, are case sensitive.
+
+For example:
+(org-table-merge 1)
+
+On these tables:
+|    |  c0 |  c1 |
+|----+-----+-----|
+| r2 | 0x0 | 0x1 |
+| r1 | 0x2 | 0x3 |
+| r3 |     | 0x4 | 
+
+|    |  c0 |  c1 |
+|----+-----+-----|
+| r1 | 0x7 | 0x8 |
+| r2 | 0x5 | 0x6 |
+| r3 | 0x9 | 0x1 |
+
+Will give
+|    |  c0 |  c0 |
+|----+-----+-----|
+| r2 | 0x0 | 0x5 |
+| r1 | 0x2 | 0x7 |
+| r3 |     | 0x9 |"
+
+  (interactive (list (read-string "Specify column to merge: ")))
+
+  (when (not ind) (setq ind 1))
+
+  ;; Switch to org mode
+  (org-mode)
+  ;; Setup the hash table
+  (define-hash-table-test 'str-hash 'string-equal 'sxhash)
+  ;; let* evaluate at point
+  (let* ((start (if (use-region-p) (region-beginning) (point)))
+         (curr start)
+	 (end (if (use-region-p) (region-end) (point-max)))
+         (col (string-to-int col))
+	 ;; Create the hash table
+	 (table (make-hash-table :test 'str-hash )))
+    ;; Iterate from current position to eof
+    (while (search-forward-regexp "^[ ]*|" end t)
+      ;; Jump to the index field
+      (org-table-goto-column-inclusive ind)
+       ;;      Get the key that identify the row.
+      (let* ((key (chomp (org-table-copy-field-to-string)))
+	     ;; Get the row form the table
+	     (row (gethash key table))
+	     ;; Specify local variable for the data
+	     (data))
+	;; Move to the column specified by the user
+	(org-table-goto-column-inclusive col)
+	;; Copy the data from that field
+	(setq data (org-table-copy-field-to-string))
+	;; Add data to row
+	(push data row)
+	;; Update the row in the table
+	(puthash key row table)
+	)
+      )
+    (goto-char start)
+    (org-table-build-simple table)
+    )
+)
+
+(defun org-table-create-header-regexp (regex match-group)
+  "Create header from matching regex"
+  (interactive (list (read-string "Regex for header: ")
+		     (read-string "Group to match (default 0): " nil "0")))
+  (let ((header nil)
+	(start (point))
+	(match-group (string-to-int match-group)))
+    (while (search-forward-regexp regex (point-max) t)
+       (push (match-string-no-properties match-group) header)
+    )
+
+    (goto-char start)
+    (insert "|")
+    (insert (mapconcat 'identity (nreverse header) "|"))
+    (insert "|\n|-+-|")
+    (goto-char start)
+    (org-table-align)
+  )
+)
+
+;; (defun org-table-zip (&optional ind)
+;; "Zip tables together. IND is optional and specifies which column to use as header.
+;; It assumes that the columns matches up.
+
+;; For example:
+;; (org-table-zip 1)
+
+;; On these tables:
+;; | h0 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | r2 | 0x0 | 0x1 |
+;; | r1 | 0x2 | 0x3 |
+;; | r3 |     | 0x4 | 
+
+;; | h1 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | r1 | 0x7 | 0x8 |
+;; | r2 | 0x5 | 0x6 |
+;; | r3 | 0x9 | 0x1 |
+
+;; Will give
+;; | r1 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 | 0x2 | 0x3 |
+;; | h1 | 0x7 | 0x8 |
+
+;; | r2 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 | 0x0 | 0x1 |
+;; | h1 | 0x5 | 0x6 |
+
+;; | r3 |  c0 |  c1 |
+;; |----+-----+-----|
+;; | h0 |     | 0x4 | 
+;; | h1 | 0x9 | 0x1 |
+;; "
+;; (interactive "p")
+;; (when (not ind) (setq ind 1))
+
+;; ;; Switch to org mode
+;; (org-mode)
+;; ;; ;; Setup the hash table
+;; ;; (define-hash-table-test 'str-hash 'string-equal 'sxhash)
+;; ;; ;; let* evaluate at point
+;; ;; (let* ((start (if (use-region-p) (region-beginning) (point)))
+;; ;;        (curr start)
+;; ;;        (end (if (use-region-p) (region-end) (point-max)))
+;; ;;        (col (string-to-int col))
+;; ;;        ;; Create the hash table
+;; ;;        (table (make-hash-table :test 'str-hash )))
+;; ;;   ;; Iterate from current position to eof
+;; ;;   (while (search-forward-regexp "^[ ]*|" end t)
+;; ;;     ;; Jump to the index field
+;; ;;     (org-table-goto-column-inclusive ind)
+;; ;;     ;;      Get the key that identify the row.
+;; ;;     (let* ((key (chomp (org-table-copy-field-to-string)))
+;; ;; 	   ;; Get the row form the table
+;; ;; 	   (row (gethash key table))
+;; ;; 	   ;; Specify local variable for the data
+;; ;; 	   (data))
+;; ;;       ;; Move to the column specified by the user
+;; ;;       (org-table-goto-column-inclusive col)
+;; ;;       ;; Copy the data from that field
+;; ;;       (setq data (org-table-copy-field-to-string))
+;; ;;       ;; Add data to row
+;; ;;       (push data row)
+;; ;;       ;; Update the row in the table
+;; ;;       (puthash key row table)
+;; ;;       )
+;; ;;     )
+;; ;;   (goto-char start)
+;; ;;   (org-table-build-simple table)
+;; ;;   )
+;; ;; let* evaluate at point
+;; (let* ((start (if (use-region-p) (region-beginning) (point)))
+;;        (end (if (use-region-p) (region-end) (point-max)))
+;;        (curr start)
+;;        (key))
+;;   (goto-char start)
+;;   ;; Goto the first line
+;;   (search-forward-regexp "^[ ]*|" end t)
+;;   (goto-char (org-table-begin))
+;;   (org-table-goto-column-inclusive ind)
+;;   (setq key (chomp (org-table-copy-field-to-string)))
+;;   (while (org-table-ne))
+  
+;;   )
+;; )
+
+
+;; (dotemacs/load-user-file "string-inflection.el")
+;; Cycle between snake case, camel case, etc.
+(require 'string-inflection)
+(global-set-key (kbd "C-;") 'string-inflection-cycle ) 
+
+;; (global-set-key (kbd "C-c i") 'string-inflection-cycle)
+;; (global-set-key (kbd "C-c C") 'string-inflection-camelcase)        ;; Force to CamelCase
+;; (global-set-key (kbd "C-c L") 'string-inflection-lower-camelcase)  ;; Force to lowerCamelCase
+;; (global-set-key (kbd "C-c J") 'string-inflection-java-style-cycle) ;; Cycle through Java styles
+
 ;;(dotemacs/load-user-file "rtags.el")
 ;;(dotemacs/load-user-file "gtags.el")
-(dotemacs/load-user-file "flycheck.el")
+;; (dotemacs/load-user-file "flycheck.el")
+;;; flycheck --- setuo flycheck
+;;; Commentary:
+;;; Code:
+(require 'flycheck )
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; Disable clang check, gcc check works better
+(setq-default flycheck-disabled-checkers
+	      (append flycheck-disabled-checkers
+		      '(c/c++-clang)))
+;; Specify language standard in dir locals file: .dir-locals.el 
+;; ((c++-mode
+;;   (flycheck-clang-language-standard . "c++14")
+;;   (flycheck-gcc-language-standard . "c++14")))
+
 ;; Modes
-(dotemacs/load-user-file "modes.el")
+;; (dotemacs/load-user-file "modes.el")
+;; =============================================================================
+;; Miscellaneous modes:
+;; =============================================================================
+
+;; GLSL mode -------------------------------------------------------------------
+(autoload 'glsl-mode "glsl-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
+;; -----------------------------------------------------------------------------
+
+;; CUA mode --------------------------------------------------------------------
+;; Annoying thing when cua-mode is enable. Highlighting with the mouse
+;; becomes a pain. Due to that in cua-mode the highlight selection
+;; follows the cursor when scrolling.
+;; (cua-mode t) ;; 
+;; (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
+;; (setq cua-enable-cua-keys nil) ;; disable windows shortcuts
+;; (cua-selection-mode nil )
+(set-variable 'shift-select-mode t)
+;; -----------------------------------------------------------------------------
+
+;; ;; Init android mode -----------------------------------------------------------
+;; (let ((default-directory "~/.emacs.d/plugins/"))
+;;   (normal-top-level-add-to-load-path 
+;;    '("android-mode")))
+
+
+;; Enable android mode
+
+;; (require 'android-mode)
+
+;; (custom-set-variables '(android-mode-sdk-dir "/opt/android-sdk"))
+;; -----------------------------------------------------------------------------
+
+;; ;; Cuda mode -------------------------------------------------------------------
+;; (autoload 'cuda-mode "cuda-mode.el" "Cuda mode." t)
+;; (setq auto-mode-alist (append '(("/*.\.cu$" . cuda-mode)) auto-mode-alist))
+;; ;; -----------------------------------------------------------------------------
+
+;; ;; Cython mode -----------------------------------------------------------------
+;; (autoload 'cython-mode "cython-mode.el" "Cython mode" t)
+;;    ;;(autoload 'cython-mode "cython-mode" nil t)
+;;    ;; (add-to-list 'auto-mode-alist '("\\.pyx\\'" . cython-mode))
+;;    ;;(add-to-list 'auto-mode-alist '("\\.pyd\\'" . cython-mode))
+;; -----------------------------------------------------------------------------
+
+;; Mel mode --------------------------------------------------------------------
+(autoload 'mel-mode "mel-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.mel$" . mel-mode))
+;; -----------------------------------------------------------------------------
+
+;; Org mode --------------------------------------------------------------------
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) (gnuplot . t) (sh . t) (C . t)))
+
+
+;; Calendar --------------------------------------------------------------------
+(setq calendar-week-start-day 1)
+
+
 
 ;; Language specific
-(dotemacs/load-user-file "lisp.el")
-(dotemacs/load-user-file "c-family.el")
-(when (not dotemacs/is-work)
-  (dotemacs/load-user-file "go.el")
-  (dotemacs/load-user-file "arduino.el")
-  (dotemacs/load-user-file "sudo-edit.el")
-  (dotemacs/load-user-file "ledger.el"))
+;; (dotemacs/load-user-file "lisp.el")
+;; =============================================================================
+;; Lisp
+;; =============================================================================
+
+;; Color hexvalues with their color, when in lisp-mode
+(defvar hexcolour-keywords
+  '(("#[[:xdigit:]]\\{6\\}"
+     (0 (put-text-property (match-beginning 0)
+			   (match-end 0)
+			   'face (list :background 
+				       (match-string-no-properties 0)))))))
+
+(defun hexcolour-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolour-keywords))
+
+(add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock)
+
+;; (dotemacs/load-user-file "c-family.el")
+;; =============================================================================
+;; C family:
+;; Specific for C, C++ and other in the c family
+;; =============================================================================
+
+;; (setq c-default-style "linux"
+;;       c-basic-offset 2)
+(setq c-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq objc-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+(setq c++-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+
+
+;;; set the default mode for .h files to c++-mode
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
+;;; Enable subword-mode which makes it easier to work with camelCase words.
+(add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
+
+;; ;;; Enable <> to be seen by the paranthesis matching
+;; (modify-syntax-entry ?< "(>" c-mode-syntax-table)
+
+;; ============================= Functions =====================================
+
+;; --------------------------- Insert comment ----------------------------------
+(defun insert-function-comment ()
+  (interactive)
+  (insert "/**")  (indent-according-to-mode)
+  (insert "\n* ") (indent-according-to-mode)
+  (insert "\n*/") (indent-according-to-mode)
+  (previous-line 1)
+  (end-of-line)
+  )
+
+;; --------------------------- Replace define ----------------------------------
+(defun replace-define()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <var> with <content> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the first with the second.
+      (replace-regexp (concat "\\_<"(nth 1 line)"\\_>") (nth 2 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+
+(defun replace-define-undo()
+"Place cursor on a #define <var> <content> and execute this command and it will 
+ replace all <content> with <var> in the file. 
+ Basically evaluating the define variable"
+(interactive)
+(setq line (split-string (thing-at-point 'line) ))
+(if (equal (car line) "#define") 
+    (progn 
+      ;; save current position
+      (setq curr-pos (point))
+      ;; Jump to the end of line
+      (end-of-line)
+      ;; Replace the second with the first
+      (replace-string (nth 2 line) (nth 1 line) )
+      ;; return to the same position
+      (goto-char curr-pos)
+      ;; move to the end of the line to indicate that it's done.
+      (end-of-line) )
+    ( message "Not a #define directive!" )
+  )
+)
+
+;; ---------------------------- Get class scope --------------------------------
+;; Work on over the weekend.
+;; (defun get-class-scope-auto ()
+;; ;; Todo expand to add an offset so you can choose which class to use
+;; ;; if there are more.
+;; "Prints the class scope of the first class it can find in the
+;; buffer. For example class MyClass {}; is declared first it will
+;; print auto MyClass:: 
+
+;; if the class is templated, 
+;; template< typename _FirstTemplate,
+;;           typename _SecondTemplate>
+;; class MyClass {};
+;; it will print
+;; template< typename _FT, typename _ST>
+;; auto MyClass<_FT,_ST>
+;; Note that for now it wont check for name clashes i.e if you have
+;; template< typename _Two, typename _Template>
+;; it will be squashed to template< typename _T, typename _T>
+;; So if you know that you have potential name clashes turn off the name mangling.
+;;  ")
+;; ============================= Key bindings ==================================
+;; Hide/Show code blocks
+(add-hook 'c-mode-common-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+    (local-set-key (kbd "C-c <down>")  'hs-show-all)
+    (hs-minor-mode t)))
+
+;; Switch between header and implementation
+(setq ff-search-directories
+      '("." "../src" "../include"))
+(add-hook 'c-mode-common-hook
+  (lambda() 
+    (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
+
+;; (add-hook 'c-mode-common-hook
+;;   (lambda() 
+;;     (local-set-key  (kbd "\C-c \C-x") 'uncomment-region)))
+
+;; Insert doxygen C based comment
+(global-set-key (kbd "C-c i") 'insert-function-comment)
+
+;; (when (not dotemacs/is-work)
+;;   (dotemacs/load-user-file "go.el")
+;;   (dotemacs/load-user-file "arduino.el")
+;;   (dotemacs/load-user-file "sudo-edit.el")
+;;   (dotemacs/load-user-file "ledger.el"))
+;; go.el
+(add-hook 'go-mode-hook 
+  (lambda ()
+    (setq-default) 
+    (setq tab-width 2) 
+    (setq standard-indent 2) 
+    (setq indent-tabs-mode nil)))
+
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+
+;; arduino.el
+(defun init-arduino ()
+"Template arduino sketch"
+(interactive)
+(insert "void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}")
+)
+;; sudo-edit
+(require 'sudo-edit)
+(global-set-key (kbd "C-c C-r") 'sudo-edit-current-file)
+;; ledger.el
+;; (use-package ledger-mode 
+;; :ensure t
+;; :init 
+;; (setq ledger-clear-whole-transactions 1)
+;; :mode "\\.dat"
+;; )
+(require 'ledger-mode)
+(setq ledger-clear-whole-transactions 1)
+;;; set the default mode for .dat files to ledger-mode
+(add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode))
+
 
 ;; (when (not dotemacs/is-work)
 ;;   (dotemacs/load-user-file "haskell.el"))
-(dotemacs/load-user-file "python.el")
-(dotemacs/load-user-file "shell.el")
+;; (dotemacs/load-user-file "python.el")
+;; =============================================================================
+;; Python
+;; =============================================================================
+
+;; Indentation
+(setq python-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq python-indent 2))))
+
+;; (dotemacs/load-user-file "shell.el")
+;; =============================================================================
+;; Shell
+;; =============================================================================
+
+;; Indent using spaces
+(setq sh-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq c-indent-level 2))))
+
+(add-hook 'shell-mode-hook 
+	  (lambda ()
+	    ;; Enable color in shell
+	    (ansi-color-for-comint-mode-on)
+	    ;; Change Color theme in shell
+	    (setq ansi-color-names-vector
+		  ["#4d4d4d" "#D81860" "#60FF60" "#f9fd75" "#4695c8" "#a78edb" "#43afce" "#f3ebe2"])
+	    (setq ansi-color-map (ansi-color-make-color-map))
+	    ;; Disable echo in shell/ Hangs dirs
+	    ;; (setq comint-process-echoes t) 
+            ;; Disable yas minor mode
+            (yas-minor-mode -1)
+	    ;; Add go and goc to the dirtrack, Need tweak the regexp 
+	    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
+	    ))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -86,7 +2046,9 @@
  '(calendar-week-start-day 1)
  '(custom-safe-themes
    (quote
-    ("c882403a829de68ab34bd194264035de23e17012065631fcac29d5e05f7ebb5d" "a25c42c5e2a6a7a3b0331cad124c83406a71bc7e099b60c31dc28a1ff84e8c04" default))))
+    ("c882403a829de68ab34bd194264035de23e17012065631fcac29d5e05f7ebb5d"
+     "a25c42c5e2a6a7a3b0331cad124c83406a71bc7e099b60c31dc28a1ff84e8c04"
+     default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
