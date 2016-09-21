@@ -1,7 +1,57 @@
 #+TITLE: Emacs configuration
 
 Inspired by [[https://github.com/hrs/dotfiles/emacs.d][hrs]] org config
+* Package
+Add melpa to the package repo and activate all the packages.
 
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+#+END_SRC
+
+List all packages I use
+#+BEGIN_SRC emacs-lisp
+(setq package-list 
+      '(ag
+	async
+	auto-complete
+	buffer-move
+	evil-numbers
+	expand-region
+	flycheck
+	git-commit
+	gnuplot
+	go-autocomplete
+	ledger-mode
+	magit
+	magit-popup
+	mc-extras
+	move-text
+	multi-term
+	multiple-cursors
+	popup
+	rtags
+	string-inflection
+	sudo-edit
+	with-editor
+	yaml-mode
+	yasnippet ))
+#+END_SRC
+
+Install all packages in the package-list.
+#+BEGIN_SRC emacs-lisp
+;; Fetch the list of packages available 
+(unless package-archive-contents
+  (package-refresh-contents))
+
+;; Install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+#+END_SRC
 * Theme
   Using sunburst theme, 
 #+BEGIN_SRC emacs-lisp
