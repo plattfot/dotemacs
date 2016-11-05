@@ -1,0 +1,3 @@
+[submodule "themes/sunburst-theme"]
+	path = themes/sunburst-theme
+	url = git@github.com:plattfot/sunburst-theme.el.git
