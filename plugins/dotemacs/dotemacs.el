@@ -1,16 +1,16 @@
-;; <header>
+;;; dotemacs -- Load config files
 
-(defconst dotemacs/path-to-dotemacs "<path-to-dotemacs>")
-(defconst dotemacs/user-init-dir "<path-to-init.d>")
+;;; Commentary:
+;; Load config files for init.el.
 
-;; =============================================================================
-;; Load init files 
+;;; Code:
+;; Load init files
 ;; url; http://stackoverflow.com/questions/2079095/how-to-modularize-an-emacs-configuration
 ;; author: seh
-;; =============================================================================
 (defun dotemacs/load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file dotemacs/user-init-dir)))				
+"Load and eval FILE in the init.d directory."
+(interactive "f")
+  (load-file (expand-file-name file "~/.emacs.d/init.d")))
 
 (provide 'dotemacs)
+;;; dotemacs.el ends here

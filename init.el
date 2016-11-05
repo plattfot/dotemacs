@@ -1,7 +1,4 @@
-;; -*- mode: lisp -*-
-
 ;; To execute an lisp function in replace regexp do \,(<function>)
- 
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -37,10 +34,6 @@
       (dotemacs/load-user-file "gccsense.el"))
   (dotemacs/load-user-file "home.el")
 )
-
-;; Home
-;; (when (not dotemacs/is-work)
-;;   (dotemacs/load-user-file "nerv.el"))
 
 ;; Key bindings
 (dotemacs/load-user-file "macros.el")
@@ -78,6 +71,7 @@
 ;;   (dotemacs/load-user-file "haskell.el"))
 (dotemacs/load-user-file "python.el")
 (dotemacs/load-user-file "shell.el")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -89,7 +83,10 @@
     ("c882403a829de68ab34bd194264035de23e17012065631fcac29d5e05f7ebb5d" "a25c42c5e2a6a7a3b0331cad124c83406a71bc7e099b60c31dc28a1ff84e8c04" default)))
  '(package-selected-packages
    (quote
-    (yasnippet yaml-mode white-sand-theme use-package sudo-edit string-inflection rtags multi-term move-text mc-extras magit ledger-mode go-autocomplete gnuplot flycheck expand-region evil-numbers company cmake-mode buffer-move ag))))
+    (yasnippet yaml-mode white-sand-theme use-package sudo-edit
+    string-inflection rtags multi-term move-text mc-extras magit
+    ledger-mode go-autocomplete gnuplot flycheck expand-region
+    evil-numbers company cmake-mode buffer-move ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
