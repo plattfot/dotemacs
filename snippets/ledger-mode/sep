@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: September
+# key: sep
+# --
+`(format-time-string "%Y/09/")`$0
