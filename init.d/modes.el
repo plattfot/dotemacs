@@ -61,3 +61,15 @@
 ;; Calendar --------------------------------------------------------------------
 (setq calendar-week-start-day 1)
 
+;;; Set the default mode for pb2 files
+(add-to-list 'auto-mode-alist '("PROJECT" . python-mode))
+(add-to-list 'auto-mode-alist '("BUILD.conf" . makefile-mode))
+
+;;; Set all files, which filename that starts with Makefile to makefile-gmake-mode
+(add-to-list 'auto-mode-alist '("Makefile.*" . makefile-gmake-mode))
+;;; Set all files that are in the modules directory to makefile
+(add-to-list 'auto-mode-alist '("modules/.*" . makefile-gmake-mode))
+(add-to-list 'auto-mode-alist '("Make/.*Rules" . makefile-gmake-mode))
+
+;;; Set all files that are in the modules directory to makefile
+(add-to-list 'auto-mode-alist '("\\.mk$" . makefile-gmake-mode))
