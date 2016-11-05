@@ -26,7 +26,8 @@
 	sudo-edit
 	with-editor
 	yaml-mode
-	yasnippet ))
+	yasnippet
+	company ))
 
 ;; Add melpa to the package repo
 (add-to-list 'package-archives
