@@ -48,7 +48,7 @@
 
 ;; ================================= Theme =====================================
 ;; Load sunburst theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
 (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
 
 ;;============================= Backup/autosave ================================
