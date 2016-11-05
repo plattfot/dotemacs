@@ -1,6 +1,7 @@
 # Emacs backup stuff
 .#*
 .yas-compiled-snippets.el
-autosave
-elpa
 ac-comphist.dat
+autosave
+backup
+elpa
