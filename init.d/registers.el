@@ -2,5 +2,5 @@
 ;; Registers
 ;; =============================================================================
 
-(set-register ?e (cons 'file dotemacs/path-to-dotemacs)) 
-(set-register ?i (cons 'file dotemacs/user-init-dir)) 
+(set-register ?e (cons 'file "~/.emacs.d/init.el")) 
+(set-register ?i (cons 'file "~/.emacs.d/init.d")) 
