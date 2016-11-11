@@ -5,3 +5,5 @@ ac-comphist.dat
 autosave
 backup
 elpa
+tramp
+.mc-lists.el
