@@ -1,0 +1,385 @@
+#+TITLE: Emacs configuration
+
+Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org config
+
+* General
+** Package management
+   Setup package to handle all packages I use. Will download packages
+   that are missing.
+   #+BEGIN_SRC emacs-lisp
+     (require 'package)
+     ; list the packages you want
+     (setq package-list 
+           '(ag
+             async
+             auto-complete
+             buffer-move
+             evil-numbers
+             expand-region
+             flycheck
+             git-commit
+             gnuplot
+             go-autocomplete
+             ledger-mode
+             magit
+             magit-popup
+             mc-extras
+             move-text
+             multi-term
+             multiple-cursors
+             popup
+             org-bullets
+             rtags
+             string-inflection
+             sudo-edit
+             with-editor
+             yaml-mode
+             yasnippet ))
+
+     ;; Add melpa to the package repo
+     (add-to-list 'package-archives
+                  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+     ;; Activate all the packages (in particular autoloads)
+     (package-initialize)
+
+     ;; Fetch the list of packages available 
+     (unless package-archive-contents
+       (package-(region-end)fresh-contents))
+
+     ;; Install the missing packages
+     (dolist (package package-list)
+       (unless (package-installed-p package)
+         (package-install package)))
+
+   #+END_SRC
+*** Custom plugins
+   Add path to custom plugins
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'load-path "~/.emacs.d/plugins")
+   #+END_SRC
+   
+** UI
+*** Maximize work area
+   Disable the menu, tool and scroll bar since they just take up
+   space.
+   #+BEGIN_SRC emacs-lisp
+     (menu-bar-mode 0)
+     (tool-bar-mode 0)
+     (scroll-bar-mode 0)
+   #+END_SRC
+*** Splash screen
+   Dismiss the startup screen
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-splash-screen t)
+   #+END_SRC
+   
+*** Font
+    Set font and font size
+    #+BEGIN_SRC emacs-lisp
+      (set-face-attribute 'default nil :height 92)
+      (set-face-attribute 'default nil :font "Hack")
+    #+END_SRC
+*** Column number
+   Show column number in the info bar
+   #+BEGIN_SRC emacs-lisp
+     (column-number-mode 1)
+   #+END_SRC
+** ibuffer
+    Use ibuffer instead of list-buffers, has some neat features.
+    #+BEGIN_SRC emacs-lisp
+      (defalias 'list-buffers 'ibuffer)    
+    #+END_SRC
+** Behaviour
+   Highlight matching brackets
+   #+BEGIN_SRC emacs-lisp
+     (show-paren-mode 1)
+   #+END_SRC
+   
+   Disable electric-indent-mode since I"m using C-j for that.
+   #+BEGIN_SRC emacs-lisp
+     (setq electric-indent-mode nil)
+   #+END_SRC
+** Backup/autosave
+   One annoying thing with emacs is it that it leaves backup files all
+   over the place.  Fixing that by dumping all backup/autosave files
+   in to one directory.
+   #+BEGIN_SRC emacs-lisp
+     (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+     (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+     (setq backup-directory-alist (list (cons ".*" backup-dir)))
+     (setq auto-save-list-file-prefix autosave-dir)
+     (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+   #+END_SRC
+
+** Theme
+   Point emacs to where it can find the sunburst theme. Depending on
+   if emacs is started in a shell or not load the correct theme.
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
+     (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+   #+END_SRC
+** Calendar
+   Week starts on Monday.
+   #+BEGIN_SRC emacs-lisp
+     (setq calendar-week-start-day 1)
+   #+END_SRC
+* Modes
+** Auto complete
+   Init autocomplete
+   #+BEGIN_SRC emacs-lisp
+     (require 'auto-complete-config)
+     (ac-config-default)
+   #+END_SRC
+   
+   Auto complete words when pressing tab. But disable it for enter.
+   #+BEGIN_SRC emacs-lisp
+     (define-key ac-completing-map "\t" 'ac-expand)
+     (define-key ac-completing-map "\r" nil)
+   #+END_SRC
+*** Programming specific 
+
+   Disable autocomplete when typing // comments in c++
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c++-mode-hook
+               (lambda ()
+                 (make-local-variable 'ac-ignores)
+                 (add-to-list 'ac-ignores "//")))
+   #+END_SRC
+                  
+   ac-omni-completion-sources is made buffer local so you need to add
+   it to a mode hook to activate on whatever buffer you want to use it
+   with.  This example uses C mode (as you probably surmised).
+   
+   auto-complete.el expects ac-omni-completion-sources to be a list of
+   cons cells where each cell's car is a regex that describes the
+   syntactical bits you want AutoComplete to be aware of. The cdr of
+   each cell is the source that will supply the completion data.  The
+   following tells autocomplete to begin completion when you type in a
+   . or a ->
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-common-hook 
+               '(lambda ()
+                  (add-to-list 'ac-omni-completion-sources
+                               (cons "\\." '(ac-source-semantic)))
+                  (add-to-list 'ac-omni-completion-sources
+                               (cons "->" '(ac-source-semantic)))
+                  ))
+
+   #+END_SRC
+   
+*** Enable for modes
+    Enable autocomplete for arduino and gmake's makefile since they're
+    not on by default.
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'ac-modes 'makefile-gmake-mode)
+      (add-to-list 'ac-modes 'arduino-mode)
+    #+END_SRC
+** Arduino
+   Function for setting up a arduino template sketch
+   #+BEGIN_SRC emacs-lisp
+     (defun init-arduino ()
+     "Template arduino sketch"
+     (interactive)
+     (insert "void setup() {
+       // put your setup code here, to run once:
+
+     }
+
+     void loop() {
+       // put your main code here, to run repeatedly:
+
+     }")
+     )   
+   #+END_SRC
+** Gnuplot
+   Enable gnuplot to be able to plot tables in org mode.
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+     (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+   #+END_SRC
+   Set that all files ending in .gp will use the gnuplot-mode
+   #+BEGIN_SRC emacs-lisp
+     (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+   #+END_SRC
+
+** C family
+   Specific for C, C++ and other in the c family
+
+   Set indentation to be two spaces.
+   #+BEGIN_SRC emacs-lisp
+     (setq c-mode-hook
+         (function (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq c-indent-level 2))))
+     (setq objc-mode-hook
+         (function (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq c-indent-level 2))))
+     (setq c++-mode-hook
+         (function (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq c-indent-level 2))))
+   #+END_SRC
+
+   Set the default mode for .h files to be c++-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+   #+END_SRC
+
+   Make it easier to work with camelCase words by enabling subword-mode
+   #+BEGIN_SRC emacs-lips
+     (add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
+   #+END_SRC
+
+   Add that it will also search src and include directories when
+   switching between header and source files
+   #+BEGIN_SRC emacs-lisp
+     (setq ff-search-directories '("." "../src" "../include"))
+   #+END_SRC
+* Custom functions
+** Buffer
+   Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
+   #+BEGIN_SRC emacs-lisp
+     (defun rename-current-file-or-buffer ()
+       "Rename current file and buffer, similar to save-as but removes
+     the old file"
+       (interactive)
+       (if (not (buffer-file-name))
+           (call-interactively 'rename-buffer)
+         (let ((file (buffer-file-name)))
+           (with-temp-buffer
+             (set-buffer (dired-noselect file))
+             (dired-do-rename)
+             (kill-buffer nil))))
+       nil)
+   #+END_SRC
+   To sync all open buffers with their respective files on disk. Source: [[https://www.emacswiki.org/emacs/RevertBuffer][here]]
+   #+BEGIN_SRC emacs-lisp
+     (defun revert-all-buffers ()
+         "Refreshes all open buffers from their respective files."
+         (interactive)
+         (dolist (buf (buffer-list))
+           (with-current-buffer buf
+             (when (and (buffer-file-name) (not (buffer-modified-p)))
+               (revert-buffer t t t) )))
+         (message "Refreshed open files.") )
+   #+END_SRC
+** Programming
+*** C++
+    Insert java style comment
+    /**
+     * <cursor>
+     */
+    #+BEGIN_SRC emacs-lisp
+      (defun insert-function-comment ()
+        (interactive)
+        (insert "/**")  (indent-according-to-mode)
+        (insert "\n* ") (indent-according-to-mode)
+        (insert "\n*/") (indent-according-to-mode)
+        (previous-line 1)
+        (end-of-line)
+        )
+    #+END_SRC
+
+    Expands a define macro for all matches in current buffer.
+    #+BEGIN_SRC emacs-lisp
+      (defun replace-define()
+      "Place cursor on a #define <var> <content> and execute this command and it will 
+       replace all <var> with <content> in the file. 
+       Basically evaluating the define variable"
+      (interactive)
+      (setq line (split-string (thing-at-point 'line) ))
+      (if (equal (car line) "#define") 
+          (progn 
+            ;; save current position
+            (setq curr-pos (point))
+            ;; Jump to the end of line
+            (end-of-line)
+            ;; Replace the first with the second.
+            (replace-regexp (concat "\\_<"(nth 1 line)"\\_>") (nth 2 line) )
+            ;; return to the same position
+            (goto-char curr-pos)
+            ;; move to the end of the line to indicate that it's done.
+            (end-of-line) )
+          ( message "Not a #define directive!" )
+        )
+      )
+    #+END_SRC
+
+    Undo the previous function.
+    #+BEGIN_SRC emacs-lisp
+      (defun replace-define-undo()
+      "Place cursor on a #define <var> <content> and execute this command and it will 
+       replace all <content> with <var> in the file. 
+       Undoing the expansion of the define variable"
+      (interactive)
+      (setq line (split-string (thing-at-point 'line) ))
+      (if (equal (car line) "#define") 
+          (progn 
+            ;; save current position
+            (setq curr-pos (point))
+            ;; Jump to the end of line
+            (end-of-line)
+            ;; Replace the second with the first
+            (replace-string (nth 2 line) (nth 1 line) )
+            ;; return to the same position
+            (goto-char curr-pos)
+            ;; move to the end of the line to indicate that it's done.
+            (end-of-line) )
+          ( message "Not a #define directive!" )
+        )
+      )
+    #+END_SRC
+* Keybindings
+** Gnuplot
+   Bind the F9 key to open a buffer into gnuplot mode
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key [(f9)] 'gnuplot-make-buffer)
+   #+END_SRC
+** Buffer functions
+   Key bindings for revert-all-buffers and rename current buffer
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c r") 'revert-all-buffers)
+     (global-set-key "\C-cR" 'rename-current-file-or-buffer)
+   #+END_SRC
+** Buffer move
+   Move buffers around instead of cycling with "C-x o"
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "<M-S-up>")     'buf-move-up)
+     (global-set-key (kbd "<M-S-down>")   'buf-move-down)
+     (global-set-key (kbd "<M-S-left>")   'buf-move-left)
+     (global-set-key (kbd "<M-S-right>")  'buf-move-right)
+   #+END_SRC
+** C Common
+   Hide/Show code blocks
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-common-hook
+       (lambda()
+         (local-set-key (kbd "C-c <right>") 'hs-show-block)
+         (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+         (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+         (local-set-key (kbd "C-c <down>")  'hs-show-all)
+         (hs-minor-mode t)))
+   #+END_SRC
+
+   When in a c family buffer use shift tab to switch between header
+   and source
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-common-hook
+       (lambda() 
+         (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
+   #+END_SRC
+   
+* Bug workarounds
+Workarounds for bugs I have encountered through out the years
+** Cursor turns black
+   Set the cursor color to white.
+   #+BEGIN_SRC emacs-lisp
+     (set-cursor-color "#ffffff")
+   #+END_SRC
+** Maximize emacs under KDE
+   Issue maximizing emacs with KDE at work
+   #+BEGIN_SRC emacs-lisp
+     (setq frame-resize-pixelwise t)
+   #+END_SRC
