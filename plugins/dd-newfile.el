@@ -1,7 +1,8 @@
-;; =============================================================================
-;; DD newfile
-;; =============================================================================
+;;; DD-newfile --- Functions to setup a new file at work.
 
+;;; Commentary:
+
+;;; Code:
 ;; ---------------------------- Boilerplate ------------------------------------
 (defun dd/insert-boilerplate()
 "Insert DD's boilerplate. Reads from file to avoid copyright issues."
@@ -103,16 +104,20 @@ and the name of the file."
 	(insert "\n")
 	(next-line (length path_list))
 	(insert "#endif")
-	(previous-line (+ (length path_list) 1)))
+	(forward-line (- (length path_list) 1)))
     (progn (insert "\n") (previous-line) )
     )
 )
 ) ;; insert-namespace
 
-(defun dd/setup-newfile ( args)
-"Adds boilerplate, description and namespaces"
+(defun dd/setup-newfile (args)
+"Add boilerplate, description and namespaces.
+ARGS are passed on to insert-namespace"
 (interactive "sAdd extra namespace (separated by space): ")
 (dd/insert-header)
 (insert "\n\n")
 (dd/insert-namespace args)
 )
+
+(provide 'dd-newfile)
+;;; dd-newfile.el ends here

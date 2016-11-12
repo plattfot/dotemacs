@@ -13,8 +13,7 @@
            (gtags-select-it nil))
           ) ))
 
-;; (global-set-key "\M-;" 'ww-next-gtag)   ;; M-; cycles to next result, after doing M-. C-M-. or
-C-M-,
+;; (global-set-key "\M-;" 'ww-next-gtag)   ;; M-; cycles to next result, after doing M-. C-M-. or C-M-,
 (global-set-key "M-." 'gtags-find-tag) ;; M-. finds tag
 (global-set-key "C-M-." 'gtags-find-rtag)   ;; C-M-. find all references of tag
 (global-set-key "C-M-," 'gtags-find-symbol) ;; C-M-, find all usages of symbol.

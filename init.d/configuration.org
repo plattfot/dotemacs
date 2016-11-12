@@ -202,7 +202,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
    #+END_SRC
-
 ** C family
    Specific for C, C++ and other in the c family
 
@@ -236,6 +235,58 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    switching between header and source files
    #+BEGIN_SRC emacs-lisp
      (setq ff-search-directories '("." "../src" "../include"))
+   #+END_SRC
+** Flycheck
+   Enable flycheck globably 
+   #+BEGIN_SRC emacs-lisp
+     (require 'flycheck)
+     (add-hook 'after-init-hook #'global-flycheck-mode)
+   #+END_SRC
+
+   Disable clang check, gcc check works better
+   #+BEGIN_SRC emacs-lisp
+     (setq-default flycheck-disabled-checkers
+                   (append flycheck-disabled-checkers
+                           '(c/c++-clang)))
+   #+END_SRC
+*** Language standard in c++
+   Specify language standard in dir locals file: .dir-locals.el 
+   For example
+   ((c++-mode
+     (flycheck-clang-language-standard . "c++14")
+     (flycheck-gcc-language-standard . "c++14")))
+
+** Golang
+   Set indentation to be 2 spaces
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'go-mode-hook 
+       (lambda ()
+         (setq-default) 
+         (setq tab-width 2) 
+         (setq standard-indent 2) 
+         (setq indent-tabs-mode nil)))
+   #+END_SRC
+
+   Enable autocomplete for go
+   #+BEGIN_SRC emacs-lisp
+     (require 'go-autocomplete)
+   #+END_SRC
+** Haskell
+   Settings for programming haskell in emacs
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+     (autoload 'ghc-init "ghc" nil t)
+   #+END_SRC
+** Ledger
+   Settings for ledger
+   #+BEGIN_SRC emacs-lisp
+     (setq ledger-clear-whole-transactions 1)
+   #+END_SRC
+   
+   Set the default mode for .dat files to ledger
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode))
    #+END_SRC
 * Custom functions
 ** Buffer
@@ -331,7 +382,81 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
         )
       )
     #+END_SRC
+*** GTags
+    Cycling gtag result. Source [[https://www.emacswiki.org/emacs/CyclingGTagsResult][link]]
+    #+BEGIN_SRC emacs-lisp
+      (defun ww-next-gtag ()
+        "Find next matching tag, for GTAGS."
+        (interactive)
+        (let ((latest-gtags-buffer
+               (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
+                                       (buffer-list)) ))))
+          (cond (latest-gtags-buffer
+                 (switch-to-buffer latest-gtags-buffer)
+                 (forward-line)
+                 (gtags-select-it nil))
+                ) ))
+    #+END_SRC
+** Workspace
+   Function for splitting emacs into three frames. 
+   Really nice to use with i3wm.
+   #+BEGIN_SRC emacs-lisp
+     (defun setup-home ()
+     "Splits the session into three frames"
+     (interactive)
+     (delete-other-frames)
+     (delete-other-windows)
+     (make-frame-command)
+     (make-frame-command)
+     )
+   #+END_SRC
 * Keybindings
+** UI
+   Key bindings if I really need to see the menu and tool bar
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "<f5>") 'menu-bar-mode)
+     (global-set-key (kbd "<f6>") 'tool-bar-mode)
+   #+END_SRC
+
+** Navigation
+   Jump between windows using the arrow keys instead of cycling with
+   "C-x o".
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key [M-left] 'windmove-left)   ; move to left windnow
+     (global-set-key [M-right] 'windmove-right) ; move to right window
+     (global-set-key [M-up] 'windmove-up)       ; move to upper window
+     (global-set-key [M-down] 'windmove-down)   ; move to downer window
+   #+END_SRC
+
+   Jump to specific line.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-g") 'goto-line)
+   #+END_SRC
+** Text search
+   I'm using the regex variant of the text search more than the normal one.
+   Swapping keybindings for them
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-M-s") 'isearch-forward)
+     (global-set-key (kbd "C-M-r") 'isearch-backward)
+     (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+     (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+     (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+   #+END_SRC
+** Text edit
+   Bind replace regexp to meta r
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-r") 'replace-regexp)
+   #+END_SRC
+   
+   Duplicate line
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c l") 'duplicate-line)
+   #+END_SRC
+** Magit
+   Run magit
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x g") 'magit-status)
+   #+END_SRC
 ** Gnuplot
    Bind the F9 key to open a buffer into gnuplot mode
    #+BEGIN_SRC emacs-lisp
@@ -344,7 +469,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (global-set-key "\C-cR" 'rename-current-file-or-buffer)
    #+END_SRC
 ** Buffer move
-   Move buffers around instead of cycling with "C-x o"
+   Move buffers around between windows
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "<M-S-up>")     'buf-move-up)
      (global-set-key (kbd "<M-S-down>")   'buf-move-down)
@@ -371,6 +496,36 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
          (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
    #+END_SRC
    
+** Evil numbers
+   Incrementing/decrementing numbers.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+     (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
+   #+END_SRC
+** Expand region
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-=") 'er/expand-region)
+   #+END_SRC
+** GTags
+   Key bindings for finding gtag, reference and usage of symbol
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-.") 'gtags-find-tag) ;; Finds tag
+     (global-set-key (kbd "C-M-.") 'gtags-find-rtag)   ;; Find all references of tag
+     (global-set-key (kbd "C-M-,") 'gtags-find-symbol) ;; Find all usages of symbol.
+   #+END_SRC
+** Java
+   Key bindings for Java autocomplete
+   #+BEGIN_SRC emacs-lisp
+     (local-set-key (kbd "C-c i") (quote ajc-import-all-unimported-class))
+     (local-set-key (kbd "C-c m") (quote ajc-import-class-under-point))
+   #+END_SRC
+** Compile
+   Key bindings to run make on current location and to re-run the
+   command.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "<f12>") 'compile)
+     (global-set-key (kbd "<f11>") 'recompile)
+   #+END_SRC
 * Bug workarounds
 Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
