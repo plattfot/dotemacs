@@ -877,3 +877,5 @@ Workarounds for bugs I have encountered through out the years
    #+BEGIN_SRC emacs-lisp
      (setq frame-resize-pixelwise t)
    #+END_SRC
+* Notes
+  To execute a lisp function in replace regexp do \,(<function>)
