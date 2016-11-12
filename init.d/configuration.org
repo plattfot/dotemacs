@@ -312,28 +312,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
      (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
    #+END_SRC
-** Default modes
-   Set default mode for pb2 files
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("PROJECT" . python-mode))
-     (add-to-list 'auto-mode-alist '("BUILD.conf" . makefile-mode))
-   #+END_SRC
-
-   Set all files, which filename that starts with Makefile to makefile-gmake-mode
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("Makefile.*" . makefile-gmake-mode))
-   #+END_SRC
-   
-   Set all files that are in the modules directory to makefile
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("modules/.*" . makefile-gmake-mode))
-     (add-to-list 'auto-mode-alist '("Make/.*Rules" . makefile-gmake-mode))
-   #+END_SRC
-
-   Set all files ending with .mk to makefile-gmake-mode
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-gmake-mode))
-   #+END_SRC
 ** Python
    Set indentation to 2 spaces and disable tab
    #+BEGIN_SRC emacs-lisp
@@ -382,6 +360,67 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Enable yasnippet
    #+BEGIN_SRC emacs-lisp
      (yas-global-mode 1)
+   #+END_SRC
+   
+   #+BEGIN_SRC emacs-lisp
+     (setq yas/indent-line nil)
+   #+END_SRC
+** Org
+   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file:
+ 
+   Use pretty bullet points instead of asterix
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (org-bullets-mode t)))
+   #+END_SRC
+   
+   Use a little downward-pointing arrow instead of the usual ellipsis
+   (=...=) when folded.
+   #+BEGIN_SRC emacs-lisp
+     (setq org-ellipsis "⤵")
+   #+END_SRC
+   
+   Use syntax highlighting in source blocks while editing.
+   #+BEGIN_SRC emacs-lisp
+     (setq org-src-fontify-natively t)
+   #+END_SRC
+   
+   # Doesn't work with yasnippet getting:
+   # yas--fallback: yasnippet fallback loop!
+   # This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+   # Make TAB act as if it were issued in a buffer of the language's major mode.
+   # #+BEGIN_SRC emacs-lisp
+   #   (setq org-src-tab-acts-natively t)
+   # #+END_SRC
+   
+   When editing a code snippet, use the current window rather than popping open a
+   new one (which shows the same information).
+   #+BEGIN_SRC emacs-lisp
+     (setq org-src-window-setup 'current-window)
+   #+END_SRC
+   
+** Default modes
+   Set default mode for pb2 files
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("PROJECT" . python-mode))
+     (add-to-list 'auto-mode-alist '("BUILD.conf" . makefile-mode))
+   #+END_SRC
+
+   Set all files, which filename that starts with Makefile to makefile-gmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("Makefile.*" . makefile-gmake-mode))
+   #+END_SRC
+   
+   Set all files that are in the modules directory to makefile
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("modules/.*" . makefile-gmake-mode))
+     (add-to-list 'auto-mode-alist '("Make/.*Rules" . makefile-gmake-mode))
+   #+END_SRC
+
+   Set all files ending with .mk to makefile-gmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-gmake-mode))
    #+END_SRC
 * Custom functions
 ** Buffer
@@ -866,7 +905,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (global-set-key (kbd "C-c C-r") 'sudo-edit-current-file)
    #+END_SRC
 * Bug workarounds
-Workarounds for bugs I have encountered through out the years
+  Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
    Set the cursor color to white.
    #+BEGIN_SRC emacs-lisp
