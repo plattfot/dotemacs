@@ -53,12 +53,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
          (package-install package)))
 
    #+END_SRC
-*** Custom plugins
-   Add path to custom plugins
-   #+BEGIN_SRC emacs-lisp
-   (add-to-list 'load-path "~/.emacs.d/plugins")
-   #+END_SRC
-   
+** Custom plugins
+  Add path to custom plugins
+  #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/plugins")
+  #+END_SRC
+  
 ** UI
 *** Maximize work area
    Disable the menu, tool and scroll bar since they just take up
@@ -288,6 +288,101 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode))
    #+END_SRC
+** Lisp
+   Color haxvalues with their respective color.
+   #+BEGIN_SRC emacs-lisp
+     (defvar hexcolour-keywords
+       '(("#[[:xdigit:]]\\{6\\}"
+          (0 (put-text-property (match-beginning 0)
+                                (match-end 0)
+                                'face (list :background 
+                                            (match-string-no-properties 0)))))))
+     (defun hexcolour-add-to-font-lock ()
+       (font-lock-add-keywords nil hexcolour-keywords))
+
+     (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock)
+   #+END_SRC
+** GLSL
+   Set files associated with glsl to use glsl mode
+   #+BEGIN_SRC emacs-lisp
+     (autoload 'glsl-mode "glsl-mode" nil t)
+     (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+     (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+     (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+     (add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
+     (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
+   #+END_SRC
+** Default modes
+   Set default mode for pb2 files
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("PROJECT" . python-mode))
+     (add-to-list 'auto-mode-alist '("BUILD.conf" . makefile-mode))
+   #+END_SRC
+
+   Set all files, which filename that starts with Makefile to makefile-gmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("Makefile.*" . makefile-gmake-mode))
+   #+END_SRC
+   
+   Set all files that are in the modules directory to makefile
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("modules/.*" . makefile-gmake-mode))
+     (add-to-list 'auto-mode-alist '("Make/.*Rules" . makefile-gmake-mode))
+   #+END_SRC
+
+   Set all files ending with .mk to makefile-gmake-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-gmake-mode))
+   #+END_SRC
+** Python
+   Set indentation to 2 spaces and disable tab
+   #+BEGIN_SRC emacs-lisp
+   (setq python-mode-hook
+    (function (lambda ()
+                (setq indent-tabs-mode nil)
+                (setq python-indent 2))))
+   #+END_SRC
+** RTags (Disabled)
+   # #+BEGIN_SRC emacs-lisp
+   #   (require 'rtags)
+   #   (require 'rtags-ac)
+   # #+END_SRC
+** Shell
+   Indent using spaces. Don't remember why I needed this one
+   #+BEGIN_SRC emacs-lisp
+     (setq sh-mode-hook
+         (function (lambda ()
+                     (setq indent-tabs-mode nil)
+                     (setq c-indent-level 2))))
+   #+END_SRC
+
+   Enable color in shell and define the color theme. Also disable
+   yasnippet in shell mode since that's messing with the shell
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'shell-mode-hook 
+               (lambda ()
+                 ;; Enable color in shell
+                 (ansi-color-for-comint-mode-on)
+                 ;; Change Color theme in shell
+                 (setq ansi-color-names-vector
+                       ["#4d4d4d" "#D81860" "#60FF60" "#f9fd75" "#4695c8" "#a78edb" "#43afce" "#f3ebe2"])
+                 (setq ansi-color-map (ansi-color-make-color-map))
+                 ;; Disable yas minor mode
+                 (yas-minor-mode -1)
+                 ;; Add go and goc to the dirtrack, Need tweak the regexp 
+                 ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
+                 ))
+   #+END_SRC
+** Tramp
+   Set the ssh to be the default method for tramp
+   #+BEGIN_SRC emacs-lisp
+     (setq tramp-default-method "ssh")   
+   #+END_SRC
+** Yasnippet
+   Enable yasnippet
+   #+BEGIN_SRC emacs-lisp
+     (yas-global-mode 1)
+   #+END_SRC
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
@@ -410,7 +505,182 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (make-frame-command)
      )
    #+END_SRC
+** Shell
+   Clear shell in emacs
+   #+BEGIN_SRC emacs-lisp
+     (defun clear-shell ()
+        (interactive)
+        (let ((comint-buffer-maximum-size 0))
+          (comint-truncate-buffer)))
+   #+END_SRC
+** Multiple Cursors extentions
+   Extra functions for Multiple cursors
+   
+   #+BEGIN_SRC emacs-lisp
+     (defun mc/insert-dec-numbers (arg)
+       "Insert decreasing numbers for each cursor, starting at number
+     of cursors - 1 or ARG."
+       (interactive "P")
+       (setq mc--insert-numbers-number (or arg (1- (mc/num-cursors))))
+       (mc/for-each-cursor-ordered
+        (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease cursor)))
+
+     (defun mc--insert-number-and-decrease ()
+       (interactive)
+       (insert (number-to-string mc--insert-numbers-number))
+       (setq mc--insert-numbers-number (1- mc--insert-numbers-number)))
+
+     (defun mc/insert-same-numbers-per-line (arg)
+       "Insert increasing numbers for each cursor that are on a separate
+     line, cursors on the same line will insert the same number, starts at
+     0 or ARG"
+     (interactive "P")
+     (setq mc--current-line nil
+           mc--insert-numbers-number (or arg 0) )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase-for-diff-lines
+                                          cursor)))
+
+     (defun mc/insert-dec-same-numbers-per-line (arg)
+       "Insert decreasing numbers for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     number, starts at number of cursors - 1 or ARG"
+     (interactive "P")
+     (setq mc--current-line nil
+           mc--insert-numbers-number (or arg (1- (mc/num-cursors))) )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease-for-diff-lines
+                                          cursor)))
+
+     (defun mc--insert-number-and-increase-for-diff-lines ()
+     (interactive)
+     (mc--insert-number-and-change-for-diff-lines '1+))
+
+     (defun mc--insert-number-and-decrease-for-diff-lines ()
+     (interactive)
+     (mc--insert-number-and-change-for-diff-lines '1-))
+
+     (defun mc--insert-number-and-change-for-diff-lines (change)
+       (interactive)
+       (if (not mc--current-line) 
+           ;; If first time init mc--current-line
+           (progn (setq mc--current-line (line-number-at-pos))
+                  (insert (number-to-string mc--insert-numbers-number)))
+         ;; Else compare lines and set accordingly
+         (progn  
+           ;; If current-line and the line is it on are different change
+           ;; and insert.
+           (if (not (= mc--current-line (line-number-at-pos)))
+               (progn 
+                 (setq mc--current-line (line-number-at-pos)
+                       mc--insert-numbers-number 
+                       (funcall change mc--insert-numbers-number))
+                 (insert (number-to-string mc--insert-numbers-number)))
+             ;; Else insert number.
+             (insert (number-to-string mc--insert-numbers-number)) ))))
+
+     (defun mc/insert-characters (char)
+       "Insert increasing character for each cursor, it starts from
+     the user specified character"
+     (interactive  "cSpecify letter to start from")
+     (setq mc--insert-chars-char char)
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+                                          cursor)))
+
+     (defun mc/insert-dec-characters (char)
+       "Insert decreasing character for each cursor, it starts from
+     the user specified character"
+     (interactive  "cSpecify letter to start from")
+     (setq mc--insert-chars-char char)
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+                                          cursor)))
+
+     (defun mc--insert-char-and-increase ()
+       (interactive)
+       (mc--insert-char-and-change '1+))
+
+     (defun mc--insert-char-and-decrease ()
+       (interactive)
+       (mc--insert-char-and-change '1-))
+
+     (defun mc--insert-char-and-change (change)
+       (interactive)
+       (insert mc--insert-chars-char)
+       (setq mc--insert-chars-char (funcall change mc--insert-chars-char)))
+
+
+     (defun mc/insert-same-chars-per-line (char)
+       "Insert increasing character for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     character, it starts from the user specified character."
+     (interactive  "cSpecify letter to start from")
+     (setq mc--current-line nil
+           mc--insert-chars-char char )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase-for-diff-lines
+                                          cursor)))
+
+     (defun mc/insert-dec-same-chars-per-line (char)
+       "Insert decreasing character for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     character, it starts from the user specified character."
+     (interactive  "cSpecify letter to start from")
+     (setq mc--current-line nil
+           mc--insert-chars-char char )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-decrease-for-diff-lines
+                                          cursor)))
+
+     (defun mc--insert-char-and-increase-for-diff-lines ()
+       (interactive)
+       (mc--insert-char-and-change-for-diff-lines '1+))
+
+     (defun mc--insert-char-and-decrease-for-diff-lines ()
+       (interactive)
+       (mc--insert-char-and-change-for-diff-lines '1-))
+
+     (defun mc--insert-char-and-change-for-diff-lines ( change )
+       (interactive)
+       (if (not mc--current-line) 
+           ;; If first time init mc--current-line
+           (progn (setq mc--current-line (line-number-at-pos))
+                  (insert mc--insert-chars-char))
+         ;; Else compare lines and set accordingly.
+         (progn  
+           ;; If current-line and the line is it on is different increment
+           ;; and insert.
+           (if (not (= mc--current-line (line-number-at-pos)))
+               (progn (setq mc--current-line (line-number-at-pos)
+                            mc--insert-chars-char 
+                            (funcall change mc--insert-chars-char))
+                      (insert mc--insert-chars-char))
+             ;; Else insert char.
+             (insert mc--insert-chars-char)) )))
+
+   #+END_SRC
+
 * Keybindings
+** Macros
+    Macro to quickly open a file that is located on my machine at work.
+    Inserts "fredriks@bcws067.d2vancouver.com:fredriks/swdevl/CoreLibs"
+    #+BEGIN_SRC emacs-lisp
+      (fset 'bcws
+         [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?b ?e ?l ?l ?w ?s ?1 ?0 ?8 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+    #+END_SRC
+
+    And bind it to the key combo
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-c B") 'bcws)
+    #+END_SRC
+** Registers
+   Quickly jump to files by pressing C-x r j <register>
+   Jump to my init file with 'e' and init directory with 'i'.
+   #+BEGIN_SRC emacs-lisp
+     (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
+     (set-register ?i (cons 'file "~/.emacs.d/init.d")) 
+   #+END_SRC
 ** UI
    Key bindings if I really need to see the menu and tool bar
    #+BEGIN_SRC emacs-lisp
@@ -506,13 +776,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-=") 'er/expand-region)
    #+END_SRC
-** GTags
-   Key bindings for finding gtag, reference and usage of symbol
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "M-.") 'gtags-find-tag) ;; Finds tag
-     (global-set-key (kbd "C-M-.") 'gtags-find-rtag)   ;; Find all references of tag
-     (global-set-key (kbd "C-M-,") 'gtags-find-symbol) ;; Find all usages of symbol.
-   #+END_SRC
+** Tags
+*** GTags
+    Key bindings for finding gtag, reference and usage of symbol
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "M-.") 'gtags-find-tag) ;; Finds tag
+      (global-set-key (kbd "C-M-.") 'gtags-find-rtag)   ;; Find all references of tag
+      (global-set-key (kbd "C-M-,") 'gtags-find-symbol) ;; Find all usages of symbol.
+    #+END_SRC
+*** RTags (Disabled)
+    # Key bindings for RTags (they conflicts with GTags)
+    # #+BEGIN_SRC emacs-lisp
+    #   (global-set-key (kbd "M-.") 'rtags-find-symbol-at-point)
+    #   (global-set-key (kbd "M-,") 'rtags-find-references-at-point)
+
+    #   (global-set-key (kbd "M-[") 'rtags-location-stack-back)
+    #   (global-set-key (kbd "M-]") 'rtags-location-stack-forward)
+    # #+END_SRC
 ** Java
    Key bindings for Java autocomplete
    #+BEGIN_SRC emacs-lisp
@@ -525,6 +805,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "<f12>") 'compile)
      (global-set-key (kbd "<f11>") 'recompile)
+   #+END_SRC
+** Multiple cursors
+   Keybindings for the mc package
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+     (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+     (global-set-key (kbd "C-+") 'mc/mark-next-like-this)
+   #+END_SRC
+** String inflections
+   Keybinding for cycle between snake case, camel case etc
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-;") 'string-inflection-cycle )
+   #+END_SRC
+** Sudo edit
+   Sudo edit the current file
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c C-r") 'sudo-edit-current-file)
    #+END_SRC
 * Bug workarounds
 Workarounds for bugs I have encountered through out the years
