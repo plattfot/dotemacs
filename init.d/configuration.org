@@ -661,6 +661,35 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
 
    #+END_SRC
 
+** Split lines
+   Function for splitting lines at specified character. Default is ','.
+   #+BEGIN_SRC emacs-lisp
+     (defun split-at (&optional delim)
+     "Split region/line at DELIM, if there are multiple matches it
+     will split each one. DELIM will default to \",\" if no delim is
+     given."
+     (interactive "sSpecify delimiter: ")
+     (when (or (string= delim "") (not delim)) (setq delim ","))
+     (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+           (end (if (use-region-p) (region-end) (point-at-eol)))
+           (regex delim))
+       (goto-char start)
+      
+       (while (search-forward-regexp regex end t)
+         (insert "\n")
+         (setq end (1+ end))
+         )
+       (indent-region start end)
+       (goto-char start)
+       )
+     )
+
+     (defun split-at-comma ()
+     "wrapper for split-at for use with key command"
+     (interactive)
+     (split-at ",")
+     )
+   #+END_SRC
 * Keybindings
 ** Macros
     Macro to quickly open a file that is located on my machine at work.
@@ -721,6 +750,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Duplicate line
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c l") 'duplicate-line)
+   #+END_SRC
+
+   Split line at comma
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-,") 'split-at-comma)
+   #+END_SRC
+** Move text
+   Move line up and down using arrow keys
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key [C-S-up] 'move-text-up)
+     (global-set-key [C-S-down] 'move-text-down)
    #+END_SRC
 ** Magit
    Run magit
