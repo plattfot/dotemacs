@@ -30,9 +30,9 @@
 (if dotemacs/is-work
     (progn
       (dotemacs/load-user-file "work.el")
-      (dotemacs/load-user-file "dd-newfile.el")
-      (dotemacs/load-user-file "gccsense.el"))
-  (dotemacs/load-user-file "home.el")
+      (dotemacs/load-user-file "dd-newfile.el"))
+  (progn (dotemacs/load-user-file "home.el")
+	 (dotemacs/load-user-file "flycheck.el"))
 )
 
 ;; Key bindings
@@ -54,7 +54,7 @@
 (dotemacs/load-user-file "string-inflection.el")
 ;;(dotemacs/load-user-file "rtags.el")
 ;;(dotemacs/load-user-file "gtags.el")
-(dotemacs/load-user-file "flycheck.el")
+
 ;; Modes
 (dotemacs/load-user-file "modes.el")
 
