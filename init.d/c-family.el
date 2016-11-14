@@ -92,7 +92,7 @@
   
   (if (use-region-p)
       (progn (setq begin (region-beginning) end (region-end)))
-    (progn begin (point) end nil))
+    (progn (setq begin (point) end nil)))
   
   (goto-char begin)
   (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
