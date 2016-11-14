@@ -96,7 +96,7 @@
   
   (goto-char begin)
   (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
-				    "[a-zA-Z0-9_:<>,* ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+				    "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
 			    end t )
     (replace-match "using \\2 = \\1;"))
   ))
