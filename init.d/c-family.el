@@ -85,6 +85,21 @@
   )
 )
 
+(defun convert-typedef-to-using ()
+"Converts typedef statements to using statements"
+(interactive)
+(let ((begin) (end))
+  
+  (if (use-region-p)
+      (progn (setq begin (region-beginning) end (region-end)))
+    (progn (setq begin (point) end nil)))
+  
+  (goto-char begin)
+  (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
+				    "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+			    end t )
+    (replace-match "using \\2 = \\1;"))
+  ))
 ;; ---------------------------- Get class scope --------------------------------
 ;; Work on over the weekend.
 ;; (defun get-class-scope-auto ()

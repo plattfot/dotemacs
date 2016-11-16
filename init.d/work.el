@@ -56,6 +56,12 @@ it will return the oldest version"
   (interactive "p")
   (insert (get-houdini-vers version-offset)))
 
+(defun insert-eigen-pretty-printer ()
+"Insert command to add eigen pretty printer for gdb"
+(interactive )
+(insert "python execfile(\"/dd/dept/software/users/fredriks/swdevl"
+	"/CoreLibs/src/python/gdb/EigenPrettyPrinter.py\")")
+)
 ;; Functions for quickly set up the work environment
 (defun setup-work ()
   "Splits the window into three equivalent buffers and set the cwd to swdevl"
