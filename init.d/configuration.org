@@ -64,11 +64,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (column-number-mode 1)
    #+END_SRC
-** ibuffer
-    Use ibuffer instead of list-buffers, has some neat features.
-    #+BEGIN_SRC emacs-lisp
-      (defalias 'list-buffers 'ibuffer)    
-    #+END_SRC
 ** Behaviour
    Highlight matching brackets
    #+BEGIN_SRC emacs-lisp
@@ -233,7 +228,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    ((c++-mode
      (flycheck-clang-language-standard . "c++14")
      (flycheck-gcc-language-standard . "c++14")))
-
 ** Golang
    Setting up go to use 2 spaces as indentation and enable
    autocomplete for go.
@@ -500,7 +494,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
        :bind (([C-S-up] . move-text-up)
               ([C-S-down] . move-text-down)))
    #+END_SRC
+** The Silver Searcher
+   #+BEGIN_SRC emacs-lisp
+     (use-package ag)
+   #+END_SRC
    
+** ibuffer
+    Use ibuffer instead of list-buffers, has some neat features.
+
+    Sort buffers by placing them in different groups
+    #+BEGIN_SRC emacs-lisp
+      (use-package ibuffer
+        :config 
+        (defalias 'list-buffers 'ibuffer)
+        (setq ibuffer-saved-filter-groups
+            (quote (("default"
+                     ("c++" (mode . c++-mode))
+                     ("dired" (mode . dired-mode))
+                     ("ag" (mode . ag-mode ))
+                     ("emacs" (or
+                               (name . "^\\*scratch\\*$")
+                               (name . "^\\*Messages\\*$")
+                               (name . "^\\*Completions\\*$")))
+                     ))))
+      (add-hook 'ibuffer-mode-hook
+                (lambda ()
+                  (ibuffer-switch-to-saved-filter-groups "default"))))
+    #+END_SRC
+
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
@@ -594,6 +615,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
           ( message "Not a #define directive!" )
         )
       )
+    #+END_SRC
+
+    Convert typedef to c++11's alias
+    #+BEGIN_SRC emacs-lisp
+      (defun convert-typedef-to-using ()
+        "Converts typedef statements to using statements"
+        (interactive)
+        (let ((begin) (end))
+          
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point) end nil)))
+          
+          (goto-char begin)
+          (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
+                                            "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+                                    end t )
+            (replace-match "using \\2 = \\1;"))
+          ))
     #+END_SRC
 *** GTags
     Cycling gtag result. Source [[https://www.emacswiki.org/emacs/CyclingGTagsResult][link]]
