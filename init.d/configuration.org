@@ -127,27 +127,27 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    
    #+BEGIN_SRC emacs-lisp
      (use-package auto-complete
-                  :bind (:map ac-complete-mode-map
-                              ("\t" . ac-expand)
-                              ("\r" . nil ))
-                  :config
-                  (ac-config-default)
-                  ;; Ignore c++ comments
-                  (add-hook 'c++-mode-hook
-                            (lambda ()
-                              (make-local-variable 'ac-ignores)
-                              (add-to-list 'ac-ignores "//")))
-                  ;; C-common: Start auto complete on . or ->
-                  (add-hook 'c-mode-common-hook 
-                            '(lambda ()
-                               (add-to-list 'ac-omni-completion-sources
-                                            (cons "\\." '(ac-source-semantic)))
-                               (add-to-list 'ac-omni-completion-sources
-                                            (cons "->" '(ac-source-semantic)))
-                               ))
-                  ;; Enable ac for gmake and arduino
-                  (add-to-list 'ac-modes 'makefile-gmake-mode)
-                  (add-to-list 'ac-modes 'arduino-mode))
+       :bind (:map ac-complete-mode-map
+                   ("\t" . ac-expand)
+                   ("\r" . nil ))
+       :config
+       (ac-config-default)
+       ;; Ignore c++ comments
+       (add-hook 'c++-mode-hook
+                 (lambda ()
+                   (make-local-variable 'ac-ignores)
+                   (add-to-list 'ac-ignores "//")))
+       ;; C-common: Start auto complete on . or ->
+       (add-hook 'c-mode-common-hook 
+                 '(lambda ()
+                    (add-to-list 'ac-omni-completion-sources
+                                 (cons "\\." '(ac-source-semantic)))
+                    (add-to-list 'ac-omni-completion-sources
+                                 (cons "->" '(ac-source-semantic)))
+                    ))
+       ;; Enable ac for gmake and arduino
+       (add-to-list 'ac-modes 'makefile-gmake-mode)
+       (add-to-list 'ac-modes 'arduino-mode))
    #+END_SRC
 ** Arduino
    Function for setting up a arduino template sketch
@@ -169,14 +169,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
 ** Gnuplot
    Enable gnuplot to be able to plot tables in org mode.
 
+   Bind the F9 key to open a buffer into gnuplot mode
+
    Set that all files ending in .gp will use the gnuplot-mode
    #+BEGIN_SRC emacs-lisp
      (use-package gnuplot
-     :config
-     (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-     (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-     ;; Set files with ext .gp to use gnuplot
-     (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist)))
+       :bind (([(f9)] . gnuplot-make-buffer))
+       :config
+       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+       ;; Set files with ext .gp to use gnuplot
+       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist)))
    #+END_SRC
 ** C family
    Specific for C, C++ and other in the c family
@@ -184,17 +187,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Set indentation to be two spaces.
    #+BEGIN_SRC emacs-lisp
      (setq c-mode-hook
-         (function (lambda ()
-                     (setq indent-tabs-mode nil)
-                     (setq c-indent-level 2))))
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
      (setq objc-mode-hook
-         (function (lambda ()
-                     (setq indent-tabs-mode nil)
-                     (setq c-indent-level 2))))
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
      (setq c++-mode-hook
-         (function (lambda ()
-                     (setq indent-tabs-mode nil)
-                     (setq c-indent-level 2))))
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
    #+END_SRC
 
    Set the default mode for .h files to be c++-mode
@@ -213,17 +216,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (setq ff-search-directories '("." "../src" "../include"))
    #+END_SRC
 ** Flycheck
-   Enable flycheck globably 
-   #+BEGIN_SRC emacs-lisp
-     (require 'flycheck)
-     (add-hook 'after-init-hook #'global-flycheck-mode)
-   #+END_SRC
+   Enable flycheck globably.
 
-   Disable clang check, gcc check works better
+   Disable clang check, gcc check works better.
    #+BEGIN_SRC emacs-lisp
-     (setq-default flycheck-disabled-checkers
-                   (append flycheck-disabled-checkers
-                           '(c/c++-clang)))
+     (use-package flycheck
+       :config
+       (add-hook 'after-init-hook #'global-flycheck-mode)
+       (setq-default flycheck-disabled-checkers
+                     (append flycheck-disabled-checkers
+                             '(c/c++-clang))))
    #+END_SRC
 *** Language standard in c++
    Specify language standard in dir locals file: .dir-locals.el 
@@ -233,60 +235,65 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (flycheck-gcc-language-standard . "c++14")))
 
 ** Golang
-   Set indentation to be 2 spaces
+   Setting up go to use 2 spaces as indentation and enable
+   autocomplete for go.
    #+BEGIN_SRC emacs-lisp
+     (use-package go-mode
+     :config
      (add-hook 'go-mode-hook 
        (lambda ()
          (setq-default) 
          (setq tab-width 2) 
          (setq standard-indent 2) 
          (setq indent-tabs-mode nil)))
-   #+END_SRC
-
-   Enable autocomplete for go
-   #+BEGIN_SRC emacs-lisp
-     (require 'go-autocomplete)
+     (use-package go-autocomplete))
    #+END_SRC
 ** Haskell
    Settings for programming haskell in emacs
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-     (autoload 'ghc-init "ghc" nil t)
+     (use-package haskell-mode
+       :config
+       (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+       (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+       (autoload 'ghc-init "ghc" nil t))
    #+END_SRC
 ** Ledger
-   Settings for ledger
+   Settings for ledger.
+   Set the default mode for .dat files to ledger.
+
+   Clean the buffer with C-c c.
    #+BEGIN_SRC emacs-lisp
-     (setq ledger-clear-whole-transactions 1)
-   #+END_SRC
-   
-   Set the default mode for .dat files to ledger
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode))
+     (use-package ledger-mode
+       :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
+       :config
+       (setq ledger-clear-whole-transactions 1)
+       (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode)))
    #+END_SRC
 ** Lisp
    Color haxvalues with their respective color.
    #+BEGIN_SRC emacs-lisp
-     (defvar hexcolour-keywords
-       '(("#[[:xdigit:]]\\{6\\}"
-          (0 (put-text-property (match-beginning 0)
-                                (match-end 0)
-                                'face (list :background 
-                                            (match-string-no-properties 0)))))))
-     (defun hexcolour-add-to-font-lock ()
-       (font-lock-add-keywords nil hexcolour-keywords))
-
-     (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock)
+     (use-package lisp-mode
+       :config
+       (defvar hexcolour-keywords
+         '(("#[[:xdigit:]]\\{6\\}"
+            (0 (put-text-property (match-beginning 0)
+                                  (match-end 0)
+                                  'face (list :background 
+                                              (match-string-no-properties 0)))))))
+       (defun hexcolour-add-to-font-lock ()
+         (font-lock-add-keywords nil hexcolour-keywords))
+       (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
    #+END_SRC
 ** GLSL
    Set files associated with glsl to use glsl mode
    #+BEGIN_SRC emacs-lisp
-     (autoload 'glsl-mode "glsl-mode" nil t)
-     (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
-     (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
-     (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
-     (add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
-     (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode))
+     (use-package glsl-mode
+       :config
+       (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+       (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+       (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
+       (add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
+       (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode)))
    #+END_SRC
 ** Python
    Set indentation to 2 spaces and disable tab
@@ -370,11 +377,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #   (setq org-src-tab-acts-natively t)
    # #+END_SRC
    
-   When editing a code snippet, use the current window rather than popping open a
-   new one (which shows the same information).
-   #+BEGIN_SRC emacs-lisp
-     (setq org-src-window-setup 'current-window)
-   #+END_SRC
+   # When editing a code snippet, use the current window rather than popping open a
+   # new one (which shows the same information).
+   # #+BEGIN_SRC emacs-lisp
+   #   (setq org-src-window-setup 'current-window)
+   # #+END_SRC
    
 ** Default modes
    Set default mode for pb2 files
@@ -724,7 +731,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
          ))
    #+END_SRC
 
-* Keybindings
+* Custom keybindings
 ** Macros
     Macro to quickly open a file that is located on my machine at work.
     Inserts "fredriks@bcws067.d2vancouver.com:fredriks/swdevl/CoreLibs"
@@ -800,11 +807,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Run magit
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-x g") 'magit-status)
-   #+END_SRC
-** Gnuplot
-   Bind the F9 key to open a buffer into gnuplot mode
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key [(f9)] 'gnuplot-make-buffer)
    #+END_SRC
 ** Buffer functions
    Key bindings for revert-all-buffers and rename current buffer
@@ -898,12 +900,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Sudo edit the current file
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c C-r") 'sudo-edit-current-file)
-   #+END_SRC
-** Ledger
-   Custom keybindings for ledger
-   #+BEGIN_SRC emacs-lisp
-     (eval-after-load "ledger-mode" 
-       '(define-key ledger-mode-map (kbd "C-c c") 'ledger-mode-clean-buffer))
    #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
