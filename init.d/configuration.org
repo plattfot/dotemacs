@@ -4,54 +4,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
 
 * General
 ** Package management
-   Setup package to handle all packages I use. Will download packages
-   that are missing.
+
+   Setup repositories for package and auto download use-package if it's missing. 
    #+BEGIN_SRC emacs-lisp
      (require 'package)
-     ; list the packages you want
-     (setq package-list 
-           '(ag
-             async
-             auto-complete
-             buffer-move
-             evil-numbers
-             expand-region
-             flycheck
-             git-commit
-             gnuplot
-             go-autocomplete
-             ledger-mode
-             magit
-             magit-popup
-             mc-extras
-             move-text
-             multi-term
-             multiple-cursors
-             popup
-             org-bullets
-             rtags
-             string-inflection
-             sudo-edit
-             with-editor
-             yaml-mode
-             yasnippet ))
 
-     ;; Add melpa to the package repo
-     (add-to-list 'package-archives
-                  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+     (setq package-archives
+           '(("melpa"        . "http://melpa.org/packages/")
+             ("gnu"          . "http://elpa.gnu.org/packages/")
+             ("marmalade"    . "http://marmalade-repo.org/packages/")
+             ("org"          . "http://orgmode.org/elpa/")))
 
-     ;; Activate all the packages (in particular autoloads)
      (package-initialize)
 
-     ;; Fetch the list of packages available 
-     (unless package-archive-contents
-       (package-(region-end)fresh-contents))
+     (when (not package-archive-contents)
+       (package-refresh-contents))
 
-     ;; Install the missing packages
-     (dolist (package package-list)
-       (unless (package-installed-p package)
-         (package-install package)))
+     (setq package-enable-at-startup nil)
 
+     (unless (package-installed-p 'use-package)
+       (package-install 'use-package))
+   #+END_SRC
+
+   Let use-package handle all the packages I use
+   #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (require 'use-package))
+     (require 'diminish)                ;; if you use :diminish
+     (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
 ** Custom plugins
   Add path to custom plugins
@@ -69,11 +49,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (scroll-bar-mode 0)
    #+END_SRC
 *** Splash screen
-   Dismiss the startup screen
-   #+BEGIN_SRC emacs-lisp
-     (setq inhibit-splash-screen t)
-   #+END_SRC
-   
+    Dismiss the startup screen
+    #+BEGIN_SRC emacs-lisp
+      (setq inhibit-splash-screen t)
+    #+END_SRC
 *** Font
     Set font and font size
     #+BEGIN_SRC emacs-lisp
@@ -124,29 +103,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (setq calendar-week-start-day 1)
    #+END_SRC
-* Modes
+* Packages
 ** Auto complete
-   Init autocomplete
-   #+BEGIN_SRC emacs-lisp
-     (require 'auto-complete-config)
-     (ac-config-default)
-   #+END_SRC
-   
-   Auto complete words when pressing tab. But disable it for enter.
-   #+BEGIN_SRC emacs-lisp
-     (define-key ac-completing-map "\t" 'ac-expand)
-     (define-key ac-completing-map "\r" nil)
-   #+END_SRC
-*** Programming specific 
+   Init auto-complete to use the default settings. Except auto
+   complete words when pressing tab but disable it for enter.
 
-   Disable autocomplete when typing // comments in c++
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'c++-mode-hook
-               (lambda ()
-                 (make-local-variable 'ac-ignores)
-                 (add-to-list 'ac-ignores "//")))
-   #+END_SRC
-                  
+   Disable autocomplete when typing // comments in c++.
+
+   For the c-family (c++, c and c#) 
    ac-omni-completion-sources is made buffer local so you need to add
    it to a mode hook to activate on whatever buffer you want to use it
    with.  This example uses C mode (as you probably surmised).
@@ -157,24 +121,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    each cell is the source that will supply the completion data.  The
    following tells autocomplete to begin completion when you type in a
    . or a ->
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'c-mode-common-hook 
-               '(lambda ()
-                  (add-to-list 'ac-omni-completion-sources
-                               (cons "\\." '(ac-source-semantic)))
-                  (add-to-list 'ac-omni-completion-sources
-                               (cons "->" '(ac-source-semantic)))
-                  ))
 
-   #+END_SRC
+   Enable autocomplete for arduino and gmake's makefile since they're
+   not on by default.
    
-*** Enable for modes
-    Enable autocomplete for arduino and gmake's makefile since they're
-    not on by default.
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'ac-modes 'makefile-gmake-mode)
-      (add-to-list 'ac-modes 'arduino-mode)
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package auto-complete
+                  :bind (:map ac-complete-mode-map
+                              ("\t" . ac-expand)
+                              ("\r" . nil ))
+                  :config
+                  (ac-config-default)
+                  ;; Ignore c++ comments
+                  (add-hook 'c++-mode-hook
+                            (lambda ()
+                              (make-local-variable 'ac-ignores)
+                              (add-to-list 'ac-ignores "//")))
+                  ;; C-common: Start auto complete on . or ->
+                  (add-hook 'c-mode-common-hook 
+                            '(lambda ()
+                               (add-to-list 'ac-omni-completion-sources
+                                            (cons "\\." '(ac-source-semantic)))
+                               (add-to-list 'ac-omni-completion-sources
+                                            (cons "->" '(ac-source-semantic)))
+                               ))
+                  ;; Enable ac for gmake and arduino
+                  (add-to-list 'ac-modes 'makefile-gmake-mode)
+                  (add-to-list 'ac-modes 'arduino-mode))
+   #+END_SRC
 ** Arduino
    Function for setting up a arduino template sketch
    #+BEGIN_SRC emacs-lisp
@@ -194,13 +168,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+END_SRC
 ** Gnuplot
    Enable gnuplot to be able to plot tables in org mode.
-   #+BEGIN_SRC emacs-lisp
-     (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-     (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-   #+END_SRC
+
    Set that all files ending in .gp will use the gnuplot-mode
    #+BEGIN_SRC emacs-lisp
-     (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+     (use-package gnuplot
+     :config
+     (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+     (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+     ;; Set files with ext .gp to use gnuplot
+     (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist)))
    #+END_SRC
 ** C family
    Specific for C, C++ and other in the c family
