@@ -437,10 +437,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Move buffers around between windows
    #+BEGIN_SRC emacs-lisp
      (use-package buffer-move 
-       :bind ( (kbd "<M-S-up>"    . buf-move-up)
-               (kbd "<M-S-down>"  . buf-move-down)
-               (kbd "<M-S-left>"  . buf-move-left)
-               (kbd "<M-S-right>" . buf-move-right)))
+       :bind ( ("<M-S-up>"    . buf-move-up)
+               ("<M-S-down>"  . buf-move-down)
+               ("<M-S-left>"  . buf-move-left)
+               ("<M-S-right>" . buf-move-right)))
    #+END_SRC
 ** Multiple cursors
    Keybindings for the mc package
@@ -464,12 +464,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Sudo edit the current file
    #+BEGIN_SRC emacs-lisp
      (use-package sudo-edit
-       :bind (kbd "C-c C-r" . sudo-edit-current-file))
+       :bind ("C-c C-r" . sudo-edit-current-file))
    #+END_SRC
 ** Expand region
    #+BEGIN_SRC emacs-lisp
      (use-package expand-region
-       :bind (kbd "C-=" . er/expand-region))
+       :bind ("C-=" . er/expand-region))
    #+END_SRC
 
 ** GTags (Disabled)
@@ -487,18 +487,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    "C-x o". Note that this Doesn't work in org mode.
    #+BEGIN_SRC emacs-lisp
      (use-package windmove 
-       :bind (("M-left"  . windmove-left)   ; move to left window
-              ("M-right" . windmove-right) ; move to right window
-              ("M-up"    . windmove-up)       ; move to upper window
-              ("M-down"  . windmove-down)))   ; move to downer window
+       :bind (([M-left]  . windmove-left)   ; move to left window
+              ([M-right] . windmove-right) ; move to right window
+              ([M-up]    . windmove-up)       ; move to upper window
+              ([M-down]  . windmove-down)))   ; move to downer window
    #+END_SRC
 
 ** Move text
    Move line up and down using arrow keys.
    #+BEGIN_SRC emacs-lisp
      (use-package move-text
-       :bind (("C-S-up" . move-text-up)
-              ("C-S-down" . move-text-down)))
+       :bind (([C-S-up] . move-text-up)
+              ([C-S-down] . move-text-down)))
    #+END_SRC
    
 * Custom functions
