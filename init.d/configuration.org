@@ -12,7 +12,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (setq package-archives
            '(("melpa"        . "http://melpa.org/packages/")
              ("gnu"          . "http://elpa.gnu.org/packages/")
-             ("marmalade"    . "http://marmalade-repo.org/packages/")
+             ;; ("marmalade"    . "http://marmalade-repo.org/packages/")
              ("org"          . "http://orgmode.org/elpa/")))
 
      (package-initialize)
@@ -174,7 +174,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    Set that all files ending in .gp will use the gnuplot-mode
    #+BEGIN_SRC emacs-lisp
      (use-package gnuplot
-       :bind (([(f9)] . gnuplot-make-buffer))
+       :bind ([(f9)] . gnuplot-make-buffer)
        :config
        (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
        (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
@@ -287,124 +287,220 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
 ** GLSL
    Set files associated with glsl to use glsl mode
    #+BEGIN_SRC emacs-lisp
-     (use-package glsl-mode
-       :config
-       (add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
-       (add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
-       (add-to-list 'auto-mode-alist '("\\.geom\\'" . glsl-mode))
-       (add-to-list 'auto-mode-alist '("\\.prog\\'" . glsl-mode))
-       (add-to-list 'auto-mode-alist '("\\.glsl\\'" . glsl-mode)))
+         (use-package glsl-mode
+           :mode (("\\.vert\\'" . glsl-mode)
+                  ("\\.frag\\'" . glsl-mode)
+                  ("\\.geom\\'" . glsl-mode)
+                  ("\\.prog\\'" . glsl-mode)
+                  ("\\.glsl\\'" . glsl-mode)))
    #+END_SRC
 ** Python
-   Set indentation to 2 spaces and disable tab
+   Package name is python but the mode is python-mode
+   Set indentation to 2 white spaces.
+
+   Set the default for pb2 files (=PROJECT=) to use python.
    #+BEGIN_SRC emacs-lisp
-   (setq python-mode-hook
-    (function (lambda ()
-                (setq indent-tabs-mode nil)
-                (setq python-indent 2))))
+          (use-package python
+            :mode (("\\.py\\'" . python-mode) 
+                   ("PROJECT" . python-mode))
+            :interpreter ("python" . python-mode)
+            :config
+            (setq python-mode-hook
+                  (function (lambda ()
+                              (setq indent-tabs-mode nil)
+                              (setq python-indent 2)))))
    #+END_SRC
 ** RTags (Disabled)
-   # #+BEGIN_SRC emacs-lisp
-   #   (require 'rtags)
-   #   (require 'rtags-ac)
-   # #+END_SRC
-** Shell
-   Indent using spaces. Don't remember why I needed this one
+   Key bindings for RTags (they conflicts with GTags)
    #+BEGIN_SRC emacs-lisp
-     (setq sh-mode-hook
-         (function (lambda ()
-                     (setq indent-tabs-mode nil)
-                     (setq c-indent-level 2))))
+     (use-package rtags
+     :disabled t
+     :bind (("M-." . rtags-find-symbol-at-point)
+            ("M-," . rtags-find-references-at-point)
+            ("M-[" . rtags-location-stack-back)
+            ("M-]" . rtags-location-stack-forward))
+     :config
+     (use-package rtags-ac))
    #+END_SRC
+** Shell
+   Indent using spaces. ( Don't remember why I needed this one. )
 
    Enable color in shell and define the color theme. Also disable
-   yasnippet in shell mode since that's messing with the shell
+   yasnippet in shell mode since that's messing with the shell.
+
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'shell-mode-hook 
-               (lambda ()
-                 ;; Enable color in shell
-                 (ansi-color-for-comint-mode-on)
-                 ;; Change Color theme in shell
-                 (setq ansi-color-names-vector
-                       ["#4d4d4d" "#D81860" "#60FF60" "#f9fd75" "#4695c8" "#a78edb" "#43afce" "#f3ebe2"])
-                 (setq ansi-color-map (ansi-color-make-color-map))
-                 ;; Disable yas minor mode
-                 (yas-minor-mode -1)
-                 ;; Add go and goc to the dirtrack, Need tweak the regexp 
-                 ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
-                 ))
+     (use-package shell
+       :bind ("<f8>" . clear-shell)
+       :config
+       (setq sh-mode-hook
+             (function (lambda ()
+                         (setq indent-tabs-mode nil)
+                         (setq c-indent-level 2))))
+       (add-hook 'shell-mode-hook 
+                 (lambda ()
+                   ;; Enable color in shell
+                   (ansi-color-for-comint-mode-on)
+                   ;; Change Color theme in shell
+                   (setq ansi-color-names-vector
+                         ["#4d4d4d"
+                          "#D81860"
+                          "#60FF60"
+                          "#f9fd75"
+                          "#4695c8"
+                          "#a78edb"
+                          "#43afce"
+                          "#f3ebe2"])
+                   (setq ansi-color-map (ansi-color-make-color-map))
+                   ;; Disable yas minor mode
+                   (yas-minor-mode -1)
+                   ;; Add go and goc to the dirtrack, Need tweak the regexp 
+                   ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
+                   )))
    #+END_SRC
 ** Tramp
    Set the ssh to be the default method for tramp
    #+BEGIN_SRC emacs-lisp
-     (setq tramp-default-method "ssh")   
+     (use-package tramp
+       :config
+       (setq tramp-default-method "ssh"))
    #+END_SRC
 ** Yasnippet
    Enable yasnippet
    #+BEGIN_SRC emacs-lisp
-     (yas-global-mode 1)
-   #+END_SRC
-   
-   #+BEGIN_SRC emacs-lisp
-     (setq yas/indent-line nil)
+     (use-package yasnippet 
+       :config
+       (yas-global-mode 1)
+       (setq yas/indent-line nil))
+
    #+END_SRC
 ** Org
-   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file:
+   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
  
    Use pretty bullet points instead of asterix
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'org-mode-hook
-               (lambda ()
-                 (org-bullets-mode t)))
-   #+END_SRC
-   
+
    Use a little downward-pointing arrow instead of the usual ellipsis
    (=...=) when folded.
-   #+BEGIN_SRC emacs-lisp
-     (setq org-ellipsis "⤵")
-   #+END_SRC
-   
+
    Use syntax highlighting in source blocks while editing.
    #+BEGIN_SRC emacs-lisp
-     (setq org-src-fontify-natively t)
-   #+END_SRC
-   
-   # Doesn't work with yasnippet getting:
-   # yas--fallback: yasnippet fallback loop!
-   # This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
-   # Make TAB act as if it were issued in a buffer of the language's major mode.
-   # #+BEGIN_SRC emacs-lisp
-   #   (setq org-src-tab-acts-natively t)
-   # #+END_SRC
-   
-   # When editing a code snippet, use the current window rather than popping open a
-   # new one (which shows the same information).
-   # #+BEGIN_SRC emacs-lisp
-   #   (setq org-src-window-setup 'current-window)
-   # #+END_SRC
-   
-** Default modes
-   Set default mode for pb2 files
-   #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("PROJECT" . python-mode))
-     (add-to-list 'auto-mode-alist '("BUILD.conf" . makefile-mode))
+     (use-package org
+       :mode ("\\.org\\'" . org-mode)
+       :config
+       (use-package org-bullets)
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (org-bullets-mode t)))
+       (setq org-ellipsis "⤵")
+       (setq org-src-fontify-natively t))
    #+END_SRC
 
-   Set all files, which filename that starts with Makefile to makefile-gmake-mode
+   Doesn't work with yasnippet getting:
+   yas--fallback: yasnippet fallback loop!
+   This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+
+   Make TAB act as if it were issued in a buffer of the language's major mode.
+   =(setq org-src-tab-acts-natively t)=
+** Makefile
+   Set following files to use makefile-gmake-mode as the default.
+   - Files that starts with =Makefile=.
+   - Has extension =.mk=.
+   - Files that are located in a directory called Make and ends with
+     Rules.
+   - Files that are located in a directory called modules.
+   - Files called BUILD.conf (pb2 file).
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("Makefile.*" . makefile-gmake-mode))
+     (use-package makefile-gmake-mode
+       :mode (("Makefile.*" . makefile-gmake-mode)
+              ("\\.mk$" . makefile-gmake-mode)
+              ("Make/.*Rules" . makefile-gmake-mode)
+              ("modules/.*" . makefile-gmake-mode)
+              ("BUILD.conf" . makefile-gmake-mode)
+              ))
    #+END_SRC
-   
-   Set all files that are in the modules directory to makefile
+** Evil numbers
+   Incrementing/decrementing numbers.
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("modules/.*" . makefile-gmake-mode))
-     (add-to-list 'auto-mode-alist '("Make/.*Rules" . makefile-gmake-mode))
+     (use-package evil-numbers
+     :bind (("C-c +" . evil-numbers/inc-at-pt)
+            ("C-c -" . evil-numbers/dec-at-pt)))
+   #+END_SRC
+** Magit
+   A Git porcelain inside Emacs
+   Key =C-x g= to run magit on current buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :bind ( "C-x g" . magit-status))
    #+END_SRC
 
-   Set all files ending with .mk to makefile-gmake-mode
+** Buffer move
+   Move buffers around between windows
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.mk$" . makefile-gmake-mode))
+     (use-package buffer-move 
+       :bind ( (kbd "<M-S-up>"    . buf-move-up)
+               (kbd "<M-S-down>"  . buf-move-down)
+               (kbd "<M-S-left>"  . buf-move-left)
+               (kbd "<M-S-right>" . buf-move-right)))
    #+END_SRC
+** Multiple cursors
+   Keybindings for the mc package
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors 
+       :bind (("C-S-c C-S-c" . mc/edit-lines)
+              ("C->"         . mc/mark-next-like-this)
+              ("C-<"         . mc/mark-previous-like-this)
+              ("C-c C-<"     . mc/mark-all-like-this)
+              ("C-+"         . mc/mark-next-like-this))
+       :config
+       (use-package mc-extras))
+   #+END_SRC
+** String inflections
+   Keybinding for cycle between snake case, camel case etc
+   #+BEGIN_SRC emacs-lisp
+     (use-package string-inflection 
+       :bind ("C-;" . string-inflection-cycle ))
+   #+END_SRC
+** Sudo edit
+   Sudo edit the current file
+   #+BEGIN_SRC emacs-lisp
+     (use-package sudo-edit
+       :bind (kbd "C-c C-r" . sudo-edit-current-file))
+   #+END_SRC
+** Expand region
+   #+BEGIN_SRC emacs-lisp
+     (use-package expand-region
+       :bind (kbd "C-=" . er/expand-region))
+   #+END_SRC
+
+** GTags (Disabled)
+   Key bindings for finding tag, reference and usage of symbol.
+   #+BEGIN_SRC emacs-lisp
+     (use-package ggtags
+       :disabled t
+       :bind (("M-." . gtags-find-tag) ;; Finds tag
+              ("C-M-." . gtags-find-rtag)   ;; Find all references of tag
+              ("C-M-," . gtags-find-symbol))) ;; Find all usages of symbol.
+   #+END_SRC
+   
+** Windmove
+   Jump between windows using the arrow keys instead of cycling with
+   "C-x o". Note that this Doesn't work in org mode.
+   #+BEGIN_SRC emacs-lisp
+     (use-package windmove 
+       :bind (("M-left"  . windmove-left)   ; move to left window
+              ("M-right" . windmove-right) ; move to right window
+              ("M-up"    . windmove-up)       ; move to upper window
+              ("M-down"  . windmove-down)))   ; move to downer window
+   #+END_SRC
+
+** Move text
+   Move line up and down using arrow keys.
+   #+BEGIN_SRC emacs-lisp
+     (use-package move-text
+       :bind (("C-S-up" . move-text-up)
+              ("C-S-down" . move-text-down)))
+   #+END_SRC
+   
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
@@ -757,17 +853,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (global-set-key (kbd "<f5>") 'menu-bar-mode)
      (global-set-key (kbd "<f6>") 'tool-bar-mode)
    #+END_SRC
-
+   
 ** Navigation
-   Jump between windows using the arrow keys instead of cycling with
-   "C-x o".
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key [M-left] 'windmove-left)   ; move to left windnow
-     (global-set-key [M-right] 'windmove-right) ; move to right window
-     (global-set-key [M-up] 'windmove-up)       ; move to upper window
-     (global-set-key [M-down] 'windmove-down)   ; move to downer window
-   #+END_SRC
-
    Jump to specific line.
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "M-g") 'goto-line)
@@ -797,30 +884,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-,") 'split-at-comma)
    #+END_SRC
-** Move text
-   Move line up and down using arrow keys
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key [C-S-up] 'move-text-up)
-     (global-set-key [C-S-down] 'move-text-down)
-   #+END_SRC
-** Magit
-   Run magit
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-x g") 'magit-status)
-   #+END_SRC
 ** Buffer functions
    Key bindings for revert-all-buffers and rename current buffer
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c r") 'revert-all-buffers)
      (global-set-key "\C-cR" 'rename-current-file-or-buffer)
-   #+END_SRC
-** Buffer move
-   Move buffers around between windows
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "<M-S-up>")     'buf-move-up)
-     (global-set-key (kbd "<M-S-down>")   'buf-move-down)
-     (global-set-key (kbd "<M-S-left>")   'buf-move-left)
-     (global-set-key (kbd "<M-S-right>")  'buf-move-right)
    #+END_SRC
 ** C Common
    Hide/Show code blocks
@@ -841,65 +909,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
        (lambda() 
          (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
    #+END_SRC
-   
-** Evil numbers
-   Incrementing/decrementing numbers.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
-     (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
-   #+END_SRC
-** Expand region
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-=") 'er/expand-region)
-   #+END_SRC
-** Tags
-*** GTags
-    Key bindings for finding gtag, reference and usage of symbol
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "M-.") 'gtags-find-tag) ;; Finds tag
-      (global-set-key (kbd "C-M-.") 'gtags-find-rtag)   ;; Find all references of tag
-      (global-set-key (kbd "C-M-,") 'gtags-find-symbol) ;; Find all usages of symbol.
-    #+END_SRC
-*** RTags (Disabled)
-    # Key bindings for RTags (they conflicts with GTags)
-    # #+BEGIN_SRC emacs-lisp
-    #   (global-set-key (kbd "M-.") 'rtags-find-symbol-at-point)
-    #   (global-set-key (kbd "M-,") 'rtags-find-references-at-point)
-
-    #   (global-set-key (kbd "M-[") 'rtags-location-stack-back)
-    #   (global-set-key (kbd "M-]") 'rtags-location-stack-forward)
-    # #+END_SRC
-** Java
-   Key bindings for Java autocomplete
-   #+BEGIN_SRC emacs-lisp
-     (local-set-key (kbd "C-c i") (quote ajc-import-all-unimported-class))
-     (local-set-key (kbd "C-c m") (quote ajc-import-class-under-point))
-   #+END_SRC
 ** Compile
    Key bindings to run make on current location and to re-run the
    command.
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "<f12>") 'compile)
      (global-set-key (kbd "<f11>") 'recompile)
-   #+END_SRC
-** Multiple cursors
-   Keybindings for the mc package
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-     (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-     (global-set-key (kbd "C-+") 'mc/mark-next-like-this)
-   #+END_SRC
-** String inflections
-   Keybinding for cycle between snake case, camel case etc
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-;") 'string-inflection-cycle )
-   #+END_SRC
-** Sudo edit
-   Sudo edit the current file
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c C-r") 'sudo-edit-current-file)
    #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
