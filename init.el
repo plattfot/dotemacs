@@ -26,10 +26,12 @@
 (dotemacs/load-user-file "file-functions.el")
 (dotemacs/load-user-file "misc-functions.el")
 
+
 ;; Work
 (if dotemacs/is-work
     (progn
       (dotemacs/load-user-file "work.el")
+      (dotemacs/load-user-file "ibuffer.el")
       (dotemacs/load-user-file "dd-newfile.el"))
   (progn (dotemacs/load-user-file "home.el")
 	 (dotemacs/load-user-file "flycheck.el"))
