@@ -1,0 +1,972 @@
+#+TITLE: Emacs configuration
+
+Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org config
+
+* General
+** Package management
+
+   Setup repositories for package and auto download use-package if it's missing. 
+   #+BEGIN_SRC emacs-lisp
+     (require 'package)
+
+     (setq package-archives
+           '(("melpa"        . "http://melpa.org/packages/")
+             ("gnu"          . "http://elpa.gnu.org/packages/")
+             ;; ("marmalade"    . "http://marmalade-repo.org/packages/")
+             ("org"          . "http://orgmode.org/elpa/")))
+
+     (package-initialize)
+
+     (when (not package-archive-contents)
+       (package-refresh-contents))
+
+     (setq package-enable-at-startup nil)
+
+     (unless (package-installed-p 'use-package)
+       (package-install 'use-package))
+   #+END_SRC
+
+   Let use-package handle all the packages I use
+   #+BEGIN_SRC emacs-lisp
+     (eval-when-compile
+       (require 'use-package))
+     (require 'diminish)                ;; if you use :diminish
+     (require 'bind-key)                ;; if you use any :bind variant
+   #+END_SRC
+** Custom plugins
+  Add path to custom plugins
+  #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/plugins")
+  #+END_SRC
+  
+** UI
+*** Maximize work area
+   Disable the menu, tool and scroll bar since they just take up
+   space.
+   #+BEGIN_SRC emacs-lisp
+     (menu-bar-mode 0)
+     (tool-bar-mode 0)
+     (scroll-bar-mode 0)
+   #+END_SRC
+*** Splash screen
+    Dismiss the startup screen
+    #+BEGIN_SRC emacs-lisp
+      (setq inhibit-splash-screen t)
+    #+END_SRC
+*** Font
+    Set font and font size
+    #+BEGIN_SRC emacs-lisp
+      (set-face-attribute 'default nil :height 92)
+      (set-face-attribute 'default nil :font "Hack")
+    #+END_SRC
+*** Column number
+   Show column number in the info bar
+   #+BEGIN_SRC emacs-lisp
+     (column-number-mode 1)
+   #+END_SRC
+** Behaviour
+   Highlight matching brackets
+   #+BEGIN_SRC emacs-lisp
+     (show-paren-mode 1)
+   #+END_SRC
+   
+   Disable electric-indent-mode since I"m using C-j for that.
+   #+BEGIN_SRC emacs-lisp
+     (setq electric-indent-mode nil)
+   #+END_SRC
+** Backup/autosave
+   One annoying thing with emacs is it that it leaves backup files all
+   over the place.  Fixing that by dumping all backup/autosave files
+   in to one directory.
+   #+BEGIN_SRC emacs-lisp
+     (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+     (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+     (setq backup-directory-alist (list (cons ".*" backup-dir)))
+     (setq auto-save-list-file-prefix autosave-dir)
+     (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+   #+END_SRC
+
+** Theme
+   Point emacs to where it can find the sunburst theme. Depending on
+   if emacs is started in a shell or not load the correct theme.
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
+     (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+   #+END_SRC
+** Calendar
+   Week starts on Monday.
+   #+BEGIN_SRC emacs-lisp
+     (setq calendar-week-start-day 1)
+   #+END_SRC
+* Packages
+** Auto complete
+   Init auto-complete to use the default settings. Except auto
+   complete words when pressing tab but disable it for enter.
+
+   Disable autocomplete when typing // comments in c++.
+
+   For the c-family (c++, c and c#) 
+   ac-omni-completion-sources is made buffer local so you need to add
+   it to a mode hook to activate on whatever buffer you want to use it
+   with.  This example uses C mode (as you probably surmised).
+   
+   auto-complete.el expects ac-omni-completion-sources to be a list of
+   cons cells where each cell's car is a regex that describes the
+   syntactical bits you want AutoComplete to be aware of. The cdr of
+   each cell is the source that will supply the completion data.  The
+   following tells autocomplete to begin completion when you type in a
+   . or a ->
+
+   Enable autocomplete for arduino and gmake's makefile since they're
+   not on by default.
+   
+   #+BEGIN_SRC emacs-lisp
+     (use-package auto-complete
+       :bind (:map ac-complete-mode-map
+                   ("\t" . ac-expand)
+                   ("\r" . nil ))
+       :config
+       (ac-config-default)
+       ;; Ignore c++ comments
+       (add-hook 'c++-mode-hook
+                 (lambda ()
+                   (make-local-variable 'ac-ignores)
+                   (add-to-list 'ac-ignores "//")))
+       ;; C-common: Start auto complete on . or ->
+       (add-hook 'c-mode-common-hook 
+                 '(lambda ()
+                    (add-to-list 'ac-omni-completion-sources
+                                 (cons "\\." '(ac-source-semantic)))
+                    (add-to-list 'ac-omni-completion-sources
+                                 (cons "->" '(ac-source-semantic)))
+                    ))
+       ;; Enable ac for gmake and arduino
+       (add-to-list 'ac-modes 'makefile-gmake-mode)
+       (add-to-list 'ac-modes 'arduino-mode))
+   #+END_SRC
+** Arduino
+   Function for setting up a arduino template sketch
+   #+BEGIN_SRC emacs-lisp
+     (defun init-arduino ()
+     "Template arduino sketch"
+     (interactive)
+     (insert "void setup() {
+       // put your setup code here, to run once:
+
+     }
+
+     void loop() {
+       // put your main code here, to run repeatedly:
+
+     }")
+     )   
+   #+END_SRC
+** Gnuplot
+   Enable gnuplot to be able to plot tables in org mode.
+
+   Bind the F9 key to open a buffer into gnuplot mode
+
+   Set that all files ending in .gp will use the gnuplot-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package gnuplot
+       :bind ([(f9)] . gnuplot-make-buffer)
+       :config
+       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+       ;; Set files with ext .gp to use gnuplot
+       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist)))
+   #+END_SRC
+** C family
+   Specific for C, C++ and other in the c family
+
+   Set indentation to be two spaces.
+   #+BEGIN_SRC emacs-lisp
+     (setq c-mode-hook
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
+     (setq objc-mode-hook
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
+     (setq c++-mode-hook
+	 (function (lambda ()
+		     (setq indent-tabs-mode nil)
+		     (setq c-indent-level 2))))
+   #+END_SRC
+
+   Set the default mode for .h files to be c++-mode
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+   #+END_SRC
+
+   Make it easier to work with camelCase words by enabling subword-mode
+   #+BEGIN_SRC emacs-lips
+     (add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
+   #+END_SRC
+
+   Add that it will also search src and include directories when
+   switching between header and source files
+   #+BEGIN_SRC emacs-lisp
+     (setq ff-search-directories '("." "../src" "../include"))
+   #+END_SRC
+** Flycheck
+   Enable flycheck globably.
+
+   Disable clang check, gcc check works better.
+   #+BEGIN_SRC emacs-lisp
+     (use-package flycheck
+       :config
+       (add-hook 'after-init-hook #'global-flycheck-mode)
+       (setq-default flycheck-disabled-checkers
+                     (append flycheck-disabled-checkers
+                             '(c/c++-clang))))
+   #+END_SRC
+*** Language standard in c++
+   Specify language standard in dir locals file: .dir-locals.el 
+   For example
+   ((c++-mode
+     (flycheck-clang-language-standard . "c++14")
+     (flycheck-gcc-language-standard . "c++14")))
+** Golang
+   Setting up go to use 2 spaces as indentation and enable
+   autocomplete for go.
+   #+BEGIN_SRC emacs-lisp
+     (use-package go-mode
+     :config
+     (add-hook 'go-mode-hook 
+       (lambda ()
+         (setq-default) 
+         (setq tab-width 2) 
+         (setq standard-indent 2) 
+         (setq indent-tabs-mode nil)))
+     (use-package go-autocomplete))
+   #+END_SRC
+** Haskell
+   Settings for programming haskell in emacs
+   #+BEGIN_SRC emacs-lisp
+     (use-package haskell-mode
+       :config
+       (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+       (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+       (autoload 'ghc-init "ghc" nil t))
+   #+END_SRC
+** Ledger
+   Settings for ledger.
+   Set the default mode for .dat files to ledger.
+
+   Clean the buffer with C-c c.
+   #+BEGIN_SRC emacs-lisp
+     (use-package ledger-mode
+       :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
+       :config
+       (setq ledger-clear-whole-transactions 1)
+       (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode)))
+   #+END_SRC
+** Lisp
+   Color haxvalues with their respective color.
+   #+BEGIN_SRC emacs-lisp
+     (use-package lisp-mode
+       :config
+       (defvar hexcolour-keywords
+         '(("#[[:xdigit:]]\\{6\\}"
+            (0 (put-text-property (match-beginning 0)
+                                  (match-end 0)
+                                  'face (list :background 
+                                              (match-string-no-properties 0)))))))
+       (defun hexcolour-add-to-font-lock ()
+         (font-lock-add-keywords nil hexcolour-keywords))
+       (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
+   #+END_SRC
+** GLSL
+   Set files associated with glsl to use glsl mode
+   #+BEGIN_SRC emacs-lisp
+         (use-package glsl-mode
+           :mode (("\\.vert\\'" . glsl-mode)
+                  ("\\.frag\\'" . glsl-mode)
+                  ("\\.geom\\'" . glsl-mode)
+                  ("\\.prog\\'" . glsl-mode)
+                  ("\\.glsl\\'" . glsl-mode)))
+   #+END_SRC
+** Python
+   Package name is python but the mode is python-mode
+   Set indentation to 2 white spaces.
+
+   Set the default for pb2 files (=PROJECT=) to use python.
+   #+BEGIN_SRC emacs-lisp
+          (use-package python
+            :mode (("\\.py\\'" . python-mode) 
+                   ("PROJECT" . python-mode))
+            :interpreter ("python" . python-mode)
+            :config
+            (setq python-mode-hook
+                  (function (lambda ()
+                              (setq indent-tabs-mode nil)
+                              (setq python-indent 2)))))
+   #+END_SRC
+** RTags (Disabled)
+   Key bindings for RTags (they conflicts with GTags)
+   #+BEGIN_SRC emacs-lisp
+     (use-package rtags
+     :disabled t
+     :bind (("M-." . rtags-find-symbol-at-point)
+            ("M-," . rtags-find-references-at-point)
+            ("M-[" . rtags-location-stack-back)
+            ("M-]" . rtags-location-stack-forward))
+     :config
+     (use-package rtags-ac))
+   #+END_SRC
+** Shell
+   Indent using spaces. ( Don't remember why I needed this one. )
+
+   Enable color in shell and define the color theme. Also disable
+   yasnippet in shell mode since that's messing with the shell.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package shell
+       :bind ("<f8>" . clear-shell)
+       :config
+       (setq sh-mode-hook
+             (function (lambda ()
+                         (setq indent-tabs-mode nil)
+                         (setq c-indent-level 2))))
+       (add-hook 'shell-mode-hook 
+                 (lambda ()
+                   ;; Enable color in shell
+                   (ansi-color-for-comint-mode-on)
+                   ;; Change Color theme in shell
+                   (setq ansi-color-names-vector
+                         ["#4d4d4d"
+                          "#D81860"
+                          "#60FF60"
+                          "#f9fd75"
+                          "#4695c8"
+                          "#a78edb"
+                          "#43afce"
+                          "#f3ebe2"])
+                   (setq ansi-color-map (ansi-color-make-color-map))
+                   ;; Disable yas minor mode
+                   (yas-minor-mode -1)
+                   ;; Add go and goc to the dirtrack, Need tweak the regexp 
+                   ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
+                   )))
+   #+END_SRC
+** Tramp
+   Set the ssh to be the default method for tramp
+   #+BEGIN_SRC emacs-lisp
+     (use-package tramp
+       :config
+       (setq tramp-default-method "ssh"))
+   #+END_SRC
+** Yasnippet
+   Enable yasnippet
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet 
+       :config
+       (yas-global-mode 1)
+       (setq yas/indent-line nil))
+
+   #+END_SRC
+** Org
+   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
+ 
+   Use pretty bullet points instead of asterix
+
+   Use a little downward-pointing arrow instead of the usual ellipsis
+   (=...=) when folded.
+
+   Use syntax highlighting in source blocks while editing.
+   #+BEGIN_SRC emacs-lisp
+     (use-package org
+       :mode ("\\.org\\'" . org-mode)
+       :config
+       (use-package org-bullets)
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (org-bullets-mode t)))
+       (setq org-ellipsis "⤵")
+       (setq org-src-fontify-natively t))
+   #+END_SRC
+
+   Doesn't work with yasnippet getting:
+   yas--fallback: yasnippet fallback loop!
+   This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+
+   Make TAB act as if it were issued in a buffer of the language's major mode.
+   =(setq org-src-tab-acts-natively t)=
+** Makefile
+   Set following files to use makefile-gmake-mode as the default.
+   - Files that starts with =Makefile=.
+   - Has extension =.mk=.
+   - Files that are located in a directory called Make and ends with
+     Rules.
+   - Files that are located in a directory called modules.
+   - Files called BUILD.conf (pb2 file).
+   #+BEGIN_SRC emacs-lisp
+     (use-package makefile-gmake-mode
+       :mode (("Makefile.*" . makefile-gmake-mode)
+              ("\\.mk$" . makefile-gmake-mode)
+              ("Make/.*Rules" . makefile-gmake-mode)
+              ("modules/.*" . makefile-gmake-mode)
+              ("BUILD.conf" . makefile-gmake-mode)
+              ))
+   #+END_SRC
+** Evil numbers
+   Incrementing/decrementing numbers.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-numbers
+     :bind (("C-c +" . evil-numbers/inc-at-pt)
+            ("C-c -" . evil-numbers/dec-at-pt)))
+   #+END_SRC
+** Magit
+   A Git porcelain inside Emacs
+   Key =C-x g= to run magit on current buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :bind ( "C-x g" . magit-status))
+   #+END_SRC
+
+** Buffer move
+   Move buffers around between windows
+   #+BEGIN_SRC emacs-lisp
+     (use-package buffer-move 
+       :bind ( ("<M-S-up>"    . buf-move-up)
+               ("<M-S-down>"  . buf-move-down)
+               ("<M-S-left>"  . buf-move-left)
+               ("<M-S-right>" . buf-move-right)))
+   #+END_SRC
+** Multiple cursors
+   Keybindings for the mc package
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors 
+       :bind (("C-S-c C-S-c" . mc/edit-lines)
+              ("C->"         . mc/mark-next-like-this)
+              ("C-<"         . mc/mark-previous-like-this)
+              ("C-c C-<"     . mc/mark-all-like-this)
+              ("C-+"         . mc/mark-next-like-this))
+       :config
+       (use-package mc-extras))
+   #+END_SRC
+** String inflections
+   Keybinding for cycle between snake case, camel case etc
+   #+BEGIN_SRC emacs-lisp
+     (use-package string-inflection 
+       :bind ("C-;" . string-inflection-cycle ))
+   #+END_SRC
+** Sudo edit
+   Sudo edit the current file
+   #+BEGIN_SRC emacs-lisp
+     (use-package sudo-edit
+       :bind ("C-c C-r" . sudo-edit-current-file))
+   #+END_SRC
+** Expand region
+   #+BEGIN_SRC emacs-lisp
+     (use-package expand-region
+       :bind ("C-=" . er/expand-region))
+   #+END_SRC
+
+** GTags (Disabled)
+   Key bindings for finding tag, reference and usage of symbol.
+   #+BEGIN_SRC emacs-lisp
+     (use-package ggtags
+       :disabled t
+       :bind (("M-." . gtags-find-tag) ;; Finds tag
+              ("C-M-." . gtags-find-rtag)   ;; Find all references of tag
+              ("C-M-," . gtags-find-symbol))) ;; Find all usages of symbol.
+   #+END_SRC
+   
+** Windmove
+   Jump between windows using the arrow keys instead of cycling with
+   "C-x o". Note that this Doesn't work in org mode.
+   #+BEGIN_SRC emacs-lisp
+     (use-package windmove 
+       :bind (([M-left]  . windmove-left)   ; move to left window
+              ([M-right] . windmove-right) ; move to right window
+              ([M-up]    . windmove-up)       ; move to upper window
+              ([M-down]  . windmove-down)))   ; move to downer window
+   #+END_SRC
+
+** Move text
+   Move line up and down using arrow keys.
+   #+BEGIN_SRC emacs-lisp
+     (use-package move-text
+       :bind (([C-S-up] . move-text-up)
+              ([C-S-down] . move-text-down)))
+   #+END_SRC
+** The Silver Searcher
+   #+BEGIN_SRC emacs-lisp
+     (use-package ag)
+   #+END_SRC
+   
+** ibuffer
+    Use ibuffer instead of list-buffers, has some neat features.
+
+    Sort buffers by placing them in different groups
+    #+BEGIN_SRC emacs-lisp
+      (use-package ibuffer
+        :config 
+        (defalias 'list-buffers 'ibuffer)
+        (setq ibuffer-saved-filter-groups
+            (quote (("default"
+                     ("c++" (mode . c++-mode))
+                     ("dired" (mode . dired-mode))
+                     ("ag" (mode . ag-mode ))
+                     ("emacs" (or
+                               (name . "^\\*scratch\\*$")
+                               (name . "^\\*Messages\\*$")
+                               (name . "^\\*Completions\\*$")))
+                     ))))
+      (add-hook 'ibuffer-mode-hook
+                (lambda ()
+                  (ibuffer-switch-to-saved-filter-groups "default"))))
+    #+END_SRC
+
+* Custom functions
+** Buffer
+   Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
+   #+BEGIN_SRC emacs-lisp
+     (defun rename-current-file-or-buffer ()
+       "Rename current file and buffer, similar to save-as but removes
+     the old file"
+       (interactive)
+       (if (not (buffer-file-name))
+           (call-interactively 'rename-buffer)
+         (let ((file (buffer-file-name)))
+           (with-temp-buffer
+             (set-buffer (dired-noselect file))
+             (dired-do-rename)
+             (kill-buffer nil))))
+       nil)
+   #+END_SRC
+   To sync all open buffers with their respective files on disk. Source: [[https://www.emacswiki.org/emacs/RevertBuffer][here]]
+   #+BEGIN_SRC emacs-lisp
+     (defun revert-all-buffers ()
+         "Refreshes all open buffers from their respective files."
+         (interactive)
+         (dolist (buf (buffer-list))
+           (with-current-buffer buf
+             (when (and (buffer-file-name) (not (buffer-modified-p)))
+               (revert-buffer t t t) )))
+         (message "Refreshed open files.") )
+   #+END_SRC
+** Programming
+*** C++
+    Insert java style comment
+    /**
+     * <cursor>
+     */
+    #+BEGIN_SRC emacs-lisp
+      (defun insert-function-comment ()
+        (interactive)
+        (insert "/**")  (indent-according-to-mode)
+        (insert "\n* ") (indent-according-to-mode)
+        (insert "\n*/") (indent-according-to-mode)
+        (previous-line 1)
+        (end-of-line)
+        )
+    #+END_SRC
+
+    Expands a define macro for all matches in current buffer.
+    #+BEGIN_SRC emacs-lisp
+      (defun replace-define()
+      "Place cursor on a #define <var> <content> and execute this command and it will 
+       replace all <var> with <content> in the file. 
+       Basically evaluating the define variable"
+      (interactive)
+      (setq line (split-string (thing-at-point 'line) ))
+      (if (equal (car line) "#define") 
+          (progn 
+            ;; save current position
+            (setq curr-pos (point))
+            ;; Jump to the end of line
+            (end-of-line)
+            ;; Replace the first with the second.
+            (replace-regexp (concat "\\_<"(nth 1 line)"\\_>") (nth 2 line) )
+            ;; return to the same position
+            (goto-char curr-pos)
+            ;; move to the end of the line to indicate that it's done.
+            (end-of-line) )
+          ( message "Not a #define directive!" )
+        )
+      )
+    #+END_SRC
+
+    Undo the previous function.
+    #+BEGIN_SRC emacs-lisp
+      (defun replace-define-undo()
+      "Place cursor on a #define <var> <content> and execute this command and it will 
+       replace all <content> with <var> in the file. 
+       Undoing the expansion of the define variable"
+      (interactive)
+      (setq line (split-string (thing-at-point 'line) ))
+      (if (equal (car line) "#define") 
+          (progn 
+            ;; save current position
+            (setq curr-pos (point))
+            ;; Jump to the end of line
+            (end-of-line)
+            ;; Replace the second with the first
+            (replace-string (nth 2 line) (nth 1 line) )
+            ;; return to the same position
+            (goto-char curr-pos)
+            ;; move to the end of the line to indicate that it's done.
+            (end-of-line) )
+          ( message "Not a #define directive!" )
+        )
+      )
+    #+END_SRC
+
+    Convert typedef to c++11's alias
+    #+BEGIN_SRC emacs-lisp
+      (defun convert-typedef-to-using ()
+        "Converts typedef statements to using statements"
+        (interactive)
+        (let ((begin) (end))
+          
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point) end nil)))
+          
+          (goto-char begin)
+          (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
+                                            "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+                                    end t )
+            (replace-match "using \\2 = \\1;"))
+          ))
+    #+END_SRC
+*** GTags
+    Cycling gtag result. Source [[https://www.emacswiki.org/emacs/CyclingGTagsResult][link]]
+    #+BEGIN_SRC emacs-lisp
+      (defun ww-next-gtag ()
+        "Find next matching tag, for GTAGS."
+        (interactive)
+        (let ((latest-gtags-buffer
+               (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
+                                       (buffer-list)) ))))
+          (cond (latest-gtags-buffer
+                 (switch-to-buffer latest-gtags-buffer)
+                 (forward-line)
+                 (gtags-select-it nil))
+                ) ))
+    #+END_SRC
+** Workspace
+   Function for splitting emacs into three frames. 
+   Really nice to use with i3wm.
+   #+BEGIN_SRC emacs-lisp
+     (defun setup-home ()
+     "Splits the session into three frames"
+     (interactive)
+     (delete-other-frames)
+     (delete-other-windows)
+     (make-frame-command)
+     (make-frame-command)
+     )
+   #+END_SRC
+** Shell
+   Clear shell in emacs
+   #+BEGIN_SRC emacs-lisp
+     (defun clear-shell ()
+        (interactive)
+        (let ((comint-buffer-maximum-size 0))
+          (comint-truncate-buffer)))
+   #+END_SRC
+** Multiple Cursors extentions
+   Extra functions for Multiple cursors
+   
+   #+BEGIN_SRC emacs-lisp
+     (defun mc/insert-dec-numbers (arg)
+       "Insert decreasing numbers for each cursor, starting at number
+     of cursors - 1 or ARG."
+       (interactive "P")
+       (setq mc--insert-numbers-number (or arg (1- (mc/num-cursors))))
+       (mc/for-each-cursor-ordered
+        (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease cursor)))
+
+     (defun mc--insert-number-and-decrease ()
+       (interactive)
+       (insert (number-to-string mc--insert-numbers-number))
+       (setq mc--insert-numbers-number (1- mc--insert-numbers-number)))
+
+     (defun mc/insert-same-numbers-per-line (arg)
+       "Insert increasing numbers for each cursor that are on a separate
+     line, cursors on the same line will insert the same number, starts at
+     0 or ARG"
+     (interactive "P")
+     (setq mc--current-line nil
+           mc--insert-numbers-number (or arg 0) )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase-for-diff-lines
+                                          cursor)))
+
+     (defun mc/insert-dec-same-numbers-per-line (arg)
+       "Insert decreasing numbers for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     number, starts at number of cursors - 1 or ARG"
+     (interactive "P")
+     (setq mc--current-line nil
+           mc--insert-numbers-number (or arg (1- (mc/num-cursors))) )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease-for-diff-lines
+                                          cursor)))
+
+     (defun mc--insert-number-and-increase-for-diff-lines ()
+     (interactive)
+     (mc--insert-number-and-change-for-diff-lines '1+))
+
+     (defun mc--insert-number-and-decrease-for-diff-lines ()
+     (interactive)
+     (mc--insert-number-and-change-for-diff-lines '1-))
+
+     (defun mc--insert-number-and-change-for-diff-lines (change)
+       (interactive)
+       (if (not mc--current-line) 
+           ;; If first time init mc--current-line
+           (progn (setq mc--current-line (line-number-at-pos))
+                  (insert (number-to-string mc--insert-numbers-number)))
+         ;; Else compare lines and set accordingly
+         (progn  
+           ;; If current-line and the line is it on are different change
+           ;; and insert.
+           (if (not (= mc--current-line (line-number-at-pos)))
+               (progn 
+                 (setq mc--current-line (line-number-at-pos)
+                       mc--insert-numbers-number 
+                       (funcall change mc--insert-numbers-number))
+                 (insert (number-to-string mc--insert-numbers-number)))
+             ;; Else insert number.
+             (insert (number-to-string mc--insert-numbers-number)) ))))
+
+     (defun mc/insert-characters (char)
+       "Insert increasing character for each cursor, it starts from
+     the user specified character"
+     (interactive  "cSpecify letter to start from")
+     (setq mc--insert-chars-char char)
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+                                          cursor)))
+
+     (defun mc/insert-dec-characters (char)
+       "Insert decreasing character for each cursor, it starts from
+     the user specified character"
+     (interactive  "cSpecify letter to start from")
+     (setq mc--insert-chars-char char)
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
+                                          cursor)))
+
+     (defun mc--insert-char-and-increase ()
+       (interactive)
+       (mc--insert-char-and-change '1+))
+
+     (defun mc--insert-char-and-decrease ()
+       (interactive)
+       (mc--insert-char-and-change '1-))
+
+     (defun mc--insert-char-and-change (change)
+       (interactive)
+       (insert mc--insert-chars-char)
+       (setq mc--insert-chars-char (funcall change mc--insert-chars-char)))
+
+
+     (defun mc/insert-same-chars-per-line (char)
+       "Insert increasing character for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     character, it starts from the user specified character."
+     (interactive  "cSpecify letter to start from")
+     (setq mc--current-line nil
+           mc--insert-chars-char char )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase-for-diff-lines
+                                          cursor)))
+
+     (defun mc/insert-dec-same-chars-per-line (char)
+       "Insert decreasing character for each cursor that are on a
+     separate line, cursors on the same line will insert the same
+     character, it starts from the user specified character."
+     (interactive  "cSpecify letter to start from")
+     (setq mc--current-line nil
+           mc--insert-chars-char char )
+     (mc/for-each-cursor-ordered
+      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-decrease-for-diff-lines
+                                          cursor)))
+
+     (defun mc--insert-char-and-increase-for-diff-lines ()
+       (interactive)
+       (mc--insert-char-and-change-for-diff-lines '1+))
+
+     (defun mc--insert-char-and-decrease-for-diff-lines ()
+       (interactive)
+       (mc--insert-char-and-change-for-diff-lines '1-))
+
+     (defun mc--insert-char-and-change-for-diff-lines ( change )
+       (interactive)
+       (if (not mc--current-line) 
+           ;; If first time init mc--current-line
+           (progn (setq mc--current-line (line-number-at-pos))
+                  (insert mc--insert-chars-char))
+         ;; Else compare lines and set accordingly.
+         (progn  
+           ;; If current-line and the line is it on is different increment
+           ;; and insert.
+           (if (not (= mc--current-line (line-number-at-pos)))
+               (progn (setq mc--current-line (line-number-at-pos)
+                            mc--insert-chars-char 
+                            (funcall change mc--insert-chars-char))
+                      (insert mc--insert-chars-char))
+             ;; Else insert char.
+             (insert mc--insert-chars-char)) )))
+
+   #+END_SRC
+
+** Split lines
+   Function for splitting lines at specified character. Default is ','.
+   #+BEGIN_SRC emacs-lisp
+     (defun split-at (&optional delim)
+     "Split region/line at DELIM, if there are multiple matches it
+     will split each one. DELIM will default to \",\" if no delim is
+     given."
+     (interactive "sSpecify delimiter: ")
+     (when (or (string= delim "") (not delim)) (setq delim ","))
+     (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+           (end (if (use-region-p) (region-end) (point-at-eol)))
+           (regex delim))
+       (goto-char start)
+      
+       (while (search-forward-regexp regex end t)
+         (insert "\n")
+         (setq end (1+ end))
+         )
+       (indent-region start end)
+       (goto-char start)
+       )
+     )
+
+     (defun split-at-comma ()
+     "wrapper for split-at for use with key command"
+     (interactive)
+     (split-at ",")
+     )
+   #+END_SRC
+** Yesterday-time
+   Computes the time 24 hours ago
+   #+BEGIN_SRC emacs-lisp
+     (defun yesterday-time ()
+     "Provide the date/time 24 hours before the time now in the format of current-time."
+       (let* ((now-time (current-time))              ; get the time now
+              (hi (car now-time))                    ; save off the high word
+              (lo (car (cdr now-time)))              ; save off the low word
+              (msecs (nth 2 now-time))               ; save off the milliseconds
+              )
+
+         (if (< lo 20864)                      ; if the low word is too small for subtracting
+             (setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
+           (setq hi (- hi 1) lo (- lo 20864))  ; else, add 86400 seconds (in two parts)
+           )
+         (list hi lo msecs)                    ; regurgitate the new values
+         ))
+   #+END_SRC
+
+* Custom keybindings
+** Macros
+    Macro to quickly open a file that is located on my machine at work.
+    Inserts "fredriks@bcws067.d2vancouver.com:fredriks/swdevl/CoreLibs"
+    #+BEGIN_SRC emacs-lisp
+      (fset 'bcws
+         [?f ?r ?e ?d ?r ?i ?k ?s ?@ ?b ?c ?b ?e ?l ?l ?w ?s ?1 ?0 ?8 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+    #+END_SRC
+
+    And bind it to the key combo
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-c B") 'bcws)
+    #+END_SRC
+** Registers
+   Quickly jump to files by pressing C-x r j <register>
+   Jump to my init file with 'e' and init directory with 'i'.
+   #+BEGIN_SRC emacs-lisp
+     (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
+     (set-register ?i (cons 'file "~/.emacs.d/init.d")) 
+   #+END_SRC
+** UI
+   Key bindings if I really need to see the menu and tool bar
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "<f5>") 'menu-bar-mode)
+     (global-set-key (kbd "<f6>") 'tool-bar-mode)
+   #+END_SRC
+   
+** Navigation
+   Jump to specific line.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-g") 'goto-line)
+   #+END_SRC
+** Text search
+   I'm using the regex variant of the text search more than the normal one.
+   Swapping keybindings for them
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-M-s") 'isearch-forward)
+     (global-set-key (kbd "C-M-r") 'isearch-backward)
+     (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+     (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+     (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+   #+END_SRC
+** Text edit
+   Bind replace regexp to meta r
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-r") 'replace-regexp)
+   #+END_SRC
+   
+   Duplicate line
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c l") 'duplicate-line)
+   #+END_SRC
+
+   Split line at comma
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-,") 'split-at-comma)
+   #+END_SRC
+** Buffer functions
+   Key bindings for revert-all-buffers and rename current buffer
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c r") 'revert-all-buffers)
+     (global-set-key "\C-cR" 'rename-current-file-or-buffer)
+   #+END_SRC
+** C Common
+   Hide/Show code blocks
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-common-hook
+       (lambda()
+         (local-set-key (kbd "C-c <right>") 'hs-show-block)
+         (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+         (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+         (local-set-key (kbd "C-c <down>")  'hs-show-all)
+         (hs-minor-mode t)))
+   #+END_SRC
+
+   When in a c family buffer use shift tab to switch between header
+   and source
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-common-hook
+       (lambda() 
+         (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
+   #+END_SRC
+** Compile
+   Key bindings to run make on current location and to re-run the
+   command.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "<f12>") 'compile)
+     (global-set-key (kbd "<f11>") 'recompile)
+   #+END_SRC
+* Bug workarounds
+  Workarounds for bugs I have encountered through out the years
+** Cursor turns black
+   Set the cursor color to white.
+   #+BEGIN_SRC emacs-lisp
+     (set-cursor-color "#ffffff")
+   #+END_SRC
+** Maximize emacs under KDE
+   Issue maximizing emacs with KDE at work
+   #+BEGIN_SRC emacs-lisp
+     (setq frame-resize-pixelwise t)
+   #+END_SRC
+* Notes
+  To execute a lisp function in replace regexp do \,(<function>)
