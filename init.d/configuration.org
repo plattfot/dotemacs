@@ -34,11 +34,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
 ** Custom plugins
-  Add path to custom plugins
-  #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/plugins")
-  #+END_SRC
-  
+*** Dotemacs
+    Export a variable if I'm at work or not.
+    #+BEGIN_SRC emacs-lisp
+      (use-package dotemacs
+       	:load-path "~/.emacs.d/plugins")
+    #+END_SRC
 ** UI
 *** Maximize work area
    Disable the menu, tool and scroll bar since they just take up
@@ -522,6 +523,185 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (ibuffer-switch-to-saved-filter-groups "default"))))
     #+END_SRC
 
+* Work
+** Custom packages
+*** dd-newfile
+    Function that inserts the DD template for a new file
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-newfile
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** dd-log-parser
+    Functions for parsing the =DD::Logger=
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-log-parser
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** dd-pybuild2
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-pybuild2
+       	:if dotemacs-is-work
+       	:load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** houdini
+    Houdini related functions, mostly handle houdini versions.
+    #+BEGIN_SRC emacs-lisp
+            (use-package houdini
+              :bind ("C-x j" . hou-insert-version)
+              :if dotemacs-is-work
+              :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** highlight-extra
+    Functions for highlighting my shells when building etc
+    #+BEGIN_SRC emacs-lisp
+      (use-package highlight-extra
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** work
+    Bunch of functions to setup my work area when at work 
+    #+BEGIN_SRC emacs-lisp
+      (use-package work
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+** Custom functions
+*** PID    
+   Get the pid of a proc
+   #+BEGIN_SRC emacs-lisp
+     (defun pid (regex &optional index)
+       "Get the pid of REGEX, if more than one is running it returns one
+     at INDEX. Where INDEX starts from 0 and up"
+       (interactive)
+       (when (not index) (setq index 0))
+       (nth index 
+	    (split-string 
+	     (shell-command-to-string
+	      (concat "ps aux | " ;; wrap first character in [ ] to not match itself
+		      "sed -nE \"s/$USER\\s+([0-9]+).*?"
+		      (concat "[" (substring regex 0 1) "]" (substring regex 1))"/\\1/p\"")
+	      ))))
+   #+END_SRC
+*** PID Houdini
+    Get the PID for houdini
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-houdini (&optional index )
+	"Get the pid for houdini.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+
+	(interactive)
+	(when (not index) (setq index 0)) (pid "houdini-bin" index))
+    #+END_SRC
+*** PID Maya
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-maya (&optional index)
+	"Get the pid for maya.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+	(interactive)
+	(when (not index) (setq index 0))
+	(pid "maya\\.bin" index))
+    #+END_SRC
+*** PID smeat
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-smeat (&optional index)
+	"Get the pid for smeat.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+	(interactive)
+	(when (not index) (setq index 0))
+	;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+	(pid "smeat(:?[^=]+|$$)" index))
+    #+END_SRC
+*** Attach Houdini
+    Used with gdb, prints attach <pid of houdini> in the prompt.
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-houdini (&optional index)
+	"Prints attach <pid> into the buffer. 
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-houdini (- index 1)) )))
+    #+END_SRC
+*** Attach Maya
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-maya (&optional index) 
+        "Prints attach <pid> into the buffer. 
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+        (interactive"p")
+        ;; The default for index is one.
+        (when (< index 1) (setq index 1))
+        (insert-string (concat "attach " (pid-maya index) )))
+    #+END_SRC
+*** Attach smeat
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-smeat (&optional index)
+	"Prints attach <pid> into the buffer.
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-smeat (- index 1)) )))
+    #+END_SRC
+*** Kill Houdini
+    #+BEGIN_SRC emacs-lisp
+      (defun kill-houdini ()
+	"Kill houdini.
+      If more than one houdini are running it will kill the
+      first one in the ps list."
+	(interactive)
+	(shell-command (concat "kill -9 " (pid-houdini))))
+    #+END_SRC
+*** Kill Maya 
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-maya (&optional index)
+	"Prints \"attach <pid>\" into the buffer.
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-maya index) )))
+    #+END_SRC
+*** Smeat abort
+    Not quite working. But sends a signal to the smeat process to abort the sim.
+    #+BEGIN_SRC emacs-lisp
+      (defun smeat-abort (&optional index )
+        "Sends USR1 signal to houdini which aborts the smeat client.
+      INDEX is used to select which houdini instance to send to if
+      multiple instances exist."
+        (interactive"p")
+        (when (< index 1) (setq index 1))
+        (let ((hou-pid (pid-houdini index)))
+          (shell-command (concat "kill -s USR1 " hou-pid))))
+    #+END_SRC
+*** Preproccess
+    #+BEGIN_SRC emacs-lisp
+      (defun preprocess-fix-macros ()
+        "Fix expanded macros when running only the preprocess on a file.
+      For example: g++ <flags> -E <file>.  Since they are expanded into
+      a single line which makes them hard to debug."
+        (interactive)
+        (let* ((start (if (use-region-p) (region-beginning) (point)))
+               (end (if (use-region-p) (region-end) (point-max)))
+               (regex-map '(":[ ]" ";" "{" "}[ ]"))
+               (regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|")))
+          (goto-char start)
+          (while (search-forward-regexp regex end t)
+            (newline)
+            (setq end (1+ end)))
+          (indent-region start (point))
+          (goto-char start)))
+    #+END_SRC
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
@@ -563,8 +743,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (insert "\n* ") (indent-according-to-mode)
         (insert "\n*/") (indent-according-to-mode)
         (previous-line 1)
-        (end-of-line)
-        )
+        (end-of-line))
     #+END_SRC
 
     Expands a define macro for all matches in current buffer.
@@ -629,11 +808,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (progn (setq begin (point) end nil)))
           
           (goto-char begin)
-          (while (re-search-forward (concat "typedef \\(\\(?:typename \\)*"
-                                            "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
-                                    end t )
-            (replace-match "using \\2 = \\1;"))
-          ))
+          (while (re-search-forward
+                  (concat "typedef \\(\\(?:typename \\)*"
+                          "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+                  end t )
+            (replace-match "using \\2 = \\1;"))))
     #+END_SRC
 *** GTags
     Cycling gtag result. Source [[https://www.emacswiki.org/emacs/CyclingGTagsResult][link]]
@@ -671,154 +850,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (let ((comint-buffer-maximum-size 0))
           (comint-truncate-buffer)))
    #+END_SRC
-** Multiple Cursors extentions
-   Extra functions for Multiple cursors
-   
-   #+BEGIN_SRC emacs-lisp
-     (defun mc/insert-dec-numbers (arg)
-       "Insert decreasing numbers for each cursor, starting at number
-     of cursors - 1 or ARG."
-       (interactive "P")
-       (setq mc--insert-numbers-number (or arg (1- (mc/num-cursors))))
-       (mc/for-each-cursor-ordered
-        (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease cursor)))
-
-     (defun mc--insert-number-and-decrease ()
-       (interactive)
-       (insert (number-to-string mc--insert-numbers-number))
-       (setq mc--insert-numbers-number (1- mc--insert-numbers-number)))
-
-     (defun mc/insert-same-numbers-per-line (arg)
-       "Insert increasing numbers for each cursor that are on a separate
-     line, cursors on the same line will insert the same number, starts at
-     0 or ARG"
-     (interactive "P")
-     (setq mc--current-line nil
-           mc--insert-numbers-number (or arg 0) )
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-increase-for-diff-lines
-                                          cursor)))
-
-     (defun mc/insert-dec-same-numbers-per-line (arg)
-       "Insert decreasing numbers for each cursor that are on a
-     separate line, cursors on the same line will insert the same
-     number, starts at number of cursors - 1 or ARG"
-     (interactive "P")
-     (setq mc--current-line nil
-           mc--insert-numbers-number (or arg (1- (mc/num-cursors))) )
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-number-and-decrease-for-diff-lines
-                                          cursor)))
-
-     (defun mc--insert-number-and-increase-for-diff-lines ()
-     (interactive)
-     (mc--insert-number-and-change-for-diff-lines '1+))
-
-     (defun mc--insert-number-and-decrease-for-diff-lines ()
-     (interactive)
-     (mc--insert-number-and-change-for-diff-lines '1-))
-
-     (defun mc--insert-number-and-change-for-diff-lines (change)
-       (interactive)
-       (if (not mc--current-line) 
-           ;; If first time init mc--current-line
-           (progn (setq mc--current-line (line-number-at-pos))
-                  (insert (number-to-string mc--insert-numbers-number)))
-         ;; Else compare lines and set accordingly
-         (progn  
-           ;; If current-line and the line is it on are different change
-           ;; and insert.
-           (if (not (= mc--current-line (line-number-at-pos)))
-               (progn 
-                 (setq mc--current-line (line-number-at-pos)
-                       mc--insert-numbers-number 
-                       (funcall change mc--insert-numbers-number))
-                 (insert (number-to-string mc--insert-numbers-number)))
-             ;; Else insert number.
-             (insert (number-to-string mc--insert-numbers-number)) ))))
-
-     (defun mc/insert-characters (char)
-       "Insert increasing character for each cursor, it starts from
-     the user specified character"
-     (interactive  "cSpecify letter to start from")
-     (setq mc--insert-chars-char char)
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
-                                          cursor)))
-
-     (defun mc/insert-dec-characters (char)
-       "Insert decreasing character for each cursor, it starts from
-     the user specified character"
-     (interactive  "cSpecify letter to start from")
-     (setq mc--insert-chars-char char)
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase
-                                          cursor)))
-
-     (defun mc--insert-char-and-increase ()
-       (interactive)
-       (mc--insert-char-and-change '1+))
-
-     (defun mc--insert-char-and-decrease ()
-       (interactive)
-       (mc--insert-char-and-change '1-))
-
-     (defun mc--insert-char-and-change (change)
-       (interactive)
-       (insert mc--insert-chars-char)
-       (setq mc--insert-chars-char (funcall change mc--insert-chars-char)))
-
-
-     (defun mc/insert-same-chars-per-line (char)
-       "Insert increasing character for each cursor that are on a
-     separate line, cursors on the same line will insert the same
-     character, it starts from the user specified character."
-     (interactive  "cSpecify letter to start from")
-     (setq mc--current-line nil
-           mc--insert-chars-char char )
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-increase-for-diff-lines
-                                          cursor)))
-
-     (defun mc/insert-dec-same-chars-per-line (char)
-       "Insert decreasing character for each cursor that are on a
-     separate line, cursors on the same line will insert the same
-     character, it starts from the user specified character."
-     (interactive  "cSpecify letter to start from")
-     (setq mc--current-line nil
-           mc--insert-chars-char char )
-     (mc/for-each-cursor-ordered
-      (mc/execute-command-for-fake-cursor 'mc--insert-char-and-decrease-for-diff-lines
-                                          cursor)))
-
-     (defun mc--insert-char-and-increase-for-diff-lines ()
-       (interactive)
-       (mc--insert-char-and-change-for-diff-lines '1+))
-
-     (defun mc--insert-char-and-decrease-for-diff-lines ()
-       (interactive)
-       (mc--insert-char-and-change-for-diff-lines '1-))
-
-     (defun mc--insert-char-and-change-for-diff-lines ( change )
-       (interactive)
-       (if (not mc--current-line) 
-           ;; If first time init mc--current-line
-           (progn (setq mc--current-line (line-number-at-pos))
-                  (insert mc--insert-chars-char))
-         ;; Else compare lines and set accordingly.
-         (progn  
-           ;; If current-line and the line is it on is different increment
-           ;; and insert.
-           (if (not (= mc--current-line (line-number-at-pos)))
-               (progn (setq mc--current-line (line-number-at-pos)
-                            mc--insert-chars-char 
-                            (funcall change mc--insert-chars-char))
-                      (insert mc--insert-chars-char))
-             ;; Else insert char.
-             (insert mc--insert-chars-char)) )))
-
-   #+END_SRC
-
 ** Split lines
    Function for splitting lines at specified character. Default is ','.
    #+BEGIN_SRC emacs-lisp
@@ -867,6 +898,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ))
    #+END_SRC
 
+* Custom plugins
+** Multiple cursor extension
+   #+BEGIN_SRC emacs-lisp
+     (use-package mc-extra-extra
+       :load-path "~/emacs.d/plugins")
+   #+END_SRC
 * Custom keybindings
 ** Macros
     Macro to quickly open a file that is located on my machine at work.
