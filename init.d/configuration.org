@@ -38,7 +38,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
     Export a variable if I'm at work or not.
     #+BEGIN_SRC emacs-lisp
       (use-package dotemacs
-       	:load-path "~/.emacs.d/plugins/dotemacs")
+       	:load-path "~/.emacs.d/plugins")
     #+END_SRC
 ** UI
 *** Maximize work area
