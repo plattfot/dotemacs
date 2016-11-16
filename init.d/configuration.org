@@ -34,11 +34,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
      (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
 ** Custom plugins
-  Add path to custom plugins
-  #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/plugins")
-  #+END_SRC
-  
+*** Dotemacs
+    Export a variable if I'm at work or not.
+    #+BEGIN_SRC emacs-lisp
+      (use-package dotemacs
+       	:load-path "~/.emacs.d/plugins/dotemacs")
+    #+END_SRC
 ** UI
 *** Maximize work area
    Disable the menu, tool and scroll bar since they just take up
@@ -522,6 +523,185 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] org con
                   (ibuffer-switch-to-saved-filter-groups "default"))))
     #+END_SRC
 
+* Work
+** Custom packages
+*** dd-newfile
+    Function that inserts the DD template for a new file
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-newfile
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** dd-log-parser
+    Functions for parsing the =DD::Logger=
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-log-parser
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** dd-pybuild2
+    #+BEGIN_SRC emacs-lisp
+      (use-package dd-pybuild2
+       	:if dotemacs-is-work
+       	:load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** houdini
+    Houdini related functions, mostly handle houdini versions.
+    #+BEGIN_SRC emacs-lisp
+            (use-package houdini
+              :bind ("C-x j" . hou-insert-version)
+              :if dotemacs-is-work
+              :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** highlight-extra
+    Functions for highlighting my shells when building etc
+    #+BEGIN_SRC emacs-lisp
+      (use-package highlight-extra
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+*** work
+    Bunch of functions to setup my work area when at work 
+    #+BEGIN_SRC emacs-lisp
+      (use-package work
+        :if dotemacs-is-work
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+** Custom functions
+*** PID    
+   Get the pid of a proc
+   #+BEGIN_SRC emacs-lisp
+     (defun pid (regex &optional index)
+       "Get the pid of REGEX, if more than one is running it returns one
+     at INDEX. Where INDEX starts from 0 and up"
+       (interactive)
+       (when (not index) (setq index 0))
+       (nth index 
+	    (split-string 
+	     (shell-command-to-string
+	      (concat "ps aux | " ;; wrap first character in [ ] to not match itself
+		      "sed -nE \"s/$USER\\s+([0-9]+).*?"
+		      (concat "[" (substring regex 0 1) "]" (substring regex 1))"/\\1/p\"")
+	      ))))
+   #+END_SRC
+*** PID Houdini
+    Get the PID for houdini
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-houdini (&optional index )
+	"Get the pid for houdini.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+
+	(interactive)
+	(when (not index) (setq index 0)) (pid "houdini-bin" index))
+    #+END_SRC
+*** PID Maya
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-maya (&optional index)
+	"Get the pid for maya.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+	(interactive)
+	(when (not index) (setq index 0))
+	(pid "maya\\.bin" index))
+    #+END_SRC
+*** PID smeat
+    #+BEGIN_SRC emacs-lisp
+      (defun pid-smeat (&optional index)
+	"Get the pid for smeat.
+      If more than one is running it returns the one at INDEX.  Where
+      INDEX starts from 0 and up"
+	(interactive)
+	(when (not index) (setq index 0))
+	;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+	(pid "smeat(:?[^=]+|$$)" index))
+    #+END_SRC
+*** Attach Houdini
+    Used with gdb, prints attach <pid of houdini> in the prompt.
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-houdini (&optional index)
+	"Prints attach <pid> into the buffer. 
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-houdini (- index 1)) )))
+    #+END_SRC
+*** Attach Maya
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-maya (&optional index) 
+        "Prints attach <pid> into the buffer. 
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+        (interactive"p")
+        ;; The default for index is one.
+        (when (< index 1) (setq index 1))
+        (insert-string (concat "attach " (pid-maya index) )))
+    #+END_SRC
+*** Attach smeat
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-smeat (&optional index)
+	"Prints attach <pid> into the buffer.
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-smeat (- index 1)) )))
+    #+END_SRC
+*** Kill Houdini
+    #+BEGIN_SRC emacs-lisp
+      (defun kill-houdini ()
+	"Kill houdini.
+      If more than one houdini are running it will kill the
+      first one in the ps list."
+	(interactive)
+	(shell-command (concat "kill -9 " (pid-houdini))))
+    #+END_SRC
+*** Kill Maya 
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-maya (&optional index)
+	"Prints \"attach <pid>\" into the buffer.
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1."
+	(interactive"p")
+	;; The default for index is one.
+	(when (< index 1) (setq index 1))
+	(insert-string (concat "attach " (pid-maya index) )))
+    #+END_SRC
+*** Smeat abort
+    Not quite working. But sends a signal to the smeat process to abort the sim.
+    #+BEGIN_SRC emacs-lisp
+      (defun smeat-abort (&optional index )
+        "Sends USR1 signal to houdini which aborts the smeat client.
+      INDEX is used to select which houdini instance to send to if
+      multiple instances exist."
+        (interactive"p")
+        (when (< index 1) (setq index 1))
+        (let ((hou-pid (pid-houdini index)))
+          (shell-command (concat "kill -s USR1 " hou-pid))))
+    #+END_SRC
+*** Preproccess
+    #+BEGIN_SRC emacs-lisp
+      (defun preprocess-fix-macros ()
+        "Fix expanded macros when running only the preprocess on a file.
+      For example: g++ <flags> -E <file>.  Since they are expanded into
+      a single line which makes them hard to debug."
+        (interactive)
+        (let* ((start (if (use-region-p) (region-beginning) (point)))
+               (end (if (use-region-p) (region-end) (point-max)))
+               (regex-map '(":[ ]" ";" "{" "}[ ]"))
+               (regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|")))
+          (goto-char start)
+          (while (search-forward-regexp regex end t)
+            (newline)
+            (setq end (1+ end)))
+          (indent-region start (point))
+          (goto-char start)))
+    #+END_SRC
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]

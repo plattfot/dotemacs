@@ -1,3 +1,8 @@
+;;; dd-log-parser --- Functions for parsing the dd log
+;;; Commentary:
+
+;;; Code:
+
 ;; From http://www.emacswiki.org/emacs/ElispCookbook#toc6
 (defun chomp (str)
       "Chomp leading and tailing whitespace from STR."
@@ -27,7 +32,7 @@ putting the matching lines in a buffer named *matching*"
                  result-buffer))))
     (pop-to-buffer result-buffer)))
 
-(defun dd/log-extract-info (re)
+(defun dd-log-extract-info (re)
 "Extracts all lines matching the regexp RE, putting them in a
 buffer named *matching* and strips the DD_LOG header."
 (interactive "sEnter regexp to match: ")
@@ -36,7 +41,7 @@ buffer named *matching* and strips the DD_LOG header."
 (replace-regexp "[| ]*\\(\\+-\\)*\\[.*\\]:" "") ;; Strip DD_LOG header
 )
 
-(defun dd/log-build-table-with-methods (method table first_header compute_avg)
+(defun dd-log-build-table-with-methods (method table first_header compute_avg)
   "build the table based on the data in TABLE"
   (org-mode)
   (insert "# Method: " method ".\n")
@@ -54,7 +59,8 @@ buffer named *matching* and strips the DD_LOG header."
 	       nil)
 	     (insert "|" key "|" (mapconcat 'identity (nreverse values) "|"))
 	     (newline)
-	     ) table)
+	     ) 
+	   table)
   (org-table-align)
   ;; Go to the beginning of the table
   (forward-line (- (1+ num_rows)))
@@ -105,7 +111,7 @@ buffer named *matching* and strips the DD_LOG header."
   (newline)
 )
 
-(defun dd/log-generate-table-with-methods ( name_row name_col methods 
+(defun dd-log-generate-table-with-methods ( name_row name_col methods 
 					    &optional first_header compute_avg) 
 "Call from the buffer that contains the dd log. Generates
 table/tables from that log by extracting the regexp matcing the
@@ -141,7 +147,7 @@ work."
 (setq re_value  (concat "\\(" name_col "\\)") )
 (setq re_key (concat "\\(" name_row "\\)") )
 ;; Extract all lines matching the three variables into a separate buffer
-(dd/log-extract-info (mapconcat 'identity (list re_value re_key re_types) "\\|"))
+(dd-log-extract-info (mapconcat 'identity (list re_value re_key re_types) "\\|"))
 ;; Setup hash table to put the data in.
 (define-hash-table-test 'str-hash 'string-equal 'sxhash)
 (setq num_methods (length methods))
@@ -193,14 +199,14 @@ work."
   (kill-line)
 )
 ;; Iterate over the tables.
-(maphash (lambda (key table) (dd/log-build-table-with-methods key table first_header compute_avg ))
+(maphash (lambda (key table) (dd-log-build-table-with-methods key table first_header compute_avg ))
 	 tables)
 )
-;; Functions that uses dd/log-generate-table to extract info
+;; Functions that uses dd-log-generate-table to extract info
 (defun extract-particle-count ()
 "Extracts the particle count from a fluid sim by parsing the dd log"
 (interactive)
-(dd/log-generate-table-with-methods
+(dd-log-generate-table-with-methods
  "Float frame: \\([0-9]+\\)"
  "total number of particles: \\([0-9]+\\)"
  "Starting process Get input \\(fluid\\)"
@@ -211,7 +217,7 @@ work."
 "Extracts the result from a DD log when using inheritance or template
 specialization with rasterizing."
   (interactive)
-  (dd/log-generate-table-with-methods 
+  (dd-log-generate-table-with-methods 
    "Number of Secondary Grids to raster \\([0-9]+\\)"
    "Finished process Volume rasterization in \\([0-9]+\\.[0-9]+\\)s"
    "Using \\(template specialization\\)\\., Using \\(inheritance\\)\\."
@@ -219,7 +225,7 @@ specialization with rasterizing."
    t) ;; SG = Secondary Grids
 )
 ;; Work in progress
-(defun dd/log-parse-layout (layout type default) 
+(defun dd-log-parse-layout (layout type default) 
 "Parse the input and returns the layout in a list. For example
 layout = \"I(1,2) R(Test,1)\" type = I, will return (1 2), type = R will return (\"Test\" 1) if it fails to make sense of
 the input it will return the default"
@@ -243,40 +249,40 @@ the input it will return the default"
   default )
 )
 
-(defun dd/log-const_extractor (const input )
+(defun dd-log-const_extractor (const input )
   "Returns what's in CONST"
   (interactive)
   const
 )
 
-(defun dd/log-extractor (group input )
+(defun dd-log-extractor (group input )
   "Returns the match from GROUP"
   (interactive)
   (match-string group input)
 )
 
-(defun dd/log-extract-func (input)
+(defun dd-log-extract-func (input)
 "returns the const-extractor if the input is an int else the extractor"
 (interactive)
-(if (stringp input) 'dd/log-const_extractor 'dd/log-extractor)
+(if (stringp input) 'dd-log-const_extractor 'dd-log-extractor)
 )
 
-(defun dd/convert-to-re (layout)
+(defun dd-convert-to-re (layout)
 "Convert integers to re groups. I.e 1 -> \\1"
 (mapcar (lambda (l) (if (numberp l) (concat "\\" (number-to-string l)) 
 		      (replace-regexp-in-string "^\\([0-9]+\\)$" "\\\\1" l))) layout)
 )
 
-(defun dd/log-generate-table-last ( iter_re result_re &optional match_layout) 
-"Same as log-generate-table except this one sets CELL-OPERATOR to dd/last. Which mean that if there are more than one entry per iteration the last encounter will be stored"
+(defun dd-log-generate-table-last ( iter_re result_re &optional match_layout) 
+"Same as log-generate-table except this one sets CELL-OPERATOR to dd-last. Which mean that if there are more than one entry per iteration the last encounter will be stored"
 (interactive (list (read-string "String that classifies each iteration: ")
 		   (read-string "String to match the result: ")	
 		   (read-string "Enter layout (default I(Iteration,1) R(Result,1)): "))
 )
-(dd/log-generate-table iter_re result_re match_layout 'dd/last )
+(dd-log-generate-table iter_re result_re match_layout 'dd-last )
 )
 
-(defun dd/log-generate-table ( iter_re result_re &optional match_layout cell-operator) 
+(defun dd-log-generate-table ( iter_re result_re &optional match_layout cell-operator) 
 "Call from the buffer that contains the dd log. Generates a table
 from that log by extracting the regexp matcing the NAME_ITER and
 RESULT_RE.\nThe ITER_RE should be something that is unique for
@@ -302,11 +308,11 @@ to I(Iteration,1) R(Result,1)"
 ;; Process arguments
 ( setq iter_layout (list "Iteration" 1)
        result_layout (list "Result" 1) )
-(if (not cell-operator) (setq cell-operator 'dd/add-numbers))
+(if (not cell-operator) (setq cell-operator 'dd-add-numbers))
 
 (if match_layout
-    (progn (setq iter_layout (dd/log-parse-layout match_layout "I" iter_layout)
-	   result_layout (dd/log-parse-layout match_layout "R" result_layout ))) 
+    (progn (setq iter_layout (dd-log-parse-layout match_layout "I" iter_layout)
+	   result_layout (dd-log-parse-layout match_layout "R" result_layout ))) 
     nil)
 
 ;; Regexp for extracting the data
@@ -332,14 +338,14 @@ to I(Iteration,1) R(Result,1)"
 ;;   (replace-match "\\1"))
 ;; (beginning-of-buffer)
 
-(setq iter_first_func (dd/log-extract-func (car iter_layout))
-      iter_second_func (dd/log-extract-func (cdr iter_layout))
-      result_first_func (dd/log-extract-func (car result_layout))
-      result_second_func (dd/log-extract-func (cdr result_layout))
+(setq iter_first_func (dd-log-extract-func (car iter_layout))
+      iter_second_func (dd-log-extract-func (cdr iter_layout))
+      result_first_func (dd-log-extract-func (car result_layout))
+      result_second_func (dd-log-extract-func (cdr result_layout))
 )
 
-(setq iter_layout_re (dd/convert-to-re iter_layout)
-      result_layout_re (dd/convert-to-re result_layout)
+(setq iter_layout_re (dd-convert-to-re iter_layout)
+      result_layout_re (dd-convert-to-re result_layout)
 )
 ;; Get the header for the iteration
 (beginning-of-buffer)
@@ -393,23 +399,23 @@ to I(Iteration,1) R(Result,1)"
   ) ;; while iter
 ;; allocate space in buffer for table
 (insert (make-string (1+ row_nr) ?\n))
-(dd/log-build-table table row_nr)
+(dd-log-build-table table row_nr)
 )
 
-(defun dd/add-numbers (a b)
+(defun dd-add-numbers (a b)
   "Add two numbers together"
   (number-to-string (+ (string-to-number a) 
 		       (string-to-number b)))
   )
 
-(defun dd/last (a b) "Returns b" b)
+(defun dd-last (a b) "Returns b" b)
 
-(defun dd/log-build-table ( table num_rows)
+(defun dd-log-build-table ( table num_rows)
 "Build table from the nested hash map TABLE"
 ;; Save the state of next-line-add-nelines
 (beginning-of-buffer)
 
-(maphash (lambda (key column) (dd/log-build-column key column num_rows))
+(maphash (lambda (key column) (dd-log-build-column key column num_rows))
 	 table)
 (beginning-of-buffer)
 (replace-regexp "^\\(.\\)" "|\\1")
@@ -417,7 +423,7 @@ to I(Iteration,1) R(Result,1)"
 (org-table-align)
 )
 
-(defun dd/log-build-column ( name column num_rows )
+(defun dd-log-build-column ( name column num_rows )
 "Build the column"
   (end-of-line)
   (insert name "|")
@@ -436,22 +442,22 @@ to I(Iteration,1) R(Result,1)"
   (beginning-of-buffer)
 )
 
-(defun dd/convert-to-seconds ( start-time )
+(defun dd-convert-to-seconds ( start-time )
   (setq start_s (float-time (date-to-time (replace-regexp-in-string "-" " " start-time ))))
   (setq curr_s (float-time (date-to-time (replace-regexp-in-string "-" " " (match-string 1) ))))
   (- curr_s start_s)
 )
 
-(defun dd/extract-fluid-info () 
+(defun dd-extract-fluid-info () 
 "Extracts the result from a DD fluid log."
   (interactive)
-  (dd/log-generate-table 
+  (dd-log-generate-table 
    "Float frame: \\([0-9]+\\)"
    "Finished process \\(.*\\) in \\([0-9]+\\.[0-9]+\\)s"
    "I(Frame,1) R(1,2)")
 )
 
-;; (defun dd/extract-fluid-info ()
+;; (defun dd-extract-fluid-info ()
 ;;   (copy-lines-matching-re "\\(Float frame: [0-9]+\\)\\|\\(Finished process\\)")
 ;;   (replace-regexp ".*?Float frame: \([0-9]+\)" "Frame |\1|")
 ;;   (replace-regexp ".*?Finished process \(.*?\) in \([0-9]+\.[0-9e\-]+s\)" "\1 \2")
@@ -459,7 +465,7 @@ to I(Iteration,1) R(Result,1)"
 ;;   (replace-regexp "s Frame" "s\nFrame ")
 
 ;; )
-(defun dd/to-simple-table (name value)
+(defun dd-to-simple-table (name value)
 "Convert NAME = VALUE to a table, it expect the buffer to only contain values you want to replace."
 
 ;;(interactive "sName to match: \nsValue to match: ")
@@ -484,4 +490,18 @@ to I(Iteration,1) R(Result,1)"
     ))
 )
 
+(defun dd-generate-solver-info-table ()
+"Generate table for how long the preconditioner took for each frame"
+(interactive)
+(let ((types '("\\(?1:Max iteration\\) = \\(?2:[0-9]+\\)"
+	       "\\(?1:best residual\\) = \\(?2:[0-9]+\\.[0-9e-]+\\)"
+	       "\\(?1:Number of cells\\): \\(?2:[0-9]+\\)"
+	       "Finished process \\(?1:Initialize preconditioner\\) in \\(?2:[0-9]+\\.[0-9]+\\)s"
+	       "Finished process \\(?1:Solve linear system\\) in \\(?2:[0-9]+\\.[0-9]+\\)s")))
+      (dd-log-generate-table-last 
+       "Float frame: \\([0-9]+\\)"
+       (concat "\\(?:" (mapconcat 'identity types "\\|")"\\)")
+       "I(Frame,1) R(1,2))")))
+
 (provide 'dd-log-parser)
+;;; dd-log-parser ends here
