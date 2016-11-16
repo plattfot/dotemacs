@@ -5,3 +5,4 @@ ac-comphist.dat
 autosave
 backup
 elpa
+.mc-lists.el
