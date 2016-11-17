@@ -33,6 +33,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (require 'diminish)                ;; if you use :diminish
      (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
+** Customizations
+   Set emacs to save the customizations in a separate file to avoid
+   having them in the git repo.
+   #+BEGIN_SRC emacs-lisp
+     (setq custom-file "~/.emacs.d/.custom.el")
+     (when (file-exists-p "~/.emacs.d/.custom.el") (load custom-file))
+   #+END_SRC
 ** Custom plugins
 *** Dotemacs
     Export a variable if I'm at work or not.
@@ -216,12 +223,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (setq-default flycheck-disabled-checkers
                      (append flycheck-disabled-checkers '(c/c++-clang))))
    #+END_SRC
-*** Language standard in c++
-   Specify language standard in dir locals file: .dir-locals.el 
-   For example
-   ((c++-mode
-     (flycheck-clang-language-standard . "c++14")
-     (flycheck-gcc-language-standard . "c++14")))
+   Tell emacs it's safe to change these in a .dir-locals.el file.
+   #+BEGIN_SRC emacs-lisp
+     (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp) 
+     (put 'flycheck-gcc-args 'safe-local-variable #'listp) 
+   #+END_SRC
 ** Golang
    Setting up go to use 2 spaces as indentation and enable
    autocomplete for go.
@@ -1021,6 +1027,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    block from being exported aka tangled. Good for example blocks that
    you don't want to end up in you config file.
 ** Flycheck
+*** Tweak flycheck
    To set specific compiler and flags for a specific project you can
    use something like this in a .dir-locals.el file:
    #+BEGIN_SRC emacs-lisp :tangle no
@@ -1078,5 +1085,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  "DD_CORELIBS_BUILD_LIBS"
                  "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>")))))
    #+END_SRC
-
-
+*** Language standard in c++
+   Specify language standard in dir locals file: .dir-locals.el 
+   For example
+   ((c++-mode
+     (flycheck-clang-language-standard . "c++14")
+     (flycheck-gcc-language-standard . "c++14")))
