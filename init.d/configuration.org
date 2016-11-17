@@ -260,9 +260,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
        :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
+       :mode "\\.dat\\'"
        :config
-       (setq ledger-clear-whole-transactions 1)
-       (add-to-list 'auto-mode-alist '("\\.dat" . ledger-mode)))
+       (setq ledger-clear-whole-transactions 1))
    #+END_SRC
 ** Lisp
    Color haxvalues with their respective color.
@@ -297,7 +297,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
           (use-package python
             :mode (("\\.py\\'" . python-mode) 
-                   ("PROJECT" . python-mode))
+                   ("^PROJECT$" . python-mode))
             :interpreter ("python" . python-mode)
             :config
             (setq python-mode-hook
@@ -729,6 +729,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (when (and (buffer-file-name) (not (buffer-modified-p)))
                (revert-buffer t t t) )))
          (message "Refreshed open files.") )
+   #+END_SRC
+** Text
+   Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg.
+   #+BEGIN_SRC emacs-lisp
+     (defun duplicate-line ()
+       "Clone line at cursor, leaving the latter intact."
+       (interactive)
+       (save-excursion
+         (let ((kill-read-only-ok t) deactivate-mark)
+           (toggle-read-only 1)
+           (kill-whole-line)
+           (toggle-read-only 0)
+           (yank))))
    #+END_SRC
 ** Programming
 *** C++
