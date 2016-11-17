@@ -1,17 +1,23 @@
+;;; dd-pybuild2 --- Helper functions for pb2
+
+;;; Commentary:
+
+;;; Code:
 (defun dd/pybuild2-project-path (root-project)
-  "Prints the project path"
+  "Prints the project path.
+Where ROOT-PROJECT defines the root."
   (let* ((dir (pwd))
 	 (start (string-match root-project dir))
 	 (end (length dir)))
     ;; Remove "directory " from the path
     (setq dir (substring dir start end))
     (concat "^" dir)
-    )
-)
+    ))
 
 
 (defun dd/pybuild2-new-project (&optional root-project)
-"Create a new template PROJECT file"
+"Create a new template PROJECT file.
+Where ROOT-PROJECT specifies the name of the project."
 (interactive "sSpecify root package: ")
 ;; notify emacs to use python-mode for the PROJECT file
 (if (> (length root-project) 0)
@@ -35,7 +41,7 @@
 )
 
 (defun dd/pybuild2-new-virtual-project ()
-"Create a new template PROJECT file, containing a virtual project"
+"Create a new template PROJECT file, containing a virtual project."
 (interactive)
 ;; notify emacs to use python-mode for the PROJECT file
 (insert "# -*- python -*-\n\n"
@@ -47,3 +53,4 @@
 (python-mode)
 )
 (provide 'dd-pybuild2)
+;;; dd-pybuild2 ends here

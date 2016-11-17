@@ -3,6 +3,9 @@
 
 ;;; Code:
 
+(require 'highlight-extra)
+(require 'multi-term)
+
 ;; ============================= Functions ===================================
 (defun work-goc ()
 "Equivalent to typing go cyclone rd 1 work in the terminal."
@@ -29,7 +32,7 @@
   (toggle-frame-fullscreen))
 
 (defun work-setup-build-fun (terminal-type)
-"Spawns multiple TERMINAL-TYPE.
+  "Spawns multiple TERMINAL-TYPE.
 With the names release, cyclone, build and misc"
   (cd "~/fredriks/release")
   (funcall terminal-type)
@@ -56,7 +59,7 @@ With the names release, cyclone, build and misc"
 
 (defun work-setup-build()
   "Spawns multiple shells.  Called cyclone, build, misc, release
- and git.  Using shell instead of multi-term for all except git."
+and git.  Using shell instead of multi-term for all except git."
   (interactive)
   ;; shell doesn't handle git's diff functions therefore I'm using
   ;; multi-term for that.
@@ -66,15 +69,15 @@ With the names release, cyclone, build and misc"
   (work-setup-build-fun #'shell) ;; #'x short for (function x)
 )
 
-(defun work-setup-houdini-term ()
-  "Spawns two multi-terms called hou and h15 and move to the correct path for both."
-  (interactive)
-  (cd "~/fredriks/Houdini")
-  (delete-other-windows)
-  (create-term-and-go "h15" "go cyclone rd 1 =fx_h15 work")
-  (create-term-and-go "hou" "goc")
-  (toggle-frame-maximized)
-  )
+(defun work-run-emacs-shell-command (command)
+  "Runs the COMMMAND in a emacs shell.
+Works only if the current buffer is a shell."
+  (let ((process (get-buffer-process (current-buffer))))
+    (unless process
+      (error "No process in %s" buffer-or-name))
+    (goto-char (process-mark process))
+    (insert command)
+    (comint-send-input nil t )))
 
 (defun work-setup-houdini ()
   "Spawns shells called h15, h14 and h13.
@@ -84,15 +87,15 @@ Using shell instead of multi-term."
   (delete-other-windows)
   (shell)
   (rename-buffer "h13")
-  (run-emacs-shell-command "goc")
+  (work-run-emacs-shell-command "goc")
   ;; (shell-resync-dirs)
   (shell)
   (rename-buffer "h14")
-  (run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
 
   (shell)
   (rename-buffer "h15")
-  (run-emacs-shell-command "go cyclone rd 1 =fx_h15 work")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h15 work")
 
   ;; (shell-resync-dirs)
   (toggle-frame-maximized))
