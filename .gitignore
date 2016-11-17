@@ -6,8 +6,6 @@ autosave
 backup
 elpa
 tramp
-.mc-lists.el
-<<<<<<< HEAD
-=======
 configuration.el
->>>>>>> 3ce88abf35d37edba3be5cb8391a7486fc78f795
+.mc-lists.el
+*.elc
