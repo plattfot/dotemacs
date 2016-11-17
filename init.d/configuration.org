@@ -542,6 +542,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (ibuffer-switch-to-saved-filter-groups "default"))))
     #+END_SRC
 
+** Multi term
+   #+BEGIN_SRC emacs-lisp
+     (use-package multi-term)
+   #+END_SRC
 * Work
 ** Custom packages
 *** dd-newfile
@@ -755,9 +759,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (interactive)
        (save-excursion
          (let ((kill-read-only-ok t) deactivate-mark)
-           (read-only-mode t)
+           (read-only-mode 1)
            (kill-whole-line)
-           (read-only-mode nil )
+           (read-only-mode 0)
            (yank))))
    #+END_SRC
 ** Programming
