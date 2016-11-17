@@ -214,8 +214,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :config
        (add-hook 'after-init-hook #'global-flycheck-mode)
        (setq-default flycheck-disabled-checkers
-                     (append flycheck-disabled-checkers
-                             '(c/c++-clang))))
+                     (append flycheck-disabled-checkers '(c/c++-clang))))
    #+END_SRC
 *** Language standard in c++
    Specify language standard in dir locals file: .dir-locals.el 
@@ -370,7 +369,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :config
        (yas-global-mode 1)
        (setq yas-indent-line nil))
-
    #+END_SRC
 ** Org
    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
@@ -1016,4 +1014,69 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (setq frame-resize-pixelwise t)
    #+END_SRC
 * Notes
-  To execute a lisp function in replace regexp do \,(<function>)
+** Lisp in search replace
+   To execute a lisp function in replace regexp do \,(<function>)
+** Skip code block
+   You can use =:tangle no= in the =SRC_BLOCK= to ignore the code
+   block from being exported aka tangled. Good for example blocks that
+   you don't want to end up in you config file.
+** Flycheck
+   To set specific compiler and flags for a specific project you can
+   use something like this in a .dir-locals.el file:
+   #+BEGIN_SRC emacs-lisp :tangle no
+     ;; File .dir-locals.el
+     ( ( c++-mode 
+         . ( (flycheck-c/c++-gcc-executable . "/tools/package/gcc/6.2.0/bin/g++" )
+             (flycheck-gcc-args 
+              . ("-I/dd/dept/software/users/fredriks/swdevl/PRIVATE/include"
+                 "-isystem/dd/tools/cent6_64/package/blosc/1.5.0/include"
+                 "-isystem/dd/tools/cent6_64/package/eigen/3.2.10/include/eigen3"
+                 "-isystem/dd/tools/cent6_64/package/hdf5/1.8.8/include"
+                 "-isystem/dd/tools/cent6_64/package/ilmbase/2.2.0/include"
+                 "-isystem/dd/tools/cent6_64/package/mkl/11.2.3/include"
+                 "-isystem/dd/tools/cent6_64/package/openvdb/3.2.0/include"
+                 "-isystem/dd/tools/cent6_64/package/boost/1.55.0/include"
+                 "-isystem/dd/tools/cent6_64/package/tbb/4.3.1/include"
+                 "-isystem/dd/tools/cent6_64/package/openmesh/3.3.0/include"
+                 "-isystem/tools/include"
+                 "-std=c++0x"
+                 "-Wall"
+                 "-D_GLIBCXX_USE_CXX11_ABI=0"
+                 "-DEIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
+                 "-DDD_OPEN_MESH_POLYMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_PolyMeshT_Extension.hpp>"
+                 "-DDD_OPEN_MESH_TRIMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_TriMeshT_Extension.hpp>"
+                 "-DDD_CORELIBS_USE_OPENMESH"
+                 "-DDD_CORELIBS_BUILD_LIBS"
+                 "-DEIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>")))))
+   #+END_SRC
+
+   If you want to play it more safe you can use the flychecks other
+   variables (see C-c ! ?). For example this also works, but all
+   include paths are prefix with -I so you'll get a lot of noise from
+   boost etc.
+   #+BEGIN_SRC emacs-lisp :tangle no
+     ;; File .dir-locals.el
+     ( ( c++-mode 
+         . ( (flycheck-gcc-include-path 
+              . ("/dd/dept/software/users/fredriks/swdevl/PRIVATE/include"
+                 "/dd/tools/cent6_64/package/blosc/1.5.0/include"
+                 "/dd/tools/cent6_64/package/eigen/3.2.10/include/eigen3"
+                 "/dd/tools/cent6_64/package/hdf5/1.8.8/include"
+                 "/dd/tools/cent6_64/package/ilmbase/2.2.0/include"
+                 "/dd/tools/cent6_64/package/mkl/11.2.3/include"
+                 "/dd/tools/cent6_64/package/openvdb/3.2.0/include"
+                 "/dd/tools/cent6_64/package/boost/1.55.0/include"
+                 "/dd/tools/cent6_64/package/tbb/4.3.1/include"
+                 "/dd/tools/cent6_64/package/openmesh/3.3.0/include"
+                 "/tools/include"))
+             (flycheck-gcc-definitions 
+              . ("_GLIBCXX_USE_CXX11_ABI=0"
+                 "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
+                 "DD_OPEN_MESH_POLYMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_PolyMeshT_Extension.hpp>"
+                 "DD_OPEN_MESH_TRIMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_TriMeshT_Extension.hpp>"
+                 "DD_CORELIBS_USE_OPENMESH"
+                 "DD_CORELIBS_BUILD_LIBS"
+                 "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>")))))
+   #+END_SRC
+
+
