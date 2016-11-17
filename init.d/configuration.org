@@ -127,13 +127,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Enable autocomplete for arduino and gmake's makefile since they're
    not on by default.
    
+   Note don't put the keybindings under :bind then this will not be
+   loaded.
    #+BEGIN_SRC emacs-lisp
-     (use-package auto-complete
-       :bind (:map ac-complete-mode-map
-                   ("\t" . ac-expand)
-                   ("\r" . nil ))
+     (use-package auto-complete-config
        :config
        (ac-config-default)
+       (define-key ac-completing-map "\t" 'ac-expand)
+       (define-key ac-completing-map "\r" nil)
+
        ;; Ignore c++ comments
        (add-hook 'c++-mode-hook
                  (lambda ()
