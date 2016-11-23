@@ -221,7 +221,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :config
        (add-hook 'after-init-hook #'global-flycheck-mode)
        (setq-default flycheck-disabled-checkers
-                     (append flycheck-disabled-checkers '(c/c++-clang))))
+		     (append flycheck-disabled-checkers '(c/c++-clang)))
+       (when dotemacs-is-work 
+	 (setq-default flycheck-c/c++-gcc-executable
+		       "/tools/package/gcc/6.2.0/bin/g++")))
    #+END_SRC
    Tell emacs it's safe to change these in a .dir-locals.el file.
    #+BEGIN_SRC emacs-lisp
@@ -394,7 +397,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (lambda ()
                    (org-bullets-mode t)))
        (setq org-ellipsis "⤵")
-       (setq org-src-fontify-natively t))
+       (setq org-src-fontify-natively t)
+       (setq org-src-window-setup 'current-window))
    #+END_SRC
 
    Doesn't work with yasnippet getting:
