@@ -26,10 +26,11 @@
   "Insert DD's boilerplate. Reads from file to avoid copyright issues."
   (interactive)
   (let ((current_pos (point) )
-	(end (point-max)))
+	(end))
     (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
+    (setq end (point-max))
     ;; Insert current year
-    (while (re-search-forward "::date::" end t )
+    (while (re-search-forward "::date::" end t)
       (replace-match (format-time-string "%Y" (current-time))))
     (goto-char current_pos)))
 ;; ---------------------------- Description ------------------------------------
