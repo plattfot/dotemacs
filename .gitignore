@@ -8,4 +8,6 @@ elpa
 tramp
 configuration.el
 .mc-lists.el
+.custom.el
 *.elc
+session.*
