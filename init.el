@@ -28,7 +28,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yasnippet yaml-mode use-package sudo-edit string-inflection rtags org-bullets multi-term move-text mc-extras magit ledger-mode go-autocomplete gnuplot flycheck expand-region evil-numbers esup buffer-move ag))))
+    (company-c-headers rainbow-mode go-mode glsl-mode haskell-mode yasnippet yaml-mode use-package sudo-edit string-inflection rtags org-bullets multi-term move-text mc-extras magit ledger-mode go-autocomplete gnuplot flycheck expand-region evil-numbers esup buffer-move ag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
