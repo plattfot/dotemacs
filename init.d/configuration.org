@@ -293,7 +293,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
-       (setq ledger-clear-whole-transactions 1))
+       (setq ledger-clear-whole-transactions 1)
+       (add-hook 'ledger-mode-hook 
+                 (lambda ()
+                   (company-mode -1))))
    #+END_SRC
 ** Lisp
    Color haxvalues with their respective color.
