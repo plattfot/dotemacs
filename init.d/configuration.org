@@ -33,6 +33,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (require 'diminish)                ;; if you use :diminish
      (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
+
+   Install missing packages.
+   #+BEGIN_SRC emacs-lisp
+     (setq use-package-always-ensure t)
+   #+END_SRC
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
@@ -45,7 +50,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Export a variable if I'm at work or not.
     #+BEGIN_SRC emacs-lisp
       (use-package dotemacs
-       	:load-path "~/.emacs.d/plugins")
+        :ensure nil
+        :load-path "~/.emacs.d/plugins")
     #+END_SRC
 ** UI
 *** Maximize work area
@@ -293,6 +299,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Color haxvalues with their respective color.
    #+BEGIN_SRC emacs-lisp
      (use-package lisp-mode
+       :ensure nil ; Built in
        :config
        (defvar hexcolour-keywords
          '(("#[[:xdigit:]]\\{6\\}"
@@ -588,6 +595,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package dd-newfile
         :if dotemacs-is-work
+        :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
 *** dd-log-parser
@@ -595,27 +603,31 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package dd-log-parser
         :if dotemacs-is-work
+        :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
 *** dd-pybuild2
     #+BEGIN_SRC emacs-lisp
       (use-package dd-pybuild2
-       	:if dotemacs-is-work
-       	:load-path "~/.emacs.d/plugins")
+        :if dotemacs-is-work
+        :ensure nil
+        :load-path "~/.emacs.d/plugins")
     #+END_SRC
 *** houdini
     Houdini related functions, mostly handle houdini versions.
     #+BEGIN_SRC emacs-lisp
-            (use-package houdini
-              :bind ("C-x j" . hou-insert-version)
-              :if dotemacs-is-work
-              :load-path "~/.emacs.d/plugins")
+      (use-package houdini
+        :bind ("C-x j" . hou-insert-version)
+        :if dotemacs-is-work
+        :ensure nil
+        :load-path "~/.emacs.d/plugins")
     #+END_SRC
 *** highlight-extra
     Functions for highlighting my shells when building etc
     #+BEGIN_SRC emacs-lisp
       (use-package highlight-extra
         :if dotemacs-is-work
+        :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
 *** work
@@ -623,6 +635,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package work
         :if dotemacs-is-work
+        :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
 ** Custom functions
@@ -947,6 +960,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Multiple cursor extension
    #+BEGIN_SRC emacs-lisp
      (use-package mc-extra-extra
+       :ensure nil
        :load-path "~/emacs.d/plugins")
    #+END_SRC
 * Custom keybindings
