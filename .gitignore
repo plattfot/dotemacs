@@ -11,3 +11,4 @@ configuration.el
 .custom.el
 *.elc
 session.*
+%backup%*
