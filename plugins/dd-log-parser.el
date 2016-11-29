@@ -96,7 +96,8 @@ buffer named *matching* and strips the DD_LOG header."
 	  )
 	;; Go back to the beginning
 	(forward-line (- num_rows))
-	) nil)
+	)
+    nil)
   ;; Add divider, reason for not doing this with the header is that
   ;; navigation becomes much harder.
   (end-of-line)
@@ -194,7 +195,8 @@ work."
        (push col bucket)
        ;; Update the row in the table
        (puthash row bucket table)
-       ) nil)
+       )
+    nil)
   (delete-region begin end)
   (kill-line)
 )
@@ -497,6 +499,7 @@ to I(Iteration,1) R(Result,1)"
 	       "\\(?1:best residual\\) = \\(?2:[0-9]+\\.[0-9e-]+\\)"
 	       "\\(?1:Number of cells\\): \\(?2:[0-9]+\\)"
 	       "Finished process \\(?1:Initialize preconditioner\\) in \\(?2:[0-9]+\\.[0-9]+\\)s"
+	       "Finished process \\(?1:Dimension-Reduced pressure solver\\) in \\(?2:[0-9]+\\.[0-9]+\\)s"
 	       "Finished process \\(?1:Solve linear system\\) in \\(?2:[0-9]+\\.[0-9]+\\)s")))
       (dd-log-generate-table-last 
        "Float frame: \\([0-9]+\\)"
