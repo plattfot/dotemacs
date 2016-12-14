@@ -27,7 +27,7 @@
   (interactive)
   (let ((current_pos (point) )
 	end )
-    (insert-file-contents "/dd-dept/software/users/fredriks/boilerplate.txt")
+    (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
     (setq end (point-max))
     ;; Insert current year
     (while (re-search-forward "::date::" end t )
