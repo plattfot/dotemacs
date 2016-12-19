@@ -186,25 +186,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Company
    
    #+BEGIN_SRC emacs-lisp
-          (use-package company
-            :disabled t
-            :bind ("C-<tab>" . company-complete)
-            :init
-              (global-company-mode 1)
-            :config
-            (setq company-dabbrev-downcase 0)
-            (setq company-idle-delay 0)
-            ;; (defun tab-indent-or-complete ()
-            ;;   (interactive)
-            ;;   (if (minibufferp)
-            ;;    (minibuffer-complete)
-            ;;     (if (or (not yas-minor-mode)
-            ;;          (null (do-yas-expand)))
-            ;;      (if (check-expansion)
-            ;;          (company-complete-common)
-            ;;        (indent-for-tab-command)))))
-            ;; (global-set-key [backtab] 'tab-indent-or-complete)
-            (add-to-list 'company-backends 'company-c-headers))
+     (use-package company
+       :bind ("C-<tab>" . company-complete)
+       :disabled dotemacs-is-work
+       :init
+         (global-company-mode 1)
+       :config
+       (setq company-dabbrev-downcase 0)
+       (setq company-idle-delay 0)
+       ;; (defun tab-indent-or-complete ()
+       ;;   (interactive)
+       ;;   (if (minibufferp)
+       ;;    (minibuffer-complete)
+       ;;     (if (or (not yas-minor-mode)
+       ;;          (null (do-yas-expand)))
+       ;;      (if (check-expansion)
+       ;;          (company-complete-common)
+       ;;        (indent-for-tab-command)))))
+       ;; (global-set-key [backtab] 'tab-indent-or-complete)
+       (add-to-list 'company-backends 'company-c-headers))
    #+END_SRC
 ** Gnuplot
    Enable gnuplot to be able to plot tables in org mode.
@@ -388,6 +388,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (setq ansi-color-map (ansi-color-make-color-map))
                    ;; Disable yas minor mode
                    (yas-minor-mode -1)
+                   ;; Disable company mode
+                   (company-mode -1)
                    ;; Add go and goc to the dirtrack, Need tweak the regexp 
                    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
                    ))
@@ -577,12 +579,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                (name . "^\\*scratch\\*$")
                                (name . "^\\*Messages\\*$")
                                (name . "^\\*Completions\\*$")))
+                     ("shell" (mode . shell-mode))
+                     ("make"  (or (mode . makefile-gmake-mode)
+                                  (mode . makefile-mode)))
                      ))))
       (add-hook 'ibuffer-mode-hook
                 (lambda ()
                   (ibuffer-switch-to-saved-filter-groups "default"))))
     #+END_SRC
-
+    
 ** Multi term
    #+BEGIN_SRC emacs-lisp
      (use-package multi-term)
@@ -898,7 +903,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (goto-char begin)
           (while (re-search-forward
                   (concat "typedef \\(\\(?:typename \\)*"
-                          "[a-zA-Z0-9_:<>,*& ]+?\\)[ ]+\\([a-zA-Z0-9]+\\)[ ]*;" )
+                          "[a-zA-Z0-9_:<>,*&() ]+?\\)[ ]+\\([a-zA-Z0-9_]+\\)[ ]*;" )
                   end t )
             (replace-match "using \\2 = \\1;"))))
     #+END_SRC

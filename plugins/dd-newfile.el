@@ -22,19 +22,20 @@
 (mapconcat 'downcase (dd-split-name s) "_"))
 
 ;; ---------------------------- Boilerplate ------------------------------------
-(defun dd/insert-boilerplate()
+(defun dd-insert-boilerplate()
   "Insert DD's boilerplate. Reads from file to avoid copyright issues."
   (interactive)
   (let ((current_pos (point) )
-	(end (point-max)))
+	end )
     (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
+    (setq end (point-max))
     ;; Insert current year
     (while (re-search-forward "::date::" end t )
       (replace-match (format-time-string "%Y" (current-time))))
     (goto-char current_pos)))
 ;; ---------------------------- Description ------------------------------------
 
-(defun dd/insert-description ()
+(defun dd-insert-description ()
   "Insert time when it was created, the author and name of the file."
   (interactive)
   (insert
@@ -48,16 +49,16 @@
 		    "*/" )
 	      "\n")))
 ;; ------------------------------ Header ---------------------------------------
-(defun dd/insert-header()
+(defun dd-insert-header()
   "Insert boilerplate and description"
   (interactive)
-  (dd/insert-boilerplate)
+  (dd-insert-boilerplate)
   (goto-char (point-max))
   (insert "\n\n")
-  (dd/insert-description))
+  (dd-insert-description))
 
 ;; ------------------------------ Namespace ------------------------------------
-(defun dd/insert-namespace ( extra_namespaces )
+(defun dd-insert-namespace ( extra_namespaces )
   "Insert namespace based on the location on the file.
 Insert extra namespaces using the variable EXTRA_NAMESPACES."
   (interactive "sAdd extra namespace (separated by space): ")
@@ -121,13 +122,13 @@ Insert extra namespaces using the variable EXTRA_NAMESPACES."
       (progn (insert "\n") (forward-line -1) )
       )))) ;; insert-namespace
 
-(defun dd/setup-newfile (args)
+(defun dd-setup-newfile (args)
 "Add boilerplate, description and namespaces.
 ARGS are passed on to insert-namespace"
 (interactive "sAdd extra namespace (separated by space): ")
-(dd/insert-header)
+(dd-insert-header)
 (insert "\n\n")
-(dd/insert-namespace args)
+(dd-insert-namespace args)
 )
 
 (provide 'dd-newfile)

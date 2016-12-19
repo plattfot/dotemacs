@@ -86,16 +86,16 @@ Using shell instead of multi-term."
   (cd "~/fredriks/Houdini")
   (delete-other-windows)
   (shell)
-  (rename-buffer "h13")
+  (rename-buffer "hou")
   (work-run-emacs-shell-command "goc")
   ;; (shell-resync-dirs)
   (shell)
-  (rename-buffer "h14")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h14 work")
-
-  (shell)
   (rename-buffer "h15")
   (work-run-emacs-shell-command "go cyclone rd 1 =fx_h15 work")
+
+  (shell)
+  (rename-buffer "h16")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h16 work")
 
   ;; (shell-resync-dirs)
   (toggle-frame-maximized))
