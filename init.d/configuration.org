@@ -591,6 +591,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package rainbow-mode)   
    #+END_SRC
+** Yaml
+   #+BEGIN_SRC emacs-lisp
+     (use-package yaml-mode)
+   #+END_SRC
 * Work
 ** Custom packages
 *** dd-newfile
