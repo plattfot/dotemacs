@@ -17,7 +17,7 @@
 "Insert command to add eigen pretty printer for gdb."
 (interactive )
 (insert "python execfile(\"/dd/dept/software/users/fredriks/swdevl"
-	"/CoreLibs/src/python/gdb/EigenPrettyPrinter.py\")")
+	"/CoreLibs/src/gdb/EigenPrettyPrinter.py\")")
 )
 
 ;; Functions for quickly set up the work environment
