@@ -276,15 +276,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Disable clang check, gcc check works better.
    #+BEGIN_SRC emacs-lisp
-     (use-package flycheck
-       :config
-       (add-hook 'after-init-hook #'global-flycheck-mode)
-       (setq-default flycheck-disabled-checkers
-                     (append flycheck-disabled-checkers '(c/c++-clang)))
-       (when dotemacs-is-work 
-         (setq-default flycheck-c/c++-gcc-executable
-                       "/tools/package/gcc/6.2.0/bin/g++"))
-       :pin melpa-stable)
+          (use-package flycheck
+            :config
+            (add-hook 'after-init-hook #'global-flycheck-mode)
+            (setq-default flycheck-disabled-checkers
+                          (append flycheck-disabled-checkers '(c/c++-clang)))
+            (when dotemacs-is-work 
+              (setq-default flycheck-c/c++-gcc-executable
+                            "/tools/package/gcc/6.2.0/bin/g++"))
+            ;; Current version of rst-sphinx for flycheck disabling it
+            (add-to-list 'auto-mode-alist
+                         '("\\.rst\\'" . (lambda () 
+                                           (rst-mode)
+                                           (flycheck-mode -1)))) 
+            :pin melpa-stable)
+
    #+END_SRC
    Tell emacs it's safe to change these in a .dir-locals.el file.
    #+BEGIN_SRC emacs-lisp
@@ -847,6 +853,118 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (indent-region start (point))
           (goto-char start)))
     #+END_SRC
+*** Make
+    Functions to speed up the port of old style Makefiles to using modules.
+    #+BEGIN_SRC emacs-lisp
+      (defun make-boost-components ()
+        "Convert old style boost libs to module style"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          (while (re-search-forward
+                  (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= "
+                          "\\$(BOOST_LIB_DIR)/libboost_\\(.*?\\)\\.a") end t)
+            (replace-match "BOOST_COMPONENTS += \\1"))))
+
+      (defun make-include-to-modules ()
+        "Convert old Makefile's INCLUDE to using modules"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          (while (re-search-forward
+                  "INCLUDES \\+= \\$(\\(.*\\)_INC_DIR)" end t)
+            (replace-match 
+             (concat "MODULES += " (downcase (match-string-no-properties 1))) t ))))
+
+      (defun make-mkl-module ()
+        "Convert old mkl static libs to using the mkl module's flags"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          (when (re-search-forward 
+                 (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= " 
+                         "\\$(MKL_STATIC_LAYERED_LIBS)") end t)
+            (replace-match "MKL_USE_STATIC_LIBS = YES"))))
+
+      (defun make-eigen-module ()
+        "Convert eigen cxxflag to using the eigen module's flags"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          (when (re-search-forward 
+                 "X?CXXFLAGS \\+= -DEIGEN_USE_MKL_ALL" end t)
+            (replace-match "EIGEN_USE_MKL = YES"))))
+
+      (defun make-openvdb-module ()
+        "Convert openvdb cxxflag to using the openvdb module's flags"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          (when (re-search-forward 
+                 "X?CXXFLAGS \\+= -DOPENVDB_3_ABI_COMPATIBLE" end t)
+            (replace-match "OPENVDB_USE_ABI_3 = YES"))))
+
+      (defun make-insert-toolchain (&optional toolchain)
+        "Insert TOOLCHAIN = TOOLCHAIN, where the last is the variable TOOLCHAIN."
+        (interactive "sName of toolchain to use: ")
+        
+        (when (not toolchain) (setq toolchain "gcc") )
+        
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end nil)))
+          (goto-char begin)
+          ;; Move to the end of the _SRCS
+          (while (re-search-forward "\\$(\\(?:EXECS\\|LIBS\\))_SRCS \\+= .*" end t))
+          
+          (insert (concat "\n\nTOOLCHAIN = " toolchain))))
+
+      (defun make-delete-libpaths-and-rpath ()
+        "Delete LIBPATHS += and RPATH_LIBSPATHS from the makefile"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end (point-max))))
+          (delete-matching-lines "\\(?:RPATH_\\)?LIBPATHS \\+= .*" begin end )))
+
+      (defun make-delete-libs ()
+        "Delete $(EXECS/LIBS)_LIBS += lines from the makefile"
+        (interactive)
+        (let ((begin) (end))
+          (if (use-region-p)
+              (progn (setq begin (region-beginning) end (region-end)))
+            (progn (setq begin (point-min) end (point-max))))
+          (delete-matching-lines "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= .*" begin end )))
+
+      (defun convert-make-to-modules ()
+        "Convert old makefile to using modules"
+        (interactive)
+        (make-insert-toolchain)
+        (make-include-to-modules)
+        (make-mkl-module)
+        (make-eigen-module)
+        (make-openvdb-module)
+        (make-boost-components)
+        (make-delete-libpaths-and-rpath)
+        (make-delete-libs))
+    #+END_SRC
 * Custom functions
 ** Buffer
    Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
@@ -1213,3 +1331,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    ((c++-mode
      (flycheck-clang-language-standard . "c++14")
      (flycheck-gcc-language-standard . "c++14")))
+** Links
+*** Elisp Regex
+    Link to elisp regular expression
+    https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
