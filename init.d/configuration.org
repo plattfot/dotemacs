@@ -229,6 +229,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (add-to-list 'company-backends 'company-c-headers)
        :pin melpa-stable)
    #+END_SRC
+** CMake
+   #+BEGIN_SRC emacs-lisp
+     (use-package cmake-mode
+       :pin melpa-stable)
+   #+END_SRC
 ** Gnuplot
    Enable gnuplot to be able to plot tables in org mode.
 
