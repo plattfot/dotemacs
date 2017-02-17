@@ -45,7 +45,8 @@ easier find them when building."
   ( highlight-regexp "warning" 'hi-green-b )
   ( highlight-regexp "error"   'hi-red-b )
   ( highlight-regexp "const "  'hi-black-b )
-  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange ))
+  ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange )
+  ( highlight-regexp "undefined reference to" 'hi-orange ))
 
 (defun unhighlight-build()
   "Like the function name applies remove the highlights set by highlight-build."
@@ -55,7 +56,8 @@ easier find them when building."
   ( unhighlight-regexp "warning")
   ( unhighlight-regexp "error")
   ( unhighlight-regexp "const ")
-  ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" ))
+  ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" )
+  ( highlight-regexp "undefined reference to" 'hi-orange ))
 
 (defun highlight-versions( input )
   "Highlight important versions when building with pybuild."
