@@ -234,22 +234,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package cmake-mode
        :pin melpa-stable)
    #+END_SRC
-** Gnuplot
-   Enable gnuplot to be able to plot tables in org mode.
-
-   Bind the F9 key to open a buffer into gnuplot mode
-
-   Set that all files ending in .gp will use the gnuplot-mode
-   #+BEGIN_SRC emacs-lisp
-     (use-package gnuplot
-       :bind ([(f9)] . gnuplot-make-buffer)
-       :config
-       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-       ;; Set files with ext .gp to use gnuplot
-       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
-       :pin melpa-stable)
-   #+END_SRC
 ** CC mode
    Specific for C, C++ and other in the c family
    - Set indentation to be two spaces.
@@ -270,6 +254,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (setq ff-search-directories '("." "../src" "../include"))
        :pin melpa-stable)
 
+   #+END_SRC
+** Gnuplot
+   Enable gnuplot to be able to plot tables in org mode.
+
+   Bind the F9 key to open a buffer into gnuplot mode
+
+   Set that all files ending in .gp will use the gnuplot-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package gnuplot
+       :bind ([(f9)] . gnuplot-make-buffer)
+       :config
+       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+       ;; Set files with ext .gp to use gnuplot
+       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+       :pin melpa-stable)
    #+END_SRC
 ** Flycheck
    Enable flycheck globably.
@@ -628,7 +628,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package ag
        :pin melpa-stable)
    #+END_SRC
-   
+
+** Powerline
+   #+BEGIN_SRC emacs-lisp
+     (use-package powerline
+       :disabled
+       :config
+       (powerline-vim-theme)
+       :pin melpa-stable)
+   #+END_SRC
 ** ibuffer
     Use ibuffer instead of list-buffers, has some neat features.
 
@@ -662,8 +670,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** Rainbow
    #+BEGIN_SRC emacs-lisp
-     (use-package rainbow-mode
-       :pin melpa-stable)
+     ;; (use-package rainbow-mode
+     ;;   :pin melpa-stable)
    #+END_SRC
 ** Yaml
    #+BEGIN_SRC emacs-lisp
