@@ -436,7 +436,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    ;; Disable yas minor mode
                    (yas-minor-mode -1)
                    ;; Disable company mode
-                   (company-mode -1)
+                   (when (not dotemacs-is-work) (company-mode -1))
                    ;; Add go and goc to the dirtrack, Need tweak the regexp 
                    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
                    ))
@@ -1343,3 +1343,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Elisp Regex
     Link to elisp regular expression
     https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
+** Change font size on the fly
+   Use commands
+   C-x C-+ and C-x C--
