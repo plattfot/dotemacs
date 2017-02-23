@@ -556,6 +556,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable)
        :pin melpa-stable)
    #+END_SRC
+** Markdown
+   #+BEGIN_SRC emacs-lisp
+     (use-package markdown-mode
+       :pin melpa-stable)   
+   #+END_SRC
 ** String inflections
    Keybinding for cycle between snake case, camel case etc
    #+BEGIN_SRC emacs-lisp
