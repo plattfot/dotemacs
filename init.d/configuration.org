@@ -653,15 +653,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq ibuffer-saved-filter-groups
             (quote (("default"
                      ("c++" (mode . c++-mode))
-                     ("dired" (mode . dired-mode))
+                     ("make"  (or (mode . makefile-gmake-mode)
+                                  (mode . makefile-mode)))
+                     ("cmake" (mode . cmake-mode ))
                      ("ag" (mode . ag-mode ))
+                     ("docs" (mode . rst-mode))
+                     ("dired" (mode . dired-mode))
+                     ("shell" (mode . shell-mode))
                      ("emacs" (or
                                (name . "^\\*scratch\\*$")
                                (name . "^\\*Messages\\*$")
                                (name . "^\\*Completions\\*$")))
-                     ("shell" (mode . shell-mode))
-                     ("make"  (or (mode . makefile-gmake-mode)
-                                  (mode . makefile-mode)))
                      ))))
       (add-hook 'ibuffer-mode-hook
                 (lambda ()
@@ -1351,3 +1353,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Change font size on the fly
    Use commands
    C-x C-+ and C-x C--
+** Git
+*** Change message in most recent commit
+    git commit --amend [-m ""]
+** Test openvdb in maya
+*** TODO Move this to separate notes
+    mel script:
+    polySphere -radius 1 -name "poly_sphere"
+    createNode OpenVDBFromPolygons -name "vdb_from_poly"
+    setAttr vdb_from_poly.VoxelSize 0.1
+    connectAttr poly_sphere.outMesh vdb_from_poly.MeshInput
+    createNode OpenVDBVisualize -name "vdb_visualize"
+    connectAttr vdb_from_poly.VdbOutput vdb_visualize.VDBInput
+
+    listAttr vdb_from_poly
