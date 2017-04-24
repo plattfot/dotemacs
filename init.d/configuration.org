@@ -1023,87 +1023,124 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** Programming
 *** C++
-    Insert java style comment
-    /**
-     * <cursor>
-     */
+**** Insert java style comment
+     /**
+      * <cursor>
+      */
     #+BEGIN_SRC emacs-lisp
-      (defun insert-function-comment ()
-        (interactive)
-        (insert "/**")  (indent-according-to-mode)
-        (insert "\n* ") (indent-according-to-mode)
-        (insert "\n*/") (indent-according-to-mode)
-        (forward-line -1)
-        (end-of-line))
+	 (defun insert-function-comment ()
+       	(interactive)
+       	(insert "/**")  (indent-according-to-mode)
+       	(insert "\n* ") (indent-according-to-mode)
+       	(insert "\n*/") (indent-according-to-mode)
+       	(forward-line -1)
+       	(end-of-line))
     #+END_SRC
+**** Expands a define macro for all matches in current buffer.
+     #+BEGIN_SRC emacs-lisp
+       (defun replace-define()
+         "Evaluating the define variable.
+       Place cursor on a #define <var> <content> and execute this command and it will
+       replace all <var> with <content> in the file."
+         (interactive)
+         (let ((line (split-string (thing-at-point 'line) )))
+                (if (equal (car line) "#define")
+                    (let ((curr-pos (point)) ;; save current position
+                          (end (point-max)))
+                 ;; Jump to the end of line
+                 (end-of-line)
+                 ;; Replace the first with the second.
+                 (while (re-search-forward (concat "\\_<"(nth 1 line)"\\_>") end t )
+                        (replace-match (nth 2 line)))
+                 ;; return to the same position
+                 (goto-char curr-pos)
+                 ;; move to the end of the line to indicate that it's done.
+                 (end-of-line))
+                  (message "Not a #define directive!" ))))
+     #+END_SRC
+**** Undo replace-define.
+      #+BEGIN_SRC emacs-lisp
+        (defun replace-define-undo()
+          "Undoing the expansion of the define variable.
+        Place cursor on a #define <var> <content> and execute this
+         command and it will replace all <content> with <var> in the
+         file."
 
-    Expands a define macro for all matches in current buffer.
-    #+BEGIN_SRC emacs-lisp
-      (defun replace-define()
-        "Evaluating the define variable.
-      Place cursor on a #define <var> <content> and execute this command and it will
-      replace all <var> with <content> in the file."
-        (interactive)
-        (let ((line (split-string (thing-at-point 'line) )))
-          (if (equal (car line) "#define")
-              (let ((curr-pos (point)) ;; save current position
-                    (end (point-max)))
-                ;; Jump to the end of line
-                (end-of-line)
-                ;; Replace the first with the second.
-                (while (re-search-forward (concat "\\_<"(nth 1 line)"\\_>") end t )
-                  (replace-match (nth 2 line)))
-                ;; return to the same position
-                (goto-char curr-pos)
-                ;; move to the end of the line to indicate that it's done.
-                (end-of-line))
-            (message "Not a #define directive!" ))))
-    #+END_SRC
+          (interactive)
+          (let ((line (split-string (thing-at-point 'line) )))
+            (if (equal (car line) "#define")
+                (let ((curr-pos (point)) ;; save current position
+                      (end (point-max)))
+                  ;; Jump to the end of line
+                  (end-of-line)
 
-    Undo the previous function.
-    #+BEGIN_SRC emacs-lisp
-      (defun replace-define-undo()
-        "Undoing the expansion of the define variable.
-      Place cursor on a #define <var> <content> and execute this
-       command and it will replace all <content> with <var> in the
-       file."
+                  ;; Replace the second with the first
+                  (while (re-search-forward (nth 2 line) end t ) (replace-match (nth 1 line)))
 
-        (interactive)
-        (let ((line (split-string (thing-at-point 'line) )))
-          (if (equal (car line) "#define")
-              (let ((curr-pos (point)) ;; save current position
-                    (end (point-max)))
-                ;; Jump to the end of line
-                (end-of-line)
+                  ;; return to the same position
+                  (goto-char curr-pos)
+                  ;; move to the end of the line to indicate that it's done.
+                  (end-of-line))
+              (message "Not a #define directive!" ))))
 
-                ;; Replace the second with the first
-                (while (re-search-forward (nth 2 line) end t ) (replace-match (nth 1 line)))
+       	  #+END_SRC
 
-                ;; return to the same position
-                (goto-char curr-pos)
-                ;; move to the end of the line to indicate that it's done.
-                (end-of-line))
-            (message "Not a #define directive!" ))))
-    #+END_SRC
+**** Convert typedef to c++11's alias
+      #+BEGIN_SRC emacs-lisp
+        (defun convert-typedef-to-using ()
+          "Converts typedef statements to using statements"
+          (interactive)
+          (let ((begin) (end))
+             (if (use-region-p)
+                (progn (setq begin (region-beginning) end (region-end)))
+              (progn (setq begin (point) end nil)))
+             (goto-char begin)
+            (while (re-search-forward
+                    (concat "typedef \\(\\(?:typename \\)*"
+                            "[a-zA-Z0-9_:<>,*&() ]+?\\)[ ]+\\([a-zA-Z0-9_]+\\)[ ]*;" )
+                    end t )
+              (replace-match "using \\2 = \\1;"))))
+      #+END_SRC
+**** Insert ifdef clauses
+     
+     #+BEGIN_SRC emacs-lisp
+       (defun afs-insert-ifdef (macro &optional add-else ifndef)
+         "Insert C preprocessor conditional #ifdef MACRO. To add an else
+         clause set ADD-ELSE to t. To invert the ifdef to #ifndef MACRO
+          set ifndef to t."
+         (interactive "sName of macro: ")
+         (let* ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+                (end (if (use-region-p) (region-end) (point-at-eol)))
+                (text (delete-and-extract-region start end))
+                (defcmd (if ifndef "#ifndef" "#ifdef")))
+           (insert (concat defcmd " " macro "\n" text "\n"
+                           (when add-else (concat "#else\n" text "\n"))
+                           "#endif"))
+           ))
+     #+END_SRC
 
-    Convert typedef to c++11's alias
-    #+BEGIN_SRC emacs-lisp
-      (defun convert-typedef-to-using ()
-        "Converts typedef statements to using statements"
-        (interactive)
-        (let ((begin) (end))
+     #+BEGIN_SRC emacs-lisp
+       (defun afs-insert-ifdef-else (macro)
+         "Insert C prepocessor conditional #ifdef MACRO with an else clause.
+       Wrapper for (afs-insert-ifdef MACRO t)"
+         (interactive "sName of macro: ")
+         (afs-insert-ifdef macro t))
+     #+END_SRC
 
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point) end nil)))
+     #+BEGIN_SRC emacs-lisp
+       (defun afs-insert-ifndef (macro)
+         "Insert C prepocessor conditional #ifndef MACRO."
+         (interactive "sName of macro: ")
+         (afs-insert-ifdef macro nil t))
+     #+END_SRC
 
-          (goto-char begin)
-          (while (re-search-forward
-                  (concat "typedef \\(\\(?:typename \\)*"
-                          "[a-zA-Z0-9_:<>,*&() ]+?\\)[ ]+\\([a-zA-Z0-9_]+\\)[ ]*;" )
-                  end t )
-            (replace-match "using \\2 = \\1;"))))
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+       (defun afs-insert-ifndef-else (macro)
+         "Insert C prepocessor conditional #ifndef MACRO."
+         (interactive "sName of macro: ")
+         (afs-insert-ifdef macro t t))
+     #+END_SRC
+
 ** Workspace
    Function for splitting emacs into three frames. 
    Really nice to use with i3wm.
@@ -1367,3 +1404,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     connectAttr vdb_from_poly.VdbOutput vdb_visualize.VDBInput
 
     listAttr vdb_from_poly
+** Org mode
+   Create source block type "<s" on a new line and press <tab>
+** Elisp
+   Use C-h f to get docs on function
