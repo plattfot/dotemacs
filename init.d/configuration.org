@@ -205,6 +205,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      }")
      )   
    #+END_SRC
+   
+** Buffer move
+   Move buffers around between windows
+   #+BEGIN_SRC emacs-lisp
+     (use-package buffer-move 
+       :bind ( ("<M-S-up>"    . buf-move-up)
+               ("<M-S-down>"  . buf-move-down)
+               ("<M-S-left>"  . buf-move-left)
+               ("<M-S-right>" . buf-move-right))
+       :pin melpa-stable)
+   #+END_SRC
 ** Company
    
    #+BEGIN_SRC emacs-lisp
@@ -255,20 +266,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :pin melpa-stable)
 
    #+END_SRC
-** Gnuplot
-   Enable gnuplot to be able to plot tables in org mode.
-
-   Bind the F9 key to open a buffer into gnuplot mode
-
-   Set that all files ending in .gp will use the gnuplot-mode
+** Demangle
    #+BEGIN_SRC emacs-lisp
-     (use-package gnuplot
-       :bind ([(f9)] . gnuplot-make-buffer)
-       :config
-       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-       ;; Set files with ext .gp to use gnuplot
-       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+     (use-package demangle-mode
+       :pin melpa-stable)
+   #+END_SRC
+** Evil numbers
+   Incrementing/decrementing numbers.
+   #+BEGIN_SRC emacs-lisp
+     (use-package evil-numbers
+       :bind (("C-c +" . evil-numbers/inc-at-pt)
+              ("C-c -" . evil-numbers/dec-at-pt))
+       :pin melpa-stable)
+   #+END_SRC
+** Expand region
+   #+BEGIN_SRC emacs-lisp
+     (use-package expand-region
+       :bind ("C-=" . er/expand-region)
        :pin melpa-stable)
    #+END_SRC
 ** Flycheck
@@ -297,6 +311,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp) 
      (put 'flycheck-gcc-args 'safe-local-variable #'listp) 
    #+END_SRC
+** Gnuplot
+   Enable gnuplot to be able to plot tables in org mode.
+
+   Bind the F9 key to open a buffer into gnuplot mode
+
+   Set that all files ending in .gp will use the gnuplot-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package gnuplot
+       :bind ([(f9)] . gnuplot-make-buffer)
+       :config
+       (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
+       (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
+       ;; Set files with ext .gp to use gnuplot
+       (setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
+       :pin melpa-stable)
+   #+END_SRC
 ** Golang
    Setting up go to use 2 spaces as indentation and enable
    autocomplete for go.
@@ -313,6 +343,43 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable)
        :pin melpa-stable)
    #+END_SRC
+
+** GTags (Disabled)
+   Key bindings for finding tag, reference and usage of symbol.
+
+   Cycling gtag results ([[https://www.emacswiki.org/emacs/CyclingGTagsResult][source]])
+   #+BEGIN_SRC emacs-lisp
+     (use-package ggtags
+       :disabled t
+       :bind (("M-." . gtags-find-tag) ;; Finds tag
+              ("C-M-." . gtags-find-rtag)   ;; Find all references of tag
+              ("C-M-," . gtags-find-symbol)) ;; Find all usages of symbol.
+       :config 
+       (defun ww-next-gtag ()
+             "Find next matching tag, for GTAGS."
+             (interactive)
+             (let ((latest-gtags-buffer
+                    (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
+                                            (buffer-list)) ))))
+               (cond (latest-gtags-buffer
+                      (switch-to-buffer latest-gtags-buffer)
+                      (forward-line)
+                      (gtags-select-it nil))
+                     )))
+       :pin melpa-stable)
+
+   #+END_SRC
+** GLSL
+   Set files associated with glsl to use glsl mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package glsl-mode                       ;
+       :mode (("\\.vert\\'" . glsl-mode)
+              ("\\.frag\\'" . glsl-mode)
+              ("\\.geom\\'" . glsl-mode)
+              ("\\.prog\\'" . glsl-mode)
+              ("\\.glsl\\'" . glsl-mode))
+       :pin melpa)
+   #+END_SRC
 ** Haskell
    Settings for programming haskell in emacs
    #+BEGIN_SRC emacs-lisp
@@ -323,6 +390,33 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (autoload 'ghc-init "ghc" nil t)
        :pin melpa-stable)
    #+END_SRC
+** ibuffer
+    Use ibuffer instead of list-buffers, has some neat features.
+
+    Sort buffers by placing them in different groups
+    #+BEGIN_SRC emacs-lisp
+      (use-package ibuffer
+        :config 
+        (defalias 'list-buffers 'ibuffer)
+        (setq ibuffer-saved-filter-groups
+            (quote (("default"
+                     ("c++" (mode . c++-mode))
+                     ("make"  (or (mode . makefile-gmake-mode)
+                                  (mode . makefile-mode)))
+                     ("cmake" (mode . cmake-mode ))
+                     ("ag" (mode . ag-mode ))
+                     ("docs" (mode . rst-mode))
+                     ("dired" (mode . dired-mode))
+                     ("shell" (mode . shell-mode))
+                     ("emacs" (or
+                               (name . "^\\*scratch\\*$")
+                               (name . "^\\*Messages\\*$")
+                               (name . "^\\*Completions\\*$")))
+                     ))))
+      (add-hook 'ibuffer-mode-hook
+                (lambda ()
+                  (ibuffer-switch-to-saved-filter-groups "default"))))
+    #+END_SRC
 ** Ledger
    Settings for ledger.
    Set the default mode for .dat files to ledger.
@@ -355,17 +449,95 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (font-lock-add-keywords nil hexcolour-keywords))
        (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
    #+END_SRC
-** GLSL
-   Set files associated with glsl to use glsl mode
+** Makefile
+   Set following files to use makefile-gmake-mode as the default.
+   - Files that starts with =Makefile=.
+   - Has extension =.mk=.
+   - Files that are located in a directory called Make and ends with
+     Rules.
+   - Files that are located in a directory called modules.
+   - Files called BUILD.conf (pb2 file).
    #+BEGIN_SRC emacs-lisp
-     (use-package glsl-mode                       ;
-       :mode (("\\.vert\\'" . glsl-mode)
-              ("\\.frag\\'" . glsl-mode)
-              ("\\.geom\\'" . glsl-mode)
-              ("\\.prog\\'" . glsl-mode)
-              ("\\.glsl\\'" . glsl-mode))
+     (use-package make-mode
+       :mode (("Makefile.*" . makefile-gmake-mode)
+              ("\\.mk$" . makefile-gmake-mode)
+              ("Make/.*Rules" . makefile-gmake-mode)
+              ("modules/.*" . makefile-gmake-mode)
+              ("BUILD.conf" . makefile-gmake-mode)
+              ))
+   #+END_SRC
+** Magit
+   A Git porcelain inside Emacs
+   Key =C-x g= to run magit on current buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :bind ( "C-x g" . magit-status)
+       :pin melpa-stable)
+   #+END_SRC
+** Multiple cursors
+   Keybindings for the mc package
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors 
+       :bind (("C-S-c C-S-c" . mc/edit-lines)
+              ("C->"         . mc/mark-next-like-this)
+              ("C-<"         . mc/mark-previous-like-this)
+              ("C-c C-<"     . mc/mark-all-like-this)
+              ("C-+"         . mc/mark-next-like-this))
+       :config
+       (use-package mc-extras
+         :pin melpa-stable)
+       :pin melpa-stable)
+   #+END_SRC
+** Markdown
+   #+BEGIN_SRC emacs-lisp
+     (use-package markdown-mode
+       :pin melpa-stable)   
+   #+END_SRC
+
+** Move text
+   Move line up and down using arrow keys.
+   #+BEGIN_SRC emacs-lisp
+     (use-package move-text
+       :bind (([C-S-up] . move-text-up)
+              ([C-S-down] . move-text-down))
+       :pin melpa-stable)
+   #+END_SRC
+    
+** Multi term
+   #+BEGIN_SRC emacs-lisp
+     (use-package multi-term
        :pin melpa)
    #+END_SRC
+** Org
+   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
+ 
+   Use pretty bullet points instead of asterix
+
+   Use a little downward-pointing arrow instead of the usual ellipsis
+   (=...=) when folded.
+
+   Use syntax highlighting in source blocks while editing.
+   #+BEGIN_SRC emacs-lisp
+     (use-package org
+       :mode ("\\.org\\'" . org-mode)
+       :config
+       (use-package org-bullets
+         :pin melpa-stable)
+       (add-hook 'org-mode-hook
+                 (lambda ()
+                   (org-bullets-mode t)))
+       (setq org-ellipsis "⤵")
+       (setq org-src-fontify-natively t)
+       (setq org-src-window-setup 'current-window))
+   #+END_SRC
+
+   Doesn't work with yasnippet getting:
+   yas--fallback: yasnippet fallback loop!
+   This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+
+   Make TAB act as if it were issued in a buffer of the language's major mode.
+   =(setq org-src-tab-acts-natively t)=
 ** Python
    Package name is python but the mode is python-mode
    Set indentation to 2 white spaces.
@@ -385,6 +557,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                (if dotemacs-is-work 4 2)))))
        :pin melpa-stable)
    #+END_SRC
+
+** Powerline
+   #+BEGIN_SRC emacs-lisp
+     (use-package powerline
+       :disabled
+       :config
+       (powerline-vim-theme)
+       :pin melpa-stable)
+   #+END_SRC
 ** RTags (Disabled)
    Key bindings for RTags (they conflicts with GTags)
    #+BEGIN_SRC emacs-lisp
@@ -398,6 +579,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (use-package rtags-ac
          :pin melpa-stable)
        :pin melpa-stable)
+   #+END_SRC
+** Rainbow
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package rainbow-mode
+     ;;   :pin melpa-stable)
    #+END_SRC
 ** Sh
    Indent using 2 spaces for shell scripts.
@@ -459,108 +645,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (setq tramp-default-method "ssh")
        (add-to-list 'tramp-remote-path "/tools/bin"))
    #+END_SRC
-** Yasnippet
-   Enable yasnippet
-   #+BEGIN_SRC emacs-lisp
-     (use-package yasnippet 
-       :config
-       (yas-global-mode 1)
-       (setq yas-indent-line nil)
-       :pin melpa-stable)
-   #+END_SRC
-** Org
-   From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
- 
-   Use pretty bullet points instead of asterix
-
-   Use a little downward-pointing arrow instead of the usual ellipsis
-   (=...=) when folded.
-
-   Use syntax highlighting in source blocks while editing.
-   #+BEGIN_SRC emacs-lisp
-     (use-package org
-       :mode ("\\.org\\'" . org-mode)
-       :config
-       (use-package org-bullets
-         :pin melpa-stable)
-       (add-hook 'org-mode-hook
-                 (lambda ()
-                   (org-bullets-mode t)))
-       (setq org-ellipsis "⤵")
-       (setq org-src-fontify-natively t)
-       (setq org-src-window-setup 'current-window))
-   #+END_SRC
-
-   Doesn't work with yasnippet getting:
-   yas--fallback: yasnippet fallback loop!
-   This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
-
-   Make TAB act as if it were issued in a buffer of the language's major mode.
-   =(setq org-src-tab-acts-natively t)=
-** Makefile
-   Set following files to use makefile-gmake-mode as the default.
-   - Files that starts with =Makefile=.
-   - Has extension =.mk=.
-   - Files that are located in a directory called Make and ends with
-     Rules.
-   - Files that are located in a directory called modules.
-   - Files called BUILD.conf (pb2 file).
-   #+BEGIN_SRC emacs-lisp
-     (use-package make-mode
-       :mode (("Makefile.*" . makefile-gmake-mode)
-              ("\\.mk$" . makefile-gmake-mode)
-              ("Make/.*Rules" . makefile-gmake-mode)
-              ("modules/.*" . makefile-gmake-mode)
-              ("BUILD.conf" . makefile-gmake-mode)
-              ))
-   #+END_SRC
-** Evil numbers
-   Incrementing/decrementing numbers.
-   #+BEGIN_SRC emacs-lisp
-     (use-package evil-numbers
-       :bind (("C-c +" . evil-numbers/inc-at-pt)
-              ("C-c -" . evil-numbers/dec-at-pt))
-       :pin melpa-stable)
-   #+END_SRC
-** Magit
-   A Git porcelain inside Emacs
-   Key =C-x g= to run magit on current buffer.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package magit
-       :bind ( "C-x g" . magit-status)
-       :pin melpa-stable)
-   #+END_SRC
-   
-** Buffer move
-   Move buffers around between windows
-   #+BEGIN_SRC emacs-lisp
-     (use-package buffer-move 
-       :bind ( ("<M-S-up>"    . buf-move-up)
-               ("<M-S-down>"  . buf-move-down)
-               ("<M-S-left>"  . buf-move-left)
-               ("<M-S-right>" . buf-move-right))
-       :pin melpa-stable)
-   #+END_SRC
-** Multiple cursors
-   Keybindings for the mc package
-   #+BEGIN_SRC emacs-lisp
-     (use-package multiple-cursors 
-       :bind (("C-S-c C-S-c" . mc/edit-lines)
-              ("C->"         . mc/mark-next-like-this)
-              ("C-<"         . mc/mark-previous-like-this)
-              ("C-c C-<"     . mc/mark-all-like-this)
-              ("C-+"         . mc/mark-next-like-this))
-       :config
-       (use-package mc-extras
-         :pin melpa-stable)
-       :pin melpa-stable)
-   #+END_SRC
-** Markdown
-   #+BEGIN_SRC emacs-lisp
-     (use-package markdown-mode
-       :pin melpa-stable)   
-   #+END_SRC
 ** String inflections
    Keybinding for cycle between snake case, camel case etc
    #+BEGIN_SRC emacs-lisp
@@ -575,37 +659,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :bind ("C-c C-r" . sudo-edit)
        :pin melpa)
    #+END_SRC
-** Expand region
+** The Silver Searcher
    #+BEGIN_SRC emacs-lisp
-     (use-package expand-region
-       :bind ("C-=" . er/expand-region)
+     (use-package ag
        :pin melpa-stable)
-   #+END_SRC
-
-** GTags (Disabled)
-   Key bindings for finding tag, reference and usage of symbol.
-
-   Cycling gtag results ([[https://www.emacswiki.org/emacs/CyclingGTagsResult][source]])
-   #+BEGIN_SRC emacs-lisp
-     (use-package ggtags
-       :disabled t
-       :bind (("M-." . gtags-find-tag) ;; Finds tag
-              ("C-M-." . gtags-find-rtag)   ;; Find all references of tag
-              ("C-M-," . gtags-find-symbol)) ;; Find all usages of symbol.
-       :config 
-       (defun ww-next-gtag ()
-             "Find next matching tag, for GTAGS."
-             (interactive)
-             (let ((latest-gtags-buffer
-                    (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
-                                            (buffer-list)) ))))
-               (cond (latest-gtags-buffer
-                      (switch-to-buffer latest-gtags-buffer)
-                      (forward-line)
-                      (gtags-select-it nil))
-                     )))
-       :pin melpa-stable)
-
    #+END_SRC
    
 ** Windmove
@@ -619,66 +676,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               ([M-down]  . windmove-down)) ; move to downer window
        :pin melpa-stable)
    #+END_SRC
-
-** Move text
-   Move line up and down using arrow keys.
+** Yasnippet
+   Enable yasnippet
    #+BEGIN_SRC emacs-lisp
-     (use-package move-text
-       :bind (([C-S-up] . move-text-up)
-              ([C-S-down] . move-text-down))
-       :pin melpa-stable)
-   #+END_SRC
-** The Silver Searcher
-   #+BEGIN_SRC emacs-lisp
-     (use-package ag
-       :pin melpa-stable)
-   #+END_SRC
-
-** Powerline
-   #+BEGIN_SRC emacs-lisp
-     (use-package powerline
-       :disabled
+     (use-package yasnippet 
        :config
-       (powerline-vim-theme)
+       (yas-global-mode 1)
+       (setq yas-indent-line nil)
        :pin melpa-stable)
-   #+END_SRC
-** ibuffer
-    Use ibuffer instead of list-buffers, has some neat features.
-
-    Sort buffers by placing them in different groups
-    #+BEGIN_SRC emacs-lisp
-      (use-package ibuffer
-        :config 
-        (defalias 'list-buffers 'ibuffer)
-        (setq ibuffer-saved-filter-groups
-            (quote (("default"
-                     ("c++" (mode . c++-mode))
-                     ("make"  (or (mode . makefile-gmake-mode)
-                                  (mode . makefile-mode)))
-                     ("cmake" (mode . cmake-mode ))
-                     ("ag" (mode . ag-mode ))
-                     ("docs" (mode . rst-mode))
-                     ("dired" (mode . dired-mode))
-                     ("shell" (mode . shell-mode))
-                     ("emacs" (or
-                               (name . "^\\*scratch\\*$")
-                               (name . "^\\*Messages\\*$")
-                               (name . "^\\*Completions\\*$")))
-                     ))))
-      (add-hook 'ibuffer-mode-hook
-                (lambda ()
-                  (ibuffer-switch-to-saved-filter-groups "default"))))
-    #+END_SRC
-    
-** Multi term
-   #+BEGIN_SRC emacs-lisp
-     (use-package multi-term
-       :pin melpa)
-   #+END_SRC
-** Rainbow
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package rainbow-mode
-     ;;   :pin melpa-stable)
    #+END_SRC
 ** Yaml
    #+BEGIN_SRC emacs-lisp
@@ -1113,8 +1118,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (end (if (use-region-p) (region-end) (point-at-eol)))
                 (text (delete-and-extract-region start end))
                 (defcmd (if ifndef "#ifndef" "#ifdef")))
-           (insert (concat defcmd " " macro "\n" text "\n"
-                           (when add-else (concat "#else\n" text "\n"))
+           (insert (concat (format "%s %s\n%s\n" defcmd macro text)
+                           (when add-else (format "#else\n%s\n" text))
                            "#endif"))
            ))
      #+END_SRC
