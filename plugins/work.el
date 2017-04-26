@@ -33,7 +33,11 @@
 
 (defun work-setup-build-fun (terminal-type)
   "Spawns multiple TERMINAL-TYPE.
-With the names release, cyclone, build and misc"
+With the names 3ps, release, cyclone, build and misc"
+  (cd "~/fredriks/swdevl/3ps")
+  (funcall terminal-type)
+  (rename-buffer "3ps")
+  (highlight-build)
   (cd "~/fredriks/release")
   (funcall terminal-type)
   (rename-buffer "release")
