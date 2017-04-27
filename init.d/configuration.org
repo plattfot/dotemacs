@@ -461,9 +461,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package make-mode
        :mode (("Makefile.*" . makefile-gmake-mode)
               ("\\.mk$" . makefile-gmake-mode)
-              ("Make/.*Rules" . makefile-gmake-mode)
+              ("Make/.*Rules$" . makefile-gmake-mode)
               ("modules/.*" . makefile-gmake-mode)
-              ("BUILD.conf" . makefile-gmake-mode)
+              ("BUILD\\.conf$" . makefile-gmake-mode)
               ))
    #+END_SRC
 ** Magit
