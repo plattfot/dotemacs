@@ -6,3 +6,4 @@
 
 (org-babel-load-file "~/.emacs.d/init.d/configuration.org")
 ;;(load "~/.emacs.d/init.d/configuration")
+(put 'upcase-region 'disabled nil)
