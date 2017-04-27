@@ -546,7 +546,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package python
        :mode (("\\.py\\'" . python-mode) 
-              ("^PROJECT$" . python-mode))
+              ("PROJECT$" . python-mode))
        :interpreter ("python" . python-mode)
        :config
 
