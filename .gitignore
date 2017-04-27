@@ -12,3 +12,9 @@ configuration.el
 *.elc
 session.*
 %backup%*
+var
+url
+themes
+recentf
+eshell
+abbrev_defs
