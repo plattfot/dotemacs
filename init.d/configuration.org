@@ -267,10 +267,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    #+END_SRC
 ** Demangle
-   #+BEGIN_SRC emacs-lisp
-     (use-package demangle-mode
-       :pin melpa-stable)
-   #+END_SRC
+   # #+BEGIN_SRC emacs-lisp
+   #   (use-package demangle-mode
+   #     :pin melpa-stable)
+   # #+END_SRC
 ** Evil numbers
    Incrementing/decrementing numbers.
    #+BEGIN_SRC emacs-lisp
@@ -1316,6 +1316,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (setq frame-resize-pixelwise t)
    #+END_SRC
+** Juniper VPN linux 4.5+
+   Juniper VPN doesn't work in linux 4.5+, workaround is to disable
+   the ipv6.
+   #+BEGIN_SRC sh
+   echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
+   #+END_SRC
+
 * Notes
 ** Lisp in search replace
    To execute a lisp function in replace regexp do \,(<function>)
