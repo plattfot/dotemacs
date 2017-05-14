@@ -408,6 +408,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("docs" (mode . rst-mode))
                      ("dired" (mode . dired-mode))
                      ("shell" (mode . shell-mode))
+                     ("vc" (name . "\\*vc")) 
                      ("emacs" (or
                                (name . "^\\*scratch\\*$")
                                (name . "^\\*Messages\\*$")
@@ -1420,3 +1421,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
    Use C-h f to get docs on function
+** ledger
+*** Check what you spend on X
+   #+BEGIN_SRC sh
+     ledger -f data.dat reg payee "X" -s
+   #+END_SRC
+*** Scripts
+    #+BEGIN_SRC sh
+      env LEDGER_FILE=data.dat scripts/cashflow.sh
+    #+END_SRC
+   
