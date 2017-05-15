@@ -1413,3 +1413,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
    Use C-h f to get docs on function
+** Code
+*** Generate a list of all defined macros
+    cpp -dM /dev/null
