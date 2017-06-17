@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: August/Augusti
+# key: aug
+# --
+`(format-time-string "%Y/08/")`$0

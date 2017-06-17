@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: igår
+# key: ig
+# --
+`(format-time-string "%Y/%m/%d" (yesterday-time))` $0

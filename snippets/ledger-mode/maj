@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Maj
+# key: maj
+# --
+`(format-time-string "%Y/05/")`$0
