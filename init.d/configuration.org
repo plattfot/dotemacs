@@ -409,6 +409,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("dired" (mode . dired-mode))
                      ("vc" (mode . vc-dir-mode))
                      ("shell" (mode . shell-mode))
+                     ("vc" (name . "\\*vc")) 
                      ("emacs" (or
                                (name . "^\\*scratch\\*$")
                                (name . "^\\*Messages\\*$")
@@ -1427,3 +1428,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Code
 *** Generate a list of all defined macros
     cpp -dM /dev/null
+** Ledger
+*** Check what you spend on X
+   #+BEGIN_SRC sh
+     ledger -f data.dat reg payee "X" -s
+   #+END_SRC
+*** Scripts
+    #+BEGIN_SRC sh
+      env LEDGER_FILE=data.dat scripts/cashflow.sh
+    #+END_SRC
