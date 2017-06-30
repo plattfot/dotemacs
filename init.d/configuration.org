@@ -1029,19 +1029,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** Programming
 *** C++
-**** Insert java style comment
-     /**
-      * <cursor>
-      */
-    #+BEGIN_SRC emacs-lisp
-	 (defun insert-function-comment ()
-       	(interactive)
-       	(insert "/**")  (indent-according-to-mode)
-       	(insert "\n* ") (indent-according-to-mode)
-       	(insert "\n*/") (indent-according-to-mode)
-       	(forward-line -1)
-       	(end-of-line))
-    #+END_SRC
 **** Expands a define macro for all matches in current buffer.
      #+BEGIN_SRC emacs-lisp
        (defun replace-define()
