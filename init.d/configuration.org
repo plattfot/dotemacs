@@ -407,6 +407,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("ag" (mode . ag-mode ))
                      ("docs" (mode . rst-mode))
                      ("dired" (mode . dired-mode))
+                     ("vc" (mode . vc-dir-mode))
                      ("shell" (mode . shell-mode))
                      ("emacs" (or
                                (name . "^\\*scratch\\*$")
