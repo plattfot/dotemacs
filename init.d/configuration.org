@@ -1437,3 +1437,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC sh
       env LEDGER_FILE=data.dat scripts/cashflow.sh
     #+END_SRC
+** Case-sensitive search
+
+   press M-c after search
