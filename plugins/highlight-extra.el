@@ -7,10 +7,48 @@
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
 
+(defface hi-dark-orange
+  '((t (:foreground "#dd7b3b")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-gras
+  '((t (:foreground "#99cf50")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-string-green
+  '((t (:foreground "#65b042")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
 (defface hi-grey
   '((t (:foreground "#666")))
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
+
+(defface hi-crimson
+  '((t (:foreground "#D80000")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defun highlight-gtest()
+  "Highlight gtest output"
+  (interactive)
+  ( highlight-regexp "\\[[ ]+OK[ ]+\\]" 'hi-string-green )
+  ( highlight-regexp "\\[[ ]+RUN[ ]+\\]" 'hi-string-green )
+  ( highlight-regexp "\\[[ ]+PASSED[ ]+\\]" 'hi-string-green )
+  ( highlight-regexp "\\[[=-]+\\]" 'hi-string-green )
+  ( highlight-regexp "\\[[ ]+FAILED[ ]+\\]" 'hi-crimson ))
+
+(defun unhighlight-gtest()
+  "Highlight gtest output"
+  (interactive)
+  ( unhighlight-regexp "\\[[ ]+OK[ ]+\\]" )
+  ( unhighlight-regexp "\\[[ ]+RUN[ ]+\\]" )
+  ( unhighlight-regexp "\\[[ ]+PASSED[ ]+\\]" )
+  ( unhighlight-regexp "\\[[=-]+\\]" )
+  ( unhighlight-regexp "\\[[ ]+FAILED[ ]+\\]" ))
 
 (defun highlight-dd-logger()
   "Highlight DD_LOGGER."
