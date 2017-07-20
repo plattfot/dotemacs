@@ -34,6 +34,8 @@
 (defun work-setup-build-fun (terminal-type)
   "Spawns multiple TERMINAL-TYPE.
 With the names 3ps, release, cyclone, build and misc"
+  (delete-other-windows)
+  (split-window-horizontally)
   (cd "~/fredriks/swdevl/3ps")
   (funcall terminal-type)
   (rename-buffer "3ps")
@@ -46,7 +48,6 @@ With the names 3ps, release, cyclone, build and misc"
   (funcall terminal-type)
   (rename-buffer "cyclone")
   (highlight-build)
-  (split-window-right)
   (funcall terminal-type)
   (rename-buffer "misc")
   (highlight-build)
