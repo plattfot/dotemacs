@@ -95,7 +95,7 @@ easier find them when building."
   ( unhighlight-regexp "error")
   ( unhighlight-regexp "const ")
   ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" )
-  ( highlight-regexp "undefined reference to" 'hi-orange ))
+  ( unhighlight-regexp "undefined reference to"))
 
 (defun highlight-versions( input )
   "Highlight important versions when building with pybuild."
