@@ -35,20 +35,16 @@
 (defun highlight-gtest()
   "Highlight gtest output"
   (interactive)
-  ( highlight-regexp "\\[[ ]+OK[ ]+\\]" 'hi-string-green )
-  ( highlight-regexp "\\[[ ]+RUN[ ]+\\]" 'hi-string-green )
-  ( highlight-regexp "\\[[ ]+PASSED[ ]+\\]" 'hi-string-green )
-  ( highlight-regexp "\\[[=-]+\\]" 'hi-string-green )
-  ( highlight-regexp "\\[[ ]+FAILED[ ]+\\]" 'hi-crimson ))
+  ( highlight-regexp "[ ]\\{1\\}OK[ ]\\{7\\}" 'hi-string-green )
+  ( highlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" 'hi-string-green )
+  ( highlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" 'hi-crimson ))
 
 (defun unhighlight-gtest()
-  "Highlight gtest output"
+  "Unhighlight gtest output"
   (interactive)
-  ( unhighlight-regexp "\\[[ ]+OK[ ]+\\]" )
-  ( unhighlight-regexp "\\[[ ]+RUN[ ]+\\]" )
-  ( unhighlight-regexp "\\[[ ]+PASSED[ ]+\\]" )
-  ( unhighlight-regexp "\\[[=-]+\\]" )
-  ( unhighlight-regexp "\\[[ ]+FAILED[ ]+\\]" ))
+  ( unhighlight-regexp "[ ]\\{1\\}RUN[ ]\\{6\\}" )
+  ( unhighlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" )
+  ( unhighlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" ))
 
 (defun highlight-dd-logger()
   "Highlight DD_LOGGER."
