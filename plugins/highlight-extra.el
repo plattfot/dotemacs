@@ -35,14 +35,14 @@
 (defun highlight-gtest()
   "Highlight gtest output"
   (interactive)
-  ( highlight-regexp "[ ]\\{1\\}OK[ ]\\{7\\}" 'hi-string-green )
+  ( highlight-regexp "[ ]\\{7\\}OK[ ]\\{1\\}" 'hi-string-green )
   ( highlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" 'hi-string-green )
   ( highlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" 'hi-crimson ))
 
 (defun unhighlight-gtest()
   "Unhighlight gtest output"
   (interactive)
-  ( unhighlight-regexp "[ ]\\{1\\}RUN[ ]\\{6\\}" )
+  ( unhighlight-regexp "[ ]\\{7\\}OK[ ]\\{1\\}" )
   ( unhighlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" )
   ( unhighlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" ))
 
