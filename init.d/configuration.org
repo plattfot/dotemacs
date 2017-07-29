@@ -406,6 +406,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("cmake" (mode . cmake-mode ))
                      ("ag" (mode . ag-mode ))
                      ("docs" (mode . rst-mode))
+                     ("org" (mode . org-mode))
                      ("dired" (mode . dired-mode))
                      ("vc" (mode . vc-dir-mode))
                      ("magit" (name . "^\\*magit"))
