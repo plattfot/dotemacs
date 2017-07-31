@@ -530,7 +530,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (org-bullets-mode t)))
        (setq org-ellipsis "⤵")
        (setq org-src-fontify-natively t)
-       (setq org-src-window-setup 'current-window))
+       ;; (setq org-src-window-setup 'current-window)
+       )
    #+END_SRC
 
    Doesn't work with yasnippet getting:
