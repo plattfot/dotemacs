@@ -390,6 +390,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (autoload 'ghc-init "ghc" nil t)
        :pin melpa-stable)
    #+END_SRC
+** Helm (Disabled)
+   Disabled because it did horrible with tramp
+   Settings for helm
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm
+       :disabled t
+       :bind (("M-x" . helm-M-x)
+              ("M-y" . helm-show-kill-ring)
+              ;;("C-x C-f" . helm-find-files)
+              ("<tab>" . helm-execute-persistent-action)
+              ("C-i" . helm-execute-persistent-action) ;; make TAB work in terminal
+              ("C-z" . helm-select-action))
+       :config
+       (helm-autoresize-mode t)
+       (helm-mode 1)
+       :pin melpa-stable)
+        
+   #+END_SRC
 ** ibuffer
     Use ibuffer instead of list-buffers, has some neat features.
 
