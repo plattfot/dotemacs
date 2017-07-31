@@ -1422,7 +1422,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
    Use C-h f to get docs on function
-** ledger
+** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
      ledger -f data.dat reg payee "X" -s
