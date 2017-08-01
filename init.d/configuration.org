@@ -221,7 +221,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package company
        :bind ("C-<tab>" . company-complete)
-       :disabled dotemacs-is-work
+       :disabled t
        :init
        (global-company-mode 1)
        :config
