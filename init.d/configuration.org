@@ -1466,3 +1466,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC sh
       env LEDGER_FILE=data.dat scripts/cashflow.sh
     #+END_SRC
+** Find
+*** Ignore directories while searching
+    For example while searching for file named foobar, ignore all .svn
+    directories.
+    #+BEGIN_SRC sh
+      find . -not \( -path '*/.svn' -prune \) -name "foobar"
+    #+END_SRC
+     
