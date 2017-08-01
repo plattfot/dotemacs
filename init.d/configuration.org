@@ -1025,7 +1025,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 * Custom functions
 ** Buffer
-   Function for renaming buffer and file. Source: [[http://www.stringify.com/2006/apr/24/rename/][Link]]
+   Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
    #+BEGIN_SRC emacs-lisp
      (defun rename-current-file-or-buffer ()
        "Rename current file and buffer, similar to save-as but removes
@@ -1040,7 +1040,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (kill-buffer nil))))
        nil)
    #+END_SRC
-   To sync all open buffers with their respective files on disk. Source: [[https://www.emacswiki.org/emacs/RevertBuffer][here]]
+   To sync all open buffers with their respective files on disk. [[https://www.emacswiki.org/emacs/RevertBuffer][Source]]
    #+BEGIN_SRC emacs-lisp
      (defun revert-all-buffers ()
          "Refreshes all open buffers from their respective files."
