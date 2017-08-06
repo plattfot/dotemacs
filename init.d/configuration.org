@@ -546,8 +546,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :pin melpa)
    #+END_SRC
 ** Org
+   
    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
- 
+   
    Use pretty bullet points instead of asterix
 
    Use a little downward-pointing arrow instead of the usual ellipsis
@@ -1527,3 +1528,4 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       find . -not \( -path '*/.svn' -prune \) -name "foobar"
     #+END_SRC
      
+    
