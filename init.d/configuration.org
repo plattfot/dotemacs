@@ -555,18 +555,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Use syntax highlighting in source blocks while editing.
    #+BEGIN_SRC emacs-lisp
-     (use-package org
-       :mode ("\\.org\\'" . org-mode)
-       :config
-       (use-package org-bullets
-         :pin melpa-stable)
-       (add-hook 'org-mode-hook
-                 (lambda ()
-                   (org-bullets-mode t)))
-       (setq org-ellipsis "⤵")
-       (setq org-src-fontify-natively t)
-       ;; (setq org-src-window-setup 'current-window)
-       )
+          (use-package org
+            :mode ("\\.org\\'" . org-mode)
+            :config
+            (use-package org-bullets
+              :pin melpa-stable)
+            (add-hook 'org-mode-hook
+                      (lambda ()
+                        (org-bullets-mode t)))
+            (setq org-ellipsis "⤵")
+            (setq org-src-fontify-natively t)
+            (setq org-todo-keywords
+                  '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+            ;; (setq org-src-window-setup 'current-window)
+            )
    #+END_SRC
 
    Doesn't work with yasnippet getting:
