@@ -7,10 +7,44 @@
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
 
+(defface hi-dark-orange
+  '((t (:foreground "#dd7b3b")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-gras
+  '((t (:foreground "#99cf50")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-string-green
+  '((t (:foreground "#65b042")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
 (defface hi-grey
   '((t (:foreground "#666")))
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
+
+(defface hi-crimson
+  '((t (:foreground "#D80000")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defun highlight-gtest()
+  "Highlight gtest output"
+  (interactive)
+  ( highlight-regexp "[ ]\\{7\\}OK[ ]\\{1\\}" 'hi-string-green )
+  ( highlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" 'hi-string-green )
+  ( highlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" 'hi-crimson ))
+
+(defun unhighlight-gtest()
+  "Unhighlight gtest output"
+  (interactive)
+  ( unhighlight-regexp "[ ]\\{7\\}OK[ ]\\{1\\}" )
+  ( unhighlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" )
+  ( unhighlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" ))
 
 (defun highlight-dd-logger()
   "Highlight DD_LOGGER."
@@ -57,7 +91,7 @@ easier find them when building."
   ( unhighlight-regexp "error")
   ( unhighlight-regexp "const ")
   ( unhighlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" )
-  ( highlight-regexp "undefined reference to" 'hi-orange ))
+  ( unhighlight-regexp "undefined reference to"))
 
 (defun highlight-versions( input )
   "Highlight important versions when building with pybuild."
