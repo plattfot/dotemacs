@@ -328,6 +328,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp) 
      (put 'flycheck-gcc-args 'safe-local-variable #'listp) 
    #+END_SRC
+** Geiser
+   #+BEGIN_SRC emacs-lisp
+     (use-package geiser
+       :pin melpa-stable)
+   #+END_SRC
+   Auto complete backend for geiser
+   #+BEGIN_SRC emacs-lips
+       (use-package ac-geiser
+         :pin melpa-stable)
+   #+END_SRC
 ** Gnuplot
    Enable gnuplot to be able to plot tables in org mode.
 
@@ -541,7 +551,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               ([C-S-down] . move-text-down))
        :pin melpa-stable)
    #+END_SRC
-    
 ** Multi term
    #+BEGIN_SRC emacs-lisp
      (use-package multi-term
@@ -580,6 +589,60 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Make TAB act as if it were issued in a buffer of the language's major mode.
    =(setq org-src-tab-acts-natively t)=
+** Smartparens
+   #+BEGIN_SRC emacs-lisp
+     (use-package smartparens
+       :init
+       (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+       (add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
+       (add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
+       (add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
+       (add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
+       (add-hook 'python-mode 'turn-on-smartparens-mode)
+       (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
+       :bind (("M-k" . sp-kill-hybrid-sexp)
+              ("C-M-k" . sp-backward-kill-sexp)
+              ("C-)" . sp-forward-slurp-sexp)
+              ("C-(" . sp-backward-slurp-sexp)
+              ("C-}" . sp-forward-barf-sexp)
+              ("C-{" . sp-backward-barf-sexp)
+              ("C-M-a" . sp-beginning-of-sexp)
+              ("C-M-e" . sp-end-of-sexp)
+              ("C-M-t" . sp-transpose-hybrid-sexp)
+              ("M-s" . sp-splice-sexp)
+              ("M-[" . sp-backward-unwrap-sexp)
+              ("M-]" . sp-unwrap-sexp)
+              ("M-}" . sp-splice-sexp-killing-backward)
+              ("M-{" . sp-splice-sexp-killing-forward))
+       :config
+       (setq sp-autoinsert-pair nil)
+       :pin melpa-stable)
+   #+END_SRC
+** Paredit
+   Cannot set custom keybindings, conflicts with my movement keys.
+
+   ParEdit is a minor mode for performing structured editing of
+   S-expression data.
+   #+BEGIN_SRC emacs-lisp
+     (use-package paredit
+       :disabled t
+       :bind (("C-)" . paredit-forward-slurp-sexp)
+              ("C-(" . paredit-backward-slurp-sexp)
+              ("C-}" . paredit-forward-barf-sexp)
+              ("C-{" . paredit-backward-barf-sexp)
+              ("M-{" . paredit-splice-sexp-killing-backward)
+              ("M-}" . paredit-splice-sexp-killing-forward))
+       :init
+       (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+       (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+       (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+       (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+       (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+       (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+       (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+       :pin melpa-stable)
+   #+END_SRC
+   
 ** Python
    Package name is python but the mode is python-mode
    Set indentation to 2 white spaces.
