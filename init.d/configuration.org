@@ -609,13 +609,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               ("C-M-a" . sp-beginning-of-sexp)
               ("C-M-e" . sp-end-of-sexp)
               ("C-M-t" . sp-transpose-hybrid-sexp)
-              ("M-s" . sp-splice-sexp)
+              ("C-M-s" . sp-splice-sexp)
+              ("M-s" . sp-split-sexp)
               ("M-[" . sp-backward-unwrap-sexp)
               ("M-]" . sp-unwrap-sexp)
               ("M-}" . sp-splice-sexp-killing-backward)
               ("M-{" . sp-splice-sexp-killing-forward))
        :config
        (setq sp-autoinsert-pair nil)
+       (setq sp-autoskip-closing-pair t)
        :pin melpa-stable)
    #+END_SRC
 ** Paredit
