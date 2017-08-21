@@ -590,8 +590,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Make TAB act as if it were issued in a buffer of the language's major mode.
    =(setq org-src-tab-acts-natively t)=
 ** Smartparens
+   Having issues with turning of auto balancing, i.e
+   (|) - insert () -> (()|
    #+BEGIN_SRC emacs-lisp
      (use-package smartparens
+       :disabled t
        :init
        (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
        (add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
@@ -617,7 +620,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               ("M-{" . sp-splice-sexp-killing-forward))
        :config
        (setq sp-autoinsert-pair nil)
-       (setq sp-autoskip-closing-pair t)
+       (setq sp-autoskip-closing-pair nil)
        :pin melpa-stable)
    #+END_SRC
 ** Paredit
