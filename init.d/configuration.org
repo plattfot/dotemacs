@@ -1398,7 +1398,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Jump to my init file with 'e' and init directory with 'i'.
    #+BEGIN_SRC emacs-lisp
      (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
-     (set-register ?i (cons 'file "~/.emacs.d/init.d")) 
+     (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org")) 
    #+END_SRC
 ** UI
    Key bindings if I really need to see the menu and tool bar
