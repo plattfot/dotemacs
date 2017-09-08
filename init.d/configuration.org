@@ -749,7 +749,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :pin melpa-stable)
    #+END_SRC
 ** Tramp
-   Set the ssh to be the default method for tramp
+   Set the ssh to be the default method for tramp.
+   If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
    #+BEGIN_SRC emacs-lisp
      (use-package tramp
        :config
@@ -1397,7 +1398,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Jump to my init file with 'e' and init directory with 'i'.
    #+BEGIN_SRC emacs-lisp
      (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
-     (set-register ?i (cons 'file "~/.emacs.d/init.d")) 
+     (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org")) 
    #+END_SRC
 ** UI
    Key bindings if I really need to see the menu and tool bar
@@ -1486,7 +1487,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
    #+END_SRC
-
+** Tramp hangs after password entry
+   :PROPERTIES:
+   :CUSTOM_ID:  tramp-hang-workaround 
+   :END:
+   See [[https://www.emacswiki.org/emacs/TrampMode#toc7][EmacsWiki]]
+   What worked for me was adding this to my .zshrc
+   #+BEGIN_SRC sh
+     [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+   #+END_SRC
 * Notes
 ** Lisp in search replace
    To execute a lisp function in replace regexp do \,(<function>)
