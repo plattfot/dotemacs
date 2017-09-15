@@ -1608,3 +1608,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Case-sensitive search
    press M-c after search
 
+** ssh
+*** ssh agent
+    Use the ssh agent to cache the private key to a terminal
+    #+BEGIN_SRC sh
+      eval $(ssh-agent)
+      ssh-add ~/.ssh/private-key
+    #+END_SRC
