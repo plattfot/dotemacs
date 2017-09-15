@@ -777,7 +777,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package ag
        :pin melpa-stable)
    #+END_SRC
-   
 ** Windmove
    Jump between windows using the arrow keys instead of cycling with
    "C-x o". Note that this Doesn't work in org mode.
@@ -1323,8 +1322,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (delete-other-frames)
      (delete-other-windows)
      (make-frame-command)
-     (make-frame-command)
-     )
+     (make-frame-command))
    #+END_SRC
 ** Split lines
    Function for splitting lines at specified character. Default is ','.
@@ -1342,18 +1340,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       
        (while (search-forward-regexp regex end t)
          (insert "\n")
-         (setq end (1+ end))
-         )
+         (setq end (1+ end)))
        (indent-region start end)
-       (goto-char start)
-       )
-     )
+       (goto-char start)))
 
      (defun split-at-comma ()
      "wrapper for split-at for use with key command"
      (interactive)
-     (split-at ",")
-     )
+     (split-at ","))
    #+END_SRC
 ** Yesterday-time
    Computes the time 24 hours ago
@@ -1363,15 +1357,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (let* ((now-time (current-time))              ; get the time now
               (hi (car now-time))                    ; save off the high word
               (lo (car (cdr now-time)))              ; save off the low word
-              (msecs (nth 2 now-time))               ; save off the milliseconds
-              )
+              (msecs (nth 2 now-time)))              ; save off the milliseconds
 
-         (if (< lo 20864)                      ; if the low word is too small for subtracting
+         (if (< lo 20864)                        ; if the low word is too small for subtracting
              (setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
-           (setq hi (- hi 1) lo (- lo 20864))  ; else, add 86400 seconds (in two parts)
-           )
-         (list hi lo msecs)                    ; regurgitate the new values
-         ))
+           (setq hi (- hi 1) lo (- lo 20864)))   ; else, add 86400 seconds (in two parts)
+
+         (list hi lo msecs))) ; regurgitate the new values
    #+END_SRC
 * Custom plugins
 ** Multiple cursor extension
