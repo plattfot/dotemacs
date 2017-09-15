@@ -85,22 +85,22 @@ Works only if the current buffer is a shell."
     (comint-send-input nil t )))
 
 (defun work-setup-houdini ()
-  "Spawns shells called h15, h14 and h13.
+  "Spawns three shells at the cyclone test show.
 Using shell instead of multi-term."
   (interactive)
   (cd "~/fredriks/Houdini")
   (delete-other-windows)
   (shell)
-  (rename-buffer "hou")
-  (work-run-emacs-shell-command "goc")
+  (rename-buffer "hou-devl")
+  (work-run-emacs-shell-command "go CYCLONE RD 1 =fx work")
   ;; (shell-resync-dirs)
   (shell)
-  (rename-buffer "h15")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h15 work")
+  (rename-buffer "hou-test")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
 
   (shell)
-  (rename-buffer "h16")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx_h16 work")
+  (rename-buffer "hou-misc")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
 
   ;; (shell-resync-dirs)
   (toggle-frame-maximized))
