@@ -87,8 +87,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Font
     Set font and font size
     #+BEGIN_SRC emacs-lisp
-      (set-face-attribute 'default nil :height 92)
-      (set-face-attribute 'default nil :font "Hack")
+      (set-default-font "Hack-9")
     #+END_SRC
 *** Column number
    Show column number in the info bar
