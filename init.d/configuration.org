@@ -282,11 +282,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (let ((fn-list (dired-get-marked-files nil arg)))
               (mapc 'find-file fn-list))))
    #+END_SRC
-** Demangle
-   # #+BEGIN_SRC emacs-lisp
-   #   (use-package demangle-mode
-   #     :pin melpa-stable)
-   # #+END_SRC
+** Demangle (Disabled)
+   #+BEGIN_SRC emacs-lisp
+     (use-package demangle-mode
+       :disabled t
+       :pin melpa-stable)
+   #+END_SRC
 ** Evil numbers
    Incrementing/decrementing numbers.
    #+BEGIN_SRC emacs-lisp
@@ -588,7 +589,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Make TAB act as if it were issued in a buffer of the language's major mode.
    =(setq org-src-tab-acts-natively t)=
-** Smartparens
+** Smartparens (Disabled)
    Having issues with turning of auto balancing, i.e
    (|) - insert () -> (()|
    #+BEGIN_SRC emacs-lisp
@@ -622,7 +623,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (setq sp-autoskip-closing-pair nil)
        :pin melpa-stable)
    #+END_SRC
-** Paredit
+** Paredit (Disabled)
    Cannot set custom keybindings, conflicts with my movement keys.
 
    ParEdit is a minor mode for performing structured editing of
@@ -667,7 +668,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :pin melpa-stable)
    #+END_SRC
 
-** Powerline
+** Powerline (Disabled)
    #+BEGIN_SRC emacs-lisp
      (use-package powerline
        :disabled
@@ -689,10 +690,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable)
        :pin melpa-stable)
    #+END_SRC
-** Rainbow
+** Rainbow (Disabled)
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package rainbow-mode
-     ;;   :pin melpa-stable)
+     (use-package rainbow-mode
+       :disabled t
+       :pin melpa-stable)
    #+END_SRC
 ** Sh
    Indent using 2 spaces for shell scripts.
