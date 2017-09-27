@@ -1604,3 +1604,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       eval $(ssh-agent)
       ssh-add ~/.ssh/private-key
     #+END_SRC
+** houdini
+*** Expression for string parameters
+    Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
+    Then edit the expression.
