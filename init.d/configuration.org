@@ -1608,3 +1608,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Expression for string parameters
     Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
     Then edit the expression.
+** KDE
+*** no borders
+    When disabled use ALT+F3 to bring the menu back.
