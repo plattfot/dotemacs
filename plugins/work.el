@@ -85,24 +85,29 @@ Works only if the current buffer is a shell."
     (comint-send-input nil t )))
 
 (defun work-setup-houdini ()
-  "Spawns three shells at the cyclone test show.
+  "Spawns four shells at the cyclone test show.
 Using shell instead of multi-term."
   (interactive)
-  (cd "~/fredriks/Houdini")
   (delete-other-windows)
-  (shell)
-  (rename-buffer "hou-devl")
-  (work-run-emacs-shell-command "go CYCLONE RD 1 =fx work")
-  ;; (shell-resync-dirs)
-  (shell)
-  (rename-buffer "hou-test")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
+  (split-window-horizontally)
+  (cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
 
   (shell)
   (rename-buffer "hou-misc")
   (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
 
-  ;; (shell-resync-dirs)
+  (shell)
+  (rename-buffer "hou-beta")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx_beta work")
+
+  (shell)
+  (rename-buffer "hou-devl")
+  (work-run-emacs-shell-command "go CYCLONE RD 1 =fx work")
+
+  (shell)
+  (rename-buffer "hou-test")
+  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
+
   (toggle-frame-maximized))
 
 ;; --------------------------- Source BuildConfig ----------------------------

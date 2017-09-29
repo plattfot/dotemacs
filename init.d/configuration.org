@@ -1571,17 +1571,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Git
 *** Change message in most recent commit
     git commit --amend [-m ""]
-** Test openvdb in maya
-*** TODO Move this to separate notes
-    mel script:
-    polySphere -radius 1 -name "poly_sphere"
-    createNode OpenVDBFromPolygons -name "vdb_from_poly"
-    setAttr vdb_from_poly.VoxelSize 0.1
-    connectAttr poly_sphere.outMesh vdb_from_poly.MeshInput
-    createNode OpenVDBVisualize -name "vdb_visualize"
-    connectAttr vdb_from_poly.VdbOutput vdb_visualize.VDBInput
-
-    listAttr vdb_from_poly
 ** Org mode
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
@@ -1615,3 +1604,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       eval $(ssh-agent)
       ssh-add ~/.ssh/private-key
     #+END_SRC
+** houdini
+*** Expression for string parameters
+    Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
+    Then edit the expression.
