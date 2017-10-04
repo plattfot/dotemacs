@@ -258,7 +258,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
      #+END_SRC
 *** Navigation
-   Packages for helping navigate code.
+   Packages for navigating code.
 **** GTags (Disabled)
      Key bindings for finding tag, reference and usage of symbol.
 
@@ -298,12 +298,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 	   :pin melpa-stable)
        	 :pin melpa-stable)
      #+END_SRC
-**** The Silver Searcher
-     #+BEGIN_SRC emacs-lisp
-       (use-package ag
-       	 :pin melpa-stable)
-     #+END_SRC
-
 ** Languages
   Modes for highlighting different programing languages.
 *** Functional
@@ -462,7 +456,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:pin melpa-stable)   
     #+END_SRC
 ** Programs
-  Packages that communicates with external processes and doesn't fit anywhere else.
+  Packages that communicates with external processes.
 *** Ledger
    Settings for ledger.
    Set the default mode for .dat files to ledger.
@@ -526,6 +520,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:bind ( "C-x g" . magit-status)
        	:pin melpa-stable)
     #+END_SRC
+*** The Silver Searcher
+    #+BEGIN_SRC emacs-lisp
+      (use-package ag
+	:pin melpa-stable)
+    #+END_SRC
+
 ** Web
   Packages for webbased content.
 *** nginx
