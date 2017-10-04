@@ -77,7 +77,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (menu-bar-mode 0)
      (tool-bar-mode 0)
-     (scroll-bar-mode 0)
+     (when (window-system) (scroll-bar-mode 0))
    #+END_SRC
 *** Splash screen
     Dismiss the startup screen
