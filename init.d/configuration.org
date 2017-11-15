@@ -536,6 +536,45 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 ** Emacs
   Packages that augments emacs.
+*** Org
+    
+    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
+    
+    Use pretty bullet points instead of asterix
+
+    Use a little downward-pointing arrow instead of the usual ellipsis
+    (=...=) when folded.
+
+    Use syntax highlighting in source blocks while editing.
+    #+BEGIN_SRC emacs-lisp
+      (use-package org
+        :mode ("\\.org\\'" . org-mode)
+        :bind (("C-c l" . org-store-link)
+               ("C-c a" . org-agenda)
+               ("C-c c" . org-capture)
+               ("C-c b" . org-iswitchb))
+        :config
+        (use-package org-bullets
+          :pin melpa-stable)
+        (add-hook 'org-mode-hook
+                  (lambda ()
+                    (org-bullets-mode t)))
+        (setq org-ellipsis "⤵")
+        (setq org-src-fontify-natively t)
+        (when (not dotemacs-is-work)
+          (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
+        (setq org-todo-keywords
+              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+        ;; (setq org-src-window-setup 'current-window)
+        :pin org)
+    #+END_SRC
+
+    Doesn't work with yasnippet getting:
+    yas--fallback: yasnippet fallback loop!
+    This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+
+    Make TAB act as if it were issued in a buffer of the language's major mode.
+    =(setq org-src-tab-acts-natively t)=
 *** Buffer move
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
@@ -593,39 +632,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (lambda ()
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+END_SRC
-*** Org
-    
-    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
-    
-    Use pretty bullet points instead of asterix
-
-    Use a little downward-pointing arrow instead of the usual ellipsis
-    (=...=) when folded.
-
-    Use syntax highlighting in source blocks while editing.
-    #+BEGIN_SRC emacs-lisp
-           (use-package org
-             :mode ("\\.org\\'" . org-mode)
-             :config
-             (use-package org-bullets
-               :pin melpa-stable)
-             (add-hook 'org-mode-hook
-                       (lambda ()
-                         (org-bullets-mode t)))
-             (setq org-ellipsis "⤵")
-             (setq org-src-fontify-natively t)
-             (setq org-todo-keywords
-                   '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
-             ;; (setq org-src-window-setup 'current-window)
-             )
-    #+END_SRC
-
-    Doesn't work with yasnippet getting:
-    yas--fallback: yasnippet fallback loop!
-    This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
-
-    Make TAB act as if it were issued in a buffer of the language's major mode.
-    =(setq org-src-tab-acts-natively t)=
 *** Helm (Disabled)
     Disabled because it did horrible with tramp
     Settings for helm
@@ -651,6 +657,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package tramp
        	:config
        	(setq tramp-default-method "ssh")
+       	(add-to-list 'tramp-remote-path "~/bin")
        	(add-to-list 'tramp-remote-path "/tools/bin"))
     #+END_SRC
 *** Sudo edit
