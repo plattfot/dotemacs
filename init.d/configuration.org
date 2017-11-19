@@ -162,31 +162,32 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Note don't put the keybindings under :bind then this will not be
      loaded.
      #+BEGIN_SRC emacs-lisp
-       (use-package auto-complete
-       	 :config
-       	 (ac-config-default)
-       	 (define-key ac-completing-map "\t" 'ac-expand)
-       	 (define-key ac-completing-map "\r" nil)
+              (use-package auto-complete
+                :config
+;;                :disabled t
+                (ac-config-default)
+                (define-key ac-completing-map "\t" 'ac-expand)
+                (define-key ac-completing-map "\r" nil)
 
-       	 ;; Ignore c++ comments
-       	 (add-hook 'c++-mode-hook
-                   (lambda ()
-                     (make-local-variable 'ac-ignores)
-                     (add-to-list 'ac-ignores "//")))
-       	 ;; C-common: Start auto complete on . or ->
-       	 (add-hook 'c-mode-common-hook 
-                   '(lambda ()
-                      (add-to-list 'ac-omni-completion-sources
-                                   (cons "\\." '(ac-source-semantic)))
-                      (add-to-list 'ac-omni-completion-sources
-                                   (cons "->" '(ac-source-semantic)))
-                      ))
-       	 ;; Enable ac for gmake and arduino
-       	 (add-to-list 'ac-modes 'makefile-gmake-mode)
-       	 (add-to-list 'ac-modes 'arduino-mode)
-       	 (use-package auto-complete-rst
-           :pin melpa)
-       	 :pin melpa-stable)
+                ;; Ignore c++ comments
+                (add-hook 'c++-mode-hook
+                          (lambda ()
+                            (make-local-variable 'ac-ignores)
+                            (add-to-list 'ac-ignores "//")))
+                ;; C-common: Start auto complete on . or ->
+                (add-hook 'c-mode-common-hook 
+                          '(lambda ()
+                             (add-to-list 'ac-omni-completion-sources
+                                          (cons "\\." '(ac-source-semantic)))
+                             (add-to-list 'ac-omni-completion-sources
+                                          (cons "->" '(ac-source-semantic)))
+                             ))
+                ;; Enable ac for gmake and arduino
+                (add-to-list 'ac-modes 'makefile-gmake-mode)
+                (add-to-list 'ac-modes 'arduino-mode)
+                (use-package auto-complete-rst
+                  :pin melpa)
+                :pin melpa-stable)
 
 
      #+END_SRC
@@ -685,6 +686,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ([M-up]    . windmove-up)    ; move to upper window
                ([M-down]  . windmove-down)) ; move to downer window
        	:pin melpa-stable)
+    #+END_SRC
+*** Compilation
+    From [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
+    #+BEGIN_SRC emacs-lisp
+      (require 'ansi-color)
+      (defun colorize-compilation-buffer ()
+        (toggle-read-only)
+        (ansi-color-apply-on-region compilation-filter-start (point))
+        (toggle-read-only))
+      (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
     #+END_SRC
 ** Text
   Packages for editing text.
