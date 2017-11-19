@@ -564,7 +564,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
         (setq org-todo-keywords
-              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)")))
+              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
         ;; (setq org-src-window-setup 'current-window)
         :pin org)
     #+END_SRC
