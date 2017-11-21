@@ -134,6 +134,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (setq calendar-week-start-day 1)
    #+END_SRC
+** Path
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'exec-path (expand-file-name "~/bin"))
+   #+END_SRC
 * Packages
 ** Auto complete
    Init auto-complete to use the default settings. Except auto
