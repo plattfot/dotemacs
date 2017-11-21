@@ -1201,7 +1201,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (goto-char begin)
             (while (re-search-forward
                     (concat "typedef \\(\\(?:typename \\)*"
-                            "[a-zA-Z0-9_:<>,*&() ]+?\\)[ ]+\\([a-zA-Z0-9_]+\\)[ ]*;" )
+                            "[[:print:]]+?\\)[ \t]+\\([[:alnum:]_]+\\)[ ]*;" )
                     end t )
               (replace-match "using \\2 = \\1;"))))
       #+END_SRC
