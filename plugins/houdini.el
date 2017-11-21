@@ -25,17 +25,33 @@ Instead of looking up in a table better just to compute it."
       )))
 
 (defun hou-get-version-list (&optional root)
-  "Search the path
+  "Return an alist with houdini string and int version.
+Search the path
 ROOT/*/toolkit/include/{UT,SYS}/{UT,SYS}_Version.h for
-UT_VERSION_INT or SYS_VERSION_INT and fetch the INT version."
+UT_VERSION_INT or SYS_VERSION_INT and fetch the INT ."
   (when (not root) (setq root "/tools/package/houdini"))
-  (shell-command-to-string
-   (concat "grep -E \"SYS_VERSION_FULL_INT|UT_VERSION_INT\" "
-	   root
-	   "/*/toolkit/include/{SYS/SYS,UT/UT}_Version.h"
-	   "| sed -En "
-	   "'s:.*?/([0-9]+\.[0-9]+\.[0-9a-z]+)/.*?(0x[0-9a-f]+):"
-	   "(\\1 . \\2):p'")))
+  (mapcar #'(lambda (x) (split-string x))
+	  (split-string-and-unquote 
+	   (shell-command-to-string
+	    (concat "grep -E \"SYS_VERSION_FULL_INT|UT_VERSION_INT\" "
+		    root
+		    "/*/toolkit/include/{SYS/SYS,UT/UT}_Version.h"
+		    "| sed -En "
+		    "'s:.*?/([0-9]+\.[0-9]+\.[0-9a-z]+)/.*?(0x[0-9a-f]+):"
+		    "\\1 \\2:p'")) "\n")))
+
+(defun hou-matching-versions (version-re)
+  "Return houdinig versions matching VERSION-RE."
+  (let ((hou-list (hou-get-version-list))
+	(matching-versions))
+    (dolist (element hou-list matching-versions)
+      (when (string-match version-re (car element))
+	(setq matching-versions (cons (car element) matching-versions))))))
+
+(defun hou-insert-latest-version (version-re)
+  "Insert the latest version matching VERSION-RE at point."
+  (interactive "sHoudini version regex: ")
+  (insert (car (sort (hou-matching-versions version-re) 'string> ))))
 
 (defun hou-insert-version-id (version)
   "Insert the houdini version id for VERSION."
