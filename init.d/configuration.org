@@ -134,6 +134,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (setq calendar-week-start-day 1)
    #+END_SRC
+** Path
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'exec-path (expand-file-name "~/bin"))
+   #+END_SRC
 * Packages
 ** Code
 *** Autocomplete
@@ -1257,7 +1261,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (goto-char begin)
             (while (re-search-forward
                     (concat "typedef \\(\\(?:typename \\)*"
-                            "[a-zA-Z0-9_:<>,*&() ]+?\\)[ ]+\\([a-zA-Z0-9_]+\\)[ ]*;" )
+                            "[[:print:]]+?\\)[ \t]+\\([[:alnum:]_]+\\)[ ]*;" )
                     end t )
               (replace-match "using \\2 = \\1;"))))
       #+END_SRC
@@ -1664,3 +1668,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Expression for string parameters
     Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
     Then edit the expression.
+** KDE
+*** no borders
+    When disabled use ALT+F3 to bring the menu back.

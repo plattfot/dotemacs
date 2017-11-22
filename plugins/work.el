@@ -36,24 +36,26 @@
 With the names 3ps, release, cyclone, build and misc"
   (delete-other-windows)
   (split-window-horizontally)
-  (cd "~/fredriks/swdevl/3ps")
+  (cd "/dd/dept/software/users/fredriks/swdevl/3ps")
   (funcall terminal-type)
   (rename-buffer "3ps")
   (highlight-build)
-  (cd "~/fredriks/release")
+  (cd "/dd/dept/software/users/fredriks/release")
   (funcall terminal-type)
   (rename-buffer "release")
   (highlight-build)
-  (cd "~/fredriks/swdevl")
+  (cd "/dd/dept/software/users/fredriks/swdevl")
   (funcall terminal-type)
   (rename-buffer "cyclone")
   (highlight-build)
+  (highlight-gtest)
   (funcall terminal-type)
   (rename-buffer "misc")
   (highlight-build)
   (funcall terminal-type)
   (rename-buffer "build")
   (highlight-build)
+  (highlight-gtest)
   (toggle-frame-maximized))
 
 (defun work-setup-build-term()
@@ -68,7 +70,7 @@ and git.  Using shell instead of multi-term for all except git."
   (interactive)
   ;; shell doesn't handle git's diff functions therefore I'm using
   ;; multi-term for that.
-  (cd "~/fredriks/swdevl")
+  (cd "/dd/dept/software/users/fredriks/swdevl")
   (multi-term)
   (rename-buffer "git")
   (work-setup-build-fun #'shell) ;; #'x short for (function x)
@@ -122,9 +124,10 @@ and FILE the config to search in."
    (split-string
     (shell-command-to-string
      ;; Look for the string matching the name.
-     (concat "grep -iE ^" name "_version " file
-	     ;; Extract only the version number from the string.
-	     " | cut -d = -f 2"
+     (concat "grep -iE " name "_version " file
+	     ;; Extract only the version number from the string and
+	     ;; pick the last one if there are multiple.
+	     " | cut -d = -f 2 | tail -n1"
 	     )
      ))))
 
