@@ -36,26 +36,23 @@
 With the names 3ps, release, cyclone, build and misc"
   (delete-other-windows)
   (split-window-horizontally)
+
+  (funcall terminal-type "3ps")
   (cd "/dd/dept/software/users/fredriks/swdevl/3ps")
-  (funcall terminal-type)
-  (rename-buffer "3ps")
   (highlight-build)
-  (cd "/dd/dept/software/users/fredriks/release")
-  (funcall terminal-type)
-  (rename-buffer "release")
+
+  (funcall terminal-type "cyclone")
   (highlight-build)
+  (highlight-gtest)
   (cd "/dd/dept/software/users/fredriks/swdevl")
-  (funcall terminal-type)
-  (rename-buffer "cyclone")
+
+  (funcall terminal-type "misc")
+  (highlight-build)
+
+  (funcall terminal-type "build")
   (highlight-build)
   (highlight-gtest)
-  (funcall terminal-type)
-  (rename-buffer "misc")
-  (highlight-build)
-  (funcall terminal-type)
-  (rename-buffer "build")
-  (highlight-build)
-  (highlight-gtest)
+
   (toggle-frame-maximized))
 
 (defun work-setup-build-term()
@@ -68,11 +65,6 @@ With the names 3ps, release, cyclone, build and misc"
   "Spawns multiple shells.  Called cyclone, build, misc, release
 and git.  Using shell instead of multi-term for all except git."
   (interactive)
-  ;; shell doesn't handle git's diff functions therefore I'm using
-  ;; multi-term for that.
-  (cd "/dd/dept/software/users/fredriks/swdevl")
-  (multi-term)
-  (rename-buffer "git")
   (work-setup-build-fun #'shell) ;; #'x short for (function x)
 )
 
