@@ -1640,6 +1640,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Code
 *** Generate a list of all defined macros
     cpp -dM /dev/null
+*** Trace undefined symbol
+    use ld's --trace-symbol=<symbol> when linking to get a list of
+    what file(s) are using that symbol. Using it with gcc it would be
+    #+BEGIN_SRC sh
+      gcc <options> -Wl,--trace-symbols=<symbol>
+    #+END_SRC
 ** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
