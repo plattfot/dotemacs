@@ -407,9 +407,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Files that starts with =Makefile=.
      - Has extension =.mk=.
      - Files that are located in a directory called Make and ends with
-       Rules.
-     - Files that are located in a directory called modules.
-     - Files called BUILD.conf (pb2 file).
+       =Rules=.
+     - Files that are located in a directory called =modules=.
+     - Files called =BUILD.conf= (pb2 file).
+     - Files called =Project= that are located in a directory called Make.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
        	 :mode (("Makefile.*" . makefile-gmake-mode)
@@ -417,6 +418,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                	("Make/.*Rules$" . makefile-gmake-mode)
                	("modules/.*" . makefile-gmake-mode)
                	("BUILD\\.conf$" . makefile-gmake-mode)
+               	("Make/Project$" . makefile-gmake-mode)
                	))
      #+END_SRC
 **** CMake
