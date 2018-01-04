@@ -411,6 +411,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Files that are located in a directory called =modules=.
      - Files called =BUILD.conf= (pb2 file).
      - Files called =Project= that are located in a directory called Make.
+     - Has extension =.tdpackage=.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
        	 :mode (("Makefile.*" . makefile-gmake-mode)
@@ -419,6 +420,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                	("modules/.*" . makefile-gmake-mode)
                	("BUILD\\.conf$" . makefile-gmake-mode)
                	("Make/Project$" . makefile-gmake-mode)
+               	("\\.tdpackage$" . makefile-gmake-mode)
                	))
      #+END_SRC
 **** CMake
