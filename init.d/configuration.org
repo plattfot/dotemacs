@@ -1681,3 +1681,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** KDE
 *** no borders
     When disabled use ALT+F3 to bring the menu back.
+** Install fonts local to user
+   Install fonts to ~/.fonts then update the fontconfig cache by
+   running.
+   #+BEGIN_SRC sh
+     fc-cache -v ~/.fonts   
+   #+END_SRC
+   The option '-v' is just for verbose output and can be skipped.
+
+   To see what fonts are installed run
+   #+BEGIN_SRC sh
+     fc-list
+   #+END_SRC
