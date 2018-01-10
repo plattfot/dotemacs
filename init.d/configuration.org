@@ -1469,6 +1469,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "M-g") 'goto-line)
    #+END_SRC
+   
+   Open file at point.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x f") 'find-file-at-point)
+   #+END_SRC
+   
 ** Text search
    I'm using the regex variant of the text search more than the normal one.
    Swapping keybindings for them
@@ -1498,7 +1504,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Key bindings for revert-all-buffers and rename current buffer
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c r") 'revert-all-buffers)
-     (global-set-key "\C-cR" 'rename-current-file-or-buffer)
+     (global-set-key (kbd "C-cR") 'rename-current-file-or-buffer)
    #+END_SRC
 ** C Common
    Hide/Show code blocks
