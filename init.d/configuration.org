@@ -411,6 +411,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Files that are located in a directory called =modules=.
      - Files called =BUILD.conf= (pb2 file).
      - Files called =Project= that are located in a directory called Make.
+     - Has extension =.tdpackage=.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
        	 :mode (("Makefile.*" . makefile-gmake-mode)
@@ -1472,6 +1473,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "M-g") 'goto-line)
    #+END_SRC
+   
+   Open file at point.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-x f") 'find-file-at-point)
+   #+END_SRC
+   
 ** Text search
    I'm using the regex variant of the text search more than the normal one.
    Swapping keybindings for them
@@ -1501,7 +1508,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Key bindings for revert-all-buffers and rename current buffer
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c r") 'revert-all-buffers)
-     (global-set-key "\C-cR" 'rename-current-file-or-buffer)
+     (global-set-key (kbd "C-cR") 'rename-current-file-or-buffer)
    #+END_SRC
 ** C Common
    Hide/Show code blocks
@@ -1684,3 +1691,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** KDE
 *** no borders
     When disabled use ALT+F3 to bring the menu back.
+** Install fonts local to user
+   Install fonts to ~/.fonts then update the fontconfig cache by
+   running.
+   #+BEGIN_SRC sh
+     fc-cache -v ~/.fonts   
+   #+END_SRC
+   The option '-v' is just for verbose output and can be skipped.
+
+   To see what fonts are installed run
+   #+BEGIN_SRC sh
+     fc-list
+   #+END_SRC
