@@ -419,6 +419,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                	("modules/.*" . makefile-gmake-mode)
                	("BUILD\\.conf$" . makefile-gmake-mode)
                	("Make/Project$" . makefile-gmake-mode)
+               	("\\.tdpackage$" . makefile-gmake-mode)
                	))
      #+END_SRC
 **** CMake
@@ -667,10 +668,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
     #+BEGIN_SRC emacs-lisp
       (use-package tramp
-       	:config
-       	(setq tramp-default-method "ssh")
-       	(add-to-list 'tramp-remote-path "~/bin")
-       	(add-to-list 'tramp-remote-path "/tools/bin"))
+        :config
+        (setq tramp-default-method "ssh")
+        (add-to-list 'tramp-remote-path "~/bin")
+        (add-to-list 'tramp-remote-path "/tools/bin")
+        (add-to-list 'tramp-remote-path "~/.guix-profile/bin")
+        (add-to-list 'tramp-remote-path "~/.guix-profile/sbin")
+        (add-to-list 'tramp-remote-path "/run/current-system/profile/bin")
+        (add-to-list 'tramp-remote-path "/run/current-system/profile/sbin"))
     #+END_SRC
 *** Sudo edit
     Sudo edit the current file
