@@ -1508,7 +1508,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Key bindings for revert-all-buffers and rename current buffer
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "C-c r") 'revert-all-buffers)
-     (global-set-key (kbd "C-cR") 'rename-current-file-or-buffer)
+     (global-set-key (kbd "C-c R") 'rename-current-file-or-buffer)
    #+END_SRC
 ** C Common
    Hide/Show code blocks
