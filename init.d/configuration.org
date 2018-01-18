@@ -704,6 +704,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ([M-down]  . windmove-down)) ; move to downer window
        	:pin melpa-stable)
     #+END_SRC
+*** avy
+    #+BEGIN_SRC emacs-lisp
+      (use-package avy
+        :config
+        (setq avy-all-windows nil)
+        (setq avy-background t)
+        :bind (("M-s" . avy-goto-char))
+        :pin melpa-stable)
 *** Compilation
     From [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
     #+BEGIN_SRC emacs-lisp
