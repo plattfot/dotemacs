@@ -712,6 +712,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq avy-background t)
         :bind (("M-s" . avy-goto-char))
         :pin melpa-stable)
+    #+END_SRC
 *** Compilation
     From [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
     #+BEGIN_SRC emacs-lisp
