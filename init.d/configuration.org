@@ -1667,6 +1667,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC sh
       gcc <options> -Wl,--trace-symbols=<symbol>
     #+END_SRC
+*** Run functions when loading/unloading shared libraries
+    Call function when shared library is loaded, with gcc use:
+    #+BEGIN_SRC c++
+      __attribute__((constructor)) void func(){}
+    #+END_SRC
+    
+    Call function when shared lbirary is unloaded, with gcc use:
+    #+BEGIN_SRC c++
+      __attribute__((destructor)) void func(){}
+    #+END_SRC
+    
 ** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
