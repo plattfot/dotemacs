@@ -1723,3 +1723,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh
      fc-list
    #+END_SRC
+** Remove/Keep lines matching regexp
+   use 'keep-lines' to keep lines matching regexp.
+   use 'flush-lines' to remove lines matching regexp.
