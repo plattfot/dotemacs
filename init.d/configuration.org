@@ -468,7 +468,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package meson-mode
        :pin melpa-stable)
-   #+END_SRC 
+   #+END_SRC
+*** Julia
+    #+BEGIN_SRC emacs-lisp
+      (use-package julia-mode
+        :init
+        :pin melpa-stable)
+    #+END_SRC
 ** Programs
   Packages that communicates with external processes.
 *** Ledger
@@ -634,13 +640,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       ("docs" (mode . rst-mode))
                       ("org" (mode . org-mode))
                       ("dired" (mode . dired-mode))
+                      ("python" (mode . python-mode))
                       ("vc" (mode . vc-dir-mode))
                       ("magit" (name . "^\\*magit"))
                       ("shell" (mode . shell-mode))
-                      ("emacs" (or
-                               	(name . "^\\*scratch\\*$")
-                               	(name . "^\\*Messages\\*$")
-                               	(name . "^\\*Completions\\*$")))
+                      ("emacs" (name . "^\\*[[:alnum:]]+\\*$"))
                       ))))
        (add-hook 'ibuffer-mode-hook
                  (lambda ()
