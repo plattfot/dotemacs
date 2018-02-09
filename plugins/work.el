@@ -22,9 +22,30 @@
 
 ;; Functions for quickly set up the work environment
 (defun work-setup ()
-  "Splits the window into three equivalent buffers and set the cwd to swdevl."
+  "Create two frames; Code and Shell.
+
+Code is split into three windows, the cwd is set to swdevl, it's
+moved to the right screen and fullscreen is toggled.
+
+
+Shell is split into two windows, multiple shells are spawned;
+3ps, release, cyclone, build and misc.  It's moved to the left
+screen and is maximized"
+
   (interactive)
-  (cd "~/fredriks/swdevl")
+  (setq frame-title-format '("Code"))
+  (set-frame-position (selected-frame) 1920 0)
+  (work-setup-code)
+  (select-frame
+   (make-frame '((name . "Shell") (top . 28) (left . 0))))
+  (work-setup-build-fun #'shell))
+
+(defun work-setup-code ()
+  "Split the frame into three windows and set cwd to swdevl.
+
+It also toggle the fullscreen for the frame."
+  (interactive)
+  (cd "/dd/dept/software/users/fredriks/swdevl")
   (delete-other-windows)
   (split-window-horizontally)
   (split-window-horizontally)
@@ -37,14 +58,14 @@ With the names 3ps, release, cyclone, build and misc"
   (delete-other-windows)
   (split-window-horizontally)
 
-  (funcall terminal-type "3ps")
   (cd "/dd/dept/software/users/fredriks/swdevl/3ps")
+  (funcall terminal-type "3ps")
   (highlight-build)
 
+  (cd "/dd/dept/software/users/fredriks/swdevl")
   (funcall terminal-type "cyclone")
   (highlight-build)
   (highlight-gtest)
-  (cd "/dd/dept/software/users/fredriks/swdevl")
 
   (funcall terminal-type "misc")
   (highlight-build)
