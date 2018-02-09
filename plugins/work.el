@@ -24,21 +24,27 @@
 (defun work-setup ()
   "Create two frames; Code and Shell.
 
+Use 'universal-argument' before calling this function to not
+delete all other frames.
+
 Code is split into three windows, the cwd is set to swdevl, it's
 moved to the right screen and fullscreen is toggled.
-
 
 Shell is split into two windows, multiple shells are spawned;
 3ps, release, cyclone, build and misc.  It's moved to the left
 screen and is maximized"
 
   (interactive)
-  (setq frame-title-format '("Code"))
-  (set-frame-position (selected-frame) (/ (display-pixel-width) 2) 0)
+  (select-frame (make-frame `((name . "Code")
+			      (top . 28)
+			      (left . ,(/ (display-pixel-width) 2)))))
+  (when (not current-prefix-arg) (delete-other-frames) )
   (work-setup-code)
   (select-frame
    (make-frame '((name . "Shell") (top . 28) (left . 0))))
-  (work-setup-build-fun #'shell))
+  (work-setup-build-fun #'shell)
+  (other-frame 1)
+)
 
 (defun work-setup-code ()
   "Split the frame into three windows and set cwd to swdevl.
@@ -58,11 +64,10 @@ With the names 3ps, release, cyclone, build and misc"
   (delete-other-windows)
   (split-window-horizontally)
 
-  (cd "/dd/dept/software/users/fredriks/swdevl/3ps")
+  (cd "/dd/dept/software/users/fredriks/swdevl")
   (funcall terminal-type "3ps")
   (highlight-build)
 
-  (cd "/dd/dept/software/users/fredriks/swdevl")
   (funcall terminal-type "cyclone")
   (highlight-build)
   (highlight-gtest)
