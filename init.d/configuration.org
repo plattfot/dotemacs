@@ -127,7 +127,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    if emacs is started in a shell or not load the correct theme.
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
-     (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+     (load-theme `sunburst t)
    #+END_SRC
 ** Calendar
    Week starts on Monday.
@@ -168,7 +168,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
               (use-package auto-complete
                 :config
-;;                :disabled t
+       ;;         :disabled t
                 (ac-config-default)
                 (define-key ac-completing-map "\t" 'ac-expand)
                 (define-key ac-completing-map "\r" nil)
@@ -191,33 +191,41 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (add-to-list 'ac-modes 'arduino-mode)
                 (use-package auto-complete-rst
                   :pin melpa)
+                (use-package ac-rtags
+                  :bind
+                  ("C-." . ac-complete-rtags)
+                  :config
+                  (ac-rtags-init)
+                  :pin melpa-stable)
                 :pin melpa-stable)
 
 
      #+END_SRC
 **** Company (disabled)
-     
+     Has some really nice features, but it's just too slow (company-clang that is). 
      #+BEGIN_SRC emacs-lisp
        (use-package company
-       	 :bind ("C-<tab>" . company-complete)
-       	 :disabled t
-       	 :init
-       	 (global-company-mode 1)
-       	 :config
-       	 (setq company-dabbrev-downcase 0)
-       	 (setq company-idle-delay 0)
-       	 ;; (defun tab-indent-or-complete ()
-       	 ;;   (interactive)
-       	 ;;   (if (minibufferp)
-       	 ;;    (minibuffer-complete)
-       	 ;;     (if (or (not yas-minor-mode)
-       	 ;;          (null (do-yas-expand)))
-       	 ;;      (if (check-expansion)
-       	 ;;          (company-complete-common)
-       	 ;;        (indent-for-tab-command)))))
-       	 ;; (global-set-key [backtab] 'tab-indent-or-complete)
-       	 (add-to-list 'company-backends 'company-c-headers)
-       	 :pin melpa-stable)
+         :bind ("C-<tab>" . company-complete)
+         :disabled t
+         :init
+         (global-company-mode 1)
+         ;; (use-package company-rtags
+         ;;   :pin melpa-stable)
+         :config
+         ;; (setq company-dabbrev-downcase 0)
+         (setq company-idle-delay 0.5)
+         ;; (defun tab-indent-or-complete ()
+         ;;   (interactive)
+         ;;   (if (minibufferp)
+         ;;    (minibuffer-complete)
+         ;;     (if (or (not yas-minor-mode)
+         ;;          (null (do-yas-expand)))
+         ;;      (if (check-expansion)
+         ;;          (company-complete-common)
+         ;;        (indent-for-tab-command)))))
+         ;; (global-set-key [backtab] 'tab-indent-or-complete)
+         ;;(add-to-list 'company-backends 'company-c-headers)
+         :pin melpa-stable)
      #+END_SRC
 **** Yasnippet
      Enable yasnippet
@@ -289,19 +297,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
 
      #+END_SRC
-**** RTags (Disabled)
+**** RTags
      Key bindings for RTags (they conflicts with GTags)
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
-       	 :disabled t
-       	 :bind (("M-." . rtags-find-symbol-at-point)
-	       	("M-," . rtags-find-references-at-point)
-	       	("M-[" . rtags-location-stack-back)
-	       	("M-]" . rtags-location-stack-forward))
-       	 :config
-       	 (use-package rtags-ac
-	   :pin melpa-stable)
-       	 :pin melpa-stable)
+         :bind (("M-." . rtags-find-symbol-at-point)
+                ("M-," . rtags-find-references-at-point)
+                ("M-[" . rtags-location-stack-back)
+                ("M-]" . rtags-location-stack-forward))
+         :config
+         (setq rtags-autostart-diagnostics t)
+         (rtags-diagnostics)
+         (setq rtags-completions-enabled t)
+         ;; (push `company-rtags company-backends)
+         :pin melpa-stable)
      #+END_SRC
 ** Languages
   Modes for highlighting different programing languages.
@@ -837,6 +846,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package string-inflection 
        	:bind ("C-;" . string-inflection-cycle )
        	:pin melpa-stable)
+    #+END_SRC
+*** fancy-narrow
+    Highlight section of code, run 'fancy-narrow-to-region' to narrow
+    down on selection.  'fancy-widen' to go back to
+    normal. 'fancy-narrow-to-defun' to narrow down on function.
+    #+BEGIN_SRC emacs-lisp
+      (use-package fancy-narrow
+        :pin melpa-stable)
     #+END_SRC
 ** Nov
    Epub reader mode.
@@ -1460,7 +1477,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Old machine was bcbellws108.
     #+BEGIN_SRC emacs-lisp
       (fset 'bcws
-         [?b ?c ?w ?s ?6 ?4 ?9 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
+         [?b ?c ?w ?s ?4 ?2 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l ?/ ?C ?o ?r ?e ?L ?i ?b ?s])
     #+END_SRC
 
     And bind it to the key combo
@@ -1727,3 +1744,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh
      fc-list
    #+END_SRC
+** Remove/Keep lines matching regexp
+   use 'keep-lines' to keep lines matching regexp.
+   use 'flush-lines' to remove lines matching regexp.
