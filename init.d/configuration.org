@@ -127,7 +127,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    if emacs is started in a shell or not load the correct theme.
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
-     (if window-system (load-theme 'sunburst t) (load-theme 'sunburst_term t))
+     (load-theme `sunburst t)
    #+END_SRC
 ** Calendar
    Week starts on Monday.
