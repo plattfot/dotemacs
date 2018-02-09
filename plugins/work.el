@@ -34,7 +34,7 @@ screen and is maximized"
 
   (interactive)
   (setq frame-title-format '("Code"))
-  (set-frame-position (selected-frame) 1920 0)
+  (set-frame-position (selected-frame) (/ (display-pixel-width) 2) 0)
   (work-setup-code)
   (select-frame
    (make-frame '((name . "Shell") (top . 28) (left . 0))))
