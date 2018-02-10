@@ -727,14 +727,30 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** Compilation
-    From [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
+
+    Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
+    For closing compilation window when it's done see [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]]
     #+BEGIN_SRC emacs-lisp
-      (require 'ansi-color)
-      (defun colorize-compilation-buffer ()
-        (toggle-read-only)
-        (ansi-color-apply-on-region compilation-filter-start (point))
-        (toggle-read-only))
-      (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+      (use-package compile 
+        :config
+        (use-package ansi-color)
+        (add-hook 'compilation-filter-hook 
+                  (lambda ()
+                    (toggle-read-only)
+                    (ansi-color-apply-on-region compilation-filter-start (point))
+                    (toggle-read-only)))
+        ;; Close the compilation window if there was no error at all.
+        (setq compilation-exit-message-function
+              (lambda (status code msg)
+                ;; If M-x compile exists with a 0
+                (when (and (eq status 'exit) (zerop code))
+                  ;; then bury the *compilation* buffer, so that C-x b doesn't go there
+                  (bury-buffer "*compilation*")
+                  ;; and return to whatever were looking at before
+                  (replace-buffer-in-windows "*compilation*"))
+                ;; Always return the anticipated result of compilation-exit-message-function
+                (cons msg code)))
+      )
     #+END_SRC
 ** Text
   Packages for editing text.
