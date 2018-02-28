@@ -1255,6 +1255,89 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (read-only-mode 0)
            (yank))))
    #+END_SRC
+** Subversion
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-fetch-info (item)
+       "Get the info ITEM from the current svn repo as a string,
+     can be for example url or revision, see svn info --help for the
+     exhaustive list."
+       (shell-command-to-string
+        (concat "env PATH=" (getenv "PATH") " "
+                "svn info --show-item=" item " --no-newline")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-fetch-repo-url ()
+       "Return a string of the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the
+          server. Prefixed will return the full url otherwise it will
+          just return the relative."
+       (let ((relurl (svn-fetch-info 
+                      (if current-prefix-arg "url" "relative-url"))))
+         (replace-regexp-in-string 
+          "^\\(.*\\)/\\(trunk\\|tags.*\\|branches.*\\)"
+          "\\1"
+          relurl)))
+   #+END_SRC
+   
+   
+   Fetches the url of the repository. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   It will return the whole thing.
+   
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-url ()
+       "Get the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the server"
+       (interactive)
+       (insert (svn-fetch-info "url")))
+   #+END_SRC
+
+   Fetches the root url. For example if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   ^^^^^^^^^^^^^^^^^^^^^^
+   This is the root url.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-root-url ()
+       "Get the repo's root url in the current svn repo."
+       (interactive)
+       (insert (svn-fetch-info "repos-root-url")))
+   #+END_SRC
+
+   Fetches the root url + the name of the repository. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   This is the repo url.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-repo-url ()
+       "Get the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the
+          server. Prefixed will return the full url otherwise it will
+          just return the relative."
+       (interactive)
+       (insert (svn-fetch-repo-url)))
+   #+END_SRC
+
+   Get the trunk url for the current svn repo. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+
+   It will return
+   http://svn.example.com/myrepo/trunk
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-trunk-url ()
+       "Get the url for the trunk in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/trunk")))
+   #+END_SRC
+
 ** Programming
 *** C++
 **** Expands a define macro for all matches in current buffer.
