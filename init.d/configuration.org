@@ -191,7 +191,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (add-to-list 'ac-modes 'arduino-mode)
                 (use-package auto-complete-rst
                   :pin melpa)
+                ;; Messes with the navigation at work
                 (use-package ac-rtags
+                  :disabled t
                   :bind
                   ("C-." . ac-complete-rtags)
                   :config
@@ -297,10 +299,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
 
      #+END_SRC
-**** RTags
+**** RTags (Disabled)
      Key bindings for RTags (they conflicts with GTags)
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
+         :disabled t
          :bind (("M-." . rtags-find-symbol-at-point)
                 ("M-," . rtags-find-references-at-point)
                 ("M-[" . rtags-location-stack-back)
