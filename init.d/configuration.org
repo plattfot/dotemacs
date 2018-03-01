@@ -1323,12 +1323,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (insert (svn-fetch-repo-url)))
    #+END_SRC
 
-   Get the trunk url for the current svn repo. For example
+   Get the trunk/branch/tag url for the current svn repo. For example
    if we have the url
    http://svn.example.com/myrepo/branches/branch
 
-   It will return
+   It will return for svn-trunk-url
    http://svn.example.com/myrepo/trunk
+
+   It will return for svn-branch-url
+   http://svn.example.com/myrepo/branches
+
+   It will return for svn-branch-url
+   http://svn.example.com/myrepo/tags
 
    #+BEGIN_SRC emacs-lisp
      (defun svn-trunk-url ()
@@ -1336,6 +1342,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (interactive)
        (insert 
         (concat (svn-fetch-repo-url) "/trunk")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-branch-url ()
+       "Get the url for the branch root in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/branches")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-tag-url ()
+       "Get the url for the branch root in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/tags")))
    #+END_SRC
 
 ** Programming
@@ -1667,6 +1689,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (global-set-key (kbd "<f12>") 'compile)
      (global-set-key (kbd "<f11>") 'recompile)
+   #+END_SRC
+** Subversion
+   Key bindings for the custom subversion commands
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c s u") 'svn-url)
+     (global-set-key (kbd "C-c s r") 'svn-repo-url)
+     (global-set-key (kbd "C-c s t") 'svn-trunk-url)
+     (global-set-key (kbd "C-c s T") 'svn-tag-url)
+     (global-set-key (kbd "C-c s b") 'svn-branch-url)
+     (global-set-key (kbd "C-c s R") 'svn-root-url)
    #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
