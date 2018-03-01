@@ -1809,6 +1809,37 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Git
 *** Change message in most recent commit
     git commit --amend [-m ""]
+** Subversion
+*** Roll back a tag
+
+    Check out the tags directory. Use --depth=empty to avoid
+    populating all the tags as this can take a really long time
+    depending on how many tags exist.
+    #+BEGIN_SRC sh
+      svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
+    #+END_SRC
+    
+    Locate the revision to roll back to.
+    #+BEGIN_SRC sh
+      svn log SVN_URL/REPO/tags
+    #+END_SRC
+    
+    Then cd into the working copy and update all tags involved in the
+    roll back. Otherwise svn will just ignore the roll back.
+    #+BEGIN_SRC sh
+      cd REPO-tag-fix
+      svn up TAG0 TAG1...
+    #+END_SRC
+    
+    Roll back to the revision you want by simply merging the tags
+    directory backwards to that revision.
+    #+BEGIN_SRC sh
+      svn merge -rHEAD:REVISION .
+    #+END_SRC
+
+    Where REVISION is the revision number you picked previously. HEAD
+    is a svn built in keyword and points to the latest revision.
+    
 ** Org mode
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
