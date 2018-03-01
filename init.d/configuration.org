@@ -1815,25 +1815,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Check out the tags directory. Use --depth=empty to avoid
     populating all the tags as this can take a really long time
     depending on how many tags exist.
-    #+BEGIN_SRC sh
+    #+BEGIN_SRC sh :tangle no
       svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
     #+END_SRC
     
     Locate the revision to roll back to.
-    #+BEGIN_SRC sh
+    #+BEGIN_SRC sh :tangle no
       svn log SVN_URL/REPO/tags
     #+END_SRC
     
     Then cd into the working copy and update all tags involved in the
     roll back. Otherwise svn will just ignore the roll back.
-    #+BEGIN_SRC sh
+    #+BEGIN_SRC sh :tangle no
       cd REPO-tag-fix
       svn up TAG0 TAG1...
     #+END_SRC
     
     Roll back to the revision you want by simply merging the tags
     directory backwards to that revision.
-    #+BEGIN_SRC sh
+    #+BEGIN_SRC sh :tangle no
       svn merge -rHEAD:REVISION .
     #+END_SRC
 
