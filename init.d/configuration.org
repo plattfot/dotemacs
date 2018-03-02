@@ -885,11 +885,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Enable color in shell and define the color theme. Also disable
    yasnippet in shell mode since that's messing with the shell.
    
+   Disabled the comint-highlight-prompt to use the colors from the
+   shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]].
+
    Custom function to clear the shell in emacs. Bound to f8
    #+BEGIN_SRC emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
+       :init
        :config
+       ;; Use the prompts colours instead of ansi-color
+       (set-face-attribute 'comint-highlight-prompt nil
+                           :inherit nil)
+
        (add-hook 'shell-mode-hook 
                  (lambda ()
                    ;; Enable color in shell
