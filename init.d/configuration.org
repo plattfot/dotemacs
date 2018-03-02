@@ -920,6 +920,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (comint-truncate-buffer))))
    #+END_SRC
 * Work
+** Behaviour
+   #+BEGIN_SRC emacs-lisp
+     (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
+   #+END_SRC
 ** Custom packages
 *** dd-newfile
     Function that inserts the DD template for a new file
