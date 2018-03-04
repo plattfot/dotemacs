@@ -191,7 +191,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (add-to-list 'ac-modes 'arduino-mode)
                 (use-package auto-complete-rst
                   :pin melpa)
+                ;; Messes with the navigation at work
                 (use-package ac-rtags
+                  :disabled t
                   :bind
                   ("C-." . ac-complete-rtags)
                   :config
@@ -297,10 +299,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
 
      #+END_SRC
-**** RTags
+**** RTags (Disabled)
      Key bindings for RTags (they conflicts with GTags)
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
+         :disabled t
          :bind (("M-." . rtags-find-symbol-at-point)
                 ("M-," . rtags-find-references-at-point)
                 ("M-[" . rtags-location-stack-back)
@@ -921,11 +924,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Enable color in shell and define the color theme. Also disable
    yasnippet in shell mode since that's messing with the shell.
    
+   Disabled the comint-highlight-prompt to use the colors from the
+   shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]].
+
    Custom function to clear the shell in emacs. Bound to f8
    #+BEGIN_SRC emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
+       :init
        :config
+       ;; Use the prompts colours instead of ansi-color
+       (set-face-attribute 'comint-highlight-prompt nil
+                           :inherit nil)
+
        (add-hook 'shell-mode-hook 
                  (lambda ()
                    ;; Enable color in shell
@@ -956,6 +967,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (comint-truncate-buffer))))
    #+END_SRC
 * Work
+** Behaviour
+   #+BEGIN_SRC emacs-lisp
+     (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
+   #+END_SRC
 ** Custom packages
 *** dd-newfile
     Function that inserts the DD template for a new file
@@ -1291,6 +1306,111 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (read-only-mode 0)
            (yank))))
    #+END_SRC
+** Subversion
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-fetch-info (item)
+       "Get the info ITEM from the current svn repo as a string,
+     can be for example url or revision, see svn info --help for the
+     exhaustive list."
+       (shell-command-to-string
+        (concat "env PATH=" (getenv "PATH") " "
+                "svn info --show-item=" item " --no-newline")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-fetch-repo-url ()
+       "Return a string of the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the
+          server. Prefixed will return the full url otherwise it will
+          just return the relative."
+       (let ((relurl (svn-fetch-info 
+                      (if current-prefix-arg "url" "relative-url"))))
+         (replace-regexp-in-string 
+          "^\\(.*\\)/\\(trunk\\|tags.*\\|branches.*\\)"
+          "\\1"
+          relurl)))
+   #+END_SRC
+   
+   
+   Fetches the url of the repository. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   It will return the whole thing.
+   
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-url ()
+       "Get the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the server"
+       (interactive)
+       (insert (svn-fetch-info "url")))
+   #+END_SRC
+
+   Fetches the root url. For example if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   ^^^^^^^^^^^^^^^^^^^^^^
+   This is the root url.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-root-url ()
+       "Get the repo's root url in the current svn repo."
+       (interactive)
+       (insert (svn-fetch-info "repos-root-url")))
+   #+END_SRC
+
+   Fetches the root url + the name of the repository. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   This is the repo url.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-repo-url ()
+       "Get the repo url in the current svn repo.
+          I.e the root url plus the name of the repo on the
+          server. Prefixed will return the full url otherwise it will
+          just return the relative."
+       (interactive)
+       (insert (svn-fetch-repo-url)))
+   #+END_SRC
+
+   Get the trunk/branch/tag url for the current svn repo. For example
+   if we have the url
+   http://svn.example.com/myrepo/branches/branch
+
+   It will return for svn-trunk-url
+   http://svn.example.com/myrepo/trunk
+
+   It will return for svn-branch-url
+   http://svn.example.com/myrepo/branches
+
+   It will return for svn-branch-url
+   http://svn.example.com/myrepo/tags
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-trunk-url ()
+       "Get the url for the trunk in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/trunk")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-branch-url ()
+       "Get the url for the branch root in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/branches")))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (defun svn-tag-url ()
+       "Get the url for the branch root in the current svn repo."
+       (interactive)
+       (insert 
+        (concat (svn-fetch-repo-url) "/tags")))
+   #+END_SRC
+
 ** Programming
 *** C++
 **** Expands a define macro for all matches in current buffer.
@@ -1621,6 +1741,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (global-set-key (kbd "<f12>") 'compile)
      (global-set-key (kbd "<f11>") 'recompile)
    #+END_SRC
+** Subversion
+   Key bindings for the custom subversion commands
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c s u") 'svn-url)
+     (global-set-key (kbd "C-c s r") 'svn-repo-url)
+     (global-set-key (kbd "C-c s t") 'svn-trunk-url)
+     (global-set-key (kbd "C-c s T") 'svn-tag-url)
+     (global-set-key (kbd "C-c s b") 'svn-branch-url)
+     (global-set-key (kbd "C-c s R") 'svn-root-url)
+   #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
@@ -1730,6 +1860,37 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Git
 *** Change message in most recent commit
     git commit --amend [-m ""]
+** Subversion
+*** Roll back a tag
+
+    Check out the tags directory. Use --depth=empty to avoid
+    populating all the tags as this can take a really long time
+    depending on how many tags exist.
+    #+BEGIN_SRC sh :tangle no
+      svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
+    #+END_SRC
+    
+    Locate the revision to roll back to.
+    #+BEGIN_SRC sh :tangle no
+      svn log SVN_URL/REPO/tags
+    #+END_SRC
+    
+    Then cd into the working copy and update all tags involved in the
+    roll back. Otherwise svn will just ignore the roll back.
+    #+BEGIN_SRC sh :tangle no
+      cd REPO-tag-fix
+      svn up TAG0 TAG1...
+    #+END_SRC
+    
+    Roll back to the revision you want by simply merging the tags
+    directory backwards to that revision.
+    #+BEGIN_SRC sh :tangle no
+      svn merge -rHEAD:REVISION .
+    #+END_SRC
+
+    Where REVISION is the revision number you picked previously. HEAD
+    is a svn built in keyword and points to the latest revision.
+    
 ** Org mode
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
