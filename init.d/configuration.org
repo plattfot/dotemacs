@@ -381,6 +381,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                	(if dotemacs-is-work 4 2)))))
        	:pin melpa-stable)
     #+END_SRC
+*** Rust
+    
+    Packages for setting up a rust environment
+    #+BEGIN_SRC emacs-lisp
+      (use-package rust-mode
+        :pin melpa-stable)
+    #+END_SRC
+    
+    Mode for editing Cargo files.
+    #+BEGIN_SRC emacs-lisp
+      (use-package toml-mode
+        :pin melpa)
+    #+END_SRC
+    
+    Add key combinations to perform cargo tasks within a Rust project.
+    #+BEGIN_SRC emacs-lisp
+      (use-package cargo
+        :init
+        (add-hook 'rust-mode-hook 'cargo-minor-mode)
+        :pin melpa-stable)
+    #+END_SRC
+
+    Lint rust code with flycheck
+    #+BEGIN_SRC emacs-lisp
+      (use-package flycheck-rust
+        :pin melpa)
+    #+END_SRC
+
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
@@ -732,6 +760,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     For closing compilation window when it's done see [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]]
     #+BEGIN_SRC emacs-lisp
       (use-package compile 
+        :init
+        ;; Don't split window if frames are available
+        ;; Almost working, just have some errors when closing the buffer.
+        (add-to-list 'display-buffer-alist
+                         '("^\\*compilation\\*$"
+                           (display-buffer-use-some-frame display-buffer-reuse-window)
+                           (inhibit-switch-frame . t)
+                           (reusable-frames      . visible)
+                           (inhibit-same-window  . t)
+                           ))
         :config
         (use-package ansi-color)
         (add-hook 'compilation-filter-hook 
@@ -749,7 +787,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ;; and return to whatever were looking at before
                   (replace-buffer-in-windows "*compilation*"))
                 ;; Always return the anticipated result of compilation-exit-message-function
-                (cons msg code)))
+                (cons msg code)
+                ))
       )
     #+END_SRC
 ** Text
