@@ -384,6 +384,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                	(if dotemacs-is-work 4 2)))))
        	:pin melpa-stable)
     #+END_SRC
+*** Rust
+    
+    Packages for setting up a rust environment
+    #+BEGIN_SRC emacs-lisp
+      (use-package rust-mode
+        :pin melpa-stable)
+    #+END_SRC
+    
+    Mode for editing Cargo files.
+    #+BEGIN_SRC emacs-lisp
+      (use-package toml-mode
+        :pin melpa)
+    #+END_SRC
+    
+    Add key combinations to perform cargo tasks within a Rust project.
+    #+BEGIN_SRC emacs-lisp
+      (use-package cargo
+        :init
+        (add-hook 'rust-mode-hook 'cargo-minor-mode)
+        :pin melpa-stable)
+    #+END_SRC
+
+    Lint rust code with flycheck
+    #+BEGIN_SRC emacs-lisp
+      (use-package flycheck-rust
+        :pin melpa)
+    #+END_SRC
+
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
@@ -735,6 +763,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     For closing compilation window when it's done see [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]]
     #+BEGIN_SRC emacs-lisp
       (use-package compile 
+        :init
+        ;; Don't split window if frames are available
+        ;; Almost working, just have some errors when closing the buffer.
+        (add-to-list 'display-buffer-alist
+                         '("^\\*compilation\\*$"
+                           (display-buffer-use-some-frame display-buffer-reuse-window)
+                           (inhibit-switch-frame . t)
+                           (reusable-frames      . visible)
+                           (inhibit-same-window  . t)
+                           ))
         :config
         (use-package ansi-color)
         (add-hook 'compilation-filter-hook 
@@ -752,7 +790,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ;; and return to whatever were looking at before
                   (replace-buffer-in-windows "*compilation*"))
                 ;; Always return the anticipated result of compilation-exit-message-function
-                (cons msg code)))
+                (cons msg code)
+                ))
       )
     #+END_SRC
 ** Text
@@ -1730,15 +1769,50 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
    #+END_SRC
-** Tramp hangs after password entry
+** Tramp hangs after password entry 
    :PROPERTIES:
    :CUSTOM_ID:  tramp-hang-workaround 
    :END:
    See [[https://www.emacswiki.org/emacs/TrampMode#toc7][EmacsWiki]]
-   What worked for me was adding this to my .zshrc
-   #+BEGIN_SRC sh
+   Simple fix if you don't want to use emacs shells is to add this to your .zshrc
+   #+BEGIN_SRC sh :tangle no
      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
    #+END_SRC
+
+   Problem with this though it that it messes up with the prompt when
+   running a emacs shell. For that use:
+   #+BEGIN_SRC sh :tangle no
+     # Tramp and emacs shell workaround
+     if [[ $TERM == "dumb" ]]
+     then
+         # Emacs shell/tramp cannot handle line editing, turning it off.
+         unsetopt zle
+
+         # The custom prompt will hang tramp.
+         # Change to something simpler and stop
+         if [[ $INSIDE_EMACS == '' ]]
+         then
+             PS1='$ '
+             return
+         fi
+     fi
+   #+END_SRC
+
+   Similar issue will happen with a bash shell on the other end. And
+   for that you can just remove the =unsetopt zle=.
+   
+   The [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html][manual]] describe that you can customize the
+   =tramp-shell-prompt-pattern= to match your remote prompt. Didn't
+   not get that to work. Same with the =Interactive shell prompt= from
+   what I can tell tramp doesn't set INSIDE_EMACS to contain tramp. So
+   this is the only workaround I found that is working. I.e. tramp
+   sets the terminal to dumb when testing a connection but it doesn't
+   set INSIDE_EMACS. Those two are set when running a shell either
+   locally or remote. When using a tramp connection it sets the
+   HISTFILE to be a tramp file. That's the only way I found to
+   distinguish between a shell that is running locally or from a tramp
+   connection.
+
 * Notes
 ** Lisp in search replace
    To execute a lisp function in replace regexp do \,(<function>)
