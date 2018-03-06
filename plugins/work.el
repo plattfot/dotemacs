@@ -112,21 +112,17 @@ Using shell instead of multi-term."
   (split-window-horizontally)
   (cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
 
-  (shell)
-  (rename-buffer "hou-misc")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
+  (shell "hou-misc")
+  (work-run-emacs-shell-command "go cyclone rd 0001 =fx work")
 
-  (shell)
-  (rename-buffer "hou-beta")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx_beta work")
+  (shell "hou-beta")
+  (work-run-emacs-shell-command "go cyclone rd 0001 =fx_beta work")
 
-  (shell)
-  (rename-buffer "hou-devl")
-  (work-run-emacs-shell-command "go CYCLONE RD 1 =fx work")
+  (shell "hou-devl")
+  (work-run-emacs-shell-command "go CYCLONE RD 0001 =fx work")
 
-  (shell)
-  (rename-buffer "hou-test")
-  (work-run-emacs-shell-command "go cyclone rd 1 =fx work")
+  (shell "hou-test")
+  (work-run-emacs-shell-command "go cyclone rd 0001 =fx work")
 
   (toggle-frame-maximized))
 
