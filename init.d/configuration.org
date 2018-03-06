@@ -1924,3 +1924,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Remove/Keep lines matching regexp
    use 'keep-lines' to keep lines matching regexp.
    use 'flush-lines' to remove lines matching regexp.
+** Terminfo files (ti)
+   To compile FILE run
+   #+BEGIN_SRC sh :tangle no
+     tic FILE
+   #+END_SRC
