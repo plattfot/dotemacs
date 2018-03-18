@@ -470,9 +470,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** REPL
 **** Geiser
+     
+     - *TODO:* Update to :hook when that comes available.
+
      #+BEGIN_SRC emacs-lisp
        (use-package geiser
-	 :pin melpa-stable)
+         :init
+         (add-hook 'scheme-mode-hook 'geiser-mode)
+         :config
+         (setq geiser-default-implementation 'guile)
+         :pin melpa-stable)
      #+END_SRC
      Auto complete backend for geiser
      #+BEGIN_SRC emacs-lips
@@ -625,6 +632,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
         (setq org-todo-keywords
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
+        ;; active Babel languages
+        (org-babel-do-load-languages
+         'org-babel-load-languages
+         '((scheme . t)))
         ;; (setq org-src-window-setup 'current-window)
         :pin org)
     #+END_SRC
