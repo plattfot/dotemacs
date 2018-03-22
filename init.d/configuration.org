@@ -794,6 +794,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ))
       )
     #+END_SRC
+*** Version Control
+    Don't ask when following a symlink to a vc directory.
+    #+BEGIN_SRC emacs-lisp
+      (setq vc-follow-symlinks t)
+    #+END_SRC
 ** Text
   Packages for editing text.
 *** Rainbow (Disabled)
