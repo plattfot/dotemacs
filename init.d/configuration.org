@@ -1771,7 +1771,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Juniper VPN linux 4.5+
    Juniper VPN doesn't work in linux 4.5+, workaround is to disable
    the ipv6.
-   #+BEGIN_SRC sh
+   #+BEGIN_SRC sh :tangle no
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
    #+END_SRC
 ** Tramp hangs after password entry 
