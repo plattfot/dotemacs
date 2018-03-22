@@ -2016,3 +2016,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      tic FILE
    #+END_SRC
+** Shell
+   Stop the shell from echoing the command.
+   #+BEGIN_SRC sh :tangle no
+     stty -echo
+   #+END_SRC
