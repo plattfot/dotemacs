@@ -75,8 +75,14 @@ Insert extra namespaces using the variable EXTRA_NAMESPACES."
 
     (setq path_list ( cdr ( split-string  path "/") ) )
     ;; Handle exceptions
-    ;; Remove CoreLibs, Common and Utility if they exist
-    (setq path_list (remove "CoreLibs" (remove "Common" (remove "Utility" path_list))))
+    ;; Remove CoreLibs, Common, Utility and .pb2-deps if they exist
+
+    (setq path_list
+	  (remove ".pb2-deps"
+		  (remove "CoreLibs"
+			  (remove "Utility"
+				  (remove "Common"
+					  path_list)))))
     
     ;; Captitalize houdini if it exist
     (when (setq houdini (member "houdini" path_list))
