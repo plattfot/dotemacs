@@ -1938,6 +1938,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Code
 *** Generate a list of all defined macros
     cpp -dM /dev/null
+**** Check what __cplusplus is set to when setting a language standard in c++
+     Need to tell cpp that we only are interested in c++ then we can
+     just pass the flags we want.
+
+     For example check what __cplusplus is set to when using c++14.
+     #+BEGIN_SRC sh
+       cpp -dM -x c++ -std=c++14 /dev/null | grep __cplusplus
+     #+END_SRC
 *** Trace undefined symbol
     use ld's --trace-symbol=<symbol> when linking to get a list of
     what file(s) are using that symbol. Using it with gcc it would be
