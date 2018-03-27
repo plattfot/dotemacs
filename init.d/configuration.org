@@ -1914,6 +1914,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Git
 *** Change message in most recent commit
     git commit --amend [-m ""]
+** Github
+*** Preview site of a git hosted website
+    Prepend to the original url.
+    #+BEGIN_SRC org :tangle no
+      http://htmlpreview.github.io/?
+    #+END_SRC
+    For example to see an older page of the embree docs.
+    #+BEGIN_SRC org :tangle no
+      https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
+    #+END_SRC
+    source: [[https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview][stackoverflow]]
 ** Subversion
 *** Roll back a tag
 
