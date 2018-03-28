@@ -828,6 +828,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ))
       )
     #+END_SRC
+*** Version Control
+    Don't ask when following a symlink to a vc directory.
+    #+BEGIN_SRC emacs-lisp
+      (setq vc-follow-symlinks t)
+    #+END_SRC
 ** Text
   Packages for editing text.
 *** Rainbow (Disabled)
@@ -1800,7 +1805,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Juniper VPN linux 4.5+
    Juniper VPN doesn't work in linux 4.5+, workaround is to disable
    the ipv6.
-   #+BEGIN_SRC sh
+   #+BEGIN_SRC sh :tangle no
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
    #+END_SRC
 ** Tramp hangs after password entry 
@@ -1929,6 +1934,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Git
 *** Change message in most recent commit
     git commit --amend [-m ""]
+** Github
+*** Preview site of a git hosted website
+    Prepend to the original url.
+    #+BEGIN_SRC org :tangle no
+      http://htmlpreview.github.io/?
+    #+END_SRC
+    For example to see an older page of the embree docs.
+    #+BEGIN_SRC org :tangle no
+      https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
+    #+END_SRC
+    source: [[https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview][stackoverflow]]
 ** Subversion
 *** Roll back a tag
 
@@ -1967,6 +1983,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Code
 *** Generate a list of all defined macros
     cpp -dM /dev/null
+**** Check what __cplusplus is set to when setting a language standard in c++
+     Need to tell cpp that we only are interested in c++ then we can
+     just pass the flags we want.
+
+     For example check what __cplusplus is set to when using c++14.
+     #+BEGIN_SRC sh
+       cpp -dM -x c++ -std=c++14 /dev/null | grep __cplusplus
+     #+END_SRC
 *** Trace undefined symbol
     use ld's --trace-symbol=<symbol> when linking to get a list of
     what file(s) are using that symbol. Using it with gcc it would be
@@ -2036,4 +2060,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    To compile FILE run
    #+BEGIN_SRC sh :tangle no
      tic FILE
+   #+END_SRC
+** Shell
+   Stop the shell from echoing the command.
+   #+BEGIN_SRC sh :tangle no
+     stty -echo
    #+END_SRC
