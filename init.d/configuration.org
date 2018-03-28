@@ -2066,3 +2066,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      stty -echo
    #+END_SRC
+** CMake
+   Don't remove the rpath when installing.
+   #+BEGIN_SRC sh :tangle no
+     CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+   #+END_SRC
+   
+   Specify c++ compiler.
+   #+BEGIN_SRC sh :tangle no
+     CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
+   #+END_SRC
+   
+
