@@ -272,8 +272,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Tell emacs it's safe to change these in a .dir-locals.el file.
      #+BEGIN_SRC emacs-lisp
        (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp) 
-       (put 'flycheck-c/c++-clang-executable 'safe-local-variable #'stringp) 
+       (put 'flycheck-gcc-language-standard 'safe-local-variable #'stringp) 
+       (put 'flycheck-gcc-include-path 'safe-local-variable #'listp) 
+       (put 'flycheck-gcc-includes 'safe-local-variable #'listp) 
+       (put 'flycheck-gcc-warnings 'safe-local-variable #'listp) 
+       (put 'flycheck-gcc-definitions 'safe-local-variable #'listp) 
        (put 'flycheck-gcc-args 'safe-local-variable #'listp) 
+
+       (put 'flycheck-c/c++-clang-executable 'safe-local-variable #'stringp) 
+       (put 'flycheck-clang-language-standard 'safe-local-variable #'stringp) 
+       (put 'flycheck-clang-include-path 'safe-local-variable #'listp) 
+       (put 'flycheck-clang-includes 'safe-local-variable #'listp) 
+       (put 'flycheck-clang-warnings 'safe-local-variable #'listp) 
+       (put 'flycheck-clang-definitions 'safe-local-variable #'listp) 
        (put 'flycheck-clang-args 'safe-local-variable #'listp) 
      #+END_SRC
 **** Demangle (Disabled)
