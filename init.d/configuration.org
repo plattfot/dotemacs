@@ -320,7 +320,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
 
      #+END_SRC
-**** RTags
+**** RTags (Disabled)
      
      Key bindings for RTags conflicts with GTags
      -TODO: Not working with the build system at work.
