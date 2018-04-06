@@ -948,15 +948,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Keybindings for the mc package
     #+BEGIN_SRC emacs-lisp
       (use-package multiple-cursors 
-       	:bind (("C-S-c C-S-c" . mc/edit-lines)
-               ("C->"         . mc/mark-next-like-this)
-               ("C-<"         . mc/mark-previous-like-this)
-               ("C-c C-<"     . mc/mark-all-like-this)
-               ("C-+"         . mc/mark-next-like-this))
-       	:config
-       	(use-package mc-extras
+        :bind (("C-S-c C-S-c"    . mc/edit-lines)
+               ("C->"            . mc/mark-next-like-this)
+               ("C-<"            . mc/mark-previous-like-this)
+               ("C-c C-<"        . mc/mark-all-like-this)
+               ("C-+"            . mc/mark-next-like-this)
+               ([(control m) n]  . mc/insert-numbers)
+               ([(control m) c]  . mc/insert-characters)
+               ([(control m) s n]. mc/insert-same-numbers-per-line)
+               ([(control m) s c]. mc/insert-same-chars-per-line))
+        :config
+        (use-package mc-extras
           :pin melpa-stable)
-       	:pin melpa-stable)
+        :pin melpa-stable)
     #+END_SRC
 *** String inflections
     Keybinding for cycle between snake case, camel case etc
