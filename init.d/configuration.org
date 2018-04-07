@@ -2109,5 +2109,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
    #+END_SRC
-   
-
+** Yum
+   Find what package a file belongs to:
+   #+BEGIN_SRC sh :tangle no
+     yum whatprovides /path/to/file
+   #+END_SRC
+** rpm
+   Find what package a file belongs to:
+   #+BEGIN_SRC sh :tangle no
+     rpm -qf /path/to/file
+   #+END_SRC
