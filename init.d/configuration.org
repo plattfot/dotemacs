@@ -835,15 +835,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package compile 
         :init
-        ;; Don't split window if frames are available
-        ;; Almost working, just have some errors when closing the buffer.
+        ;; Reuse the *compilaiton* window if open if not pick another window
+        ;; in another frame.
         (add-to-list 'display-buffer-alist
-                         '("^\\*compilation\\*$"
-                           (display-buffer-use-some-frame display-buffer-reuse-window)
-                           (inhibit-switch-frame . t)
-                           (reusable-frames      . visible)
-                           (inhibit-same-window  . t)
-                           ))
+                     '("^\\*compilation\\*$"
+                       (display-buffer-reuse-window display-buffer-use-some-frame)
+                       (reusable-frames      . visible)
+                       (inhibit-switch-frame . t)
+                       (inhibit-same-window  . t)
+                       ))
         :config
         (use-package ansi-color)
         (add-hook 'compilation-filter-hook 
