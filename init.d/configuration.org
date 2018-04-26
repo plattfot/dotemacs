@@ -387,6 +387,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     - Add that it will also search src and include directories when
       switching between header and source files.
 
+    Custom style based on gnu for work. See [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Adding-Styles.html#Adding-Styles][adding-styles]] for more
+    info how this work. [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html][Guessing]] the style also work, but it was
+    easier for me to just place the pointer at a location and press
+    C-c C-o (c-set-offset) and add that to the c-offsets-alist.
+    #+BEGIN_SRC emacs-lisp
+      (c-add-style "dd"
+                   '("gnu"
+                     (c-basic-offset . 2)
+                     (c-offsets-alist
+                      (substatement-open . 0)
+                      (statement-cont . 0)
+                      (arglist-close . 0)
+                      (statement-case-open . 0))))
+    #+END_SRC
     #+BEGIN_SRC emacs-lisp
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
