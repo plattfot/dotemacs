@@ -411,7 +411,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     (setq indent-tabs-mode nil)
-                    (setq c-basic-offset 2)
+                    (when dotemacs-is-work (c-set-style "dd"))
                     (subword-mode 1))) ;; enable camelCase
         (setq ff-search-directories '("." "../src" "../include"))
         :pin melpa-stable)
