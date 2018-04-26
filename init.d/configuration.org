@@ -286,6 +286,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (put 'flycheck-clang-warnings 'safe-local-variable #'listp) 
        (put 'flycheck-clang-definitions 'safe-local-variable #'listp) 
        (put 'flycheck-clang-args 'safe-local-variable #'listp) 
+
+       (put 'flycheck-checkers 'safe-local-variable #'listp)
      #+END_SRC
 **** Demangle (Disabled)
      #+BEGIN_SRC emacs-lisp
