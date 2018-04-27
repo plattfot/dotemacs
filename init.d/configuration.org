@@ -253,6 +253,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 (setq yas-indent-line nil)
        	 :pin melpa-stable)
      #+END_SRC
+**** Semantic
+     Keybindings for semantic mode. Semantic-ia-fast-jump works a lot
+     better than the one assigned to "C-c , j"
+     (semantic-complete-jump-local).
+     #+BEGIN_SRC emacs-lisp
+       (use-package semantic
+         :bind (("M-," . semantic-ia-fast-jump)
+                ("M-*" . pop-global-mark)
+                ("C-c , i" . semantic-ia-show-summary)
+                ("C-c , c" . semantic-ia-describe-class)))
+     #+END_SRC
 *** Lint
    Packages that helps inspecting code, report errors etc.
 **** Flycheck
