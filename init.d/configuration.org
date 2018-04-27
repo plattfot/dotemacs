@@ -410,7 +410,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      (c-basic-offset . 2)
                      (c-offsets-alist
                       (substatement-open . 0)
-                      (statement-cont . 0)
                       (arglist-close . 0)
                       (statement-case-open . 0))))
     #+END_SRC
