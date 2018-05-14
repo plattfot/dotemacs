@@ -1071,6 +1071,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
    #+END_SRC
+
+   Store work related settings.
+   #+BEGIN_SRC emacs-lisp
+     (when dotemacs-is-work 
+       (when (file-exists-p "~/.emacs.d/.work.el") 
+         (load "~/.emacs.d/.work.el")))
+   #+END_SRC
 ** Custom packages
 *** dd-newfile
     Function that inserts the DD template for a new file
