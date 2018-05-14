@@ -9,6 +9,7 @@ tramp
 configuration.el
 .mc-lists.el
 .custom.el
+.work.el
 *.elc
 session.*
 %backup%*
