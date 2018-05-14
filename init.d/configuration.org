@@ -60,7 +60,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    having them in the git repo.
    #+BEGIN_SRC emacs-lisp
      (setq custom-file "~/.emacs.d/.custom.el")
-     (when (file-exists-p "~/.emacs.d/.custom.el") (load custom-file))
+     (when (file-exists-p custom-file) (load custom-file))
    #+END_SRC
 ** Custom plugins
 *** Dotemacs
