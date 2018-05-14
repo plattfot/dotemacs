@@ -363,6 +363,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; (push `company-rtags company-backends)
          :pin melpa-stable)
      #+END_SRC
+*** Format
+    #+BEGIN_SRC emacs-lisp
+      (use-package clang-format
+        :bind ("C-<tab>" . clang-format-region)
+        :pin melpa)
+    #+END_SRC
 ** Languages
   Modes for highlighting different programing languages.
 *** Functional
