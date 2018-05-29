@@ -239,16 +239,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 (setq yas-indent-line nil)
        	 :pin melpa-stable)
      #+END_SRC
-**** Semantic
+**** Semantic (disabled)
+     NOTE: Notice a lot of lag when having this enabled for large
+     files. Freezes every few seconds when editing etc.
+     
      Keybindings for semantic mode. Semantic-ia-fast-jump works a lot
      better than the one assigned to "C-c , j"
      (semantic-complete-jump-local).
+
+     And enable semantic for the C family.
      #+BEGIN_SRC emacs-lisp
        (use-package semantic
+         :disabled t
          :bind (("M-," . semantic-ia-fast-jump)
                 ("M-*" . pop-global-mark)
                 ("C-c , i" . semantic-ia-show-summary)
-                ("C-c , c" . semantic-ia-describe-class)))
+                ("C-c , c" . semantic-ia-describe-class))
+         :config
+         (add-hook 'c-mode-common-hook 'semantic-mode))
      #+END_SRC
 *** Lint
    Packages that helps inspecting code, report errors etc.
@@ -409,7 +417,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
         :config
-        (add-hook 'c-mode-common-hook 'semantic-mode)
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     (setq indent-tabs-mode nil)
