@@ -108,11 +108,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
      (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
-     (setq backup-directory-alist (list (cons ".*" backup-dir)))
-     (setq auto-save-list-file-prefix autosave-dir)
-     (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+     (setq backup-directory-alist (list (cons ".*" backup-dir))
+	   auto-save-list-file-prefix autosave-dir
+	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
    #+END_SRC
-
 ** Theme
    Point emacs to where it can find the sunburst theme. Depending on
    if emacs is started in a shell or not load the correct theme.
@@ -668,40 +667,42 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Emacs
   Packages that augments emacs.
 *** Org
-    
-    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
-    
-    Use pretty bullet points instead of asterix
+
+    Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
 
     Use a little downward-pointing arrow instead of the usual ellipsis
     (=...=) when folded.
 
-    Use syntax highlighting in source blocks while editing.
+    Use syntax highlighting in source blocks while editing
+    'org-src-fontify-natively'.
+
     #+BEGIN_SRC emacs-lisp
       (use-package org
-        :mode ("\\.org\\'" . org-mode)
-        :bind (("C-c l" . org-store-link)
-               ("C-c a" . org-agenda)
-               ("C-c c" . org-capture)
-               ("C-c b" . org-iswitchb))
-        :config
-        (use-package org-bullets
-          :pin melpa-stable)
-        (add-hook 'org-mode-hook
-                  (lambda ()
-                    (org-bullets-mode t)))
-        (setq org-ellipsis "⤵")
-        (setq org-src-fontify-natively t)
-        (when (not dotemacs-is-work)
-          (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
-        (setq org-todo-keywords
-              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
-        ;; active Babel languages
-        (org-babel-do-load-languages
-         'org-babel-load-languages
-         '((scheme . t)))
-        ;; (setq org-src-window-setup 'current-window)
-        :pin org)
+	:mode ("\\.org\\'" . org-mode)
+	:bind (("C-c l" . org-store-link)
+	       ("C-c a" . org-agenda)
+	       ("C-c c" . org-capture)
+	       ("C-c b" . org-iswitchb))
+	:config
+	(use-package org-bullets
+	  :pin melpa-stable)
+	;; Use pretty bullet points instead of asterix
+	(add-hook 'org-mode-hook
+		  (lambda ()
+		    (org-bullets-mode t)))
+	(setq org-ellipsis "⤵"
+	      org-src-fontify-natively t
+	      org-todo-keywords
+	      '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
+	(when (not dotemacs-is-work)
+	  (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
+
+	;; Active Babel languages
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((scheme . t)))
+	;; (setq org-src-window-setup 'current-window)
+	:pin org)
     #+END_SRC
 
     Doesn't work with yasnippet getting:
