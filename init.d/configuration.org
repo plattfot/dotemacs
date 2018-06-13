@@ -79,11 +79,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (tool-bar-mode 0)
      (when (window-system) (scroll-bar-mode 0))
    #+END_SRC
-*** Splash screen
-    Dismiss the startup screen
-    #+BEGIN_SRC emacs-lisp
-      (setq inhibit-splash-screen t)
-    #+END_SRC
 *** Font
     Set font and font size
     #+BEGIN_SRC emacs-lisp
@@ -95,20 +90,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (column-number-mode 1)
    #+END_SRC
 ** Behaviour
-   Highlight matching brackets
+   Changing the default emacs behavior to better suite me.
    #+BEGIN_SRC emacs-lisp
-     (show-paren-mode 1)
-   #+END_SRC
-   
-   Disable electric-indent-mode since I"m using C-j for that.
-   #+BEGIN_SRC emacs-lisp
-     (setq electric-indent-mode nil)
-   #+END_SRC
-
-   To avoid loading outdated byte code files, prefer loading newer .el
-   files.
-   #+BEGIN_SRC emacs-lisp
-     (setq load-prefer-newer t)
+     (setq-default
+	electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that.
+	load-prefer-newer t             ;; Avoid loading outdated byte code files.
+	auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up).
+	inhibit-splash-screen t         ;; Dismiss the startup screen.
+	initial-scratch-message ""      ;; Empty scratch buffer.
+	calendar-week-start-day 1)      ;; Week starts on Monday.
+     (show-paren-mode 1)                ;; Highlight matching brackets.
    #+END_SRC
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
@@ -117,22 +108,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
      (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
-     (setq backup-directory-alist (list (cons ".*" backup-dir)))
-     (setq auto-save-list-file-prefix autosave-dir)
-     (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+     (setq backup-directory-alist (list (cons ".*" backup-dir))
+	   auto-save-list-file-prefix autosave-dir
+	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
    #+END_SRC
-
 ** Theme
    Point emacs to where it can find the sunburst theme. Depending on
    if emacs is started in a shell or not load the correct theme.
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
      (load-theme `sunburst t)
-   #+END_SRC
-** Calendar
-   Week starts on Monday.
-   #+BEGIN_SRC emacs-lisp
-     (setq calendar-week-start-day 1)
    #+END_SRC
 ** Path
    #+BEGIN_SRC emacs-lisp
@@ -253,16 +238,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 (setq yas-indent-line nil)
        	 :pin melpa-stable)
      #+END_SRC
-**** Semantic
+**** Semantic (disabled)
+     NOTE: Notice a lot of lag when having this enabled for large
+     files. Freezes every few seconds when editing etc.
+     
      Keybindings for semantic mode. Semantic-ia-fast-jump works a lot
      better than the one assigned to "C-c , j"
      (semantic-complete-jump-local).
+
+     And enable semantic for the C family.
      #+BEGIN_SRC emacs-lisp
        (use-package semantic
+         :disabled t
          :bind (("M-," . semantic-ia-fast-jump)
                 ("M-*" . pop-global-mark)
                 ("C-c , i" . semantic-ia-show-summary)
-                ("C-c , c" . semantic-ia-describe-class)))
+                ("C-c , c" . semantic-ia-describe-class))
+         :config
+         (add-hook 'c-mode-common-hook 'semantic-mode))
      #+END_SRC
 *** Lint
    Packages that helps inspecting code, report errors etc.
@@ -423,7 +416,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
         :config
-        (add-hook 'c-mode-common-hook 'semantic-mode)
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     (setq indent-tabs-mode nil)
@@ -682,40 +674,42 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Emacs
   Packages that augments emacs.
 *** Org
-    
-    From [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
-    
-    Use pretty bullet points instead of asterix
+
+    Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
 
     Use a little downward-pointing arrow instead of the usual ellipsis
     (=...=) when folded.
 
-    Use syntax highlighting in source blocks while editing.
+    Use syntax highlighting in source blocks while editing
+    'org-src-fontify-natively'.
+
     #+BEGIN_SRC emacs-lisp
       (use-package org
-        :mode ("\\.org\\'" . org-mode)
-        :bind (("C-c l" . org-store-link)
-               ("C-c a" . org-agenda)
-               ("C-c c" . org-capture)
-               ("C-c b" . org-iswitchb))
-        :config
-        (use-package org-bullets
-          :pin melpa-stable)
-        (add-hook 'org-mode-hook
-                  (lambda ()
-                    (org-bullets-mode t)))
-        (setq org-ellipsis "⤵")
-        (setq org-src-fontify-natively t)
-        (when (not dotemacs-is-work)
-          (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
-        (setq org-todo-keywords
-              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
-        ;; active Babel languages
-        (org-babel-do-load-languages
-         'org-babel-load-languages
-         '((scheme . t)))
-        ;; (setq org-src-window-setup 'current-window)
-        :pin org)
+	:mode ("\\.org\\'" . org-mode)
+	:bind (("C-c l" . org-store-link)
+	       ("C-c a" . org-agenda)
+	       ("C-c c" . org-capture)
+	       ("C-c b" . org-iswitchb))
+	:config
+	(use-package org-bullets
+	  :pin melpa-stable)
+	;; Use pretty bullet points instead of asterix
+	(add-hook 'org-mode-hook
+		  (lambda ()
+		    (org-bullets-mode t)))
+	(setq org-ellipsis "⤵"
+	      org-src-fontify-natively t
+	      org-todo-keywords
+	      '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
+	(when (not dotemacs-is-work)
+	  (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
+
+	;; Active Babel languages
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((scheme . t)))
+	;; (setq org-src-window-setup 'current-window)
+	:pin org)
     #+END_SRC
 
     Doesn't work with yasnippet getting:
