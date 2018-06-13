@@ -612,10 +612,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :mode "\\.dat\\'"
        :config
        (setq ledger-clear-whole-transactions 1)
-       (add-hook 'ledger-mode-hook 
-                 (lambda ()
-                   (company-mode -1)))
-:pin melpa-stable)
+       (setq ledger-schedule-file "~/projects/bokforing/schedule.ledger")
+       ;; (add-hook 'ledger-mode-hook 
+       ;;           (lambda ()
+       ;;             (company-mode -1)))
+       :pin melpa-stable)
    #+END_SRC   
 *** Arduino
     Function for setting up a arduino template sketch
