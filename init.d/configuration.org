@@ -414,15 +414,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
     #+BEGIN_SRC emacs-lisp
       (use-package cc-mode
-        :mode ("\\.h\\'" . c++-mode)
-        :config
-        (add-hook 'c-mode-common-hook
-                  (lambda ()
-                    (setq indent-tabs-mode nil)
-                    (when dotemacs-is-work (c-set-style "dd"))
-                    (subword-mode 1))) ;; enable camelCase
-        (setq ff-search-directories '("." "../src" "../include"))
-        :pin melpa-stable)
+	:mode ("\\.h\\'" . c++-mode)
+	:config
+	(add-hook 'c-mode-common-hook
+		  (lambda ()
+		    (setq indent-tabs-mode nil)
+		    (when dotemacs-is-work (c-set-style "dd"))
+		    ;; Highlight useless whitespaces
+		    (setq show-trailing-whitespace t)
+		    (subword-mode 1))) ;; enable camelCase
+	(setq ff-search-directories '("." "../src" "../include"))
+	:pin melpa-stable)
 
     #+END_SRC
 *** Python
