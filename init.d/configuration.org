@@ -516,14 +516,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Has extension =.tdpackage=.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
-       	 :mode (("Makefile.*" . makefile-gmake-mode)
-               	("\\.mk$" . makefile-gmake-mode)
-               	("Make/.*Rules$" . makefile-gmake-mode)
-               	("modules/.*" . makefile-gmake-mode)
-               	("BUILD\\.conf$" . makefile-gmake-mode)
-               	("Make/Project$" . makefile-gmake-mode)
-               	("\\.tdpackage$" . makefile-gmake-mode)
-               	))
+         :mode (("Makefile.*" . makefile-gmake-mode)
+                ("\\.mk$" . makefile-gmake-mode)
+                ("Make/.*Rules$" . makefile-gmake-mode)
+                ("modules/.*" . makefile-gmake-mode)
+                ("BUILD\\.conf$" . makefile-gmake-mode)
+                ("Make/Project$" . makefile-gmake-mode)
+                ("\\.tdpackage$" . makefile-gmake-mode)
+                )
+         :config
+         (add-hook 'makefile-mode-hook
+                         (lambda ()
+                           ;; Highlight useless whitespaces
+                           (setq show-trailing-whitespace t))))
      #+END_SRC
 **** CMake
      #+BEGIN_SRC emacs-lisp
