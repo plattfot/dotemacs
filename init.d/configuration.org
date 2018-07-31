@@ -176,16 +176,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-to-list 'ac-modes 'arduino-mode)
          (use-package auto-complete-rst
            :pin melpa)
-         ;; Messes with the navigation at work
-         (use-package ac-rtags
-           :disabled t
-           :bind
-           ("C-." . ac-complete-rtags)
-           :config
-           (ac-rtags-init)
-           :pin melpa-stable)
          :pin melpa-stable)
+     #+END_SRC
 
+     Messes with the navigation at work, disabled for now.
+     #+BEGIN_SRC emacs-lisp
+       (use-package ac-rtags
+         :disabled t
+         :after (auto-complete rtags)
+         :bind
+         ("C-." . ac-complete-rtags)
+         :config
+         (ac-rtags-init)
+         :pin melpa-stable)
 
      #+END_SRC
 **** Company (disabled)
