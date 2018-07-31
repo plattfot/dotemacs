@@ -329,35 +329,47 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
 
      #+END_SRC
-**** RTags (Disabled)
-     
-     Key bindings for RTags conflicts with GTags
-     -TODO: Not working with the build system at work.
-     -TODO: Flycheck is lagging behind when using rtags.
+**** RTags
+     Enabled rtags in its most simple form. Using its default
+     keybindings, i.e. under C-c r. 
+
+     Highlights for the keybindings are:
+     - 'C-c r' . for finding the symbol under point. 
+     - 'C-c r [' For going back in the search. 
+     - 'C-c r ]' Going forward in the search.
+
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
-         :disabled t
+         ;;:disabled t
          :init
-         (use-package flycheck-rtags
-           :config
-           (defun my-flycheck-rtags-setup ()
-             (flycheck-select-checker 'rtags)
-             (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-             (setq-local flycheck-check-syntax-automatically nil))
-           (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
-           (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
-           (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup)
-           :pin melpa-stable)
-         :bind (("M-." . rtags-find-symbol-at-point)
-                ("M-," . rtags-find-references-at-point)
-                ("M-[" . rtags-location-stack-back)
-                ("M-]" . rtags-location-stack-forward))
+         (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+         (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+         (add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
          :config
-         (setq rtags-autostart-diagnostics t)
-         (rtags-diagnostics)
-         (setq rtags-completions-enabled t)
+         (rtags-enable-standard-keybindings)
+         ;; (setq rtags-autostart-diagnostics t)
+         ;; (rtags-diagnostics)
+         ;; (setq rtags-completions-enabled t)
          ;; (push `company-rtags company-backends)
          :pin melpa-stable)
+     #+END_SRC
+
+     Use rtags for flychecking buffers. But Flycheck is lagging behind
+     when using rtags. Disabled for now. 
+     #+BEGIN_SRC emacs-lisp
+       (use-package flycheck-rtags
+         :disabled t
+         :after (flycheck rtags)
+         :config
+         (defun my-flycheck-rtags-setup ()
+           (flycheck-select-checker 'rtags)
+           (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+           (setq-local flycheck-check-syntax-automatically nil))
+         (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
+         (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
+         (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup)
+         :pin melpa-stable)
+
      #+END_SRC
 *** Format
     #+BEGIN_SRC emacs-lisp
