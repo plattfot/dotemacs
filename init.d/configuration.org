@@ -304,29 +304,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** Navigation
    Packages for navigating code.
-**** GTags (Disabled)
+**** GTags
      Key bindings for finding tag, reference and usage of symbol.
 
-     Cycling gtag results ([[https://www.emacswiki.org/emacs/CyclingGTagsResult][source]])
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
-       	 :disabled t
-       	 :bind (("M-." . gtags-find-tag) ;; Finds tag
-               	("C-M-." . gtags-find-rtag)   ;; Find all references of tag
-               	("C-M-," . gtags-find-symbol)) ;; Find all usages of symbol.
-       	 :config 
-       	 (defun ww-next-gtag ()
-               "Find next matching tag, for GTAGS."
-               (interactive)
-               (let ((latest-gtags-buffer
-                      (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
-                                              (buffer-list)) ))))
-               	 (cond (latest-gtags-buffer
-                       	(switch-to-buffer latest-gtags-buffer)
-                       	(forward-line)
-                       	(gtags-select-it nil))
-                       )))
-       	 :pin melpa-stable)
+         :config
+         :pin melpa-stable)
 
      #+END_SRC
 **** RTags
