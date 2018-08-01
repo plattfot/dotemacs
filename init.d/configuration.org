@@ -334,7 +334,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (setq ggtags-highlight-tag nil) ;; Highlight was annoying
          :pin melpa-stable)
      #+END_SRC
-**** RTags
+**** RTags (disabled)
      Enabled rtags in its most simple form. Using its default
      keybindings, i.e. under C-c r. 
 
@@ -345,7 +345,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
-         ;;:disabled t
+         :disabled t
          :init
          (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
          (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
