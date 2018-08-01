@@ -309,9 +309,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
-         :config
+         :after (cc-mode)
+         :init
+         (add-hook 'c-mode-common-hook (lambda () (ggtags-mode 1)))
+         (setq ggtags-highlight-tag nil) ;; Highlight was annoying
          :pin melpa-stable)
-
      #+END_SRC
 **** RTags
      Enabled rtags in its most simple form. Using its default
