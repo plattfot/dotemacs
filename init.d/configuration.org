@@ -381,16 +381,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package rtags
          :disabled t
+         :after (company)
          :init
-         (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-         (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
-         (add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
+         (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
          :config
          (rtags-enable-standard-keybindings)
-         ;; (setq rtags-autostart-diagnostics t)
+         (setq rtags-autostart-diagnostics t)
          ;; (rtags-diagnostics)
-         ;; (setq rtags-completions-enabled t)
-         ;; (push `company-rtags company-backends)
+         (setq rtags-completions-enabled t)
+         (push `company-rtags company-backends)
          :pin melpa-stable)
      #+END_SRC
 
