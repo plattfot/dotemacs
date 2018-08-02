@@ -195,47 +195,75 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable)
 
      #+END_SRC
-**** Company (disabled)
+**** Company 
 
-     Has some really nice features, but it's just too slow
-     (company-clang that is).
-
+     Configure company to work similar to auto complete. Disabled most
+     backends for c++ when at work as they were either slow, failed to
+     find a completion half the time or flat out crashed clang when
+     trying to complete stuff. The company-dabbrev-code works similar
+     to what I had before with ac.
+     
      #+BEGIN_SRC emacs-lisp
        (use-package company
-         :bind (("C-<tab>" . company-complete)
-                ("C-n" . company-select-next)
-                ("C-p" . company-select-previous))
-         :disabled t
+                                               ;:disabled t
+         :bind ( ("C-;" . company-complete-common)
+                 :map company-active-map
+                 ("C-n" . company-select-next)
+                 ("C-p" . company-select-previous))
          :init
-         ;; C++/C auto-complete
-         (use-package irony
-           :config
-           (add-hook 'c++-mode-hook 'irony-mode)
-           (add-hook 'c-mode-hook 'irony-mode)
-           (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-           :pin melpa-stable)
-         
-         (use-package company-irony
-           :config
-           (add-to-list 'company-backends 'company-irony)
-           :pin melpa-stable)
-
-         ;; Shell autocomplete
-         (use-package company-shell
-           :config
-           :pin melpa-stable)
-         
-         :config
          ;; List what modes to use company in.
-         (add-hook 'c++-mode-hook 'company-mode)
-         (add-hook 'c-mode-hook 'company-mode)
-         (add-hook 'emacs-lisp-mode-hook 'company-mode)
-         (add-hook 'shell-script-mode-hook 'company-mode)
+         (add-hook 'after-init-hook 'global-company-mode)
+         :config
+         (setq company-idle-delay 0.1
+               company-minimum-prefix-length 3
+               company-clang-insert-arguments nil
+               company-dabbrev-downcase nil
+               company-dabbrev-ignore-case nil
+               company-dabbrev-other-buffers t
+               company-dabbrev-code-other-buffers t)
 
-         (setq company-idle-delay 0)
-         (setq company-minimum-prefix-length 3)
+         (add-hook 'org-mode-hook 
+                   (lambda ()
+                     ;; Remove dabbrev from org-mode as it's driving me crazy!
+                     (set (make-local-variable 'company-backends)
+                          (setq-local company-backends 
+                                      (delete 'company-dabbrev company-backends)))
+                     ;; Fixing capf to work with org-mode
+                     ;; https://emacs.stackexchange.com/a/21173
+                     (add-hook 'completion-at-point-functions 
+                               'pcomplete-completions-at-point nil t)))
+         (add-hook 'emacs-lisp-mode-hook
+                   (lambda () 
+                     (set (make-local-variable 'company-backends)
+                          '((company-capf
+                             company-dabbrev-code
+                             :separate)))))
+         ;; Only reliable backend at work
+         (when dotemacs-is-work 
+           (add-hook 'c-mode-common-hook
+                     (lambda ()
+                       (set (make-local-variable 'company-backends)
+                            '(company-dabbrev-code)))))
          :pin melpa-stable)
      #+END_SRC
+     
+     #+BEGIN_SRC emacs-lisp
+       ;; Shell autocomplete
+       (use-package company-shell
+         :disabled t
+         :after (company)
+         :config
+         :pin melpa-stable)
+
+     #+END_SRC
+
+     Tell emacs it's safe to change these company variables in a
+     .dir-locals.el file.
+     #+BEGIN_SRC emacs-lisp
+       (put 'company-clang-executable 'safe-local-variable #'stringp)
+       (put 'company-clang-arguments 'safe-local-variable #'listp)
+     #+END_SRC
+
 **** Yasnippet
      Enable yasnippet
      #+BEGIN_SRC emacs-lisp
