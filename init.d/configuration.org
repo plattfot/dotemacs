@@ -1820,18 +1820,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :load-path "~/emacs.d/plugins")
    #+END_SRC
 * Custom keybindings
-* Macros
-   Macro to quickly open a file that is located on my machine at work.
-   Inserts "fredriks@bcws427.d2vancouver.com:fredriks/swdevl"
-   #+BEGIN_SRC emacs-lisp
-     (fset 'bcws
-	[?b ?c ?w ?s ?4 ?2 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l])
-   #+END_SRC
+** Macros
+    Macro to quickly open a file that is located on my machine at work.
+    Inserts "fredriks@bcws427.d2vancouver.com:fredriks/swdevl"
+    #+BEGIN_SRC emacs-lisp
+      (fset 'bcws
+	 [?b ?c ?w ?s ?4 ?2 ?7 ?. ?d ?2 ?v ?a ?n ?c ?o ?u ?v ?e ?r ?. ?c ?o ?m ?: ?f ?r ?e ?d ?r ?i ?k ?s ?/ ?s ?w ?d ?e ?v ?l])
+    #+END_SRC
 
-   And bind it to the key combo
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c B") 'bcws)
-   #+END_SRC
+    And bind it to the key combo
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-c B") 'bcws)
+    #+END_SRC
 ** Registers
    Quickly jump to files by pressing C-x r j <register>
    Jump to my init file with 'e' and init directory with 'i'.
