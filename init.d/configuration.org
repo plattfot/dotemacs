@@ -339,9 +339,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** GTags
      Key bindings for finding tag, reference and usage of symbol.
 
+     TODO: Find out why ggtags messes with the for theme auto complete.
+
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
          :after (cc-mode)
+         :diminish ggtags-mode
          :init
          ;; Patching ggtags to not use compilation-info-face for the project
          ;; root in the mode-line. Was sticking out like a sore thumb.
