@@ -206,7 +206,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package company
                                                ;:disabled t
-         :bind ( ("C-;" . company-complete-common)
+         :bind ( ("C-<tab>" . company-complete-common)
                  :map company-active-map
                  ("C-n" . company-select-next)
                  ("C-p" . company-select-previous))
@@ -414,7 +414,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Format
     #+BEGIN_SRC emacs-lisp
       (use-package clang-format
-        :bind ("C-<tab>" . clang-format-region)
+        :bind ("C-M-<tab>" . clang-format-region)
         :pin melpa)
     #+END_SRC
 ** Languages
