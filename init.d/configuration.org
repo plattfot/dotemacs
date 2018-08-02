@@ -127,7 +127,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Code
 *** Autocomplete
    Packages that helps speed up coding, i.e. auto complete, boiler plates etc 
-**** Auto complete
+**** Auto complete (disabled)
+
+     NOTE: ggtags messes with the popup theme for this. Switched to
+     using company instead.
+
      Init auto-complete to use the default settings. Except auto
      complete words when pressing tab but disable it for enter.
 
@@ -153,7 +157,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package auto-complete
          :config
-         ;; :disabled t
+         :disabled t
          (ac-config-default)
          (define-key ac-completing-map "\t" 'ac-expand)
          (define-key ac-completing-map "\r" nil)
