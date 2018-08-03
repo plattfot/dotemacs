@@ -93,12 +93,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Changing the default emacs behavior to better suite me.
    #+BEGIN_SRC emacs-lisp
      (setq-default
-	electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that.
-	load-prefer-newer t             ;; Avoid loading outdated byte code files.
-	auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up).
-	inhibit-splash-screen t         ;; Dismiss the startup screen.
-	initial-scratch-message ""      ;; Empty scratch buffer.
-	calendar-week-start-day 1)      ;; Week starts on Monday.
+        electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that.
+        load-prefer-newer t             ;; Avoid loading outdated byte code files.
+        auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up).
+        inhibit-splash-screen t         ;; Dismiss the startup screen.
+        initial-scratch-message ""      ;; Empty scratch buffer.
+        calendar-week-start-day 1       ;; Week starts on Monday.
+        indent-tabs-mode nil)           ;; Don't use tab for indenting.
      (show-paren-mode 1)                ;; Highlight matching brackets.
    #+END_SRC
 ** Backup/autosave
