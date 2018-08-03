@@ -960,6 +960,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (setq vc-follow-symlinks t)
     #+END_SRC
+*** Regexp builder
+    Avoid escape-hell with regex builder, can toggle between styles
+    with 'C-c <tab>'. See [[https://masteringemacs.org/article/re-builder-interactive-regexp-builder][masteringemacs]] for more info about regex
+    builder.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package re-builder
+        :config
+        (setq-default reb-re-syntax 'string))
+    #+END_SRC
 ** Text
   Packages for editing text.
 *** Rainbow (Disabled)
