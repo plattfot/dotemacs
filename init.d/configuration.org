@@ -453,6 +453,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     - Make it easier to work with camelCase words by enabling subword-mode.
     - Add that it will also search src and include directories when
       switching between header and source files.
+    - Show trailing white spaces for writeable buffers.
 
     Custom style based on gnu for work. See [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Adding-Styles.html#Adding-Styles][adding-styles]] for more
     info how this work. [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html][Guessing]] the style also work, but it was
@@ -469,17 +470,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
     #+BEGIN_SRC emacs-lisp
       (use-package cc-mode
-	:mode ("\\.h\\'" . c++-mode)
-	:config
-	(add-hook 'c-mode-common-hook
-		  (lambda ()
-		    (setq indent-tabs-mode nil)
-		    (when dotemacs-is-work (c-set-style "dd"))
-		    ;; Highlight useless whitespaces
-		    (setq show-trailing-whitespace t)
-		    (subword-mode 1))) ;; enable camelCase
-	(setq ff-search-directories '("." "../src" "../include"))
-	:pin melpa-stable)
+        :mode ("\\.h\\'" . c++-mode)
+        :config
+        ;; Only need to set these once when initializing the cc-mode
+        (add-hook 'c-initialization-hook
+                  (lambda ()
+                    (setq indent-tabs-mode nil)
+                    (when dotemacs-is-work (c-set-style "dd"))
+                    ;; enable camelCase
+                    (subword-mode 1)))
+        ;; Call everytime an c-mode-common file is opened
+        (add-hook 'c-mode-common-hook
+                  (lambda ()
+                    ;; Highlight useless whitespaces for writeable buffers.
+                    (when (not buffer-read-only)
+                      (setq show-trailing-whitespace t))))
+        (setq ff-search-directories '("." "../src" "../include"))
+        :pin melpa-stable)
 
     #+END_SRC
 *** Python
@@ -569,6 +576,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Files called =BUILD.conf= (pb2 file).
      - Files called =Project= that are located in a directory called Make.
      - Has extension =.tdpackage=.
+
+     Show trailing whitespace as those can mess up make pretty bad.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
          :mode (("Makefile.*" . makefile-gmake-mode)
@@ -581,9 +590,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 )
          :config
          (add-hook 'makefile-mode-hook
-                         (lambda ()
-                           ;; Highlight useless whitespaces
-                           (setq show-trailing-whitespace t))))
+                   (lambda ()
+                     ;; Highlight useless whitespaces.
+                     (setq show-trailing-whitespace t))))
      #+END_SRC
 **** CMake
      #+BEGIN_SRC emacs-lisp
