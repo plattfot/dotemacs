@@ -473,16 +473,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
         :config
-        ;; Only need to set these once when initializing the cc-mode
-        (add-hook 'c-initialization-hook
+        ;; Call everytime an c-mode-common file is opened
+        (add-hook 'c-mode-common-hook
                   (lambda ()
                     (setq indent-tabs-mode nil)
                     (when dotemacs-is-work (c-set-style "dd"))
                     ;; enable camelCase
-                    (subword-mode 1)))
-        ;; Call everytime an c-mode-common file is opened
-        (add-hook 'c-mode-common-hook
-                  (lambda ()
+                    (subword-mode 1)
                     ;; Highlight useless whitespaces for writeable buffers.
                     (when (not buffer-read-only)
                       (setq show-trailing-whitespace t))))
