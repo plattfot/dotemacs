@@ -1069,6 +1069,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ("C-<"         . mc/mark-previous-like-this)
                ("C-c C-<"     . mc/mark-all-like-this)
                ("C-+"         . mc/mark-next-like-this)
+               :map mc/keymap
                ("C-c m n"     . mc/insert-numbers)
                ("C-c m c"     . mc/insert-characters)
                ("C-c m s n"   . mc/insert-same-numbers-per-line)
