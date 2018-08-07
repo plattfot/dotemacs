@@ -731,7 +731,40 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package ag
 	:pin melpa-stable)
     #+END_SRC
+*** notmuch
 
+    Using notmuch to index my emails.
+    #+BEGIN_SRC emacs-lisp
+      (use-package notmuch
+        :bind ("C-c m" . notmuch)
+        :config
+        (setq-default notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
+                      notmuch-show-logo nil
+                      sendmail-program "msmtp"
+                      message-kill-buffer-on-exit t
+                      message-send-mail-function 'message-send-mail-with-sendmail
+                      send-mail-function 'sendmail-send-it
+                      notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
+                                               (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "o")
+                                               (:name "oläst" :query "tag:unread" :sort-order newest-first :key "O")
+                                               (:name "reklam" :query "tag:reklam and tag:unread" :key "r")
+                                               (:name "stjärnmärkt" :query "tag:flagged" :key "f")
+                                               (:name "skickat" :query "tag:sent" :key "s")
+                                               (:name "utkast" :query "tag:draft" :key "u")
+                                               (:name "allt" :query "*" :key "a")))
+        :ensure nil)
+    #+END_SRC
+
+    For HTML email see [[https://orgmode.org/worg/org-contrib/org-mime.html][org-mime]] for more information.
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-mime
+        :after (org notmuch)
+        :config
+        (setq
+         org-mime-library 'mml
+         org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil))
+        :pin melpa-stable)
+    #+END_SRC
 ** Web
   Packages for webbased content.
 *** nginx
