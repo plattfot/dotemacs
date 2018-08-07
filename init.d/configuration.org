@@ -740,6 +740,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq-default notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
                       notmuch-show-logo nil
+                      notmuch-draft-folder "gmail.com/Utkast"
                       sendmail-program "msmtp"
                       message-kill-buffer-on-exit t
                       message-send-mail-function 'message-send-mail-with-sendmail
