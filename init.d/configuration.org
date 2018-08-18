@@ -215,7 +215,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; List what modes to use company in.
          (add-hook 'after-init-hook 'global-company-mode)
          :config
-         (setq company-global-modes '(not shell-mode)
+         (setq company-global-modes '(not shell-mode gud-mode)
                company-idle-delay 0.1
                company-minimum-prefix-length 3
                company-clang-insert-arguments nil
