@@ -738,23 +738,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package notmuch
         :bind ("C-c m" . notmuch)
         :config
+        (define-key notmuch-search-mode-map "l"
+          (lambda (&optional beg end)
+            "mark thread as read"
+            (interactive (notmuch-search-interactive-region))
+            (notmuch-search-tag (list "-unread") beg end)))
         (setq-default
-                      sendmail-program "msmtp"
-                      send-mail-function 'sendmail-send-it
-                      message-kill-buffer-on-exit t
-                      message-send-mail-function 'message-send-mail-with-sendmail
-                      mm-text-html-renderer 'gnus-w3m
-                      notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
-                      notmuch-show-logo nil
-                      notmuch-draft-folder "gmail.com/Utkast"
-                      notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
-                                               (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "o")
-                                               (:name "oläst" :query "tag:unread" :sort-order newest-first :key "O")
-                                               (:name "reklam" :query "tag:reklam and tag:unread" :key "r")
-                                               (:name "stjärnmärkt" :query "tag:flagged" :key "f")
-                                               (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
-                                               (:name "utkast" :query "tag:draft" :key "u")
-                                               (:name "allt" :query "*" :key "a")))
+         sendmail-program "msmtp"
+         send-mail-function 'sendmail-send-it
+         message-kill-buffer-on-exit t
+         message-send-mail-function 'message-send-mail-with-sendmail
+         mm-text-html-renderer 'gnus-w3m
+         notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
+         notmuch-show-logo nil
+         notmuch-draft-folder "gmail.com/Utkast"
+         notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
+                                  (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "o")
+                                  (:name "oläst" :query "tag:unread" :sort-order newest-first :key "O")
+                                  (:name "reklam" :query "tag:reklam and tag:unread" :key "r")
+                                  (:name "stjärnmärkt" :query "tag:flagged" :key "f")
+                                  (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
+                                  (:name "utkast" :query "tag:draft" :key "u")
+                                  (:name "allt" :query "*" :key "a")))
         :ensure nil)
     #+END_SRC
 
@@ -849,6 +854,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (interactive "P")
              (let ((fn-list (dired-get-marked-files nil arg)))
                (mapc 'find-file fn-list))))
+    #+END_SRC
+*** Eshell
+    #+BEGIN_SRC emacs-lisp
+      (use-package eshell
+        :config
+        (setq-default eshell-prompt-function
+                      (lambda ()
+                        (concat (propertize "⎣" 'face '(:foreground "#ddd"))
+                                (propertize (user-login-name) 'face '(:foreground "#3387cc"))
+                                (propertize "@" 'face '(:foreground "#ddd"))
+                                (propertize (system-name) 'face '(:foreground "#ddd"))
+                                " " 
+                                (propertize (if (string-prefix-p (getenv "HOME") (eshell/pwd))
+                                                (replace-regexp-in-string (getenv "HOME") "~" (eshell/pwd)) 
+                                                (eshell/pwd)) 'face '(:foreground "#666"))
+                                (propertize "⎦ " 'face '(:foreground "ddd"))
+                                )))
+        (setq-default eshell-prompt-regexp "^⎣.*⎦ "))
     #+END_SRC
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
