@@ -749,6 +749,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          message-kill-buffer-on-exit t
          message-send-mail-function 'message-send-mail-with-sendmail
          mm-text-html-renderer 'gnus-w3m
+         notmuch-search-oldest-first nil
          notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
          notmuch-show-logo nil
          notmuch-draft-folder "gmail.com/Utkast"
@@ -887,6 +888,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       ("make"  (or (mode . makefile-gmake-mode)
                                    (mode . makefile-mode)))
                       ("cmake" (mode . cmake-mode ))
+                      ("scripts" (mode . sh-mode))
                       ("ag" (mode . ag-mode ))
                       ("docs" (or (mode . rst-mode)
                                   (mode . Man-mode)))
