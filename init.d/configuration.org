@@ -749,6 +749,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          message-kill-buffer-on-exit t
          message-send-mail-function 'message-send-mail-with-sendmail
          mm-text-html-renderer 'gnus-w3m
+         notmuch-search-oldest-first nil
          notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
          notmuch-show-logo nil
          notmuch-draft-folder "gmail.com/Utkast"
@@ -896,13 +897,43 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       ("make"  (or (mode . makefile-gmake-mode)
                                    (mode . makefile-mode)))
                       ("cmake" (mode . cmake-mode ))
+                      ("scripts" (mode . sh-mode))
                       ("ag" (mode . ag-mode ))
-                      ("docs" (mode . rst-mode))
+                      ("docs" (or (mode . rst-mode)
+                                  (mode . Man-mode)))
                       ("org" (mode . org-mode))
                       ("dired" (mode . dired-mode))
                       ("python" (mode . python-mode))
-                      ("vc" (mode . vc-dir-mode))
-                      ("magit" (name . "^\\*magit"))
+                      ("vc" (or (mode . vc-dir-mode)
+                                (mode . magit--turn-on-shift-select-mode)
+                                (mode . magit-auto-revert-mode)
+                                (mode . magit-blame-disable-mode)
+                                (mode . magit-blame-disabled-mode)
+                                (mode . magit-blame-mode)
+                                (mode . magit-blame-put-keymap-before-view-mode)
+                                (mode . magit-blob-mode)
+                                (mode . magit-cherry-mode)
+                                (mode . magit-diff-mode)
+                                (mode . magit-file-mode)
+                                (mode . magit-log-mode)
+                                (mode . magit-log-select-mode)
+                                (mode . magit-merge-preview-mode)
+                                (mode . magit-popup-mode)
+                                (mode . magit-process-mode)
+                                (mode . magit-process-unset-mode)
+                                (mode . magit-reflog-mode)
+                                (mode . magit-refs-mode)
+                                (mode . magit-repolist-mode)
+                                (mode . magit-revision-mode)
+                                (mode . magit-stash-mode)
+                                (mode . magit-stashes-mode)
+                                (mode . magit-status-mode)
+                                (mode . magit-submodule-list-mode)
+                                (mode . magit-turn-on-auto-revert-mode)
+                                (mode . magit-wip-after-apply-mode)
+                                (mode . magit-wip-after-save-local-mode)
+                                (mode . magit-wip-after-save-mode)
+                                (mode . magit-wip-before-change-mode)))
                       ("shell" (mode . shell-mode))
                       ("emacs" (name . "^\\*[[:alnum:]]+\\*$"))
                       ))))
@@ -2295,6 +2326,52 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      stty -echo
    #+END_SRC
+*** Shell script
+**** Argument parsing
+     A good way of parsing the arguments for a shell script is using
+     getopt (enhanced). There's also built in shell command in bash
+     called getopts. But that one doesn't handle long options.
+
+     To use getopt in a script simply do:
+
+     #+BEGIN_SRC sh
+        # Use getopt to parse the command-line arguments
+        _args=$(getopt --options h --longoptions workspace:,update::,help -- "$@")
+        if [[ $? != 0 ]]
+        then
+            echo "Try '$0 --help for more information.'" >&2
+            exit $_error_input
+        fi
+
+        eval set -- "$_args"
+
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                --workspace)
+                    _workspace=$2
+                    shift 2
+                    ;;
+                --update)
+                    _update_func=update
+                    # Filters separated by comma
+                    for arg in ${2//,/ }
+                    do
+                        _filter[$arg]=0
+                    done
+                    shift 2
+                    ;;
+                -h|--help)
+                    echo -e "${help}"
+                    exit
+                    ;;
+                --)
+                    # End of command-line arguments
+                    shift
+                    break
+                    ;;
+            esac
+        done
+     #+END_SRC
 ** CMake
    Don't remove the rpath when installing.
    #+BEGIN_SRC sh :tangle no
