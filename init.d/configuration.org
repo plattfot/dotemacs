@@ -773,6 +773,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil))
         :pin melpa-stable)
     #+END_SRC
+*** pdftools (disabled)
+    Problem compiling 0.80 with arch
+    #+BEGIN_SRC emacs-lisp
+      (use-package pdf-tools
+        :disabled t
+        :mode ("\\.pdf\\'" . pdf-view-mode)
+        :if (not dotemacs-is-work)
+        :pin melpa-stable)
+    #+END_SRC
 ** Web
   Packages for webbased content.
 *** nginx
