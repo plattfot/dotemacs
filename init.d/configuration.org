@@ -41,6 +41,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      (unless (package-installed-p 'use-package)
        (package-install 'use-package))
+     (unless (package-installed-p 'diminish)
+       (package-install 'diminish))
    #+END_SRC
 
    Let use-package handle all the packages I use
