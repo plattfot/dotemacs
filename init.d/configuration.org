@@ -760,6 +760,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                   (:name "stjärnmärkt" :query "tag:flagged" :key "f")
                                   (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
                                   (:name "utkast" :query "tag:draft" :key "u")
+                                  (:name "order" :query "tag:order" :key "b")
                                   (:name "allt" :query "*" :key "a")))
         :ensure nil)
     #+END_SRC
