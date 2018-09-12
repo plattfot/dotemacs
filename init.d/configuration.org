@@ -41,6 +41,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      (unless (package-installed-p 'use-package)
        (package-install 'use-package))
+     (unless (package-installed-p 'diminish)
+       (package-install 'diminish))
    #+END_SRC
 
    Let use-package handle all the packages I use
@@ -760,6 +762,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                   (:name "stjärnmärkt" :query "tag:flagged" :key "f")
                                   (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
                                   (:name "utkast" :query "tag:draft" :key "u")
+                                  (:name "order" :query "tag:order" :key "b")
                                   (:name "allt" :query "*" :key "a")))
         :ensure nil)
     #+END_SRC
@@ -772,6 +775,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq
          org-mime-library 'mml
          org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil))
+        :pin melpa-stable)
+    #+END_SRC
+*** pdftools (disabled)
+    Problem compiling 0.80 with arch
+    #+BEGIN_SRC emacs-lisp
+      (use-package pdf-tools
+        :disabled t
+        :mode ("\\.pdf\\'" . pdf-view-mode)
+        :if (not dotemacs-is-work)
         :pin melpa-stable)
     #+END_SRC
 ** Web
