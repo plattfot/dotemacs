@@ -422,33 +422,32 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 ** Languages
   Modes for highlighting different programing languages.
-*** Functional
-**** Haskell
-     Settings for programming haskell in emacs
-     #+BEGIN_SRC emacs-lisp
-       (use-package haskell-mode
-       	 :config
-       	 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-       	 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-       	 (autoload 'ghc-init "ghc" nil t)
-       	 :pin melpa-stable)
-     #+END_SRC
-**** Lisp
-     Color haxvalues with their respective color.
-     #+BEGIN_SRC emacs-lisp
-       (use-package lisp-mode
-	 :ensure nil ; Built in
-	 :config
-	 (defvar hexcolour-keywords
-	   '(("#[[:xdigit:]]\\{6\\}"
-	      (0 (put-text-property (match-beginning 0)
-				    (match-end 0)
-				    'face (list :background 
-					       	(match-string-no-properties 0)))))))
-	 (defun hexcolour-add-to-font-lock ()
-	   (font-lock-add-keywords nil hexcolour-keywords))
-	 (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
-     #+END_SRC
+*** Haskell
+    Settings for programming haskell in emacs
+    #+BEGIN_SRC emacs-lisp
+      (use-package haskell-mode
+        :config
+        (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+        (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+        (autoload 'ghc-init "ghc" nil t)
+        :pin melpa-stable)
+    #+END_SRC
+*** Lisp
+    Color haxvalues with their respective color.
+    #+BEGIN_SRC emacs-lisp
+      (use-package lisp-mode
+        :ensure nil ; Built in
+        :config
+        (defvar hexcolour-keywords
+          '(("#[[:xdigit:]]\\{6\\}"
+             (0 (put-text-property (match-beginning 0)
+                                   (match-end 0)
+                                   'face (list :background 
+                                               (match-string-no-properties 0)))))))
+        (defun hexcolour-add-to-font-lock ()
+          (font-lock-add-keywords nil hexcolour-keywords))
+        (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
+    #+END_SRC
 *** C family
     Specific for C, C++ and other in the c family
     - Set indentation to be two spaces.
@@ -661,6 +660,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package systemd
         :init
         :pin melpa-stable)
+    #+END_SRC
+*** GDB script
+    #+BEGIN_SRC emacs-lisp
+      (use-package gud
+        :mode (("\\.gdbinit$" . gdb-script-mode))
+        :ensure nil)
     #+END_SRC
 ** Programs
   Packages that communicates with external processes.
@@ -941,6 +946,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             (mode . magit-wip-after-save-mode)
                             (mode . magit-wip-before-change-mode)))
                   ("shell" (mode . shell-mode))
+                  ("gdb" (mode . gdb-script-mode))
                   ("emacs" (name . "^\\*[[:alnum:]]+\\*$"))
                   )))
        (add-hook 'ibuffer-mode-hook
