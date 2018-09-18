@@ -68,6 +68,7 @@ found.  For relative it will return nil."
       (setq found-path-p (member "WORKSPACE" (directory-files path)))
       (setq path (file-name-directory (directory-file-name path)))))
   path)
+
 ;; ------------------------------ Namespace ------------------------------------
 (defun dd-insert-namespace (&optional modify_namespaces )
   "Insert namespace based on the location on the file.
@@ -95,14 +96,6 @@ Math::Geometry3D::Test."
          (workspace_root (dd-find-workspace path))
 	 (path (directory-file-name (string-remove-prefix workspace_root path)))
 	 (path_list (split-string path "/")))
-    ;; Remove all entrys that starts with a lowercase and or .
-    (setq path_list
-	  (let ((case-fold-search nil)
-		(check))
-	    (cl-remove-if (lambda (x)
-                            (when (setq check (string-match-p "[.a-z]+" x))
-                              (= check 0)))
-                          path_list)))
 
     ;; Remove entries in the blacklist if they exist
     (let ((blacklist '("CoreLibs" "Utility" "Common")))
@@ -111,6 +104,13 @@ Math::Geometry3D::Test."
     ;; Captitalize houdini if it exist
     (let ((houdini (member "houdini" path_list)))
       (when houdini (setcar houdini (capitalize (car houdini)))))
+
+    ;; Remove all entrys that starts with a lowercase and or .
+    (setq path_list
+	  (let ((case-fold-search nil))
+	    (cl-remove-if (lambda (x)
+                            (string-match-p "^[.a-z]+" x))
+                          path_list)))
 
     ;; Add DD as the first namespace
     (if (not (string-equal "DD" (car path_list)))
@@ -121,35 +121,29 @@ Math::Geometry3D::Test."
       (let ((modify_namespaces_list (if (stringp modify_namespaces)
                                         (split-string modify_namespaces)
                                       modify_namespaces))
-            (extra_namespaces)
-            (replace_list)
-            (remove_list))
-        ;; Sort the modify_namespace into the different categories
-        (let ((value))
-          (dolist (value (nreverse modify_namespaces_list))
-            (cond
-             ((string-match "\\(.*?\\)=\\(.*\\)" value)
-              (push (cons (match-string 1 value) (match-string 2 value)) replace_list))
-             ((string-match "^!\\(.*\\)" value)
-              (push (match-string 1 value) remove_list))
-             (t (push value extra_namespaces)))))
+            (value))
+        ;; Modify the path_list
+        (dolist (value modify_namespaces_list)
+          (cond
+           ;; Modify namespaces
+           ((string-match "\\(.*?\\)=\\(.*\\)" value)
+            (let ((regex (match-string 1 value))
+                  (replace (match-string 2 value)))
+              (setq path_list
+                    (mapcar (lambda (x)
+                              (replace-regexp-in-string regex replace x))
+                            path_list))))
+           ;; Remove namespaces
+           ((string-match "^!\\(.*\\)" value)
+            (let ((remove (match-string 1 value)))
+              (setq path_list
+                    (cl-remove-if (lambda (x) (string-equal x remove)) path_list))))
+           ;; Prepend namespace
+           ((string-match "^\\^\\(.*\\)" value)
+            (push (match-string 1 value) path_list))
+           ;; Append namespace
+           (t (setq path_list (nconc path_list (list value))))))))
 
-        ;; Add extra namespaces
-        (setq path_list (nconc path_list extra_namespaces))
-
-        ;; Remove namespaces
-        (let ((remove))
-          (dolist (remove remove_list)
-            (setq path_list
-                  (cl-remove-if (lambda (x) (string-equal x remove)) path_list))))
-
-        ;; Modify namespaces
-        (let ((replace))
-          (dolist (replace replace_list)
-            (setq path_list
-                  (mapcar (lambda (x)
-                            (replace-regexp-in-string (car replace) (cdr replace) x))
-                          path_list))))))
     (let ((is_header
            (string-equal "h" (substring (file-name-extension (buffer-name)) 0 1))))
       (when is_header
