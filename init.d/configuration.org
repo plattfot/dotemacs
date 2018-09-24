@@ -1312,7 +1312,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Functions for highlighting my shells when building etc
     #+BEGIN_SRC emacs-lisp
       (use-package highlight-extra
-        :if dotemacs-is-work
         :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
