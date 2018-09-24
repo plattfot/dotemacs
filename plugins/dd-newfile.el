@@ -24,12 +24,14 @@
 (mapconcat 'downcase (dd-split-name s) "_"))
 
 ;; ---------------------------- Boilerplate ------------------------------------
-(defun dd-insert-boilerplate()
-  "Insert DD's boilerplate. Reads from file to avoid copyright issues."
+(defun dd-insert-boilerplate (&optional boilerplate)
+  "Insert DD's BOILERPLATE.  Read from file to avoid copyright issues."
   (interactive)
   (let ((current_pos (point) )
 	end )
-    (insert-file-contents "/dd/dept/software/users/fredriks/boilerplate.txt")
+    (insert-file-contents (if boilerplate
+                              boilerplate
+                            "~/.emacs.d/boilerplates/dd.txt"))
     (setq end (point-max))
     ;; Insert current year
     (while (re-search-forward "::date::" end t )
@@ -51,10 +53,10 @@
 		    "*/" )
 	      "\n")))
 ;; ------------------------------ Header ---------------------------------------
-(defun dd-insert-header()
-  "Insert boilerplate and description"
+(defun dd-insert-header (&optional boilerplate)
+  "Insert BOILERPLATE and description."
   (interactive)
-  (dd-insert-boilerplate)
+  (dd-insert-boilerplate boilerplate)
   (goto-char (point-max))
   (insert "\n\n")
   (dd-insert-description))
@@ -185,13 +187,16 @@ tree has a directory called DD."
          (workspace_root (dd-find-workspace default-directory)))
     (dd-insert-namespace-raw modify_namespaces workspace_root)))
 
-(defun dd-setup-newfile (args)
-"Add boilerplate, description and namespaces.
+(defun dd-setup-newfile (args &optional boilerplate)
+"Add BOILERPLATE, description and namespaces.
 ARGS are passed on to insert-namespace.  Extra namespaces in ARGS
 are separated by whitespace.  If any entry contains 'REGEX=REP'
-it will replace all namespaces matching REGEX with REP."
+it will replace all namespaces matching REGEX with REP.
+
+If BOILERPLATE is empty it will look for the boilerplate in
+'~/.emacs.d/boilerplates/dd.txt'."
 (interactive "sAdd extra namespace: ")
-(dd-insert-header)
+(dd-insert-header boilerplate)
 (insert "\n\n")
 (dd-insert-namespace args)
 )
