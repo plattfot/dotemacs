@@ -24,14 +24,12 @@
 (mapconcat 'downcase (dd-split-name s) "_"))
 
 ;; ---------------------------- Boilerplate ------------------------------------
-(defun dd-insert-boilerplate (&optional boilerplate)
+(defun dd-insert-boilerplate (boilerplate)
   "Insert DD's BOILERPLATE.  Read from file to avoid copyright issues."
   (interactive)
   (let ((current_pos (point) )
 	end )
-    (insert-file-contents (if boilerplate
-                              boilerplate
-                            "~/.emacs.d/boilerplates/dd.txt"))
+    (insert-file-contents boilerplate)
     (setq end (point-max))
     ;; Insert current year
     (while (re-search-forward "::date::" end t )
@@ -45,20 +43,25 @@
   (insert
    (mapconcat 'identity
 	      (list "/**"
-		    ( concat "* \\file   " (buffer-name))
-		    "*"
-		    "* \\author Fredrik Salomonsson (fredriks@d2.com)"
-		    "*"
-		    ( concat "* \\date   " (format-time-string "%B %Y") )
-		    "*/" )
+		    ( concat " // \\file   " (buffer-name))
+		    " *"
+		    " * \\author Fredrik Salomonsson (fredriks@d2.com)"
+		    " *"
+		    ( concat " * \\date   " (format-time-string "%B %Y") )
+		    " */" )
 	      "\n")))
 ;; ------------------------------ Header ---------------------------------------
 (defun dd-insert-header (&optional boilerplate)
-  "Insert BOILERPLATE and description."
+  "Insert header to the buffer.
+
+If BOILERPLATE is not nil the header will consist of the
+boilerplate and the description.  Else it will just contain the
+description."
   (interactive)
-  (dd-insert-boilerplate boilerplate)
-  (goto-char (point-max))
-  (insert "\n\n")
+  (when boilerplate
+    (dd-insert-boilerplate boilerplate)
+    (goto-char (point-max))
+    (insert "\n\n"))
   (dd-insert-description))
 
 (defun dd-find-workspace (path)
@@ -93,7 +96,9 @@ found.  For relative it will return nil."
 
 The MODIFY_NAMESPACES can be used to change, remove or add
 namespaces.  If MODIFY_NAMESPACE is a string entries are
-separated by whitespace.  All regex are case sensitive.
+separated by whitespace.  All regexs are case sensitive and the
+options are order dependent.
+
 Options supported are:
 
 - !REGEX remove matching namespaces from the result.
@@ -105,7 +110,9 @@ WORKSPACE_ROOT is the path to the root of the project.  This path
 will be removed from PATH if the PATH is absolute.
 
 PATH to the where the buffer is located, default is to use the
-\"default-directory\"."
+\"default-directory\".
+
+Return the namespaces it inserted into the buffer."
 
   (interactive "sAdd/Remove/Modify namespaces: ")
   (let* ((path (if (not path) default-directory path))
@@ -154,15 +161,13 @@ PATH to the where the buffer is located, default is to use the
            ;; Append namespace
            (t (setq path_list (nconc path_list (list value))))))))
 
-    (let ((is_header (string-match-p "^h" (file-name-extension (buffer-name)))))
-      (when is_header
-        (dd-insert-include-guard path_list (buffer-name))
-        (insert "\n"))
-      (dolist (x path_list) (insert "namespace " x " {\n} // namespace " x "\n")
-              (search-backward "{")
-              (forward-char 2))
-      (insert "\n")
-      (forward-line -1)))) ;; insert-namespace
+    (dolist (x path_list)
+      (insert "namespace " x " {\n} // namespace " x "\n")
+      (search-backward "{")
+      (forward-char 2))
+    (insert "\n")
+    (forward-line -1)
+    path_list)) ;; insert-namespace
 
 (defun dd-insert-namespace (&optional modify_namespaces)
   "Insert namespace based on the location of the file.
@@ -175,7 +180,9 @@ Limitations: The DD namespace can only be at the beginning (and
 or end if you append it yourself).  As it will first remove all
 DD namespaces from the list then prepend DD.  As that is the only
 way right now to avoid duplicates at the beginning if the source
-tree has a directory called DD."
+tree has a directory called DD.
+
+Retun the namespaces it inserted into the buffer."
   (interactive "sAdd/Remove/Modify namespaces: ")
 
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
@@ -189,17 +196,27 @@ tree has a directory called DD."
     (dd-insert-namespace-raw modify_namespaces workspace_root)))
 
 (defun dd-setup-newfile (args &optional boilerplate)
-"Add boilerplate, description and namespaces.
+  "Add boilerplate, description, namespaces and include guard.
 ARGS are passed on to insert-namespace.  Extra namespaces in ARGS
 are separated by whitespace.  If any entry contains 'REGEX=REP'
 it will replace all namespaces matching REGEX with REP.
 
 If BOILERPLATE is empty it will look for the boilerplate in
 '~/.emacs.d/boilerplates/dd.txt'."
-(interactive "sAdd extra namespace: ")
-(dd-insert-header boilerplate)
-(insert "\n\n")
-(dd-insert-namespace args))
+  (interactive "sAdd extra namespace: ")
+  (dd-insert-header (if boilerplate
+                        boilerplate
+                      "~/.emacs.d/boilerplates/dd.txt"))
+  (insert "\n\n")
+  (let ((include_guard_position (point))
+        (namespaces (dd-insert-namespace args))
+        (is_header (string-match-p "^h" (file-name-extension (buffer-name))))
+        )
+    (when is_header
+      (goto-char include_guard_position)
+      (dd-insert-include-guard namespaces (buffer-name))
+      (insert "\n")
+      (forward-line (length namespaces)))))
 
 (defun dd-include-guard-from-namespaces ()
   "Insert #ifdef include guard at point.
