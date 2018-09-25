@@ -3,188 +3,32 @@
 ;;; Commentary:
 
 ;;; Code:
-(require 'cl-lib)
-(require 'subr-x)
+(require 'newfile)
 
-;; Function from http://www.emacswiki.org/emacs/CamelCase
-;; Modified to be able to call it from emacs
-(defun dd-split-name (s)
-"Split string S."
-  (split-string
-   (let ((case-fold-search nil))
-     (downcase
-      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
-   "[^A-Za-z0-9]+"))
+(defcustom dd-author-name
+  user-full-name
+  "Author's full name to use when creating the header.")
 
-(defun dd-camelcase (s)
-"Transfrom string S to camelcase."
-(mapconcat 'capitalize (dd-split-name s) ""))
-(defun dd-underscore (s)
-"Transfrom string S to underscore."
-(mapconcat 'downcase (dd-split-name s) "_"))
+(defcustom dd-author-mail
+  user-mail-address
+  "Author's mail address to use when creating the header.")
 
-;; ---------------------------- Boilerplate ------------------------------------
-(defun dd-insert-boilerplate (boilerplate)
-  "Insert DD's BOILERPLATE.  Read from file to avoid copyright issues."
-  (interactive)
-  (let ((current_pos (point) )
-	end )
-    (insert-file-contents boilerplate)
-    (setq end (point-max))
-    ;; Insert current year
-    (while (re-search-forward "::date::" end t )
-      (replace-match (format-time-string "%Y" (current-time))))
-    (goto-char current_pos)))
-;; ---------------------------- Description ------------------------------------
+(defcustom dd-boilerplate
+  "~/.emacs.d/boilerplates/dd.txt"
+  "File to use or the DD's boilerplate.")
 
-(defun dd-insert-description ()
-  "Insert time when it was created, the author and name of the file."
-  (interactive)
-  (insert
-   (mapconcat 'identity
-	      (list "/**"
-		    ( concat " // \\file   " (buffer-name))
-		    " *"
-		    " * \\author Fredrik Salomonsson (fredriks@d2.com)"
-		    " *"
-		    ( concat " * \\date   " (format-time-string "%B %Y") )
-		    " */" )
-	      "\n")))
-;; ------------------------------ Header ---------------------------------------
-(defun dd-insert-header (&optional boilerplate)
-  "Insert header to the buffer.
+(defun dd-setup-newfile (modify_namespaces)
+  "Add boilerplate, description, namespaces and include guard.
+MODIFY_NAMESPACES are passed on to insert-namespace.  Extra
+namespaces in MODIFY_NAMESPACES are separated by whitespace.  See
+'nf-insert-namespaces' for the syntax on MODIFY_NAMESPACES.
 
-If BOILERPLATE is not nil the header will consist of the
-boilerplate and the description.  Else it will just contain the
-description."
-  (interactive)
-  (when boilerplate
-    (dd-insert-boilerplate boilerplate)
-    (goto-char (point-max))
-    (insert "\n\n"))
-  (dd-insert-description))
-
-(defun dd-find-workspace (path)
-  "Find the path to the last WORKSPACE file, in the PATH.
-For absolute paths it will return the root of the path if not
-found.  For relative it will return nil."
-
-  (let ((found-path-p nil))
-    (while (and (not (string-equal path "/")) (not found-path-p))
-      (setq found-path-p (directory-files path nil "WORKSPACE"))
-      (setq path (file-name-directory (directory-file-name path)))))
-  path)
-
-(defun dd-insert-include-guard (namespaces filename)
-  "Insert a #ifdef-include guard based on NAMESPACES and FILENAME."
-  (let ((include_guard (mapconcat 'upcase namespaces "_"))
-        (return_pos))
-    ;; Create include gaurd name
-    (setq include_guard
-          (concat include_guard "_" (upcase (dd-underscore (dd-camelcase filename)))))
-    ;; Insert all into buffer
-    (insert "#ifndef " include_guard "\n" "#define " include_guard "\n")
-    (setq return_pos (point))
-    (goto-char (point-max))
-    ;; Jump to the end and close the ifdef
-    (insert (concat "\n#endif // " include_guard "\n"))
-    (goto-char return_pos)))
-
-;; ------------------------------ Namespace ------------------------------------
-(defun dd-insert-namespace-raw (&optional modify_namespaces workspace_root path)
-  "Insert namespace based on the location of the buffer.
-
-The MODIFY_NAMESPACES can be used to change, remove or add
-namespaces.  If MODIFY_NAMESPACE is a string entries are
-separated by whitespace.  All regexs are case sensitive and the
-options are order dependent.
-
-Options supported are:
-
-- !REGEX remove matching namespaces from the result.
-- REGEX=REP will replace matching namespaces with REP.
-- NAMESPACE append to the namespaces.
-- ^NAMESPACE prepend to the namespaces
-
-WORKSPACE_ROOT is the path to the root of the project.  This path
-will be removed from PATH if the PATH is absolute.
-
-PATH to the where the buffer is located, default is to use the
-\"default-directory\".
-
-Return the namespaces it inserted into the buffer."
+It will use the 'dd-boilerplate' as the boilerplate.
+It will use the 'dd-author-name' as the author name for the header.
+It will use the 'dd-author-mail' as the author's mail address for the header."
 
   (interactive "sAdd/Remove/Modify namespaces: ")
-  (let* ((path (if (not path) default-directory path))
-         (path (if (and workspace_root (file-name-absolute-p path))
-                   (progn
-                     (if (not (file-name-absolute-p workspace_root))
-                         (error "Workspace root '%s' is not an absolute path"
-                                workspace_root))
-                     (if (string-prefix-p workspace_root path)
-                         (setq path (string-remove-prefix workspace_root path))
-                       (error "Path '%s' is not in workspace root '%s'"
-                              path workspace_root)))
-                 path))
-         (path_list (split-string (directory-file-name path) "/")))
-
-    ;; If path is still absolute path_list will have an empty entry at
-    ;; the beginning.
-    (when (file-name-absolute-p path)
-      (setq path_list (cdr path_list)))
-
-    ;; Customize namespaces
-    (when modify_namespaces
-      (let ((modify_namespaces_list (if (stringp modify_namespaces)
-                                        (split-string modify_namespaces)
-                                      modify_namespaces))
-            (value)
-            (case-fold-search nil))
-        (dolist (value modify_namespaces_list)
-          (cond
-           ;; Modify namespaces
-           ((string-match "\\(.*?\\)=\\(.*\\)" value)
-            (let ((regex (match-string 1 value))
-                  (replace (match-string 2 value)))
-              (setq path_list
-                    (mapcar (lambda (x)
-                              (replace-regexp-in-string regex replace x))
-                            path_list))))
-           ;; Remove namespaces
-           ((string-match "^!\\(.*\\)" value)
-            (let ((remove (match-string 1 value)))
-              (setq path_list
-                    (cl-remove-if (lambda (x) (string-match-p remove x)) path_list))))
-           ;; Prepend namespace
-           ((string-match "^\\^\\(.*\\)" value)
-            (push (match-string 1 value) path_list))
-           ;; Append namespace
-           (t (setq path_list (nconc path_list (list value))))))))
-
-    (dolist (x path_list)
-      (insert "namespace " x " {\n} // namespace " x "\n")
-      (search-backward "{")
-      (forward-char 2))
-    (insert "\n")
-    (forward-line -1)
-    path_list)) ;; insert-namespace
-
-(defun dd-insert-namespace (&optional modify_namespaces)
-  "Insert namespace based on the location of the file.
-
-Prefixed with namespace DD and remove all directories starting
-with lowercase or a dot (.).  MODIFY_NAMESPACES can be use to
-tweak the namespaces, see dd-insert-namespace-raw for the syntax.
-
-Limitations: The DD namespace can only be at the beginning (and
-or end if you append it yourself).  As it will first remove all
-DD namespaces from the list then prepend DD.  As that is the only
-way right now to avoid duplicates at the beginning if the source
-tree has a directory called DD.
-
-Retun the namespaces it inserted into the buffer."
-  (interactive "sAdd/Remove/Modify namespaces: ")
-
+  
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
          (prefix_dd '("!^DD$" "^DD"))
          (replace '("^houdini$=HOUDINI"))
@@ -193,43 +37,25 @@ Retun the namespaces it inserted into the buffer."
                             (split-string modify_namespaces))))
          (modify_namespaces (append prefix_dd replace blacklist user_args))
          (workspace_root (dd-find-workspace default-directory)))
-    (dd-insert-namespace-raw modify_namespaces workspace_root)))
+    (nf-setup-newfile modify_namespaces
+                      dd-author-name
+                      dd-author-mail
+                      dd-boilerplate
+                      workspace_root)))
+  
+(defun dd-find-workspace (path)
+  "Find the path to the last WORKSPACE file, in the PATH.
+For absolute paths it will return the root of the path if not
+found.  For relative it will return nil."
 
-(defun dd-setup-newfile (args &optional boilerplate)
-  "Add boilerplate, description, namespaces and include guard.
-ARGS are passed on to insert-namespace.  Extra namespaces in ARGS
-are separated by whitespace.  If any entry contains 'REGEX=REP'
-it will replace all namespaces matching REGEX with REP.
-
-If BOILERPLATE is empty it will look for the boilerplate in
-'~/.emacs.d/boilerplates/dd.txt'."
-  (interactive "sAdd extra namespace: ")
-  (dd-insert-header (if boilerplate
-                        boilerplate
-                      "~/.emacs.d/boilerplates/dd.txt"))
-  (insert "\n\n")
-  (let ((include_guard_position (point))
-        (namespaces (dd-insert-namespace args))
-        (is_header (string-match-p "^h" (file-name-extension (buffer-name))))
-        )
-    (when is_header
-      (goto-char include_guard_position)
-      (dd-insert-include-guard namespaces (buffer-name))
-      (insert "\n")
-      (forward-line (length namespaces)))))
-
-(defun dd-include-guard-from-namespaces ()
-  "Insert #ifdef include guard at point.
-Based on the main namespaces in the file."
-  (interactive)
-  (let ((namespaces '())
-        (position (point)))
-    (goto-char (point-min))
-    (while (re-search-forward "^namespace[ ]+\\([[:alpha:]]+\\)[ ]+{" nil t)
-      (setq namespaces (cons (match-string-no-properties 1) namespaces)))
-    (goto-char position)
-    (dd-insert-include-guard (reverse namespaces) (buffer-name)))
-)
+  (let ((found-path-p nil)
+        (abs_path (expand-file-name path)))
+    (while (and (not (string-equal abs_path "/")) (not found-path-p))
+      (setq found-path-p (directory-files abs_path nil "WORKSPACE"))
+      (setq abs_path (file-name-directory (directory-file-name abs_path))))
+    (when (not found-path-p)
+      (error "Workspace not found!"))
+    abs_path))
 
 (provide 'dd-newfile)
 ;;; dd-newfile.el ends here
