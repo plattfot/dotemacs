@@ -1280,7 +1280,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** dd-newfile
     Function that inserts the DD template for a new file
     #+BEGIN_SRC emacs-lisp
+      (use-package newfile
+        :ensure nil
+        :load-path "~/.emacs.d/plugins")
+
       (use-package dd-newfile
+        :after newfile
         :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
