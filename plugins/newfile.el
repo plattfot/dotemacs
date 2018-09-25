@@ -131,6 +131,8 @@ Return the namespaces it inserted into the buffer."
                  path))
          (path_list (split-string (directory-file-name path) "/")))
 
+    (setq path_list (cl-remove-if (lambda (x) (string-equal x "")) path_list))
+
     ;; If path is still absolute path_list will have an empty entry at
     ;; the beginning.
     (when (file-name-absolute-p path)
