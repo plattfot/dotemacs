@@ -72,6 +72,21 @@ found.  For relative it will return nil."
       (setq path (file-name-directory (directory-file-name path)))))
   path)
 
+(defun dd-insert-include-guard (namespaces filename)
+  "Insert a #ifdef-include guard based on NAMESPACES and FILENAME."
+  (let ((include_guard (mapconcat 'upcase namespaces "_"))
+        (return_pos))
+    ;; Create include gaurd name
+    (setq include_guard
+          (concat include_guard "_" (upcase (dd-underscore (dd-camelcase filename)))))
+    ;; Insert all into buffer
+    (insert "#ifndef " include_guard "\n" "#define " include_guard "\n")
+    (setq return_pos (point))
+    (goto-char (point-max))
+    ;; Jump to the end and close the ifdef
+    (insert (concat "\n#endif // " include_guard "\n"))
+    (goto-char return_pos)))
+
 ;; ------------------------------ Namespace ------------------------------------
 (defun dd-insert-namespace-raw (&optional modify_namespaces workspace_root path)
   "Insert namespace based on the location of the buffer.
@@ -141,27 +156,13 @@ PATH to the where the buffer is located, default is to use the
 
     (let ((is_header (string-match-p "^h" (file-name-extension (buffer-name)))))
       (when is_header
-	(let ((include_guard (mapconcat 'upcase path_list "_")))
-	  ;; Create include gaurd name
-	  (setq include_guard (concat include_guard
-				      "_"
-				      (upcase
-				       (dd-underscore
-					(dd-camelcase (buffer-name))))))
-	  ;; Insert all into buffer
-	  (insert "#ifndef " include_guard "\n" "#define " include_guard "\n\n")))
-
+        (dd-insert-include-guard path_list (buffer-name))
+        (insert "\n"))
       (dolist (x path_list) (insert "namespace " x " {\n} // namespace " x "\n")
               (search-backward "{")
               (forward-char 2))
-      (if is_header
-          (progn
-            (insert "\n")
-            (forward-line (length path_list))
-            (insert "#endif\n")
-            (forward-line (- (+ (length path_list) 2))))
-        (progn (insert "\n") (forward-line -1) )
-        )))) ;; insert-namespace
+      (insert "\n")
+      (forward-line -1)))) ;; insert-namespace
 
 (defun dd-insert-namespace (&optional modify_namespaces)
   "Insert namespace based on the location of the file.
@@ -188,7 +189,7 @@ tree has a directory called DD."
     (dd-insert-namespace-raw modify_namespaces workspace_root)))
 
 (defun dd-setup-newfile (args &optional boilerplate)
-"Add BOILERPLATE, description and namespaces.
+"Add boilerplate, description and namespaces.
 ARGS are passed on to insert-namespace.  Extra namespaces in ARGS
 are separated by whitespace.  If any entry contains 'REGEX=REP'
 it will replace all namespaces matching REGEX with REP.
@@ -198,7 +199,19 @@ If BOILERPLATE is empty it will look for the boilerplate in
 (interactive "sAdd extra namespace: ")
 (dd-insert-header boilerplate)
 (insert "\n\n")
-(dd-insert-namespace args)
+(dd-insert-namespace args))
+
+(defun dd-include-guard-from-namespaces ()
+  "Insert #ifdef include guard at point.
+Based on the main namespaces in the file."
+  (interactive)
+  (let ((namespaces '())
+        (position (point)))
+    (goto-char (point-min))
+    (while (re-search-forward "^namespace[ ]+\\([[:alpha:]]+\\)[ ]+{" nil t)
+      (setq namespaces (cons (match-string-no-properties 1) namespaces)))
+    (goto-char position)
+    (dd-insert-include-guard (reverse namespaces) (buffer-name)))
 )
 
 (provide 'dd-newfile)
