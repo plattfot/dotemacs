@@ -679,8 +679,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
-       (setq ledger-clear-whole-transactions 1)
-       (setq ledger-schedule-file "~/projects/bokforing/schedule.ledger")
+       (setq ledger-clear-whole-transactions 1
+             ledger-schedule-file "~/projects/bokforing/schedule.ledger"
+             ledger-schedule-look-backward 0
+             ledger-schedule-look-forward 30)
+
        ;; (add-hook 'ledger-mode-hook 
        ;;           (lambda ()
        ;;             (company-mode -1)))
