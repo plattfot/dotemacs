@@ -371,6 +371,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'c-mode-common-hook (lambda () (ggtags-mode 1)))
 
          (setq ggtags-highlight-tag nil) ;; Highlight was annoying
+
+         ;; Turn off function documentation if file is remote, was too slow.
+         (add-hook 'ggtags-mode-hook
+                   (lambda ()
+                     (when (file-remote-p (buffer-file-name))
+                       (setq-local eldoc-documentation-function #'ignore))))
          :pin melpa-stable)
      #+END_SRC
 **** RTags (disabled)
