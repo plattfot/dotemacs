@@ -820,33 +820,37 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Use syntax highlighting in source blocks while editing
     'org-src-fontify-natively'.
 
+    The variable 'org-directory' is set in '.custom.el', as it changes
+    from compute to computer at the moment.
+
     #+BEGIN_SRC emacs-lisp
       (use-package org
-	:mode ("\\.org\\'" . org-mode)
-	:bind (("C-c l" . org-store-link)
-	       ("C-c a" . org-agenda)
-	       ("C-c c" . org-capture)
-	       ("C-c b" . org-iswitchb))
-	:config
-	(use-package org-bullets
-	  :pin melpa-stable)
-	;; Use pretty bullet points instead of asterix
-	(add-hook 'org-mode-hook
-		  (lambda ()
-		    (org-bullets-mode t)))
-	(setq org-ellipsis "⤵"
-	      org-src-fontify-natively t
-	      org-todo-keywords
-	      '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
-	(when (not dotemacs-is-work)
-	  (add-to-list 'org-agenda-files "~/syncthing/Orgzly/"))
+        :mode ("\\.org\\'" . org-mode)
+        :bind (("C-c l" . org-store-link)
+               ("C-c a" . org-agenda)
+               ("C-c c" . org-capture)
+               ("C-c b" . org-iswitchb))
+        :config
+        (use-package org-bullets
+          :pin melpa-stable)
+        ;; Use pretty bullet points instead of asterix
+        (add-hook 'org-mode-hook
+                  (lambda ()
+                    (org-bullets-mode t)))
+        (setq org-ellipsis "⤵"
+              org-src-fontify-natively t
+              org-todo-keywords
+              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
+              org-default-notes-file (concat org-directory "/Övrigt.org"))
+        (when (not dotemacs-is-work)
+          (add-to-list 'org-agenda-files org-directory))
 
-	;; Active Babel languages
-	(org-babel-do-load-languages
-	 'org-babel-load-languages
-	 '((scheme . t)))
-	;; (setq org-src-window-setup 'current-window)
-	:pin org)
+        ;; Active Babel languages
+        (org-babel-do-load-languages
+         'org-babel-load-languages
+         '((scheme . t)))
+        ;; (setq org-src-window-setup 'current-window)
+        :pin org)
     #+END_SRC
 
     Doesn't work with yasnippet getting:
