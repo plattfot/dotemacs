@@ -264,10 +264,12 @@ dependent."
 
 (let ((count 0)
       value)
-  (dolist (x list)
-    (setq value (if (listp x) (car x) x))
-    (when (string-match regex value) (return count))
-    (setq count (+ 1 count)))))
+  (catch 'index
+    (dolist (x list)
+      (setq value (if (listp x) (car x) x))
+      (when (string-match regex value)
+        (throw 'index count))
+      (setq count (+ 1 count))))))
 
 (defun nf-last-index-of (regex list)
 "Find the last index matching the REGEX in LIST."
