@@ -110,19 +110,19 @@ Using shell instead of multi-term."
   (interactive)
   (delete-other-windows)
   (split-window-horizontally)
-  (cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
+  (cd "/dd/shows/DEV01/user/work.fredriks")
 
   (shell "hou-misc")
-  (work-run-emacs-shell-command "go cyclone rd 0001 =fx work")
+  (work-run-emacs-shell-command "go dev01 =fx work")
 
   (shell "hou-beta")
-  (work-run-emacs-shell-command "go cyclone rd 0001 =fx_beta work")
+  (work-run-emacs-shell-command "go dev01 =fx_beta work")
 
   (shell "hou-devl")
-  (work-run-emacs-shell-command "go CYCLONE RD 0001 =fx work")
+  (work-run-emacs-shell-command "go dev01 =fx work")
 
   (shell "hou-test")
-  (work-run-emacs-shell-command "go cyclone rd 0001 =fx work")
+  (work-run-emacs-shell-command "go dev01 =fx work")
 
   (toggle-frame-maximized))
 
