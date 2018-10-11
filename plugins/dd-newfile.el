@@ -5,17 +5,33 @@
 ;;; Code:
 (require 'newfile)
 
-(defcustom dd-author-name
-  user-full-name
-  "Author's full name to use when creating the header.")
+(defgroup dd-newfile nil
+  "Functions to setup a new file at DD"
+  :group 'tools)
 
-(defcustom dd-author-mail
-  user-mail-address
-  "Author's mail address to use when creating the header.")
+(defcustom dd-author-name user-full-name
+  "Author's full name to use when creating the header."
+  :type 'string
+  :group 'dd-newfile)
 
-(defcustom dd-boilerplate
-  "~/.emacs.d/boilerplates/dd.txt"
-  "File to use or the DD's boilerplate.")
+(defcustom dd-author-mail user-mail-address
+  "Author's mail address to use when creating the header."
+  :type 'string
+  :group 'dd-newfile)
+
+(defcustom dd-boilerplate "~/.emacs.d/boilerplates/dd.txt"
+  "File to use or the DD's boilerplate."
+  :type 'string
+  :group 'dd-newfile)
+
+(defcustom dd-setup-newfile-default nil
+  "Default options for `dd-setup-newfile'.
+By default this is empty."
+  :type 'string
+  :group 'dd-newfile)
+
+(defvar dd-newfile-history nil
+  "History for dd-setup-newfile.")
 
 (defun dd-setup-newfile (modify_namespaces)
   "Add boilerplate, description, namespaces and include guard.
@@ -27,7 +43,15 @@ It will use the 'dd-boilerplate' as the boilerplate.
 It will use the 'dd-author-name' as the author name for the header.
 It will use the 'dd-author-mail' as the author's mail address for the header."
 
-  (interactive "sAdd/Remove/Modify namespaces: ")
+  (interactive
+   (let ((prompt "Add/Remove/Modify namespaces"))
+     (list (read-regexp
+            (if (and dd-setup-newfile-default
+                     (not (string-empty-p dd-setup-newfile-default)))
+                (format "%s (default %s): " prompt dd-setup-newfile-default)
+              (format "%s: " prompt))
+            dd-setup-newfile-default
+            'dd-newfile-history))))
   
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
          (prefix_dd '("!^DD$" "^DD"))
