@@ -47,7 +47,7 @@ Based on the main namespaces in the file."
     (while (re-search-forward "^namespace[ ]+\\([[:alpha:]]+\\)[ ]+{" nil t)
       (setq namespaces (cons (match-string-no-properties 1) namespaces)))
     (goto-char position)
-    (nf-insert-include-guard (reverse namespaces)
+    (nf-insert-include-guard (mapcar 'list (reverse namespaces))
                              (file-name-nondirectory (buffer-file-name)))))
 
 (defun nf-insert-header (author email &optional boilerplate)
