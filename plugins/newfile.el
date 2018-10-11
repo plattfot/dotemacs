@@ -99,16 +99,11 @@ author.  Last the date it was created (B Y),"
   "Insert namespace based on the location of the buffer.
 
 The MODIFY_NAMESPACES can be used to change, remove or add
-namespaces.  If MODIFY_NAMESPACE is a string entries are
-separated by whitespace.  All regexs are case sensitive and the
-options are order dependent.
+namespaces.  If MODIFY_NAMESPACE is a string, entries are
+separated by whitespace.
 
-Options supported are:
-
-- !REGEX remove matching namespaces from the result.
-- REGEX=REP will replace matching namespaces with REP.
-- NAMESPACE append to the namespaces.
-- ^NAMESPACE prepend to the namespaces
+See `nf-modify-namespaces' for the syntax for modifying the
+namespaces.
 
 WORKSPACE_ROOT is the path to the root of the project.  This path
 will be removed from PATH if the PATH is absolute.
@@ -143,42 +138,146 @@ Return the namespaces it inserted into the buffer."
     (when modify_namespaces
       (let ((modify_namespaces_list (if (stringp modify_namespaces)
                                         (split-string modify_namespaces)
-                                      modify_namespaces))
-            (value)
-            (case-fold-search nil))
-        (dolist (value modify_namespaces_list)
-          (cond
-           ;; Modify namespaces
-           ((string-match "\\(.*?\\)=\\(.*\\)" value)
-            (let ((regex (match-string 1 value))
-                  (replace (match-string 2 value)))
-              (setq path_list
-                    (mapcar (lambda (x)
-                              (replace-regexp-in-string regex replace x))
-                            path_list))))
-           ;; Remove namespaces
-           ((string-match "^!\\(.*\\)" value)
-            (let ((remove (match-string 1 value)))
-              (setq path_list
-                    (cl-remove-if (lambda (x) (string-match-p remove x)) path_list))))
-           ;; Prepend namespace
-           ((string-match "^\\^\\(.*\\)" value)
-            (push (match-string 1 value) path_list))
-           ;; Append namespace
-           (t (setq path_list (nconc path_list (list value))))))))
+                                      modify_namespaces)))
+        (setq path_list (nf-modify-namespaces modify_namespaces_list path_list))))
 
-    (dolist (x path_list)
-      (insert "namespace " x " {\n} // namespace " x "\n")
-      (search-backward "{")
-      (forward-char 2))
+    (let (x)
+      (dolist (x path_list)
+        (if (listp x)
+            (let ((namespace (car x))
+                  (keyword (cdr x)))
+              (insert (format "%s namespace %s {\n} // %s namespace %s\n"
+                              keyword namespace keyword namespace)))
+          (insert (format "namespace %s {\n} // namespace %s\n" x x)))
+        (search-backward "{")
+        (forward-char 2)))
     (insert "\n")
     (forward-line -1)
     path_list)) ;; insert-namespace
 
+(defun nf-modify-namespaces (modify_list namespaces)
+  "Using the options in MODIFY_LIST to modify the list NAMESPACES.
+MODIFY_LIST should contain a list of strings with the following
+syntax.  All regexs are case sensitive and the options are order
+dependent.
+
+Options supported are:
+
+- NAMESPACE Append NAMESPACE to NAMESPACES.
+- ^NAMESPACE Prepend to NAMESPACES.
+- REGEX>NAMESPACE Add NAMESPACE after first matching REGEX.
+- REGEX<NAMESPACE Add NAMESPACE before first matching REGEX.
+- REGEX>>NAMESPACE Add NAMESPACE after last matching REGEX.
+- REGEX<<NAMESPACE Add NAMESPACE before last matching REGEX.
+- REGEX->KEYWORD Add KEYWORD to matching namespaces.
+- !REGEX Remove matching namespaces from NAMESPACES.
+- REGEX=REP Replace matching namespaces with REP."
+
+  (let ((case-fold-search nil)
+        value)
+    (dolist (value modify_list)
+      (cond
+       ;; Add keyword, turning element into a cons cell.
+       ((string-match "\\(.*?\\)->\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (keyword (match-string 2 value)))
+          (setq namespaces
+                (mapcar (lambda (x)
+                          (if (string-match regex x)
+                              (cons x keyword)
+                            x))
+                        namespaces))))
+       ;; Modify namespaces
+       ((string-match "\\(.*?\\)=\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (replace (match-string 2 value)))
+          (setq namespaces
+                (mapcar (lambda (x)
+                          (replace-regexp-in-string regex replace x))
+                        namespaces))))
+       ;; Remove namespaces
+       ((string-match "^!\\(.*\\)" value)
+        (let ((remove (match-string 1 value)))
+          (setq namespaces
+                (cl-remove-if (lambda (x) (string-match-p remove x)) namespaces))))
+       ;; Prepend namespace
+       ((string-match "^\\^\\(.*\\)" value)
+        (push (match-string 1 value) namespaces))
+
+       ;; Insert after last namespace matching regex
+       ((string-match "\\(.*?\\)>>\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (namespace (match-string 2 value)))
+          (let ((idx (nf-last-index-of regex namespaces)))
+            (when idx (setq namespaces (nf-insert-after namespace idx namespaces))))))
+
+       ;; Insert after first namespace matching regex
+       ((string-match "\\(.*?\\)>\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (namespace (match-string 2 value)))
+          (let ((idx (nf-first-index-of regex namespaces)))
+            (when idx (setq namespaces (nf-insert-after namespace idx namespaces))))))
+
+       ;; Insert before first namespace matching regex
+       ((string-match "\\(.*?\\)<<\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (namespace (match-string 2 value)))
+          (let ((idx (nf-first-index-of regex namespaces)))
+            (when idx (setq namespaces (nf-insert-before namespace idx namespaces))))))
+
+       ;; Insert before first namespace matching regex
+       ((string-match "\\(.*?\\)<\\(.*\\)" value)
+        (let ((regex (match-string 1 value))
+              (namespace (match-string 2 value)))
+          (let ((idx (nf-first-index-of regex namespaces)))
+            (when idx (setq namespaces (nf-insert-before namespace idx namespaces))))))
+
+       ;; Append namespace
+       (t (setq namespaces (append namespaces (list value))))))
+    namespaces))
+
+(defun nf-insert-after (element idx list)
+  "Insert ELEMENT after IDX in a copy of LIST."
+  (nf-insert-before element (+ 1 idx) list))
+
+(defun nf-insert-before (element idx list)
+  "Insert ELEMENT before IDX in a copy of LIST."
+  (when (not (integerp idx))
+    (error "IDX must be an integer!"))
+  (when (or (> idx (length list)) (< idx 0))
+    (error "IDX is out of bounds!"))
+
+  (let ((new_list (copy-list list)))
+    (if (equal idx 0 )
+        (push element new_list)
+      (setcdr (nthcdr (- idx 1) new_list) (cons element (nthcdr idx new_list))))
+    new_list))
+
+(defun nf-first-index-of (regex list)
+"Find the first index matching the REGEX in LIST."
+
+(let ((count 0))
+  (dolist (x list)
+    (when (string-match regex x)
+      (return count))
+    (setq count (+ 1 count)))))
+
+(defun nf-last-index-of (regex list)
+"Find the last index matching the REGEX in LIST."
+
+(let ((count 0)
+      idx)
+  (dolist (x list)
+    (when (string-match regex x)
+      (setq idx count))
+    (setq count (+ 1 count)))
+  idx))
+
 (defun nf-insert-include-guard (namespaces filename)
   "Insert a #ifdef-include guard based on NAMESPACES and FILENAME."
-  (let ((include_guard (mapconcat 'upcase namespaces "_"))
-        (return_pos))
+  (let* ((only_namespaces (mapcar (lambda (x) (if (listp x) (car x) x )) namespaces))
+         (include_guard (mapconcat 'upcase only_namespaces "_"))
+         return_pos)
     ;; Create include gaurd name
     (setq include_guard
           (concat include_guard "_" (upcase (nf-underscore (nf-camelcase filename)))))
