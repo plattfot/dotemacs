@@ -247,7 +247,7 @@ Options supported are:
   (when (or (> idx (length list)) (< idx 0))
     (error "IDX is out of bounds!"))
 
-  (let ((new_list (copy-list list)))
+  (let ((new_list (copy-tree list)))
     (if (equal idx 0 )
         (push element new_list)
       (setcdr (nthcdr (- idx 1) new_list) (cons element (nthcdr idx new_list))))
