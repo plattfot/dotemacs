@@ -31,7 +31,7 @@ It will use the 'dd-author-mail' as the author's mail address for the header."
   
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
          (prefix_dd '("!^DD$" "^DD"))
-         (replace '("^houdini$=HOUDINI"))
+         (replace '("^houdini$=Houdini"))
          (user_args (if modify_namespaces
                         (if (stringp modify_namespaces)
                             (split-string modify_namespaces))))
