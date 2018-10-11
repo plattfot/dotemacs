@@ -144,12 +144,13 @@ Return the namespaces it inserted into the buffer."
 
       (let (x)
         (dolist (x namespaces)
-          (if (listp x)
-              (let ((namespace (car x))
-                    (keyword (cdr x)))
+          (let ((namespace (car x))
+                (keyword (cdr x)))
+            (if keyword
                 (insert (format "%s namespace %s {\n} // %s namespace %s\n"
-                                keyword namespace keyword namespace)))
-            (insert (format "namespace %s {\n} // namespace %s\n" x x)))
+                                keyword namespace keyword namespace))
+              (insert (format "namespace %s {\n} // namespace %s\n"
+                              namespace namespace))))
           (search-backward "{")
           (forward-char 2)))
       (insert "\n")
