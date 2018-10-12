@@ -2016,10 +2016,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    
 ** Text search
    I'm using the regex variant of the text search more than the normal one.
-   Swapping keybindings for them
    #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-M-s") 'isearch-forward)
-     (global-set-key (kbd "C-M-r") 'isearch-backward)
      (global-set-key (kbd "C-s") 'isearch-forward-regexp)
      (global-set-key (kbd "C-r") 'isearch-backward-regexp)
      (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
