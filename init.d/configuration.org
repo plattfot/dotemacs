@@ -454,6 +454,83 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (font-lock-add-keywords nil hexcolour-keywords))
         (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
     #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package lispy
+        :disabled t
+        :init
+        (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
+        :pin melpa-stable)
+    #+END_SRC
+**** adjust-parens (disabled)
+    #+BEGIN_SRC emacs-lisp
+      (use-package adjust-parens
+        :disabled t
+        :init
+        (add-hook 'emacs-lisp-mode-hook #'adjust-parens-mode)
+        :pin gnu)
+    #+END_SRC
+**** Smartparens (Disabled)
+
+     Having issues with turning of auto balancing, i.e
+     (|) - insert () -> (()|
+     #+BEGIN_SRC emacs-lisp
+       (use-package smartparens
+         ;; :disabled t
+         :init
+         ;;(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+         ;;(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
+         ;; (add-hook 'python-mode 'turn-on-smartparens-mode)
+         (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
+         :bind (:map smartparens-mode-map
+                     ("M-k" . sp-kill-hybrid-sexp)
+                     ("C-M-k" . sp-backward-kill-sexp)
+                     ("C-)" . sp-forward-slurp-sexp)
+                     ("C-(" . sp-backward-slurp-sexp)
+                     ("C-}" . sp-forward-barf-sexp)
+                     ("C-{" . sp-backward-barf-sexp)
+                     ("C-M-a" . sp-beginning-of-sexp)
+                     ("C-M-e" . sp-end-of-sexp)
+                     ("C-M-t" . sp-transpose-hybrid-sexp)
+                     ("C-M-s" . sp-splice-sexp)
+                     ("M-s" . sp-split-sexp)
+                     ("M-[" . sp-backward-unwrap-sexp)
+                     ("M-]" . sp-unwrap-sexp)
+                     ("M-}" . sp-splice-sexp-killing-backward)
+                     ("M-{" . sp-splice-sexp-killing-forward))
+         :config
+         ;; (setq sp-autoinsert-pair nil)
+         ;; (setq sp-autoskip-closing-pair nil)
+         :pin melpa-stable)
+     #+END_SRC
+**** Paredit (Disabled)
+     Cannot set custom keybindings, conflicts with my movement keys.
+
+     ParEdit is a minor mode for performing structured editing of
+     S-expression data.
+     #+BEGIN_SRC emacs-lisp
+       (use-package paredit
+       	 :disabled t
+       	 :bind (("C-)" . paredit-forward-slurp-sexp)
+	        ("C-(" . paredit-backward-slurp-sexp)
+	        ("C-}" . paredit-forward-barf-sexp)
+	        ("C-{" . paredit-backward-barf-sexp)
+	        ("M-{" . paredit-splice-sexp-killing-backward)
+	        ("M-}" . paredit-splice-sexp-killing-forward))
+       	 :init
+       	 (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+       	 (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+       	 (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+       	 (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+       	 (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+       	 (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+       	 (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+       	 :pin melpa-stable)
+     #+END_SRC
+
 *** C family
     Specific for C, C++ and other in the c family
     - Set indentation to be two spaces.
@@ -1114,65 +1191,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:disabled t
        	:pin melpa-stable)
     #+END_SRC
-*** Smartparens (Disabled)
-    Having issues with turning of auto balancing, i.e
-    (|) - insert () -> (()|
-    #+BEGIN_SRC emacs-lisp
-      (use-package smartparens
-       	:disabled t
-       	:init
-       	(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
-       	(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
-       	(add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
-       	(add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
-       	(add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
-       	(add-hook 'python-mode 'turn-on-smartparens-mode)
-       	(add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
-       	:bind (("M-k" . sp-kill-hybrid-sexp)
-	       ("C-M-k" . sp-backward-kill-sexp)
-	       ("C-)" . sp-forward-slurp-sexp)
-	       ("C-(" . sp-backward-slurp-sexp)
-	       ("C-}" . sp-forward-barf-sexp)
-	       ("C-{" . sp-backward-barf-sexp)
-	       ("C-M-a" . sp-beginning-of-sexp)
-	       ("C-M-e" . sp-end-of-sexp)
-	       ("C-M-t" . sp-transpose-hybrid-sexp)
-	       ("C-M-s" . sp-splice-sexp)
-	       ("M-s" . sp-split-sexp)
-	       ("M-[" . sp-backward-unwrap-sexp)
-	       ("M-]" . sp-unwrap-sexp)
-	       ("M-}" . sp-splice-sexp-killing-backward)
-	       ("M-{" . sp-splice-sexp-killing-forward))
-       	:config
-       	(setq sp-autoinsert-pair nil)
-       	(setq sp-autoskip-closing-pair nil)
-       	:pin melpa-stable)
-    #+END_SRC
-*** Paredit (Disabled)
-    Cannot set custom keybindings, conflicts with my movement keys.
-
-    ParEdit is a minor mode for performing structured editing of
-    S-expression data.
-    #+BEGIN_SRC emacs-lisp
-      (use-package paredit
-       	:disabled t
-       	:bind (("C-)" . paredit-forward-slurp-sexp)
-	       ("C-(" . paredit-backward-slurp-sexp)
-	       ("C-}" . paredit-forward-barf-sexp)
-	       ("C-{" . paredit-backward-barf-sexp)
-	       ("M-{" . paredit-splice-sexp-killing-backward)
-	       ("M-}" . paredit-splice-sexp-killing-forward))
-       	:init
-       	(autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-       	(add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-       	(add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-       	(add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-       	(add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-       	(add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-       	(add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-       	:pin melpa-stable)
-    #+END_SRC
-
 *** Evil numbers
     Incrementing/decrementing numbers.
     #+BEGIN_SRC emacs-lisp
