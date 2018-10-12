@@ -859,6 +859,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Make TAB act as if it were issued in a buffer of the language's major mode.
     =(setq org-src-tab-acts-natively t)=
+
+*** Org-noter (disabled)
+    Not quite working yet.
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-noter
+        :disabled t
+        :after org
+        :config
+        (setq-default org-noter-notes-search-path `("~/Documents" ,org-directory))
+        :pin melpa-stable)
+    #+END_SRC
 *** Buffer move
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
