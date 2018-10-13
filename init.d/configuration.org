@@ -400,6 +400,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         ;; Call everytime an c-mode-common file is opened
         (add-hook 'c-mode-common-hook
                   (lambda ()
+                    ;; Set keybinding for all cc-modes
+                    (local-set-key  (kbd "<backtab>") 'ff-find-other-file)
+
                     (setq indent-tabs-mode nil)
                     (when dotemacs-is-work (c-set-style "dd"))
                     ;; enable camelCase
