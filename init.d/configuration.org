@@ -116,8 +116,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
    #+END_SRC
 ** Theme
-   Point emacs to where it can find the sunburst theme. Depending on
-   if emacs is started in a shell or not load the correct theme.
+   Point emacs to where it can find the sunburst theme.
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
      (load-theme `sunburst t)
