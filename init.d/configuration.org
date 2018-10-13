@@ -1371,66 +1371,121 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
 ** Custom functions
-*** PID    
-   Get the pid of a proc
-   #+BEGIN_SRC emacs-lisp
-     (defun pid (regex &optional index)
-       "Get the pid of REGEX, if more than one is running it returns one
-     at INDEX. Where INDEX starts from 0 and up"
-       (interactive)
-       (when (not index) (setq index 0))
-       (nth index 
-	    (split-string 
-	     (shell-command-to-string
-	      (concat "ps aux | " ;; wrap first character in [ ] to not match itself
-		      "sed -nE \"s/$USER\\s+([0-9]+).*?"
-		      (concat "[" (substring regex 0 1) "]" (substring regex 1))"/\\1/p\"")
-	      ))))
-   #+END_SRC
+*** PID
+    Functions for getting the pid and other useful stuff regarding
+    PIDs.
+
+    #+BEGIN_SRC emacs-lisp
+      (defun pid (regex &optional index newest)
+        "Get the pid of the first command matching REGEX.
+      If more than one is running it return the one at INDEX.  Where
+      INDEX starts from 0 and up.  If NEWEST is t it will sort the
+      commands based on elapsed time before picking one."
+        (interactive)
+        (when (not index) (setq index 0))
+        (let ((ps_list (ps-match regex)))
+          (car (nth index (if newest (sort-ps-etime ps_list) ps_list)))))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+     (defun ps-match (regex)
+       "Call ps and return a list of info for each the command matching the REGEX.
+     The list format is '(pid etime ppid user comm)"
+       (let ((ps_list
+              (mapcar
+               (lambda (x) (split-string x))
+               (cl-remove-if
+                'string-empty-p
+                (split-string
+                 (shell-command-to-string
+                  (concat "ps axo pid,etime,ppid,user,comm | grep -e " regex)) "\n")))))
+         (mapcar (lambda (x) (setcar (nthcdr 1 x) (encode-ps-etime (cadr x)))) ps_list)
+         ps_list))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+     (defun encode-ps-etime (etime)
+       "Convert time returns from ps etime to an elisp time type."
+       (let ((time (mapcar 'string-to-number (nreverse (split-string etime "[:-]"))))
+             (units [0 0 0 0])
+             (index 0))
+         (while time
+           (aset units index (pop time))
+           (setq index (+ 1 index)))
+         (encode-time (elt units 0) (elt units 1) (elt units 2) (elt units 3) 0 0)))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun sort-ps-etime (ps_list)
+        "Sort the PS_LIST based on the elapsed time.
+      In ascending order."
+        (seq-sort (lambda (a b) (time-less-p (cadr a) (cadr b))) ps_list))
+    #+END_SRC
+
 *** PID Houdini
     Get the PID for houdini
     #+BEGIN_SRC emacs-lisp
-      (defun pid-houdini (&optional index )
-	"Get the pid for houdini.
-      If more than one is running it returns the one at INDEX.  Where
-      INDEX starts from 0 and up"
+      (defun pid-houdini (&optional index newest)
+        "Get the pid for houdini.
 
-	(interactive)
-	(when (not index) (setq index 0)) (pid "houdini-bin" index))
+            If more than one is running it returns the one at INDEX.  Where
+            INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+            before picking one."
+
+        (interactive)
+        (when (not index) (setq index 0)) 
+        (pid "houdini-bin" index newest))
     #+END_SRC
 *** PID Maya
     #+BEGIN_SRC emacs-lisp
-      (defun pid-maya (&optional index)
-	"Get the pid for maya.
+      (defun pid-maya (&optional index newest)
+        "Get the pid for maya.
       If more than one is running it returns the one at INDEX.  Where
-      INDEX starts from 0 and up"
-	(interactive)
-	(when (not index) (setq index 0))
-	(pid "maya\\.bin" index))
+      INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+      before picking one."
+        (interactive)
+        (when (not index) (setq index 0))
+        (pid "maya\\.bin" index newest))
     #+END_SRC
 *** PID smeat
     #+BEGIN_SRC emacs-lisp
-      (defun pid-smeat (&optional index)
-	"Get the pid for smeat.
+      (defun pid-smeat (&optional index newest)
+        "Get the pid for smeat.
       If more than one is running it returns the one at INDEX.  Where
-      INDEX starts from 0 and up"
-	(interactive)
-	(when (not index) (setq index 0))
-	;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
-	(pid "smeat(:?[^=]+|$$)" index))
+      INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+      before picking one."
+        (interactive)
+        (when (not index) (setq index 0))
+        ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+        (pid "smeat(:?[^=]+|$$)" index newest))
     #+END_SRC
 *** Attach Houdini
     Used with gdb, prints attach <pid of houdini> in the prompt.
     #+BEGIN_SRC emacs-lisp
       (defun attach-houdini (&optional index)
-	"Prints attach <pid> into the buffer. 
+        "Prints attach <pid> into the buffer. 
       INDEX is use to select which one if there are multiple instances
       running, INDEX counts from 1."
-	(interactive"p")
+        (interactive"p")
 
-	;; The default for index is one.
-	(when (< index 1) (setq index 1))
-	(insert (concat "attach " (pid-houdini (- index 1)) )))
+        ;; The default for index is one.
+        (when (< index 1) (setq index 1))
+        (insert (format "attach %s" (pid-houdini (- index 1)))))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun attach-houdini-newest (&optional index)
+        "Prints 'attach <pid>' into the buffer.
+
+      INDEX is use to select which one if there are multiple instances
+      running, INDEX counts from 1.  PIDs are sorted on elapsed time
+      before one is selected to return the newest houdini instance."
+        (interactive"p")
+
+        ;; The default for index is one.
+        (when (not index) (setq index 1))
+        (when (< index 1) (setq index 1))
+        (insert (format "attach %s" (pid-houdini (- index 1) t))))
     #+END_SRC
 *** Attach Maya
     #+BEGIN_SRC emacs-lisp
