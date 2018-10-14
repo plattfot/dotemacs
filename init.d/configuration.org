@@ -628,11 +628,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       }")
       )   
     #+END_SRC
-*** Multi term
-    #+BEGIN_SRC emacs-lisp
-      (use-package multi-term
-       	:pin melpa)
-    #+END_SRC
 *** Gnuplot
     Enable gnuplot to be able to plot tables in org mode.
 
@@ -893,36 +888,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             (mode . magit-wip-before-change-mode)))
                   ("shell" (mode . shell-mode))
                   ("gdb" (mode . gdb-script-mode))
-                  ("emacs" (name . "^\\*[[:alnum:]]+\\*$"))
-                  )))
+                  ("emacs" (name . "^\\*[[:alnum:]]+\\*$")))))
        (add-hook 'ibuffer-mode-hook
                  (lambda ()
                    (ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+END_SRC
-*** Helm (Disabled)
-    Disabled because it did horrible with tramp
-    Settings for helm
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package helm
-        :disabled t
-        :init
-        ;; List git and svn projects with helm-browse-project
-        (use-package helm-ls-git
-          :pin melpa-stable)
-        :bind (("M-x" . helm-M-x)
-               ("M-y" . helm-show-kill-ring)
-               ("C-x C-f" . helm-find-files)
-               ("<tab>" . helm-execute-persistent-action)
-               ("C-i" . helm-execute-persistent-action) ;; make TAB work in terminal
-               ("C-z" . helm-select-action))
-        :config
-        (helm-autoresize-mode t)
-        (helm-mode 1)
-        :pin melpa-stable)
-         
-    #+END_SRC
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
@@ -945,17 +916,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:bind ("C-c C-r" . sudo-edit)
        	:pin melpa)
     #+END_SRC
-*** Powerline (Disabled)
-    #+BEGIN_SRC emacs-lisp
-      (use-package powerline
-       	:disabled
-       	:config
-       	(powerline-vim-theme)
-       	:pin melpa-stable)
-    #+END_SRC
 *** Windmove
     Jump between windows using the arrow keys instead of cycling with
     "C-x o". Note that this Doesn't work in org mode.
+    
+    *TIP:* If using i3wm. Use frames instead of windows then use i3's
+     navigation instead.
     #+BEGIN_SRC emacs-lisp
       (use-package windmove 
        	:bind (([M-left]  . windmove-left)  ; move to left window
@@ -1037,18 +1003,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 ** Text
   Packages for editing text.
-*** Rainbow (Disabled)
+*** Rainbow
+    Useful when debugging the theme. But is rarely used.
     #+BEGIN_SRC emacs-lisp
       (use-package rainbow-mode
-       	:disabled t
-       	:pin melpa-stable)
-    #+END_SRC
-*** Evil numbers
-    Incrementing/decrementing numbers.
-    #+BEGIN_SRC emacs-lisp
-      (use-package evil-numbers
-       	:bind (("C-c +" . evil-numbers/inc-at-pt)
-	       ("C-c -" . evil-numbers/dec-at-pt))
        	:pin melpa-stable)
     #+END_SRC
 *** Move text
