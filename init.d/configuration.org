@@ -971,20 +971,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (lambda ()
                     (toggle-read-only)
                     (ansi-color-apply-on-region compilation-filter-start (point))
-                    (toggle-read-only)))
-        ;; ;; Close the compilation window if there was no error at all.
-        ;; (setq compilation-exit-message-function
-        ;;       (lambda (status code msg)
-        ;;         ;; If M-x compile exists with a 0
-        ;;         (when (and (eq status 'exit) (zerop code))
-        ;;           ;; then bury the *compilation* buffer, so that C-x b doesn't go there
-        ;;           (bury-buffer "*compilation*")
-        ;;           ;; and return to whatever were looking at before
-        ;;           (replace-buffer-in-windows "*compilation*"))
-        ;;         ;; Always return the anticipated result of compilation-exit-message-function
-        ;;         (cons msg code)
-
-      )
+                    (toggle-read-only))))
     #+END_SRC
 *** Version Control
     Don't ask when following a symlink to a vc directory.
@@ -1063,6 +1050,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Highlight section of code, run 'fancy-narrow-to-region' to narrow
     down on selection.  'fancy-widen' to go back to
     normal. 'fancy-narrow-to-defun' to narrow down on function.
+
+    Nothing I use that often.
     #+BEGIN_SRC emacs-lisp
       (use-package fancy-narrow
         :pin melpa-stable)
@@ -1117,7 +1106,494 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (let ((comint-buffer-maximum-size 0))
            (comint-truncate-buffer))))
    #+END_SRC
-* Work
+* Custom
+
+** Packages
+*** Multiple cursor extension
+    Add some extra functionality to multiple cursors inserting numbers
+    and characters.
+    #+BEGIN_SRC emacs-lisp
+      (use-package mc-extra-extra
+        :after (multiple-cursors)
+        :ensure nil
+        :load-path "~/emacs.d/plugins")
+    #+END_SRC
+*** newfile
+    Functions for setting up a newfile in c++. I.e create the license
+    boilerplate, add the include guard, header for the author etc and
+    namespaces based on directory structure.
+    #+BEGIN_SRC emacs-lisp
+      (use-package newfile
+        :ensure nil
+        :load-path "~/.emacs.d/plugins")
+    #+END_SRC
+** Functions
+*** Buffer
+    Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
+    #+BEGIN_SRC emacs-lisp
+      (defun rename-current-file-or-buffer ()
+        "Rename current file and buffer, similar to save-as but removes
+      the old file"
+        (interactive)
+        (if (not (buffer-file-name))
+            (call-interactively 'rename-buffer)
+          (let ((file (buffer-file-name)))
+            (with-temp-buffer
+              (set-buffer (dired-noselect file))
+              (dired-do-rename)
+              (kill-buffer nil))))
+        nil)
+    #+END_SRC
+    To sync all open buffers with their respective files on disk. [[https://www.emacswiki.org/emacs/RevertBuffer][Source]]
+    #+BEGIN_SRC emacs-lisp
+      (defun revert-all-buffers ()
+          "Refreshes all open buffers from their respective files."
+          (interactive)
+          (dolist (buf (buffer-list))
+            (with-current-buffer buf
+              (when (and (buffer-file-name) (not (buffer-modified-p)))
+                (revert-buffer t t t) )))
+          (message "Refreshed open files.") )
+    #+END_SRC
+*** Text
+    Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg.
+    #+BEGIN_SRC emacs-lisp
+      (defun duplicate-line ()
+        "Clone line at cursor, leaving the latter intact."
+        (interactive)
+        (save-excursion
+          (let ((kill-read-only-ok t) deactivate-mark)
+            (read-only-mode 1)
+            (kill-whole-line)
+            (read-only-mode 0)
+            (yank))))
+    #+END_SRC
+*** Subversion
+    Function for dealing with subversion repos.
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-fetch-info (item)
+        "Get the info ITEM from the current svn repo as a string,
+      can be for example url or revision, see svn info --help for the
+      exhaustive list."
+        (shell-command-to-string
+         (concat "env PATH=" (getenv "PATH") " "
+                 "svn info --show-item=" item " --no-newline")))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-fetch-repo-url ()
+        "Return a string of the repo url in the current svn repo.
+           I.e the root url plus the name of the repo on the
+           server. Prefixed will return the full url otherwise it will
+           just return the relative."
+        (let ((relurl (svn-fetch-info 
+                       (if current-prefix-arg "url" "relative-url"))))
+          (replace-regexp-in-string 
+           "^\\(.*\\)/\\(trunk\\|tags.*\\|branches.*\\)"
+           "\\1"
+           relurl)))
+    #+END_SRC
+      
+    Fetches the url of the repository. For example
+    if we have the url
+    http://svn.example.com/myrepo/branches/branch
+    It will return the whole thing.
+   
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-url ()
+        "Get the repo url in the current svn repo.
+           I.e the root url plus the name of the repo on the server"
+        (interactive)
+        (insert (svn-fetch-info "url")))
+    #+END_SRC
+
+    Fetches the root url. For example if we have the url
+    http://svn.example.com/myrepo/branches/branch
+    ^^^^^^^^^^^^^^^^^^^^^^
+    This is the root url.
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-root-url ()
+        "Get the repo's root url in the current svn repo."
+        (interactive)
+        (insert (svn-fetch-info "repos-root-url")))
+    #+END_SRC
+
+    Fetches the root url + the name of the repository. For example
+    if we have the url
+    http://svn.example.com/myrepo/branches/branch
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    This is the repo url.
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-repo-url ()
+        "Get the repo url in the current svn repo.
+           I.e the root url plus the name of the repo on the
+           server. Prefixed will return the full url otherwise it will
+           just return the relative."
+        (interactive)
+        (insert (svn-fetch-repo-url)))
+    #+END_SRC
+
+    Get the trunk/branch/tag url for the current svn repo. For example
+    if we have the url
+    http://svn.example.com/myrepo/branches/branch
+
+    It will return for svn-trunk-url
+    http://svn.example.com/myrepo/trunk
+
+    It will return for svn-branch-url
+    http://svn.example.com/myrepo/branches
+
+    It will return for svn-branch-url
+    http://svn.example.com/myrepo/tags
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-trunk-url ()
+        "Get the url for the trunk in the current svn repo."
+        (interactive)
+        (insert 
+         (concat (svn-fetch-repo-url) "/trunk")))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-branch-url ()
+        "Get the url for the branch root in the current svn repo."
+        (interactive)
+        (insert 
+         (concat (svn-fetch-repo-url) "/branches")))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun svn-tag-url ()
+        "Get the url for the branch root in the current svn repo."
+        (interactive)
+        (insert 
+         (concat (svn-fetch-repo-url) "/tags")))
+    #+END_SRC
+
+*** Programming
+**** C++
+***** Expands a define macro for all matches in current buffer.
+      #+BEGIN_SRC emacs-lisp
+        (defun replace-define()
+          "Evaluating the define variable.
+        Place cursor on a #define <var> <content> and execute this command and it will
+        replace all <var> with <content> in the file."
+          (interactive)
+          (let ((line (split-string (thing-at-point 'line) )))
+                 (if (equal (car line) "#define")
+                     (let ((curr-pos (point)) ;; save current position
+                           (end (point-max)))
+                  ;; Jump to the end of line
+                  (end-of-line)
+                  ;; Replace the first with the second.
+                  (while (re-search-forward (concat "\\_<"(nth 1 line)"\\_>") end t )
+                         (replace-match (nth 2 line)))
+                  ;; return to the same position
+                  (goto-char curr-pos)
+                  ;; move to the end of the line to indicate that it's done.
+                  (end-of-line))
+                   (message "Not a #define directive!" ))))
+      #+END_SRC
+***** Undo replace-define.
+       #+BEGIN_SRC emacs-lisp
+         (defun replace-define-undo()
+           "Undoing the expansion of the define variable.
+         Place cursor on a #define <var> <content> and execute this
+          command and it will replace all <content> with <var> in the
+          file."
+
+           (interactive)
+           (let ((line (split-string (thing-at-point 'line) )))
+             (if (equal (car line) "#define")
+                 (let ((curr-pos (point)) ;; save current position
+                       (end (point-max)))
+                   ;; Jump to the end of line
+                   (end-of-line)
+
+                   ;; Replace the second with the first
+                   (while (re-search-forward (nth 2 line) end t ) (replace-match (nth 1 line)))
+
+                   ;; return to the same position
+                   (goto-char curr-pos)
+                   ;; move to the end of the line to indicate that it's done.
+                   (end-of-line))
+               (message "Not a #define directive!" ))))
+
+       	   #+END_SRC
+
+***** Convert typedef to c++11's alias
+       #+BEGIN_SRC emacs-lisp
+         (defun convert-typedef-to-using ()
+           "Converts typedef statements to using statements"
+           (interactive)
+           (let ((begin) (end))
+              (if (use-region-p)
+                 (progn (setq begin (region-beginning) end (region-end)))
+               (progn (setq begin (point) end nil)))
+              (goto-char begin)
+             (while (re-search-forward
+                     (concat "typedef \\(\\(?:typename \\)*"
+                             "[[:print:]]+?\\)[ \t]+\\([[:alnum:]_]+\\)[ ]*;" )
+                     end t )
+               (replace-match "using \\2 = \\1;"))))
+       #+END_SRC
+***** Convert LinSys to LinAlg
+      #+BEGIN_SRC emacs-lisp
+        (defun convert-LinSys-Solver ()
+          "Converts Physics::Fluids::LinSys to Math::LinAlg::Solver"
+          (interactive)
+          (let ((begin) (end))
+            (if (use-region-p)
+                (progn (setq begin (region-beginning) end (region-end)))
+              (progn (setq begin (point) end nil)))
+            (goto-char begin)
+            (while (re-search-forward "Physics\\([^/:.]\\)" end t ) (replace-match "Math\\1"))
+            (goto-char begin)
+            (while (re-search-forward "Fluids\\([^/:.]\\)" end t ) (replace-match "LinAlg\\1"))
+            (goto-char begin)
+            (while (re-search-forward "LinSys\\([^/:.]\\)" end t ) (replace-match "Solver\\1"))
+
+            (goto-char begin)
+            (while (re-search-forward "Physics::Fluids::LinSys" end t ) 
+              (replace-match "Math::LinAlg::Solver"))
+           
+            (goto-char (point-min))
+            (while (re-search-forward "PHYSICS_FLUIDS_LINSYS" end t ) 
+              (replace-match "MATH_LINALG_SOLVER"))
+            (goto-char begin)))
+      #+END_SRC
+***** Convert LinAlg to LinSys
+      #+BEGIN_SRC emacs-lisp
+        (defun convert-Solver-LinSys ()
+          "Converts Math::LinAlg::Solver to Physics::Fluids::LinSys"
+          (interactive)
+          (let ((begin) (end))
+            (if (use-region-p)
+                (progn (setq begin (region-beginning) end (region-end)))
+              (progn (setq begin (point) end nil)))
+            (goto-char begin)
+            (while (re-search-forward "Math\\([^/:.]\\)" end t ) (replace-match "Physics\\1"))
+            (goto-char begin)
+            (while (re-search-forward "LinAlg\\([^/:.]\\)" end t ) (replace-match "Fluids\\1"))
+            (goto-char begin)
+            (while (re-search-forward "Solver\\([^/:.]\\)" end t ) (replace-match "LinSys\\1"))
+
+            (goto-char begin)
+            (while (re-search-forward "Math::LinAlg::Solver" end t ) 
+              (replace-match "Physics::Fluids::LinSys"))
+           
+            (goto-char (point-min))
+            (while (re-search-forward "MATH_LINALG_SOLVER" end t ) 
+              (replace-match "PHYSICS_FLUIDS_LINSYS"))
+            (goto-char begin)))
+      #+END_SRC
+
+***** Insert ifdef clauses
+     
+      #+BEGIN_SRC emacs-lisp
+        (defun afs-insert-ifdef (macro &optional add-else ifndef)
+          "Insert C preprocessor conditional #ifdef MACRO. To add an else
+          clause set ADD-ELSE to t. To invert the ifdef to #ifndef MACRO
+           set ifndef to t."
+          (interactive "sName of macro: ")
+          (let* ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+                 (end (if (use-region-p) (region-end) (point-at-eol)))
+                 (text (delete-and-extract-region start end))
+                 (defcmd (if ifndef "#ifndef" "#ifdef")))
+            (insert (concat (format "%s %s\n%s\n" defcmd macro text)
+                            (when add-else (format "#else\n%s\n" text))
+                            "#endif"))
+            ))
+      #+END_SRC
+
+      #+BEGIN_SRC emacs-lisp
+        (defun afs-insert-ifdef-else (macro)
+          "Insert C prepocessor conditional #ifdef MACRO with an else clause.
+        Wrapper for (afs-insert-ifdef MACRO t)"
+          (interactive "sName of macro: ")
+          (afs-insert-ifdef macro t))
+      #+END_SRC
+
+      #+BEGIN_SRC emacs-lisp
+        (defun afs-insert-ifndef (macro)
+          "Insert C prepocessor conditional #ifndef MACRO."
+          (interactive "sName of macro: ")
+          (afs-insert-ifdef macro nil t))
+      #+END_SRC
+
+      #+BEGIN_SRC emacs-lisp
+        (defun afs-insert-ifndef-else (macro)
+          "Insert C prepocessor conditional #ifndef MACRO."
+          (interactive "sName of macro: ")
+          (afs-insert-ifdef macro t t))
+      #+END_SRC
+
+***** Convert java style comment to doxygen
+     #+BEGIN_SRC emacs-lisp
+       (defun convert-java-comment-to-doxygen ()
+           "Convert java style comment to doxygen"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point) end nil)))
+           (goto-char begin)
+           (while (re-search-forward
+                   "/\\*\\*\n[ ]+\\*\\(.*\\)\n[ ]+\\*/"
+                   end t )
+             (replace-match "///\\1"))))
+
+     #+END_SRC 
+*** Workspace
+    Function for splitting emacs into three frames. 
+    Really nice to use with i3wm.
+    #+BEGIN_SRC emacs-lisp
+      (defun setup-home ()
+      "Splits the session into three frames"
+      (interactive)
+      (delete-other-frames)
+      (delete-other-windows)
+      (make-frame-command)
+      (make-frame-command))
+    #+END_SRC
+*** Split lines
+    Function for splitting lines at specified character. Default is ','.
+    #+BEGIN_SRC emacs-lisp
+      (defun split-at (&optional delim)
+      "Split region/line at DELIM, if there are multiple matches it
+      will split each one. DELIM will default to \",\" if no delim is
+      given."
+      (interactive "sSpecify delimiter: ")
+      (when (or (string= delim "") (not delim)) (setq delim ","))
+      (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+            (end (if (use-region-p) (region-end) (point-at-eol)))
+            (regex delim))
+        (goto-char start)
+      
+        (while (search-forward-regexp regex end t)
+          (insert "\n")
+          (setq end (1+ end)))
+        (indent-region start end)
+        (goto-char start)))
+
+      (defun split-at-comma ()
+      "wrapper for split-at for use with key command"
+      (interactive)
+      (split-at ","))
+    #+END_SRC
+*** Yesterday-time
+    Computes the time 24 hours ago
+    #+BEGIN_SRC emacs-lisp
+      (defun yesterday-time ()
+      "Provide the date/time 24 hours before the time now in the format
+      of `current-time'."
+        (let* ((now-time (current-time))              ; get the time now
+               (hi (car now-time))                    ; save off the high word
+               (lo (car (cdr now-time)))              ; save off the low word
+               (msecs (nth 2 now-time)))              ; save off the milliseconds
+
+          (if (< lo 20864)                        ; if the low word is too small for subtracting
+              (setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
+            (setq hi (- hi 1) lo (- lo 20864)))   ; else, add 86400 seconds (in two parts)
+
+          (list hi lo msecs))) ; regurgitate the new values
+    #+END_SRC
+
+** Keybindings
+ 
+   To better organize what my custom keys are and also easy see what
+   they do. I wrapped them up into a minor mode. Can just run
+   'describe-minor-mode' then plattfot-mode to get a quick list of
+   them. Downside is that I lost a bit of structure in this file when
+   reading.
+
+   Time will tell if that was a smart idea or not.
+   
+   #+BEGIN_SRC emacs-lisp
+     (defvar plattfot-mode-map 
+       (let ((map (make-sparse-keymap))) 
+         ;; Navigation
+         (define-key map (kbd "C-x f") 'find-file-at-point)
+         ;; Text search
+         ;; Rebinding the text search to the regex variants as
+         ;; use those far more than the normal ones.
+         (define-key map (kbd "C-s") 'isearch-forward-regexp)
+         (define-key map (kbd "C-r") 'isearch-backward-regexp)
+         (define-key map (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+         ;; Text edit
+         (define-key map (kbd "M-r") 'replace-regexp)
+         (define-key map (kbd "C-c l") 'duplicate-line)
+         (define-key map (kbd "C-,") 'split-at-comma)
+         ;; Buffer functions
+         (define-key map (kbd "C-c r") 'revert-all-buffers)
+         (define-key map (kbd "C-c R") 'rename-current-file-or-buffer)
+         ;; Compile from current location and to re-run
+         (define-key map (kbd "<f12>") 'compile)
+         (define-key map (kbd "<f11>") 'recompile)
+         ;; Key bindings for the custom subversion commands
+         (define-key map (kbd "C-c s u") 'svn-url)
+         (define-key map (kbd "C-c s r") 'svn-repo-url)
+         (define-key map (kbd "C-c s t") 'svn-trunk-url)
+         (define-key map (kbd "C-c s T") 'svn-tag-url)
+         (define-key map (kbd "C-c s b") 'svn-branch-url)
+         (define-key map (kbd "C-c s R") 'svn-root-url)
+         ;; UI
+         ;; Key bindings if I really need to see the menu and tool bar.
+         (define-key map (kbd "C-<f5>") 'menu-bar-mode)
+         (define-key map (kbd "C-<f6>") 'tool-bar-mode)
+         map)
+       "Custom keymap for `plattfot-mode'")
+
+     (define-minor-mode plattfot-mode 
+       "Custom keybindings for plattfot:
+     \\{plattfot-mode-map}"
+       :version "3.0.0"
+       :lighter nil
+       :global t
+       :keymap plattfot-mode-map
+       nil)
+
+     (provide 'plattfot)
+   #+END_SRC
+   
+   Added that I need to press ctrl and the function key for the UI keys
+   as I was hitting these accidentaly from time to time when running
+   'compile' or 'recompile'. Due to how my keyboard is layed out. See
+   my [[https://github.com/plattfot/qmk_firmware/tree/master/layouts/community/ergodox/plattfot][qmk fork]] for why that is.
+
+   #+BEGIN_SRC emacs-lisp
+    (use-package plattfot
+      :init
+      (plattfot-mode 1)
+      :ensure nil)
+   #+END_SRC
+
+*** Macros
+     "Macro" to quickly open a file that is located on my machine at
+     work. As I'm just inserting text I switched the real macro to just
+     using insert instead.
+
+     Updated it only bind the key when I'm in the minibuffer as I
+     don't have any use for this outside of that scope.
+     #+BEGIN_SRC emacs-lisp
+       (add-hook 
+        'minibuffer-setup-hook 
+        (lambda () 
+          (define-key minibuffer-local-map (kbd "C-c B")
+            (lambda ()
+              (interactive)
+              (insert "/-:pd-ws-he03.d2.com:/dd/dept/software/users/fredriks/swdevl")))))
+     #+END_SRC
+*** Registers
+    Quickly jump to files by pressing C-x r j <register>
+    Jump to my init file with 'e' and init directory with 'i'.
+    #+BEGIN_SRC emacs-lisp
+      (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
+      (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org")) 
+    #+END_SRC
 ** Behaviour
    #+BEGIN_SRC emacs-lisp
      (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
@@ -1129,839 +1605,356 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (when (file-exists-p "~/.emacs.d/.work.el") 
          (load "~/.emacs.d/.work.el")))
    #+END_SRC
-** Custom packages
-*** dd-newfile
-    Function that inserts the DD template for a new file
-    #+BEGIN_SRC emacs-lisp
-      (use-package newfile
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
+** Work
+** Custom   
+*** Packages
+**** dd-newfile
+     Function that inserts the DD template for a new file
+     #+BEGIN_SRC emacs-lisp
+       (use-package dd-newfile
+         :after newfile
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+**** dd-log-parser
+     Functions for parsing the =DD::Logger=
+     #+BEGIN_SRC emacs-lisp
+       (use-package dd-log-parser
+         :if dotemacs-is-work
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+**** dd-pybuild2
+     #+BEGIN_SRC emacs-lisp
+       (use-package dd-pybuild2
+         :if dotemacs-is-work
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+**** houdini
+     Houdini related functions, mostly handle houdini versions.
+     #+BEGIN_SRC emacs-lisp
+       (use-package houdini
+         :bind ("C-x j" . hou-insert-version)
+         :if dotemacs-is-work
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+**** highlight-extra
+     Functions for highlighting my shells when building etc
+     #+BEGIN_SRC emacs-lisp
+       (use-package highlight-extra
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+**** work
+     Bunch of functions to setup my work area when at work 
+     #+BEGIN_SRC emacs-lisp
+       (use-package work
+         :if dotemacs-is-work
+         :ensure nil
+         :load-path "~/.emacs.d/plugins")
+     #+END_SRC
+*** Functions
+**** PID
+     Functions for getting the pid and other useful stuff regarding
+     PIDs.
 
-      (use-package dd-newfile
-        :after newfile
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-*** dd-log-parser
-    Functions for parsing the =DD::Logger=
-    #+BEGIN_SRC emacs-lisp
-      (use-package dd-log-parser
-        :if dotemacs-is-work
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-*** dd-pybuild2
-    #+BEGIN_SRC emacs-lisp
-      (use-package dd-pybuild2
-        :if dotemacs-is-work
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-*** houdini
-    Houdini related functions, mostly handle houdini versions.
-    #+BEGIN_SRC emacs-lisp
-      (use-package houdini
-        :bind ("C-x j" . hou-insert-version)
-        :if dotemacs-is-work
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-*** highlight-extra
-    Functions for highlighting my shells when building etc
-    #+BEGIN_SRC emacs-lisp
-      (use-package highlight-extra
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-*** work
-    Bunch of functions to setup my work area when at work 
-    #+BEGIN_SRC emacs-lisp
-      (use-package work
-        :if dotemacs-is-work
-        :ensure nil
-        :load-path "~/.emacs.d/plugins")
-    #+END_SRC
-** Custom functions
-*** PID
-    Functions for getting the pid and other useful stuff regarding
-    PIDs.
+     #+BEGIN_SRC emacs-lisp
+       (defun pid (regex &optional index newest)
+         "Get the pid of the first command matching REGEX.
+       If more than one is running it return the one at INDEX.  Where
+       INDEX starts from 0 and up.  If NEWEST is t it will sort the
+       commands based on elapsed time before picking one."
+         (interactive)
+         (when (not index) (setq index 0))
+         (let ((ps_list (ps-match regex)))
+           (car (nth index (if newest (sort-ps-etime ps_list) ps_list)))))
+     #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-      (defun pid (regex &optional index newest)
-        "Get the pid of the first command matching REGEX.
-      If more than one is running it return the one at INDEX.  Where
-      INDEX starts from 0 and up.  If NEWEST is t it will sort the
-      commands based on elapsed time before picking one."
-        (interactive)
-        (when (not index) (setq index 0))
-        (let ((ps_list (ps-match regex)))
-          (car (nth index (if newest (sort-ps-etime ps_list) ps_list)))))
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+      (defun ps-match (regex)
+        "Call ps and return a list of info for each the command matching the REGEX.
+      The list format is '(pid etime ppid user comm)"
+        (let ((ps_list
+               (mapcar
+                (lambda (x) (split-string x))
+                (cl-remove-if
+                 'string-empty-p
+                 (split-string
+                  (shell-command-to-string
+                   (concat "ps axo pid,etime,ppid,user,comm | grep -e " regex)) "\n")))))
+          (mapcar (lambda (x) (setcar (nthcdr 1 x) (encode-ps-etime (cadr x)))) ps_list)
+          ps_list))
+     #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-     (defun ps-match (regex)
-       "Call ps and return a list of info for each the command matching the REGEX.
-     The list format is '(pid etime ppid user comm)"
-       (let ((ps_list
-              (mapcar
-               (lambda (x) (split-string x))
-               (cl-remove-if
-                'string-empty-p
-                (split-string
-                 (shell-command-to-string
-                  (concat "ps axo pid,etime,ppid,user,comm | grep -e " regex)) "\n")))))
-         (mapcar (lambda (x) (setcar (nthcdr 1 x) (encode-ps-etime (cadr x)))) ps_list)
-         ps_list))
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+      (defun encode-ps-etime (etime)
+        "Convert time returns from ps etime to an elisp time type."
+        (let ((time (mapcar 'string-to-number (nreverse (split-string etime "[:-]"))))
+              (units [0 0 0 0])
+              (index 0))
+          (while time
+            (aset units index (pop time))
+            (setq index (+ 1 index)))
+          (encode-time (elt units 0) (elt units 1) (elt units 2) (elt units 3) 0 0)))
+     #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-     (defun encode-ps-etime (etime)
-       "Convert time returns from ps etime to an elisp time type."
-       (let ((time (mapcar 'string-to-number (nreverse (split-string etime "[:-]"))))
-             (units [0 0 0 0])
-             (index 0))
-         (while time
-           (aset units index (pop time))
-           (setq index (+ 1 index)))
-         (encode-time (elt units 0) (elt units 1) (elt units 2) (elt units 3) 0 0)))
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+       (defun sort-ps-etime (ps_list)
+         "Sort the PS_LIST based on the elapsed time.
+       In ascending order."
+         (seq-sort (lambda (a b) (time-less-p (cadr a) (cadr b))) ps_list))
+     #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-      (defun sort-ps-etime (ps_list)
-        "Sort the PS_LIST based on the elapsed time.
-      In ascending order."
-        (seq-sort (lambda (a b) (time-less-p (cadr a) (cadr b))) ps_list))
-    #+END_SRC
+**** PID Houdini
+     Get the PID for houdini
+     #+BEGIN_SRC emacs-lisp
+       (defun pid-houdini (&optional index newest)
+         "Get the pid for houdini.
 
-*** PID Houdini
-    Get the PID for houdini
-    #+BEGIN_SRC emacs-lisp
-      (defun pid-houdini (&optional index newest)
-        "Get the pid for houdini.
+             If more than one is running it returns the one at INDEX.  Where
+             INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+             before picking one."
 
-            If more than one is running it returns the one at INDEX.  Where
-            INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-            before picking one."
+         (interactive)
+         (when (not index) (setq index 0)) 
+         (pid "houdini-bin" index newest))
+     #+END_SRC
+**** PID Maya
+     #+BEGIN_SRC emacs-lisp
+       (defun pid-maya (&optional index newest)
+         "Get the pid for maya.
+       If more than one is running it returns the one at INDEX.  Where
+       INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+       before picking one."
+         (interactive)
+         (when (not index) (setq index 0))
+         (pid "maya\\.bin" index newest))
+     #+END_SRC
+**** PID smeat
+     #+BEGIN_SRC emacs-lisp
+       (defun pid-smeat (&optional index newest)
+         "Get the pid for smeat.
+       If more than one is running it returns the one at INDEX.  Where
+       INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
+       before picking one."
+         (interactive)
+         (when (not index) (setq index 0))
+         ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+         (pid "smeat(:?[^=]+|$$)" index newest))
+     #+END_SRC
+**** Attach Houdini
+     Used with gdb, prints attach <pid of houdini> in the prompt.
+     #+BEGIN_SRC emacs-lisp
+       (defun attach-houdini (&optional index)
+         "Prints attach <pid> into the buffer. 
+       INDEX is use to select which one if there are multiple instances
+       running, INDEX counts from 1."
+         (interactive"p")
 
-        (interactive)
-        (when (not index) (setq index 0)) 
-        (pid "houdini-bin" index newest))
-    #+END_SRC
-*** PID Maya
-    #+BEGIN_SRC emacs-lisp
-      (defun pid-maya (&optional index newest)
-        "Get the pid for maya.
-      If more than one is running it returns the one at INDEX.  Where
-      INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-      before picking one."
-        (interactive)
-        (when (not index) (setq index 0))
-        (pid "maya\\.bin" index newest))
-    #+END_SRC
-*** PID smeat
-    #+BEGIN_SRC emacs-lisp
-      (defun pid-smeat (&optional index newest)
-        "Get the pid for smeat.
-      If more than one is running it returns the one at INDEX.  Where
-      INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-      before picking one."
-        (interactive)
-        (when (not index) (setq index 0))
-        ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
-        (pid "smeat(:?[^=]+|$$)" index newest))
-    #+END_SRC
-*** Attach Houdini
-    Used with gdb, prints attach <pid of houdini> in the prompt.
-    #+BEGIN_SRC emacs-lisp
-      (defun attach-houdini (&optional index)
-        "Prints attach <pid> into the buffer. 
-      INDEX is use to select which one if there are multiple instances
-      running, INDEX counts from 1."
-        (interactive"p")
+         ;; The default for index is one.
+         (when (< index 1) (setq index 1))
+         (insert (format "attach %s" (pid-houdini (- index 1)))))
+     #+END_SRC
 
-        ;; The default for index is one.
-        (when (< index 1) (setq index 1))
-        (insert (format "attach %s" (pid-houdini (- index 1)))))
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+       (defun attach-houdini-newest (&optional index)
+         "Prints 'attach <pid>' into the buffer.
 
-    #+BEGIN_SRC emacs-lisp
-      (defun attach-houdini-newest (&optional index)
-        "Prints 'attach <pid>' into the buffer.
+       INDEX is use to select which one if there are multiple instances
+       running, INDEX counts from 1.  PIDs are sorted on elapsed time
+       before one is selected to return the newest houdini instance."
+         (interactive"p")
 
-      INDEX is use to select which one if there are multiple instances
-      running, INDEX counts from 1.  PIDs are sorted on elapsed time
-      before one is selected to return the newest houdini instance."
-        (interactive"p")
+         ;; The default for index is one.
+         (when (not index) (setq index 1))
+         (when (< index 1) (setq index 1))
+         (insert (format "attach %s" (pid-houdini (- index 1) t))))
+     #+END_SRC
+**** Attach Maya
+     #+BEGIN_SRC emacs-lisp
+       (defun attach-maya (&optional index) 
+         "Prints attach <pid> into the buffer. 
+       INDEX is use to select which one if there are multiple instances
+       running, INDEX counts from 1."
+         (interactive"p")
+         ;; The default for index is one.
+         (when (< index 1) (setq index 1))
+         (insert (concat "attach " (pid-maya index) )))
+     #+END_SRC
+**** Attach smeat
+     #+BEGIN_SRC emacs-lisp
+       (defun attach-smeat (&optional index)
+	 "Prints attach <pid> into the buffer.
+       INDEX is use to select which one if there are multiple instances
+       running, INDEX counts from 1."
+	 (interactive"p")
 
-        ;; The default for index is one.
-        (when (not index) (setq index 1))
-        (when (< index 1) (setq index 1))
-        (insert (format "attach %s" (pid-houdini (- index 1) t))))
-    #+END_SRC
-*** Attach Maya
-    #+BEGIN_SRC emacs-lisp
-      (defun attach-maya (&optional index) 
-        "Prints attach <pid> into the buffer. 
-      INDEX is use to select which one if there are multiple instances
-      running, INDEX counts from 1."
-        (interactive"p")
-        ;; The default for index is one.
-        (when (< index 1) (setq index 1))
-        (insert (concat "attach " (pid-maya index) )))
-    #+END_SRC
-*** Attach smeat
-    #+BEGIN_SRC emacs-lisp
-      (defun attach-smeat (&optional index)
-	"Prints attach <pid> into the buffer.
-      INDEX is use to select which one if there are multiple instances
-      running, INDEX counts from 1."
-	(interactive"p")
+	 ;; The default for index is one.
+	 (when (< index 1) (setq index 1))
+	 (insert (concat "attach " (pid-smeat (- index 1)) )))
+     #+END_SRC
+**** Kill Houdini
+     #+BEGIN_SRC emacs-lisp
+       (defun kill-houdini ()
+         "Kill houdini.
+       If more than one houdini are running it will kill the
+       first one in the ps list."
+         (interactive)
+         (shell-command (concat "kill -9 " (pid-houdini))))
+     #+END_SRC
+**** Kill Maya 
+     #+BEGIN_SRC emacs-lisp
+       (defun kill-maya ()
+         "Kill maya.
+       If more than one Maya process are running it will kill the
+       first one in the ps list."
+         (interactive)
+         (shell-command (concat "kill -9 " (pid-maya))))
+     #+END_SRC
+**** Smeat abort
+     Not quite working. But sends a signal to the smeat process to abort the sim.
+     #+BEGIN_SRC emacs-lisp
+       (defun smeat-abort (&optional index )
+         "Sends USR1 signal to houdini which aborts the smeat client.
+       INDEX is used to select which houdini instance to send to if
+       multiple instances exist."
+         (interactive"p")
+         (when (< index 1) (setq index 1))
+         (let ((hou-pid (pid-houdini index)))
+           (shell-command (concat "kill -s USR1 " hou-pid))))
+     #+END_SRC
+**** Preproccess
+     #+BEGIN_SRC emacs-lisp
+       (defun preprocess-fix-macros ()
+         "Fix expanded macros when running only the preprocess on a file.
+       For example: g++ <flags> -E <file>.  Since they are expanded into
+       a single line which makes them hard to debug."
+         (interactive)
+         (let* ((start (if (use-region-p) (region-beginning) (point)))
+                (end (if (use-region-p) (region-end) (point-max)))
+                (regex-map '(":[ ]" ";" "{" "}[ ]"))
+                (regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|")))
+           (goto-char start)
+           (while (search-forward-regexp regex end t)
+             (newline)
+             (setq end (1+ end)))
+           (indent-region start (point))
+           (goto-char start)))
+     #+END_SRC
+**** Make
+     Functions to speed up the port of old style Makefiles to using modules.
+     #+BEGIN_SRC emacs-lisp
+       (defun make-boost-components ()
+         "Convert old style boost libs to module style"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           (while (re-search-forward
+                   (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= "
+                           "\\$(BOOST_LIB_DIR)/libboost_\\(.*?\\)\\.a") end t)
+             (replace-match "BOOST_COMPONENTS += \\1"))))
 
-	;; The default for index is one.
-	(when (< index 1) (setq index 1))
-	(insert (concat "attach " (pid-smeat (- index 1)) )))
-    #+END_SRC
-*** Kill Houdini
-    #+BEGIN_SRC emacs-lisp
-      (defun kill-houdini ()
-        "Kill houdini.
-      If more than one houdini are running it will kill the
-      first one in the ps list."
-        (interactive)
-        (shell-command (concat "kill -9 " (pid-houdini))))
-    #+END_SRC
-*** Kill Maya 
-    #+BEGIN_SRC emacs-lisp
-      (defun kill-maya ()
-        "Kill maya.
-      If more than one Maya process are running it will kill the
-      first one in the ps list."
-        (interactive)
-        (shell-command (concat "kill -9 " (pid-maya))))
-    #+END_SRC
-*** Smeat abort
-    Not quite working. But sends a signal to the smeat process to abort the sim.
-    #+BEGIN_SRC emacs-lisp
-      (defun smeat-abort (&optional index )
-        "Sends USR1 signal to houdini which aborts the smeat client.
-      INDEX is used to select which houdini instance to send to if
-      multiple instances exist."
-        (interactive"p")
-        (when (< index 1) (setq index 1))
-        (let ((hou-pid (pid-houdini index)))
-          (shell-command (concat "kill -s USR1 " hou-pid))))
-    #+END_SRC
-*** Preproccess
-    #+BEGIN_SRC emacs-lisp
-      (defun preprocess-fix-macros ()
-        "Fix expanded macros when running only the preprocess on a file.
-      For example: g++ <flags> -E <file>.  Since they are expanded into
-      a single line which makes them hard to debug."
-        (interactive)
-        (let* ((start (if (use-region-p) (region-beginning) (point)))
-               (end (if (use-region-p) (region-end) (point-max)))
-               (regex-map '(":[ ]" ";" "{" "}[ ]"))
-               (regex (mapconcat (lambda (x) (format "\\(%s\\)" x)) regex-map "\\|")))
-          (goto-char start)
-          (while (search-forward-regexp regex end t)
-            (newline)
-            (setq end (1+ end)))
-          (indent-region start (point))
-          (goto-char start)))
-    #+END_SRC
-*** Make
-    Functions to speed up the port of old style Makefiles to using modules.
-    #+BEGIN_SRC emacs-lisp
-      (defun make-boost-components ()
-        "Convert old style boost libs to module style"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          (while (re-search-forward
-                  (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= "
-                          "\\$(BOOST_LIB_DIR)/libboost_\\(.*?\\)\\.a") end t)
-            (replace-match "BOOST_COMPONENTS += \\1"))))
+       (defun make-include-to-modules ()
+         "Convert old Makefile's INCLUDE to using modules"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           (while (re-search-forward
+                   "INCLUDES \\+= \\$(\\(.*\\)_INC_DIR)" end t)
+             (replace-match 
+              (concat "MODULES += " (downcase (match-string-no-properties 1))) t ))))
 
-      (defun make-include-to-modules ()
-        "Convert old Makefile's INCLUDE to using modules"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          (while (re-search-forward
-                  "INCLUDES \\+= \\$(\\(.*\\)_INC_DIR)" end t)
-            (replace-match 
-             (concat "MODULES += " (downcase (match-string-no-properties 1))) t ))))
+       (defun make-mkl-module ()
+         "Convert old mkl static libs to using the mkl module's flags"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           (when (re-search-forward 
+                  (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= " 
+                          "\\$(MKL_STATIC_LAYERED_LIBS)") end t)
+             (replace-match "MKL_USE_STATIC_LIBS = YES"))))
 
-      (defun make-mkl-module ()
-        "Convert old mkl static libs to using the mkl module's flags"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          (when (re-search-forward 
-                 (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= " 
-                         "\\$(MKL_STATIC_LAYERED_LIBS)") end t)
-            (replace-match "MKL_USE_STATIC_LIBS = YES"))))
+       (defun make-eigen-module ()
+         "Convert eigen cxxflag to using the eigen module's flags"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           (when (re-search-forward 
+                  "X?CXXFLAGS \\+= -DEIGEN_USE_MKL_ALL" end t)
+             (replace-match "EIGEN_USE_MKL = YES"))))
 
-      (defun make-eigen-module ()
-        "Convert eigen cxxflag to using the eigen module's flags"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          (when (re-search-forward 
-                 "X?CXXFLAGS \\+= -DEIGEN_USE_MKL_ALL" end t)
-            (replace-match "EIGEN_USE_MKL = YES"))))
+       (defun make-openvdb-module ()
+         "Convert openvdb cxxflag to using the openvdb module's flags"
+         (interactive)
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           (when (re-search-forward 
+                  "X?CXXFLAGS \\+= -DOPENVDB_3_ABI_COMPATIBLE" end t)
+             (replace-match "OPENVDB_USE_ABI_3 = YES"))))
 
-      (defun make-openvdb-module ()
-        "Convert openvdb cxxflag to using the openvdb module's flags"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          (when (re-search-forward 
-                 "X?CXXFLAGS \\+= -DOPENVDB_3_ABI_COMPATIBLE" end t)
-            (replace-match "OPENVDB_USE_ABI_3 = YES"))))
-
-      (defun make-insert-toolchain (&optional toolchain)
-        "Insert TOOLCHAIN = TOOLCHAIN, where the last is the variable TOOLCHAIN."
-        (interactive "sName of toolchain to use: ")
+       (defun make-insert-toolchain (&optional toolchain)
+         "Insert TOOLCHAIN = TOOLCHAIN, where the last is the variable TOOLCHAIN."
+         (interactive "sName of toolchain to use: ")
         
-        (when (not toolchain) (setq toolchain "gcc") )
+         (when (not toolchain) (setq toolchain "gcc") )
         
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end nil)))
-          (goto-char begin)
-          ;; Move to the end of the _SRCS
-          (while (re-search-forward "\\$(\\(?:EXECS\\|LIBS\\))_SRCS \\+= .*" end t))
+         (let ((begin) (end))
+           (if (use-region-p)
+               (progn (setq begin (region-beginning) end (region-end)))
+             (progn (setq begin (point-min) end nil)))
+           (goto-char begin)
+           ;; Move to the end of the _SRCS
+           (while (re-search-forward "\\$(\\(?:EXECS\\|LIBS\\))_SRCS \\+= .*" end t))
           
-          (insert (concat "\n\nTOOLCHAIN = " toolchain))))
+           (insert (concat "\n\nTOOLCHAIN = " toolchain))))
 
-      (defun make-delete-libpaths-and-rpath ()
-        "Delete LIBPATHS += and RPATH_LIBSPATHS from the makefile"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end (point-max))))
-          (delete-matching-lines "\\(?:RPATH_\\)?LIBPATHS \\+= .*" begin end )))
-
-      (defun make-delete-libs ()
-        "Delete $(EXECS/LIBS)_LIBS += lines from the makefile"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point-min) end (point-max))))
-          (delete-matching-lines "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= .*" begin end )))
-
-      (defun convert-make-to-modules ()
-        "Convert old makefile to using modules"
-        (interactive)
-        (make-insert-toolchain)
-        (make-include-to-modules)
-        (make-mkl-module)
-        (make-eigen-module)
-        (make-openvdb-module)
-        (make-boost-components)
-        (make-delete-libpaths-and-rpath)
-        (make-delete-libs))
-    #+END_SRC
-* Custom functions
-** Buffer
-   Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
-   #+BEGIN_SRC emacs-lisp
-     (defun rename-current-file-or-buffer ()
-       "Rename current file and buffer, similar to save-as but removes
-     the old file"
-       (interactive)
-       (if (not (buffer-file-name))
-           (call-interactively 'rename-buffer)
-         (let ((file (buffer-file-name)))
-           (with-temp-buffer
-             (set-buffer (dired-noselect file))
-             (dired-do-rename)
-             (kill-buffer nil))))
-       nil)
-   #+END_SRC
-   To sync all open buffers with their respective files on disk. [[https://www.emacswiki.org/emacs/RevertBuffer][Source]]
-   #+BEGIN_SRC emacs-lisp
-     (defun revert-all-buffers ()
-         "Refreshes all open buffers from their respective files."
-         (interactive)
-         (dolist (buf (buffer-list))
-           (with-current-buffer buf
-             (when (and (buffer-file-name) (not (buffer-modified-p)))
-               (revert-buffer t t t) )))
-         (message "Refreshed open files.") )
-   #+END_SRC
-** Text
-   Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg.
-   #+BEGIN_SRC emacs-lisp
-     (defun duplicate-line ()
-       "Clone line at cursor, leaving the latter intact."
-       (interactive)
-       (save-excursion
-         (let ((kill-read-only-ok t) deactivate-mark)
-           (read-only-mode 1)
-           (kill-whole-line)
-           (read-only-mode 0)
-           (yank))))
-   #+END_SRC
-** Subversion
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-fetch-info (item)
-       "Get the info ITEM from the current svn repo as a string,
-     can be for example url or revision, see svn info --help for the
-     exhaustive list."
-       (shell-command-to-string
-        (concat "env PATH=" (getenv "PATH") " "
-                "svn info --show-item=" item " --no-newline")))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-fetch-repo-url ()
-       "Return a string of the repo url in the current svn repo.
-          I.e the root url plus the name of the repo on the
-          server. Prefixed will return the full url otherwise it will
-          just return the relative."
-       (let ((relurl (svn-fetch-info 
-                      (if current-prefix-arg "url" "relative-url"))))
-         (replace-regexp-in-string 
-          "^\\(.*\\)/\\(trunk\\|tags.*\\|branches.*\\)"
-          "\\1"
-          relurl)))
-   #+END_SRC
-   
-   
-   Fetches the url of the repository. For example
-   if we have the url
-   http://svn.example.com/myrepo/branches/branch
-   It will return the whole thing.
-   
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-url ()
-       "Get the repo url in the current svn repo.
-          I.e the root url plus the name of the repo on the server"
-       (interactive)
-       (insert (svn-fetch-info "url")))
-   #+END_SRC
-
-   Fetches the root url. For example if we have the url
-   http://svn.example.com/myrepo/branches/branch
-   ^^^^^^^^^^^^^^^^^^^^^^
-   This is the root url.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-root-url ()
-       "Get the repo's root url in the current svn repo."
-       (interactive)
-       (insert (svn-fetch-info "repos-root-url")))
-   #+END_SRC
-
-   Fetches the root url + the name of the repository. For example
-   if we have the url
-   http://svn.example.com/myrepo/branches/branch
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   This is the repo url.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-repo-url ()
-       "Get the repo url in the current svn repo.
-          I.e the root url plus the name of the repo on the
-          server. Prefixed will return the full url otherwise it will
-          just return the relative."
-       (interactive)
-       (insert (svn-fetch-repo-url)))
-   #+END_SRC
-
-   Get the trunk/branch/tag url for the current svn repo. For example
-   if we have the url
-   http://svn.example.com/myrepo/branches/branch
-
-   It will return for svn-trunk-url
-   http://svn.example.com/myrepo/trunk
-
-   It will return for svn-branch-url
-   http://svn.example.com/myrepo/branches
-
-   It will return for svn-branch-url
-   http://svn.example.com/myrepo/tags
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-trunk-url ()
-       "Get the url for the trunk in the current svn repo."
-       (interactive)
-       (insert 
-        (concat (svn-fetch-repo-url) "/trunk")))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-branch-url ()
-       "Get the url for the branch root in the current svn repo."
-       (interactive)
-       (insert 
-        (concat (svn-fetch-repo-url) "/branches")))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (defun svn-tag-url ()
-       "Get the url for the branch root in the current svn repo."
-       (interactive)
-       (insert 
-        (concat (svn-fetch-repo-url) "/tags")))
-   #+END_SRC
-
-** Programming
-*** C++
-**** Expands a define macro for all matches in current buffer.
-     #+BEGIN_SRC emacs-lisp
-       (defun replace-define()
-         "Evaluating the define variable.
-       Place cursor on a #define <var> <content> and execute this command and it will
-       replace all <var> with <content> in the file."
-         (interactive)
-         (let ((line (split-string (thing-at-point 'line) )))
-                (if (equal (car line) "#define")
-                    (let ((curr-pos (point)) ;; save current position
-                          (end (point-max)))
-                 ;; Jump to the end of line
-                 (end-of-line)
-                 ;; Replace the first with the second.
-                 (while (re-search-forward (concat "\\_<"(nth 1 line)"\\_>") end t )
-                        (replace-match (nth 2 line)))
-                 ;; return to the same position
-                 (goto-char curr-pos)
-                 ;; move to the end of the line to indicate that it's done.
-                 (end-of-line))
-                  (message "Not a #define directive!" ))))
-     #+END_SRC
-**** Undo replace-define.
-      #+BEGIN_SRC emacs-lisp
-        (defun replace-define-undo()
-          "Undoing the expansion of the define variable.
-        Place cursor on a #define <var> <content> and execute this
-         command and it will replace all <content> with <var> in the
-         file."
-
-          (interactive)
-          (let ((line (split-string (thing-at-point 'line) )))
-            (if (equal (car line) "#define")
-                (let ((curr-pos (point)) ;; save current position
-                      (end (point-max)))
-                  ;; Jump to the end of line
-                  (end-of-line)
-
-                  ;; Replace the second with the first
-                  (while (re-search-forward (nth 2 line) end t ) (replace-match (nth 1 line)))
-
-                  ;; return to the same position
-                  (goto-char curr-pos)
-                  ;; move to the end of the line to indicate that it's done.
-                  (end-of-line))
-              (message "Not a #define directive!" ))))
-
-       	  #+END_SRC
-
-**** Convert typedef to c++11's alias
-      #+BEGIN_SRC emacs-lisp
-        (defun convert-typedef-to-using ()
-          "Converts typedef statements to using statements"
-          (interactive)
-          (let ((begin) (end))
-             (if (use-region-p)
-                (progn (setq begin (region-beginning) end (region-end)))
-              (progn (setq begin (point) end nil)))
-             (goto-char begin)
-            (while (re-search-forward
-                    (concat "typedef \\(\\(?:typename \\)*"
-                            "[[:print:]]+?\\)[ \t]+\\([[:alnum:]_]+\\)[ ]*;" )
-                    end t )
-              (replace-match "using \\2 = \\1;"))))
-      #+END_SRC
-**** Convert LinSys to LinAlg
-     #+BEGIN_SRC emacs-lisp
-       (defun convert-LinSys-Solver ()
-         "Converts Physics::Fluids::LinSys to Math::LinAlg::Solver"
+       (defun make-delete-libpaths-and-rpath ()
+         "Delete LIBPATHS += and RPATH_LIBSPATHS from the makefile"
          (interactive)
          (let ((begin) (end))
            (if (use-region-p)
                (progn (setq begin (region-beginning) end (region-end)))
-             (progn (setq begin (point) end nil)))
-           (goto-char begin)
-           (while (re-search-forward "Physics\\([^/:.]\\)" end t ) (replace-match "Math\\1"))
-           (goto-char begin)
-           (while (re-search-forward "Fluids\\([^/:.]\\)" end t ) (replace-match "LinAlg\\1"))
-           (goto-char begin)
-           (while (re-search-forward "LinSys\\([^/:.]\\)" end t ) (replace-match "Solver\\1"))
+             (progn (setq begin (point-min) end (point-max))))
+           (delete-matching-lines "\\(?:RPATH_\\)?LIBPATHS \\+= .*" begin end )))
 
-           (goto-char begin)
-           (while (re-search-forward "Physics::Fluids::LinSys" end t ) 
-             (replace-match "Math::LinAlg::Solver"))
-           
-           (goto-char (point-min))
-           (while (re-search-forward "PHYSICS_FLUIDS_LINSYS" end t ) 
-             (replace-match "MATH_LINALG_SOLVER"))
-           (goto-char begin)))
-     #+END_SRC
-**** Convert LinAlg to LinSys
-     #+BEGIN_SRC emacs-lisp
-       (defun convert-Solver-LinSys ()
-         "Converts Math::LinAlg::Solver to Physics::Fluids::LinSys"
+       (defun make-delete-libs ()
+         "Delete $(EXECS/LIBS)_LIBS += lines from the makefile"
          (interactive)
          (let ((begin) (end))
            (if (use-region-p)
                (progn (setq begin (region-beginning) end (region-end)))
-             (progn (setq begin (point) end nil)))
-           (goto-char begin)
-           (while (re-search-forward "Math\\([^/:.]\\)" end t ) (replace-match "Physics\\1"))
-           (goto-char begin)
-           (while (re-search-forward "LinAlg\\([^/:.]\\)" end t ) (replace-match "Fluids\\1"))
-           (goto-char begin)
-           (while (re-search-forward "Solver\\([^/:.]\\)" end t ) (replace-match "LinSys\\1"))
+             (progn (setq begin (point-min) end (point-max))))
+           (delete-matching-lines "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= .*" begin end )))
 
-           (goto-char begin)
-           (while (re-search-forward "Math::LinAlg::Solver" end t ) 
-             (replace-match "Physics::Fluids::LinSys"))
-           
-           (goto-char (point-min))
-           (while (re-search-forward "MATH_LINALG_SOLVER" end t ) 
-             (replace-match "PHYSICS_FLUIDS_LINSYS"))
-           (goto-char begin)))
-     #+END_SRC
-
-**** Insert ifdef clauses
-     
-     #+BEGIN_SRC emacs-lisp
-       (defun afs-insert-ifdef (macro &optional add-else ifndef)
-         "Insert C preprocessor conditional #ifdef MACRO. To add an else
-         clause set ADD-ELSE to t. To invert the ifdef to #ifndef MACRO
-          set ifndef to t."
-         (interactive "sName of macro: ")
-         (let* ((start (if (use-region-p) (region-beginning) (point-at-bol)))
-                (end (if (use-region-p) (region-end) (point-at-eol)))
-                (text (delete-and-extract-region start end))
-                (defcmd (if ifndef "#ifndef" "#ifdef")))
-           (insert (concat (format "%s %s\n%s\n" defcmd macro text)
-                           (when add-else (format "#else\n%s\n" text))
-                           "#endif"))
-           ))
-     #+END_SRC
-
-     #+BEGIN_SRC emacs-lisp
-       (defun afs-insert-ifdef-else (macro)
-         "Insert C prepocessor conditional #ifdef MACRO with an else clause.
-       Wrapper for (afs-insert-ifdef MACRO t)"
-         (interactive "sName of macro: ")
-         (afs-insert-ifdef macro t))
-     #+END_SRC
-
-     #+BEGIN_SRC emacs-lisp
-       (defun afs-insert-ifndef (macro)
-         "Insert C prepocessor conditional #ifndef MACRO."
-         (interactive "sName of macro: ")
-         (afs-insert-ifdef macro nil t))
-     #+END_SRC
-
-     #+BEGIN_SRC emacs-lisp
-       (defun afs-insert-ifndef-else (macro)
-         "Insert C prepocessor conditional #ifndef MACRO."
-         (interactive "sName of macro: ")
-         (afs-insert-ifdef macro t t))
-     #+END_SRC
-
-**** Convert java style comment to doxygen
-    #+BEGIN_SRC emacs-lisp
-      (defun convert-java-comment-to-doxygen ()
-          "Convert java style comment to doxygen"
-        (interactive)
-        (let ((begin) (end))
-          (if (use-region-p)
-              (progn (setq begin (region-beginning) end (region-end)))
-            (progn (setq begin (point) end nil)))
-          (goto-char begin)
-          (while (re-search-forward
-                  "/\\*\\*\n[ ]+\\*\\(.*\\)\n[ ]+\\*/"
-                  end t )
-            (replace-match "///\\1"))))
-
-    #+END_SRC 
-** Workspace
-   Function for splitting emacs into three frames. 
-   Really nice to use with i3wm.
-   #+BEGIN_SRC emacs-lisp
-     (defun setup-home ()
-     "Splits the session into three frames"
-     (interactive)
-     (delete-other-frames)
-     (delete-other-windows)
-     (make-frame-command)
-     (make-frame-command))
-   #+END_SRC
-** Split lines
-   Function for splitting lines at specified character. Default is ','.
-   #+BEGIN_SRC emacs-lisp
-     (defun split-at (&optional delim)
-     "Split region/line at DELIM, if there are multiple matches it
-     will split each one. DELIM will default to \",\" if no delim is
-     given."
-     (interactive "sSpecify delimiter: ")
-     (when (or (string= delim "") (not delim)) (setq delim ","))
-     (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
-           (end (if (use-region-p) (region-end) (point-at-eol)))
-           (regex delim))
-       (goto-char start)
-      
-       (while (search-forward-regexp regex end t)
-         (insert "\n")
-         (setq end (1+ end)))
-       (indent-region start end)
-       (goto-char start)))
-
-     (defun split-at-comma ()
-     "wrapper for split-at for use with key command"
-     (interactive)
-     (split-at ","))
-   #+END_SRC
-** Yesterday-time
-   Computes the time 24 hours ago
-   #+BEGIN_SRC emacs-lisp
-     (defun yesterday-time ()
-     "Provide the date/time 24 hours before the time now in the format of current-time."
-       (let* ((now-time (current-time))              ; get the time now
-              (hi (car now-time))                    ; save off the high word
-              (lo (car (cdr now-time)))              ; save off the low word
-              (msecs (nth 2 now-time)))              ; save off the milliseconds
-
-         (if (< lo 20864)                        ; if the low word is too small for subtracting
-             (setq hi (- hi 2)  lo (+ lo 44672)) ; take 2 from the high word and add to the low
-           (setq hi (- hi 1) lo (- lo 20864)))   ; else, add 86400 seconds (in two parts)
-
-         (list hi lo msecs))) ; regurgitate the new values
-   #+END_SRC
-* Custom plugins
-** Multiple cursor extension
-   #+BEGIN_SRC emacs-lisp
-     (use-package mc-extra-extra
-       :ensure nil
-       :load-path "~/emacs.d/plugins")
-   #+END_SRC
-* Custom keybindings
-** Macros
-    "Macro" to quickly open a file that is located on my machine at
-    work. As I'm just inserting text I switched the real macro to just
-    using insert instead.
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key
-       (kbd "C-c B")
-       (lambda ()
+       (defun convert-make-to-modules ()
+         "Convert old makefile to using modules"
          (interactive)
-         (insert "/-:pd-ws-he03.d2.com:/dd/dept/software/users/fredriks/swdevl")))
-    #+END_SRC
-** Registers
-   Quickly jump to files by pressing C-x r j <register>
-   Jump to my init file with 'e' and init directory with 'i'.
-   #+BEGIN_SRC emacs-lisp
-     (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
-     (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org")) 
-   #+END_SRC
-** UI
-   Key bindings if I really need to see the menu and tool bar
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "<f5>") 'menu-bar-mode)
-     (global-set-key (kbd "<f6>") 'tool-bar-mode)
-   #+END_SRC
-   
-** Navigation
-   Jump to specific line.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "M-g") 'goto-line)
-   #+END_SRC
-   
-   Open file at point.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-x f") 'find-file-at-point)
-   #+END_SRC
-   
-** Text search
-   I'm using the regex variant of the text search more than the normal one.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-     (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-     (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
-   #+END_SRC
-** Text edit
-   Bind replace regexp to meta r
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "M-r") 'replace-regexp)
-   #+END_SRC
-   
-   Duplicate line
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c l") 'duplicate-line)
-   #+END_SRC
-
-   Split line at comma
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-,") 'split-at-comma)
-   #+END_SRC
-** Buffer functions
-   Key bindings for revert-all-buffers and rename current buffer
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c r") 'revert-all-buffers)
-     (global-set-key (kbd "C-c R") 'rename-current-file-or-buffer)
-   #+END_SRC
-** C Common
-   Hide/Show code blocks
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'c-mode-common-hook
-       (lambda()
-         (local-set-key (kbd "C-c <right>") 'hs-show-block)
-         (local-set-key (kbd "C-c <left>")  'hs-hide-block)
-         (local-set-key (kbd "C-c <up>")    'hs-hide-all)
-         (local-set-key (kbd "C-c <down>")  'hs-show-all)
-         (hs-minor-mode t)))
-   #+END_SRC
-
-   When in a c family buffer use shift tab to switch between header
-   and source
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'c-mode-common-hook
-       (lambda() 
-         (local-set-key  (kbd "<backtab>") 'ff-find-other-file)))
-   #+END_SRC
-** Compile
-   Key bindings to run make on current location and to re-run the
-   command.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "<f12>") 'compile)
-     (global-set-key (kbd "<f11>") 'recompile)
-   #+END_SRC
-** Subversion
-   Key bindings for the custom subversion commands
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c s u") 'svn-url)
-     (global-set-key (kbd "C-c s r") 'svn-repo-url)
-     (global-set-key (kbd "C-c s t") 'svn-trunk-url)
-     (global-set-key (kbd "C-c s T") 'svn-tag-url)
-     (global-set-key (kbd "C-c s b") 'svn-branch-url)
-     (global-set-key (kbd "C-c s R") 'svn-root-url)
-   #+END_SRC
+         (make-insert-toolchain)
+         (make-include-to-modules)
+         (make-mkl-module)
+         (make-eigen-module)
+         (make-openvdb-module)
+         (make-boost-components)
+         (make-delete-libpaths-and-rpath)
+         (make-delete-libs))
+     #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
