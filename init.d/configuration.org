@@ -313,13 +313,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           '(("#[[:xdigit:]]\\{6\\}"
              (0 (put-text-property (match-beginning 0)
                                    (match-end 0)
-                                   'face (list :background 
+                                   'face (list :background
                                                (match-string-no-properties 0)))))))
-        (defun hexcolour-add-to-font-lock ()
-          (font-lock-add-keywords nil hexcolour-keywords))
-        (add-hook 'lisp-mode-hook 'hexcolour-add-to-font-lock))
+        (add-hook 'lisp-mode-hook 
+                  (lambda ()
+                    (setq show-trailing-whitespace t)
+                    (font-lock-add-keywords nil hexcolour-keywords))))
     #+END_SRC
-
+**** lispy (disabled)
     #+BEGIN_SRC emacs-lisp
       (use-package lispy
         :disabled t
@@ -335,7 +336,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'emacs-lisp-mode-hook #'adjust-parens-mode)
         :pin gnu)
     #+END_SRC
-**** Smartparens (Disabled)
+**** Smartparens
 
      Having issues with turning of auto balancing, i.e
      (|) - insert () -> (()|
@@ -384,6 +385,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     info how this work. [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html][Guessing]] the style also work, but it was
     easier for me to just place the pointer at a location and press
     C-c C-o (c-set-offset) and add that to the c-offsets-alist.
+
+    When in a c family buffer use shift tab to switch between header
+    and source.
+
     #+BEGIN_SRC emacs-lisp
       (c-add-style "dd"
                    '("gnu"
@@ -448,6 +453,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Add key combinations to perform cargo tasks within a Rust project.
     #+BEGIN_SRC emacs-lisp
       (use-package cargo
+        :after (rust-mode)
         :init
         (add-hook 'rust-mode-hook 'cargo-minor-mode)
         :pin melpa-stable)
@@ -456,6 +462,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Lint rust code with flycheck
     #+BEGIN_SRC emacs-lisp
       (use-package flycheck-rust
+        :after (rust-mode)
         :pin melpa)
     #+END_SRC
 
@@ -464,16 +471,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     autocomplete for go.
     #+BEGIN_SRC emacs-lisp
       (use-package go-mode
-       	:config
-       	(add-hook 'go-mode-hook 
+        :config
+        (add-hook 'go-mode-hook
                   (lambda ()
-                    (setq-default) 
-                    (setq tab-width 2) 
-                    (setq standard-indent 2) 
-                    (setq indent-tabs-mode nil)))
-       	(use-package go-autocomplete
-          :pin melpa-stable)
-       	:pin melpa-stable)
+                    (setq tab-width 2
+                          standard-indent 2
+                          indent-tabs-mode nil)))
+        :pin melpa-stable)
     #+END_SRC
 *** Shaders
 **** GLSL
@@ -509,8 +513,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ("modules/.*" . makefile-gmake-mode)
                 ("BUILD\\.conf$" . makefile-gmake-mode)
                 ("Make/Project$" . makefile-gmake-mode)
-                ("\\.tdpackage$" . makefile-gmake-mode)
-                )
+                ("\\.tdpackage$" . makefile-gmake-mode))
          :config
          (add-hook 'makefile-mode-hook
                    (lambda ()
@@ -544,11 +547,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Indent using 2 spaces for shell scripts.
      #+BEGIN_SRC emacs-lisp
        (use-package sh-script
-       	 :config
-       	 (add-hook 'sh-mode-hook
+         :config
+         (add-hook 'sh-mode-hook
                (lambda ()
-               	 (setq indent-tabs-mode nil)
-               	 (setq c-basic-offset 2))))
+                 (setq indent-tabs-mode nil
+                       c-basic-offset 2))))
      #+END_SRC
 *** Yaml
     #+BEGIN_SRC emacs-lisp
@@ -576,13 +579,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Julia
     #+BEGIN_SRC emacs-lisp
       (use-package julia-mode
-        :init
         :pin melpa-stable)
     #+END_SRC
 *** Systemd
     #+BEGIN_SRC emacs-lisp
       (use-package systemd
-        :init
         :pin melpa-stable)
     #+END_SRC
 *** GDB script
@@ -600,17 +601,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Clean the buffer with C-c c.
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
-       :bind (:map ledger-mode-map ("C-c c" . ledger-mode-clean-buffer))
+       :bind (:map ledger-mode-map
+                   ("C-c c" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 0
              ledger-schedule-look-forward 30)
-
-       ;; (add-hook 'ledger-mode-hook 
-       ;;           (lambda ()
-       ;;             (company-mode -1)))
        :pin melpa-stable)
    #+END_SRC   
 *** Arduino
@@ -749,17 +747,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ("C-c c" . org-capture)
                ("C-c b" . org-iswitchb))
         :config
-        (use-package org-bullets
-          :pin melpa-stable)
-        ;; Use pretty bullet points instead of asterix
-        (add-hook 'org-mode-hook
-                  (lambda ()
-                    (org-bullets-mode t)))
         (setq org-ellipsis "⤵"
-              org-src-fontify-natively t
               org-todo-keywords
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
-              org-default-notes-file (concat org-directory "/Övrigt.org"))
+              org-default-notes-file (concat org-directory "/Övrigt.org")
+              org-src-fontify-natively t
+              org-src-tab-acts-natively t)
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
 
@@ -767,16 +760,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (org-babel-do-load-languages
          'org-babel-load-languages
          '((scheme . t)))
-        ;; (setq org-src-window-setup 'current-window)
         :pin org)
     #+END_SRC
+    
+    Use pretty bullet points instead of asterix
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-bullets
+        :after (org)
+        :init
+        (add-hook 'org-mode-hook
+                  (lambda ()
+                    (org-bullets-mode t)))
+        :pin melpa-stable)
+    #+END_SRC
 
-    Doesn't work with yasnippet getting:
-    yas--fallback: yasnippet fallback loop!
+    *NOTE:*
+    "Doesn't work with yasnippet getting:
+     yas--fallback: yasnippet fallback loop!"
+
     This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
-
-    Make TAB act as if it were issued in a buffer of the language's major mode.
-    =(setq org-src-tab-acts-natively t)=
 
 *** Org-noter (disabled)
     Not quite working yet.
@@ -819,19 +821,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package eshell
         :config
-        (setq-default eshell-prompt-function
-                      (lambda ()
-                        (concat (propertize "⎣" 'face '(:foreground "#ddd"))
-                                (propertize (user-login-name) 'face '(:foreground "#3387cc"))
-                                (propertize "@" 'face '(:foreground "#ddd"))
-                                (propertize (system-name) 'face '(:foreground "#ddd"))
-                                " " 
-                                (propertize (if (string-prefix-p (getenv "HOME") (eshell/pwd))
-                                                (replace-regexp-in-string (getenv "HOME") "~" (eshell/pwd)) 
-                                                (eshell/pwd)) 'face '(:foreground "#666"))
-                                (propertize "⎦ " 'face '(:foreground "ddd"))
-                                )))
-        (setq-default eshell-prompt-regexp "^⎣.*⎦ "))
+        (setq-default
+         eshell-prompt-function
+         (lambda ()
+           (concat (propertize "⎣" 'face '(:foreground "#ddd"))
+                   (propertize (user-login-name) 'face '(:foreground "#3387cc"))
+                   (propertize "@" 'face '(:foreground "#ddd"))
+                   (propertize (system-name) 'face '(:foreground "#ddd"))
+                   " " 
+                   (propertize (if (string-prefix-p (getenv "HOME") (eshell/pwd))
+                                   (replace-regexp-in-string (getenv "HOME") "~" 
+                                                             (eshell/pwd)) 
+                                 (eshell/pwd)) 'face '(:foreground "#666"))
+                   (propertize "⎦ " 'face '(:foreground "ddd"))
+                   ))
+         eshell-prompt-regexp "^⎣.*⎦ "))
     #+END_SRC
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
@@ -926,6 +930,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package tramp
         :config
         (setq tramp-default-method "ssh")
+        ;; Deal with work, guix and my custom scripts
         (add-to-list 'tramp-remote-path "~/bin")
         (add-to-list 'tramp-remote-path "/tools/bin")
         (add-to-list 'tramp-remote-path "~/.guix-profile/bin")
@@ -960,6 +965,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:pin melpa-stable)
     #+END_SRC
 *** avy
+    Cool tool that I use far too seldom.
     #+BEGIN_SRC emacs-lisp
       (use-package avy
         :config
@@ -969,13 +975,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** Compilation
-
     Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
-    For closing compilation window when it's done see [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]]
 
-    TODO: Fix that when closing the *compilation* buffer that it picks
-    a buffer that's not already active. Which it does right now and is
-    quite annoying. Have disabled it because of that.
+    Have disabled automatically closing the *compilation* buffer if no
+    errors occur. For one the function in [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]] doesn't properly swap
+    to the correct buffer. Usually you end up with multiple frames
+    having the same buffer open, which is annoying.
+
+    Second it will close the buffer if only warnings occured. I like
+    to have my code warning free and thus I need to see if any
+    warnings occured. And cannot force all warnings to be treated as
+    errors as others might not share the same idea about warnings.
+
     #+BEGIN_SRC emacs-lisp
       (use-package compile 
         :init
@@ -1070,8 +1081,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ("C-c m s n"   . mc/insert-same-numbers-per-line)
                ("C-c m s c"   . mc/insert-same-chars-per-line))
         :config
-        (use-package mc-extras
-          :pin melpa-stable)
+        :pin melpa-stable)
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package mc-extras
+        :after (multiple-cursors)
         :pin melpa-stable)
     #+END_SRC
 *** String inflections
@@ -1108,7 +1123,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Disabled the comint-highlight-prompt to use the colors from the
    shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]].
 
-   Custom function to clear the shell in emacs. Bound to f8
+   Custom function to clear the shell in emacs. Bound to f8. Also
+   works for gdb.
    #+BEGIN_SRC emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
@@ -1117,7 +1133,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ;; Use the prompts colours instead of ansi-color
        (set-face-attribute 'comint-highlight-prompt nil
                            :inherit nil)
-
        (add-hook 'shell-mode-hook 
                  (lambda ()
                    ;; Enable color in shell
@@ -1135,9 +1150,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (setq ansi-color-map (ansi-color-make-color-map))
                    ;; Disable yas minor mode
                    (yas-minor-mode -1)
-                   ;; Disable company mode
-                   ;; Breaks find-*dired functions
-                   ;;(when (not dotemacs-is-work) (company-mode -1))
                    ;; Add go and goc to the dirtrack, Need tweak the regexp 
                    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
                    ))
