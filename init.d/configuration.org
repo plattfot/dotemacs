@@ -349,6 +349,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
          ;; (add-hook 'python-mode 'turn-on-smartparens-mode)
          (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
          :bind (:map smartparens-mode-map
@@ -368,8 +369,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("M-}" . sp-splice-sexp-killing-backward)
                      ("M-{" . sp-splice-sexp-killing-forward))
          :config
-         ;; (setq sp-autoinsert-pair nil)
-         ;; (setq sp-autoskip-closing-pair nil)
+         ;; Turn off balancing of single and back quote in lisp.
+         (sp-with-modes sp--lisp-modes
+           (sp-local-pair "'" nil :actions nil)
+           (sp-local-pair "`" nil :actions nil))
          :pin melpa-stable)
      #+END_SRC
 *** C family
