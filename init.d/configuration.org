@@ -940,7 +940,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq avy-all-windows nil)
         (setq avy-background t)
-        :bind (("M-s" . avy-goto-char))
+        :bind (("M-j" . avy-goto-char))
         :pin melpa-stable)
     #+END_SRC
 *** Compilation
@@ -1547,17 +1547,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-<f5>") 'menu-bar-mode)
          (define-key map (kbd "C-<f6>") 'tool-bar-mode)
          map)
-       "Custom keymap for `plattfot-mode'")
+       "Custom keymap for `plattfot-mode'.")
+
+     (defvar plattfot-comint-mode-map
+       (let ((map (copy-keymap plattfot-mode-map)))
+         ;; Avoid overloading M-r in comint mode as that is used for
+         ;; fetching history.
+         (define-key map (kbd "M-r") nil)
+         map)
+       "Custom keymap for `plattfot-comint-mode'.")
 
      (define-minor-mode plattfot-mode
        "Custom keybindings for plattfot:
      \\{plattfot-mode-map}"
        :version "3.0.0"
        :lighter nil
-       :global t
        :keymap plattfot-mode-map
        nil)
 
+     (define-globalized-minor-mode plattfot-global-mode plattfot-mode
+       (lambda () (plattfot-mode 1)))
+
+     (define-minor-mode plattfot-comint-mode
+       "Custom keybindings for plattfot that removes the replace-regex keybinding:
+     \\{plattfot-comint-mode-map}"
+       :version "3.0.0"
+       :lighter nil
+       :keymap plattfot-comint-mode-map
+       nil)
      (provide 'plattfot)
    #+END_SRC
 
@@ -1566,11 +1583,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    'compile' or 'recompile'. Due to how my keyboard is layed out. See
    my [[https://github.com/plattfot/qmk_firmware/tree/master/layouts/community/ergodox/plattfot][qmk fork]] for why that is.
 
+   Reason for having three different modes is to be able to disable
+   the 'M-r' keybinding for comint modes, eg. shell and gud-gdb. This
+   was the cleanest way I could find doing this.
+
    #+BEGIN_SRC emacs-lisp
-    (use-package plattfot
-      :init
-      (plattfot-mode 1)
-      :ensure nil)
+     (use-package plattfot
+       :init
+       (plattfot-global-mode 1)
+       (add-hook 'comint-mode-hook
+                 (lambda ()
+                   ;; Change to the comint mode to get history search.
+                   (plattfot-mode 0)
+                   (plattfot-comint-mode 1)))
+       :ensure nil)
    #+END_SRC
 
 *** Macros
