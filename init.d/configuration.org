@@ -399,6 +399,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      (c-offsets-alist
                       (substatement-open . 0)
                       (arglist-close . 0)
+                      (arglist-intro . +)
                       (statement-case-open . 0))))
     #+END_SRC
     #+BEGIN_SRC emacs-lisp
