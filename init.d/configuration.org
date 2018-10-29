@@ -100,9 +100,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up).
         inhibit-splash-screen t         ;; Dismiss the startup screen.
         initial-scratch-message ""      ;; Empty scratch buffer.
-        calendar-week-start-day 1       ;; Week starts on Monday.
         indent-tabs-mode nil)           ;; Don't use tab for indenting.
      (show-paren-mode 1)                ;; Highlight matching brackets.
+   #+END_SRC
+** Calender
+   #+BEGIN_SRC emacs-lisp
+     (setq-default
+      calendar-week-start-day 1       ;; Week starts on Monday.
+      calendar-day-name-array
+      ["söndag" "måndag" "tisdag" "onsdag" "torsdag" "fredag" "lördag"]
+      calendar-month-name-array
+      ["januari" "februari" "mars" "april" "maj" "juni"
+       "juli" "augusti" "september" "oktober" "november" "december"]
+      calendar-time-display-form '(24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))
+      calendar-date-style 'european)
    #+END_SRC
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
