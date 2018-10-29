@@ -5,7 +5,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * General
 ** Package management
 
-   Setup repositories for package and auto download use-package if it's missing. 
+   Setup repositories for package and auto download use-package if it's missing.
    #+BEGIN_SRC emacs-lisp
      (require 'package)
 
@@ -139,15 +139,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * Packages
 ** Code
 *** Autocomplete
-   Packages that helps speed up coding, i.e. auto complete, boiler plates etc 
-**** Company 
+   Packages that helps speed up coding, i.e. auto complete, boiler plates etc
+**** Company
 
      Configure company to work similar to auto complete. Disabled most
      backends for c++ when at work as they were either slow, failed to
      find a completion half the time or flat out crashed clang when
      trying to complete stuff. The company-dabbrev-code works similar
      to what I had before with ac.
-     
+
      #+BEGIN_SRC emacs-lisp
        (use-package company
                                                ;:disabled t
@@ -168,31 +168,31 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                company-dabbrev-other-buffers t
                company-dabbrev-code-other-buffers t)
 
-         (add-hook 'org-mode-hook 
+         (add-hook 'org-mode-hook
                    (lambda ()
                      ;; Remove dabbrev from org-mode as it's driving me crazy!
                      (set (make-local-variable 'company-backends)
-                          (setq-local company-backends 
+                          (setq-local company-backends
                                       (delete 'company-dabbrev company-backends)))
                      ;; Fixing capf to work with org-mode
                      ;; https://emacs.stackexchange.com/a/21173
-                     (add-hook 'completion-at-point-functions 
+                     (add-hook 'completion-at-point-functions
                                'pcomplete-completions-at-point nil t)))
          (add-hook 'emacs-lisp-mode-hook
-                   (lambda () 
+                   (lambda ()
                      (set (make-local-variable 'company-backends)
                           '((company-capf
                              company-dabbrev-code
                              :separate)))))
          ;; Only reliable backend at work
-         (when dotemacs-is-work 
+         (when dotemacs-is-work
            (add-hook 'c-mode-common-hook
                      (lambda ()
                        (set (make-local-variable 'company-backends)
                             '(company-dabbrev-code)))))
          :pin melpa-stable)
      #+END_SRC
-     
+
      #+BEGIN_SRC emacs-lisp
        ;; Shell autocomplete
        (use-package company-shell
@@ -213,7 +213,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Yasnippet
      Enable yasnippet
      #+BEGIN_SRC emacs-lisp
-       (use-package yasnippet 
+       (use-package yasnippet
        	 :config
        	 (yas-global-mode 1)
        	 (setq yas-indent-line nil)
@@ -231,27 +231,27 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'after-init-hook #'global-flycheck-mode)
          ;; Current version of rst-sphinx for flycheck disabling it
          (add-to-list 'auto-mode-alist '("\\.rst\\'" .
-                                         (lambda () (rst-mode) (flycheck-mode -1)))) 
+                                         (lambda () (rst-mode) (flycheck-mode -1))))
          :pin melpa-stable)
 
      #+END_SRC
      Tell emacs it's safe to change these in a .dir-locals.el file.
      #+BEGIN_SRC emacs-lisp
-       (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp) 
-       (put 'flycheck-gcc-language-standard 'safe-local-variable #'stringp) 
-       (put 'flycheck-gcc-include-path 'safe-local-variable #'listp) 
-       (put 'flycheck-gcc-includes 'safe-local-variable #'listp) 
-       (put 'flycheck-gcc-warnings 'safe-local-variable #'listp) 
-       (put 'flycheck-gcc-definitions 'safe-local-variable #'listp) 
-       (put 'flycheck-gcc-args 'safe-local-variable #'listp) 
+       (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp)
+       (put 'flycheck-gcc-language-standard 'safe-local-variable #'stringp)
+       (put 'flycheck-gcc-include-path 'safe-local-variable #'listp)
+       (put 'flycheck-gcc-includes 'safe-local-variable #'listp)
+       (put 'flycheck-gcc-warnings 'safe-local-variable #'listp)
+       (put 'flycheck-gcc-definitions 'safe-local-variable #'listp)
+       (put 'flycheck-gcc-args 'safe-local-variable #'listp)
 
-       (put 'flycheck-c/c++-clang-executable 'safe-local-variable #'stringp) 
-       (put 'flycheck-clang-language-standard 'safe-local-variable #'stringp) 
-       (put 'flycheck-clang-include-path 'safe-local-variable #'listp) 
-       (put 'flycheck-clang-includes 'safe-local-variable #'listp) 
-       (put 'flycheck-clang-warnings 'safe-local-variable #'listp) 
-       (put 'flycheck-clang-definitions 'safe-local-variable #'listp) 
-       (put 'flycheck-clang-args 'safe-local-variable #'listp) 
+       (put 'flycheck-c/c++-clang-executable 'safe-local-variable #'stringp)
+       (put 'flycheck-clang-language-standard 'safe-local-variable #'stringp)
+       (put 'flycheck-clang-include-path 'safe-local-variable #'listp)
+       (put 'flycheck-clang-includes 'safe-local-variable #'listp)
+       (put 'flycheck-clang-warnings 'safe-local-variable #'listp)
+       (put 'flycheck-clang-definitions 'safe-local-variable #'listp)
+       (put 'flycheck-clang-args 'safe-local-variable #'listp)
 
        (put 'flycheck-checkers 'safe-local-variable #'listp)
      #+END_SRC
@@ -326,7 +326,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                    (match-end 0)
                                    'face (list :background
                                                (match-string-no-properties 0)))))))
-        (add-hook 'lisp-mode-hook 
+        (add-hook 'lisp-mode-hook
                   (lambda ()
                     (setq show-trailing-whitespace t)
                     (font-lock-add-keywords nil hexcolour-keywords))))
@@ -360,6 +360,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
          ;; (add-hook 'python-mode 'turn-on-smartparens-mode)
          (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
          :bind (:map smartparens-mode-map
@@ -379,8 +380,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("M-}" . sp-splice-sexp-killing-backward)
                      ("M-{" . sp-splice-sexp-killing-forward))
          :config
-         ;; (setq sp-autoinsert-pair nil)
-         ;; (setq sp-autoskip-closing-pair nil)
+         ;; Turn off balancing of single and back quote in lisp.
+         (sp-with-modes sp--lisp-modes
+           (sp-local-pair "'" nil :actions nil)
+           (sp-local-pair "`" nil :actions nil))
          :pin melpa-stable)
      #+END_SRC
 *** C family
@@ -407,6 +410,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      (c-offsets-alist
                       (substatement-open . 0)
                       (arglist-close . 0)
+                      (arglist-intro . +)
                       (statement-case-open . 0))))
     #+END_SRC
     #+BEGIN_SRC emacs-lisp
@@ -437,7 +441,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Set the default for pb2 files (=PROJECT=) to use python.
     #+BEGIN_SRC emacs-lisp
       (use-package python
-        :mode (("\\.py\\'" . python-mode) 
+        :mode (("\\.py\\'" . python-mode)
                ("PROJECT$" . python-mode))
         :interpreter ("python" . python-mode)
         :config
@@ -448,19 +452,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** Rust
-    
+
     Packages for setting up a rust environment
     #+BEGIN_SRC emacs-lisp
       (use-package rust-mode
         :pin melpa-stable)
     #+END_SRC
-    
+
     Mode for editing Cargo files.
     #+BEGIN_SRC emacs-lisp
       (use-package toml-mode
         :pin melpa)
     #+END_SRC
-    
+
     Add key combinations to perform cargo tasks within a Rust project.
     #+BEGIN_SRC emacs-lisp
       (use-package cargo
@@ -538,7 +542,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** REPL
 **** Geiser
-     
+
      - *TODO:* Update to :hook when that comes available.
 
      #+BEGIN_SRC emacs-lisp
@@ -580,7 +584,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Markdown
     #+BEGIN_SRC emacs-lisp
       (use-package markdown-mode
-       	:pin melpa-stable)   
+       	:pin melpa-stable)
     #+END_SRC
 *** Meson
    #+BEGIN_SRC emacs-lisp
@@ -621,7 +625,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              ledger-schedule-look-backward 0
              ledger-schedule-look-forward 30)
        :pin melpa-stable)
-   #+END_SRC   
+   #+END_SRC
 *** Arduino
     Function for setting up a arduino template sketch
     #+BEGIN_SRC emacs-lisp
@@ -637,7 +641,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	// put your main code here, to run repeatedly:
 
       }")
-      )   
+      )
     #+END_SRC
 *** Gnuplot
     Enable gnuplot to be able to plot tables in org mode.
@@ -768,7 +772,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          '((scheme . t)))
         :pin org)
     #+END_SRC
-    
+
     Use pretty bullet points instead of asterix
     #+BEGIN_SRC emacs-lisp
       (use-package org-bullets
@@ -799,7 +803,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Buffer move
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
-      (use-package buffer-move 
+      (use-package buffer-move
        	:bind ( ("<M-S-up>"    . buf-move-up)
                	("<M-S-down>"  . buf-move-down)
                	("<M-S-left>"  . buf-move-left)
@@ -813,7 +817,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package dired
        	:ensure nil
        	;; Map afs-dired-find-file to F
-       	:bind (:map dired-mode-map 
+       	:bind (:map dired-mode-map
                ("F" . afs-dired-find-file))
        	:config
        	(defun afs-dired-find-file (&optional arg)
@@ -834,10 +838,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (propertize (user-login-name) 'face '(:foreground "#3387cc"))
                    (propertize "@" 'face '(:foreground "#ddd"))
                    (propertize (system-name) 'face '(:foreground "#ddd"))
-                   " " 
+                   " "
                    (propertize (if (string-prefix-p (getenv "HOME") (eshell/pwd))
-                                   (replace-regexp-in-string (getenv "HOME") "~" 
-                                                             (eshell/pwd)) 
+                                   (replace-regexp-in-string (getenv "HOME") "~"
+                                                             (eshell/pwd))
                                  (eshell/pwd)) 'face '(:foreground "#666"))
                    (propertize "⎦ " 'face '(:foreground "ddd"))
                    ))
@@ -850,7 +854,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      groups to avoid cluttering the ibuffer.
      #+BEGIN_SRC emacs-lisp
        (use-package ibuffer
-         :config 
+         :config
          (defalias 'list-buffers 'ibuffer)
          (setq-default ibuffer-expert t ;; Don't ask when closing unmodified buffers
                        ibuffer-show-empty-filter-groups nil)
@@ -930,11 +934,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Windmove
     Jump between windows using the arrow keys instead of cycling with
     "C-x o". Note that this Doesn't work in org mode.
-    
+
     *TIP:* If using i3wm. Use frames instead of windows then use i3's
      navigation instead.
     #+BEGIN_SRC emacs-lisp
-      (use-package windmove 
+      (use-package windmove
        	:bind (([M-left]  . windmove-left)  ; move to left window
                ([M-right] . windmove-right) ; move to right window
                ([M-up]    . windmove-up)    ; move to upper window
@@ -948,7 +952,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq avy-all-windows nil)
         (setq avy-background t)
-        :bind (("M-s" . avy-goto-char))
+        :bind (("M-j" . avy-goto-char))
         :pin melpa-stable)
     #+END_SRC
 *** Compilation
@@ -965,7 +969,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     errors as others might not share the same idea about warnings.
 
     #+BEGIN_SRC emacs-lisp
-      (use-package compile 
+      (use-package compile
         :init
         ;; Reuse the *compilaiton* window if open if not pick another window
         ;; in another frame.
@@ -978,7 +982,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                        ))
         :config
         (use-package ansi-color)
-        (add-hook 'compilation-filter-hook 
+        (add-hook 'compilation-filter-hook
                   (lambda ()
                     (toggle-read-only)
                     (ansi-color-apply-on-region compilation-filter-start (point))
@@ -1025,7 +1029,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Multiple cursors
     Keybindings for the mc package
     #+BEGIN_SRC emacs-lisp
-      (use-package multiple-cursors 
+      (use-package multiple-cursors
         :bind (("C-S-c C-S-c" . mc/edit-lines)
                ("C->"         . mc/mark-next-like-this)
                ("C-<"         . mc/mark-previous-like-this)
@@ -1048,7 +1052,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** String inflections
     Keybinding for cycle between snake case, camel case etc
     #+BEGIN_SRC emacs-lisp
-      (use-package string-inflection 
+      (use-package string-inflection
        	:bind ("C-;" . string-inflection-cycle)
        	:pin melpa-stable)
     #+END_SRC
@@ -1077,7 +1081,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Shell
    Enable color in shell and define the color theme. Also disable
    yasnippet in shell mode since that's messing with the shell.
-   
+
    Disabled the comint-highlight-prompt to use the colors from the
    shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]].
 
@@ -1091,7 +1095,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ;; Use the prompts colours instead of ansi-color
        (set-face-attribute 'comint-highlight-prompt nil
                            :inherit nil)
-       (add-hook 'shell-mode-hook 
+       (add-hook 'shell-mode-hook
                  (lambda ()
                    ;; Enable color in shell
                    (ansi-color-for-comint-mode-on)
@@ -1108,7 +1112,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (setq ansi-color-map (ansi-color-make-color-map))
                    ;; Disable yas minor mode
                    (yas-minor-mode -1)
-                   ;; Add go and goc to the dirtrack, Need tweak the regexp 
+                   ;; Add go and goc to the dirtrack, Need tweak the regexp
                    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
                    ))
        (defun clear-shell ()
@@ -1118,7 +1122,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (comint-truncate-buffer))))
    #+END_SRC
 * Custom
-
 ** Packages
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
@@ -1198,19 +1201,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            I.e the root url plus the name of the repo on the
            server. Prefixed will return the full url otherwise it will
            just return the relative."
-        (let ((relurl (svn-fetch-info 
+        (let ((relurl (svn-fetch-info
                        (if current-prefix-arg "url" "relative-url"))))
-          (replace-regexp-in-string 
+          (replace-regexp-in-string
            "^\\(.*\\)/\\(trunk\\|tags.*\\|branches.*\\)"
            "\\1"
            relurl)))
     #+END_SRC
-      
+
     Fetches the url of the repository. For example
     if we have the url
     http://svn.example.com/myrepo/branches/branch
     It will return the whole thing.
-   
+
     #+BEGIN_SRC emacs-lisp
       (defun svn-url ()
         "Get the repo url in the current svn repo.
@@ -1264,7 +1267,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (defun svn-trunk-url ()
         "Get the url for the trunk in the current svn repo."
         (interactive)
-        (insert 
+        (insert
          (concat (svn-fetch-repo-url) "/trunk")))
     #+END_SRC
 
@@ -1272,7 +1275,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (defun svn-branch-url ()
         "Get the url for the branch root in the current svn repo."
         (interactive)
-        (insert 
+        (insert
          (concat (svn-fetch-repo-url) "/branches")))
     #+END_SRC
 
@@ -1280,7 +1283,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (defun svn-tag-url ()
         "Get the url for the branch root in the current svn repo."
         (interactive)
-        (insert 
+        (insert
          (concat (svn-fetch-repo-url) "/tags")))
     #+END_SRC
 
@@ -1368,11 +1371,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (while (re-search-forward "LinSys\\([^/:.]\\)" end t ) (replace-match "Solver\\1"))
 
             (goto-char begin)
-            (while (re-search-forward "Physics::Fluids::LinSys" end t ) 
+            (while (re-search-forward "Physics::Fluids::LinSys" end t )
               (replace-match "Math::LinAlg::Solver"))
-           
+
             (goto-char (point-min))
-            (while (re-search-forward "PHYSICS_FLUIDS_LINSYS" end t ) 
+            (while (re-search-forward "PHYSICS_FLUIDS_LINSYS" end t )
               (replace-match "MATH_LINALG_SOLVER"))
             (goto-char begin)))
       #+END_SRC
@@ -1393,17 +1396,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (while (re-search-forward "Solver\\([^/:.]\\)" end t ) (replace-match "LinSys\\1"))
 
             (goto-char begin)
-            (while (re-search-forward "Math::LinAlg::Solver" end t ) 
+            (while (re-search-forward "Math::LinAlg::Solver" end t )
               (replace-match "Physics::Fluids::LinSys"))
-           
+
             (goto-char (point-min))
-            (while (re-search-forward "MATH_LINALG_SOLVER" end t ) 
+            (while (re-search-forward "MATH_LINALG_SOLVER" end t )
               (replace-match "PHYSICS_FLUIDS_LINSYS"))
             (goto-char begin)))
       #+END_SRC
 
 ***** Insert ifdef clauses
-     
+
       #+BEGIN_SRC emacs-lisp
         (defun afs-insert-ifdef (macro &optional add-else ifndef)
           "Insert C preprocessor conditional #ifdef MACRO. To add an else
@@ -1457,9 +1460,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    end t )
              (replace-match "///\\1"))))
 
-     #+END_SRC 
+     #+END_SRC
 *** Workspace
-    Function for splitting emacs into three frames. 
+    Function for splitting emacs into three frames.
     Really nice to use with i3wm.
     #+BEGIN_SRC emacs-lisp
       (defun setup-home ()
@@ -1483,7 +1486,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (end (if (use-region-p) (region-end) (point-at-eol)))
             (regex delim))
         (goto-char start)
-      
+
         (while (search-forward-regexp regex end t)
           (insert "\n")
           (setq end (1+ end)))
@@ -1514,7 +1517,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 
 ** Keybindings
- 
+*** Minor mode
    To better organize what my custom keys are and also easy see what
    they do. I wrapped them up into a minor mode. Can just run
    'describe-minor-mode' then plattfot-mode to get a quick list of
@@ -1522,10 +1525,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    reading.
 
    Time will tell if that was a smart idea or not.
-   
+
    #+BEGIN_SRC emacs-lisp
-     (defvar plattfot-mode-map 
-       (let ((map (make-sparse-keymap))) 
+     (defvar plattfot-mode-map
+       (let ((map (make-sparse-keymap)))
          ;; Navigation
          (define-key map (kbd "C-x f") 'find-file-at-point)
          ;; Text search
@@ -1556,30 +1559,56 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-<f5>") 'menu-bar-mode)
          (define-key map (kbd "C-<f6>") 'tool-bar-mode)
          map)
-       "Custom keymap for `plattfot-mode'")
+       "Custom keymap for `plattfot-mode'.")
 
-     (define-minor-mode plattfot-mode 
+     (defvar plattfot-comint-mode-map
+       (let ((map (copy-keymap plattfot-mode-map)))
+         ;; Avoid overloading M-r in comint mode as that is used for
+         ;; fetching history.
+         (define-key map (kbd "M-r") nil)
+         map)
+       "Custom keymap for `plattfot-comint-mode'.")
+
+     (define-minor-mode plattfot-mode
        "Custom keybindings for plattfot:
      \\{plattfot-mode-map}"
        :version "3.0.0"
        :lighter nil
-       :global t
        :keymap plattfot-mode-map
        nil)
 
+     (define-globalized-minor-mode plattfot-global-mode plattfot-mode
+       (lambda () (plattfot-mode 1)))
+
+     (define-minor-mode plattfot-comint-mode
+       "Custom keybindings for plattfot that removes the replace-regex keybinding:
+     \\{plattfot-comint-mode-map}"
+       :version "3.0.0"
+       :lighter nil
+       :keymap plattfot-comint-mode-map
+       nil)
      (provide 'plattfot)
    #+END_SRC
-   
+
    Added that I need to press ctrl and the function key for the UI keys
    as I was hitting these accidentaly from time to time when running
    'compile' or 'recompile'. Due to how my keyboard is layed out. See
    my [[https://github.com/plattfot/qmk_firmware/tree/master/layouts/community/ergodox/plattfot][qmk fork]] for why that is.
 
+   Reason for having three different modes is to be able to disable
+   the 'M-r' keybinding for comint modes, eg. shell and gud-gdb. This
+   was the cleanest way I could find doing this.
+
    #+BEGIN_SRC emacs-lisp
-    (use-package plattfot
-      :init
-      (plattfot-mode 1)
-      :ensure nil)
+     (use-package plattfot
+       :init
+       (plattfot-global-mode 1)
+       (add-hook 'comint-mode-hook
+                 (lambda ()
+                   ;; Change to the comint mode to get history search.
+                   (plattfot-mode 0)
+                   (plattfot-comint-mode 1)))
+       :ensure nil)
    #+END_SRC
 
 *** Macros
@@ -1590,9 +1619,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Updated it only bind the key when I'm in the minibuffer as I
      don't have any use for this outside of that scope.
      #+BEGIN_SRC emacs-lisp
-       (add-hook 
-        'minibuffer-setup-hook 
-        (lambda () 
+       (add-hook
+        'minibuffer-setup-hook
+        (lambda ()
           (define-key minibuffer-local-map (kbd "C-c B")
             (lambda ()
               (interactive)
@@ -1602,8 +1631,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Quickly jump to files by pressing C-x r j <register>
     Jump to my init file with 'e' and init directory with 'i'.
     #+BEGIN_SRC emacs-lisp
-      (set-register ?e (cons 'file "~/.emacs.d/init.el")) 
-      (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org")) 
+      (set-register ?e (cons 'file "~/.emacs.d/init.el"))
+      (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org"))
     #+END_SRC
 ** Behaviour
    #+BEGIN_SRC emacs-lisp
@@ -1612,12 +1641,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Store work related settings.
    #+BEGIN_SRC emacs-lisp
-     (when dotemacs-is-work 
-       (when (file-exists-p "~/.emacs.d/.work.el") 
+     (when dotemacs-is-work
+       (when (file-exists-p "~/.emacs.d/.work.el")
          (load "~/.emacs.d/.work.el")))
    #+END_SRC
-** Work
-** Custom   
+* Work
+** Custom
 *** Packages
 **** dd-newfile
      Function that inserts the DD template for a new file
@@ -1659,7 +1688,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :load-path "~/.emacs.d/plugins")
      #+END_SRC
 **** work
-     Bunch of functions to setup my work area when at work 
+     Bunch of functions to setup my work area when at work
      #+BEGIN_SRC emacs-lisp
        (use-package work
          :if dotemacs-is-work
@@ -1729,7 +1758,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              before picking one."
 
          (interactive)
-         (when (not index) (setq index 0)) 
+         (when (not index) (setq index 0))
          (pid "houdini-bin" index newest))
      #+END_SRC
 **** PID Maya
@@ -1759,7 +1788,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Used with gdb, prints attach <pid of houdini> in the prompt.
      #+BEGIN_SRC emacs-lisp
        (defun attach-houdini (&optional index)
-         "Prints attach <pid> into the buffer. 
+         "Prints attach <pid> into the buffer.
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1."
          (interactive"p")
@@ -1785,8 +1814,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 **** Attach Maya
      #+BEGIN_SRC emacs-lisp
-       (defun attach-maya (&optional index) 
-         "Prints attach <pid> into the buffer. 
+       (defun attach-maya (&optional index)
+         "Prints attach <pid> into the buffer.
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1."
          (interactive"p")
@@ -1815,7 +1844,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (interactive)
          (shell-command (concat "kill -9 " (pid-houdini))))
      #+END_SRC
-**** Kill Maya 
+**** Kill Maya
      #+BEGIN_SRC emacs-lisp
        (defun kill-maya ()
          "Kill maya.
@@ -1880,7 +1909,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (goto-char begin)
            (while (re-search-forward
                    "INCLUDES \\+= \\$(\\(.*\\)_INC_DIR)" end t)
-             (replace-match 
+             (replace-match
               (concat "MODULES += " (downcase (match-string-no-properties 1))) t ))))
 
        (defun make-mkl-module ()
@@ -1891,8 +1920,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (progn (setq begin (region-beginning) end (region-end)))
              (progn (setq begin (point-min) end nil)))
            (goto-char begin)
-           (when (re-search-forward 
-                  (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= " 
+           (when (re-search-forward
+                  (concat "\\$(\\(?:EXECS\\|LIBS\\))_LIBS \\+= "
                           "\\$(MKL_STATIC_LAYERED_LIBS)") end t)
              (replace-match "MKL_USE_STATIC_LIBS = YES"))))
 
@@ -1904,7 +1933,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (progn (setq begin (region-beginning) end (region-end)))
              (progn (setq begin (point-min) end nil)))
            (goto-char begin)
-           (when (re-search-forward 
+           (when (re-search-forward
                   "X?CXXFLAGS \\+= -DEIGEN_USE_MKL_ALL" end t)
              (replace-match "EIGEN_USE_MKL = YES"))))
 
@@ -1916,16 +1945,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (progn (setq begin (region-beginning) end (region-end)))
              (progn (setq begin (point-min) end nil)))
            (goto-char begin)
-           (when (re-search-forward 
+           (when (re-search-forward
                   "X?CXXFLAGS \\+= -DOPENVDB_3_ABI_COMPATIBLE" end t)
              (replace-match "OPENVDB_USE_ABI_3 = YES"))))
 
        (defun make-insert-toolchain (&optional toolchain)
          "Insert TOOLCHAIN = TOOLCHAIN, where the last is the variable TOOLCHAIN."
          (interactive "sName of toolchain to use: ")
-        
+
          (when (not toolchain) (setq toolchain "gcc") )
-        
+
          (let ((begin) (end))
            (if (use-region-p)
                (progn (setq begin (region-beginning) end (region-end)))
@@ -1933,7 +1962,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (goto-char begin)
            ;; Move to the end of the _SRCS
            (while (re-search-forward "\\$(\\(?:EXECS\\|LIBS\\))_SRCS \\+= .*" end t))
-          
+
            (insert (concat "\n\nTOOLCHAIN = " toolchain))))
 
        (defun make-delete-libpaths-and-rpath ()
@@ -1982,11 +2011,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Juniper VPN doesn't work in linux 4.5+, workaround is to disable
    the ipv6.
    #+BEGIN_SRC sh :tangle no
-   echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6   
+   echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
    #+END_SRC
-** Tramp hangs after password entry 
+** Tramp hangs after password entry
    :PROPERTIES:
-   :CUSTOM_ID:  tramp-hang-workaround 
+   :CUSTOM_ID:  tramp-hang-workaround
    :END:
    See [[https://www.emacswiki.org/emacs/TrampMode#toc7][EmacsWiki]]
    Simple fix if you don't want to use emacs shells is to add this to your .zshrc
@@ -2015,7 +2044,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Similar issue will happen with a bash shell on the other end. And
    for that you can just remove the =unsetopt zle=.
-   
+
    The [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html][manual]] describe that you can customize the
    =tramp-shell-prompt-pattern= to match your remote prompt. Didn't
    not get that to work. Same with the =Interactive shell prompt= from
@@ -2041,7 +2070,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    use something like this in a .dir-locals.el file:
    #+BEGIN_SRC emacs-lisp :tangle no
      ;; File .dir-locals.el
-     ( ( c++-mode 
+     ( ( c++-mode
          . ((flycheck-c/c++-gcc-executable . "/tools/package/gcc/6.4.0/bin/g++" )
             (flycheck-gcc-language-standard . "c++14")
             (flycheck-gcc-include-path
@@ -2058,7 +2087,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
                 "EIGEN_MATRIX_PLUGIN=<DD/Utility/EigenMatrixAddon.hpp>"
                 ))
-            (flycheck-gcc-args 
+            (flycheck-gcc-args
              . ("-B/tools/package/binutils/2.29.1/bin"
                 "-isystem/tools/package/openvdb/4.0.1_dd01/include"
                 "-isystem/tools/package/eigen/3.3.4/include/eigen3"
@@ -2086,7 +2115,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Also prefer flycheck-gcc-includes over adding that in
    flycheck-gcc-args as if you do
    #+BEGIN_SRC emacs-lisp :tangle no
-     (flycheck-gcc-args 
+     (flycheck-gcc-args
       . ("-include openvdb/math/Vec3.h")
      )
    #+END_SRC
@@ -2096,14 +2125,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    that to work you'll need to do:
 
    #+BEGIN_SRC emacs-lisp :tangle no
-     (flycheck-gcc-args 
+     (flycheck-gcc-args
       . ("-includeopenvdb/math/Vec3.h")
      )
    #+END_SRC
    Which is not that readable.
 
 *** Language standard in c++
-   Specify language standard in dir locals file: .dir-locals.el 
+   Specify language standard in dir locals file: .dir-locals.el
    For example
    ((c++-mode
      (flycheck-clang-language-standard . "c++14")
@@ -2138,19 +2167,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC sh :tangle no
       svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
     #+END_SRC
-    
+
     Locate the revision to roll back to.
     #+BEGIN_SRC sh :tangle no
       svn log SVN_URL/REPO/tags
     #+END_SRC
-    
+
     Then cd into the working copy and update all tags involved in the
     roll back. Otherwise svn will just ignore the roll back.
     #+BEGIN_SRC sh :tangle no
       cd REPO-tag-fix
       svn up TAG0 TAG1...
     #+END_SRC
-    
+
     Roll back to the revision you want by simply merging the tags
     directory backwards to that revision.
     #+BEGIN_SRC sh :tangle no
@@ -2159,7 +2188,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Where REVISION is the revision number you picked previously. HEAD
     is a svn built in keyword and points to the latest revision.
-    
+
 ** Org mode
    Create source block type "<s" on a new line and press <tab>
 ** Elisp
@@ -2186,12 +2215,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC c++
       __attribute__((constructor)) void func(){}
     #+END_SRC
-    
+
     Call function when shared lbirary is unloaded, with gcc use:
     #+BEGIN_SRC c++
       __attribute__((destructor)) void func(){}
     #+END_SRC
-    
+
 ** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
@@ -2229,7 +2258,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Install fonts to ~/.fonts then update the fontconfig cache by
    running.
    #+BEGIN_SRC sh
-     fc-cache -v ~/.fonts   
+     fc-cache -v ~/.fonts
    #+END_SRC
    The option '-v' is just for verbose output and can be skipped.
 
@@ -2301,7 +2330,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
    #+END_SRC
-   
+
    Specify c++ compiler.
    #+BEGIN_SRC sh :tangle no
      CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
