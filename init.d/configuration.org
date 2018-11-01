@@ -2056,6 +2056,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    HISTFILE to be a tramp file. That's the only way I found to
    distinguish between a shell that is running locally or from a tramp
    connection.
+** Paragraph fill in empty message-mode buffer
+   They changed the formating in emacs 26.1 so everything before
+   --text follows this line--
+   Is treated as a headline and the first line is indented with some spaces.
+
+   #+BEGIN_SRC text
+     I am sorry about your difficulties with git push.  It is true that in this
+         situation
+     --text follows this line--
+     I am sorry about your difficulties with git push.  It is true that in
+     this situation
+   #+END_SRC
+   [[https://emacs.stackexchange.com/a/41803][source]]
+
+   Workaround is just to add
+   #+BEGIN_SRC test
+   --text follows this line--
+   #+END_SRC
 
 * Notes
 ** Lisp in search replace
