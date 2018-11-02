@@ -301,7 +301,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :bind ("C-M-<tab>" . clang-format-region)
         :pin melpa)
     #+END_SRC
-** Languages
+** Programming languages
   Modes for highlighting different programing languages.
 *** Haskell
     Settings for programming haskell in emacs
