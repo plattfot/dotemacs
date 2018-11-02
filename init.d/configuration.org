@@ -692,9 +692,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          message-send-mail-function 'message-send-mail-with-sendmail
          mm-text-html-renderer 'gnus-w3m
          notmuch-search-oldest-first nil
-         notmuch-fcc-dirs `((,user-mail-address . "gmail.com/Skickat"))
+         notmuch-fcc-dirs `((,user-mail-address . "gmail/[Gmail]/Skickat"))
          notmuch-show-logo nil
-         notmuch-draft-folder "gmail.com/Utkast"
+         notmuch-draft-folder "gmail/[Gmail]/Utkast"
          notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
                                   (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "o")
                                   (:name "oläst" :query "tag:unread" :sort-order newest-first :key "O")
