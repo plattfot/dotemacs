@@ -2363,3 +2363,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC sh :tangle no
      rpm -qf /path/to/file
    #+END_SRC
+** See what font is used under cursor
+   #+BEGIN_SRC text :tangle no
+     M-x describe-char
+   #+END_SRC
+   or
+   #+BEGIN_SRC text :tangle no
+     C-u C-x =
+   #+END_SRC
+   [[https://stackoverflow.com/a/1242760][source]]
