@@ -2271,7 +2271,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC c++
       __attribute__((destructor)) void func(){}
     #+END_SRC
-
+*** Check what indentation rule is used for c++
+    Run the function ~c-show-syntactic-information~ normaly bound to.
+    #+BEGIN_SRC :tangle no
+    C-c C-s
+    #+END_SRC
+    Useful when customizing a style.
 ** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
