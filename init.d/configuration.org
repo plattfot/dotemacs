@@ -1004,7 +1004,40 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq-default reb-re-syntax 'string))
     #+END_SRC
 ** Text
-  Packages for editing text.
+  Packages for editing and viewing text.
+*** Emojify
+
+    Need to be able to render emojis properly when reading emails. And
+    since emacs in Linux doesn't support Color fonts (yet?) needed for
+    it to work with Google's Noto Emoij font. MacOS had support but
+    got removed in [[https://github.com/emacs-mirror/emacs/blob/emacs-25.1/etc/NEWS#L1723][25.1]].
+
+    I'll need to use emojify instead.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package emojify
+        :after (notmuch)
+        :init
+        ;; Enable emojify when searching and reading emails
+        (add-hook 'notmuch-search-mode-hook 'emojify-mode)
+        (add-hook 'notmuch-show-mode-hook 'emojify-mode)
+        (add-hook 'notmuch-message-mode-hook 'emojify-mode)
+        :pin melpa-stable)
+    #+END_SRC
+
+    And added backend to company to be able to type emojis when
+    responding to messages.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package company-emoji
+        :after (company)
+        :init
+        (add-hook 'notmuch-message-mode-hook
+                  (lambda ()
+                    (add-to-list 'company-backends 'company-emoji)))
+        :pin melpa-stable)
+    #+END_SRC
+
 *** Rainbow
     Useful when debugging the theme. But is rarely used.
     #+BEGIN_SRC emacs-lisp
