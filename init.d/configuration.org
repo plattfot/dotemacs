@@ -4,7 +4,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * General
 ** Package management
 
-   Setup repositories for package and auto download use-package if it's missing.
+   Setup repositories for package and auto download use-package if it's missing
    #+BEGIN_SRC emacs-lisp
      (require 'package)
 
