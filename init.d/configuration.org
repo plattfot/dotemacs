@@ -4,7 +4,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * General
 ** Package management
 
-   Setup repositories for package and auto download use-package if it's missing.
+   Setup repositories for package and auto download use-package if it's missing
    #+BEGIN_SRC emacs-lisp
      (require 'package)
 
@@ -22,7 +22,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (setq package-enable-at-startup nil)
 
      ;; Pin melpa-stable for packages not under use-package control, i.e
-     ;; dependencies and use-package itself.
+     ;; dependencies and use-package itself
      (setq package-pinned-packages
            '((use-package . "melpa-stable")
              ;; Deps
@@ -52,20 +52,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (require 'bind-key)                ;; if you use any :bind variant
    #+END_SRC
 
-   Install missing packages.
+   Install missing packages
    #+BEGIN_SRC emacs-lisp
      (setq use-package-always-ensure t)
    #+END_SRC
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
-   having them in the git repo.
+   having them in the git repo
    #+BEGIN_SRC emacs-lisp
      (setq custom-file "~/.emacs.d/.custom.el")
      (when (file-exists-p custom-file) (load custom-file))
    #+END_SRC
 ** Custom plugins
 *** Dotemacs
-    Export a variable if I'm at work or not.
+    Export a variable if I'm at work or not
     #+BEGIN_SRC emacs-lisp
       (use-package dotemacs
         :ensure nil
@@ -74,7 +74,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** UI
 *** Maximize work area
    Disable the menu, tool and scroll bar since they just take up
-   space.
+   space
    #+BEGIN_SRC emacs-lisp
      (menu-bar-mode 0)
      (tool-bar-mode 0)
@@ -91,21 +91,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (column-number-mode 1)
    #+END_SRC
 ** Behaviour
-   Changing the default emacs behavior to better suite me.
+   Changing the default emacs behavior to better suite me
    #+BEGIN_SRC emacs-lisp
      (setq-default
-        electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that.
-        load-prefer-newer t             ;; Avoid loading outdated byte code files.
-        auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up).
-        inhibit-splash-screen t         ;; Dismiss the startup screen.
-        initial-scratch-message ""      ;; Empty scratch buffer.
-        indent-tabs-mode nil)           ;; Don't use tab for indenting.
-     (show-paren-mode 1)                ;; Highlight matching brackets.
+        electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that
+        load-prefer-newer t             ;; Avoid loading outdated byte code files
+        auto-hscroll-mode 'current-line ;; Activate single-line horizontal scrolling mode (emacs-26 and up)
+        inhibit-splash-screen t         ;; Dismiss the startup screen
+        initial-scratch-message ""      ;; Empty scratch buffer
+        indent-tabs-mode nil)           ;; Don't use tab for indenting
+     (show-paren-mode 1)                ;; Highlight matching brackets
    #+END_SRC
 ** Calender
    #+BEGIN_SRC emacs-lisp
      (setq-default
-      calendar-week-start-day 1       ;; Week starts on Monday.
+      calendar-week-start-day 1       ;; Week starts on Monday
       calendar-day-name-array
       ["söndag" "måndag" "tisdag" "onsdag" "torsdag" "fredag" "lördag"]
       calendar-month-name-array
@@ -117,7 +117,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
    over the place.  Fixing that by dumping all backup/autosave files
-   in to one directory.
+   in to one directory
    #+BEGIN_SRC emacs-lisp
      (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
      (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
@@ -126,7 +126,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
    #+END_SRC
 ** Theme
-   Point emacs to where it can find the sunburst theme.
+   Point emacs to where it can find the sunburst theme
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
      (load-theme `sunburst t)
@@ -145,7 +145,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      backends for c++ when at work as they were either slow, failed to
      find a completion half the time or flat out crashed clang when
      trying to complete stuff. The company-dabbrev-code works similar
-     to what I had before with ac.
+     to what I had before with ac
 
      #+BEGIN_SRC emacs-lisp
        (use-package company
@@ -155,7 +155,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  ("C-n" . company-select-next)
                  ("C-p" . company-select-previous))
          :init
-         ;; List what modes to use company in.
+         ;; List what modes to use company in
          (add-hook 'after-init-hook 'global-company-mode)
          :config
          (setq company-global-modes '(not shell-mode gud-mode)
@@ -203,7 +203,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 
      Tell emacs it's safe to change these company variables in a
-     .dir-locals.el file.
+     .dir-locals.el file
      #+BEGIN_SRC emacs-lisp
        (put 'company-clang-executable 'safe-local-variable #'stringp)
        (put 'company-clang-arguments 'safe-local-variable #'listp)
@@ -219,22 +219,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 :pin melpa-stable)
      #+END_SRC
 *** Lint
-   Packages that helps inspecting code, report errors etc.
+   Packages that helps inspecting code, report errors etc
 **** Flycheck
-     Enable flycheck globably.
+     Enable flycheck globably
 
-     Disable clang check, gcc check works better.
+     Disable clang check, gcc check works better
      #+BEGIN_SRC emacs-lisp
        (use-package flycheck
          :config
          (add-hook 'after-init-hook #'global-flycheck-mode)
          ;; Current version of rst-sphinx for flycheck disabling it
-         (add-to-list 'auto-mode-alist '("\\.rst\\'" .
+         (add-to-list 'auto-mode-alist '("\\.rst\\'"
                                          (lambda () (rst-mode) (flycheck-mode -1))))
          :pin melpa-stable)
 
      #+END_SRC
-     Tell emacs it's safe to change these in a .dir-locals.el file.
+     Tell emacs it's safe to change these in a .dir-locals.el file
      #+BEGIN_SRC emacs-lisp
        (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp)
        (put 'flycheck-gcc-language-standard 'safe-local-variable #'stringp)
@@ -255,11 +255,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (put 'flycheck-checkers 'safe-local-variable #'listp)
      #+END_SRC
 *** Navigation
-   Packages for navigating code.
+   Packages for navigating code
 **** GTags
-     Key bindings for finding tag, reference and usage of symbol.
+     Key bindings for finding tag, reference and usage of symbol
 
-     TODO: Find out why ggtags messes with the for theme auto complete.
+     TODO: Find out why ggtags messes with the for theme auto complete
 
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
@@ -267,7 +267,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :diminish ggtags-mode
          :init
          ;; Patching ggtags to not use compilation-info-face for the project
-         ;; root in the mode-line. Was sticking out like a sore thumb.
+         ;; root in the mode-line. Was sticking out like a sore thumb
          (defvar ggtags-mode-line-project-name
            '("[" (:eval (let ((name (if (stringp ggtags-project-root)
                                         (file-name-nondirectory
@@ -281,14 +281,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                            'mouse-face 'mode-line-highlight
                            'keymap ggtags-mode-line-project-keymap)))
              "]")
-           "Mode line construct for displaying current project name.
+           "Mode line construct for displaying current project name
        The value is the name of the project root directory. Setting it
        to nil disables displaying this information.")
          (add-hook 'c-mode-common-hook (lambda () (ggtags-mode 1)))
 
          (setq ggtags-highlight-tag nil) ;; Highlight was annoying
 
-         ;; Turn off function documentation if file is remote, was too slow.
+         ;; Turn off function documentation if file is remote, was too slow
          (add-hook 'ggtags-mode-hook
                    (lambda ()
                      (when (and (buffer-file-name) (file-remote-p (buffer-file-name)))
@@ -302,7 +302,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa)
     #+END_SRC
 ** Programming languages
-  Modes for highlighting different programing languages.
+  Modes for highlighting different programing languages
 *** Haskell
     Settings for programming haskell in emacs
     #+BEGIN_SRC emacs-lisp
@@ -314,7 +314,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** Lisp
-    Color haxvalues with their respective color.
+    Color haxvalues with their respective color
     #+BEGIN_SRC emacs-lisp
       (use-package lisp-mode
         :ensure nil ; Built in
@@ -379,7 +379,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("M-}" . sp-splice-sexp-killing-backward)
                      ("M-{" . sp-splice-sexp-killing-forward))
          :config
-         ;; Turn off balancing of single and back quote in lisp.
+         ;; Turn off balancing of single and back quote in lisp
          (sp-with-modes sp--lisp-modes
            (sp-local-pair "'" nil :actions nil)
            (sp-local-pair "`" nil :actions nil))
@@ -387,20 +387,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** C family
     Specific for C, C++ and other in the c family
-    - Set indentation to be two spaces.
+    - Set indentation to be two spaces
     - Set the default mode for .h files to be c++-mode
-    - Make it easier to work with camelCase words by enabling subword-mode.
+    - Make it easier to work with camelCase words by enabling subword-mode
     - Add that it will also search src and include directories when
-      switching between header and source files.
-    - Show trailing white spaces for writeable buffers.
+      switching between header and source files
+    - Show trailing white spaces for writeable buffers
 
     Custom style based on gnu for work. See [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Adding-Styles.html#Adding-Styles][adding-styles]] for more
     info how this work. [[https://www.gnu.org/software/emacs/manual/html_node/ccmode/Guessing-the-Style.html][Guessing]] the style also work, but it was
     easier for me to just place the pointer at a location and press
-    C-c C-o (c-set-offset) and add that to the c-offsets-alist.
+    C-c C-o (c-set-offset) and add that to the c-offsets-alist
 
     When in a c family buffer use shift tab to switch between header
-    and source.
+    and source
 
     #+BEGIN_SRC emacs-lisp
       (c-add-style "dd"
@@ -427,7 +427,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (when dotemacs-is-work (c-set-style "dd"))
                     ;; enable camelCase
                     (subword-mode 1)
-                    ;; Highlight useless whitespaces for writeable buffers.
+                    ;; Highlight useless whitespaces for writeable buffers
                     (when (not buffer-read-only)
                       (setq show-trailing-whitespace t))))
         (setq ff-search-directories '("." "../src" "../include"))
@@ -436,9 +436,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 *** Python
     Package name is python but the mode is python-mode
-    Set indentation to 2 white spaces.
+    Set indentation to 2 white spaces
 
-    Set the default for pb2 files (=PROJECT=) to use python.
+    Set the default for pb2 files (=PROJECT=) to use python
     #+BEGIN_SRC emacs-lisp
       (use-package python
         :mode (("\\.py\\'" . python-mode)
@@ -459,13 +459,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 
-    Mode for editing Cargo files.
+    Mode for editing Cargo files
     #+BEGIN_SRC emacs-lisp
       (use-package toml-mode
         :pin melpa)
     #+END_SRC
 
-    Add key combinations to perform cargo tasks within a Rust project.
+    Add key combinations to perform cargo tasks within a Rust project
     #+BEGIN_SRC emacs-lisp
       (use-package cargo
         :after (rust-mode)
@@ -483,7 +483,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
-    autocomplete for go.
+    autocomplete for go
     #+BEGIN_SRC emacs-lisp
       (use-package go-mode
         :config
@@ -509,17 +509,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
 *** Build
 **** Makefile
-     Set following files to use makefile-gmake-mode as the default.
-     - Files that starts with =Makefile=.
-     - Has extension =.mk=.
+     Set following files to use makefile-gmake-mode as the default
+     - Files that starts with =Makefile=
+     - Has extension =.mk=
      - Files that are located in a directory called Make and ends with
-       =Rules=.
-     - Files that are located in a directory called =modules=.
-     - Files called =BUILD.conf= (pb2 file).
-     - Files called =Project= that are located in a directory called Make.
-     - Has extension =.tdpackage=.
+       =Rules=
+     - Files that are located in a directory called =modules=
+     - Files called =BUILD.conf= (pb2 file)
+     - Files called =Project= that are located in a directory called Make
+     - Has extension =.tdpackage=
 
-     Show trailing whitespace as those can mess up make pretty bad.
+     Show trailing whitespace as those can mess up make pretty bad
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
          :mode (("Makefile.*" . makefile-gmake-mode)
@@ -532,7 +532,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :config
          (add-hook 'makefile-mode-hook
                    (lambda ()
-                     ;; Highlight useless whitespaces.
+                     ;; Highlight useless whitespaces
                      (setq show-trailing-whitespace t))))
      #+END_SRC
 **** CMake
@@ -543,7 +543,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** REPL
 **** Geiser
 
-     - *TODO:* Update to :hook when that comes available.
+     - *TODO:* Update to :hook when that comes available
 
      #+BEGIN_SRC emacs-lisp
        (use-package geiser
@@ -559,7 +559,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 	   :pin melpa-stable)
      #+END_SRC
 **** Sh
-     Indent using 2 spaces for shell scripts.
+     Indent using 2 spaces for shell scripts
      #+BEGIN_SRC emacs-lisp
        (use-package sh-script
          :config
@@ -608,12 +608,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil)
     #+END_SRC
 ** Programs
-  Packages that communicates with external processes.
+  Packages that communicates with external processes
 *** Ledger
-   Settings for ledger.
-   Set the default mode for .dat files to ledger.
+   Settings for ledger
+   Set the default mode for .dat files to ledger
 
-   Clean the buffer with C-c c.
+   Clean the buffer with C-c c
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
        :bind (:map ledger-mode-map
@@ -644,7 +644,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       )
     #+END_SRC
 *** Gnuplot
-    Enable gnuplot to be able to plot tables in org mode.
+    Enable gnuplot to be able to plot tables in org mode
 
     Bind the F9 key to open a buffer into gnuplot mode
 
@@ -661,7 +661,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 *** Magit
     A Git porcelain inside Emacs
-    Key =C-x g= to run magit on current buffer.
+    Key =C-x g= to run magit on current buffer
 
     #+BEGIN_SRC emacs-lisp
       (use-package magit
@@ -675,7 +675,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 *** notmuch
 
-    Using notmuch to index my emails.
+    Using notmuch to index my emails
     #+BEGIN_SRC emacs-lisp
       (use-package notmuch
         :bind ("C-c m" . notmuch)
@@ -707,7 +707,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil)
     #+END_SRC
 
-    For HTML email see [[https://orgmode.org/worg/org-contrib/org-mime.html][org-mime]] for more information.
+    For HTML email see [[https://orgmode.org/worg/org-contrib/org-mime.html][org-mime]] for more information
     #+BEGIN_SRC emacs-lisp
       (use-package org-mime
         :after (org notmuch)
@@ -727,27 +727,27 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 ** Web
-  Packages for webbased content.
+  Packages for webbased content
 *** nginx
-    Major mode for editing nginx.
+    Major mode for editing nginx
     #+BEGIN_SRC emacs-lisp
       (use-package nginx-mode
        	:pin melpa-stable)
     #+END_SRC
 ** Emacs
-  Packages that augments emacs.
+  Packages that augments emacs
 *** Org
 
-    Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
+    Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package
 
     Use a little downward-pointing arrow instead of the usual ellipsis
-    (=...=) when folded.
+    (=...=) when folded
 
     Use syntax highlighting in source blocks while editing
-    'org-src-fontify-natively'.
+    'org-src-fontify-natively'
 
     The variable 'org-directory' is set in '.custom.el', as it changes
-    from compute to computer at the moment.
+    from compute to computer at the moment
 
     #+BEGIN_SRC emacs-lisp
       (use-package org
@@ -788,10 +788,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     "Doesn't work with yasnippet getting:
      yas--fallback: yasnippet fallback loop!"
 
-    This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
+    This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’
 
 *** Org-noter (disabled)
-    Not quite working yet.
+    Not quite working yet
     #+BEGIN_SRC emacs-lisp
       (use-package org-noter
         :disabled t
@@ -811,7 +811,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:pin melpa-stable)
     #+END_SRC
 *** Dired
-    Settings for dired.
+    Settings for dired
     Source for the afs-dired-find-file function: [[https://stackoverflow.com/questions/1110118/in-emacs-dired-how-to-find-visit-multiple-files][Source]]
     #+BEGIN_SRC emacs-lisp
       (use-package dired
@@ -848,10 +848,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          eshell-prompt-regexp "^⎣.*⎦ "))
     #+END_SRC
 *** ibuffer
-     Use ibuffer instead of list-buffers, has some neat features.
+     Use ibuffer instead of list-buffers, has some neat features
 
      Sort buffers by placing them in different groups. Hide empty
-     groups to avoid cluttering the ibuffer.
+     groups to avoid cluttering the ibuffer
      #+BEGIN_SRC emacs-lisp
        (use-package ibuffer
          :config
@@ -910,8 +910,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+END_SRC
 *** Tramp
-    Set the ssh to be the default method for tramp.
-    If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
+    Set the ssh to be the default method for tramp
+    If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]]
     #+BEGIN_SRC emacs-lisp
       (use-package tramp
         :config
@@ -933,10 +933,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 *** Windmove
     Jump between windows using the arrow keys instead of cycling with
-    "C-x o". Note that this Doesn't work in org mode.
+    "C-x o". Note that this Doesn't work in org mode
 
     *TIP:* If using i3wm. Use frames instead of windows then use i3's
-     navigation instead.
+     navigation instead
     #+BEGIN_SRC emacs-lisp
       (use-package windmove
        	:bind (([M-left]  . windmove-left)  ; move to left window
@@ -946,7 +946,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	:pin melpa-stable)
     #+END_SRC
 *** avy
-    Cool tool that I use far too seldom.
+    Cool tool that I use far too seldom
     #+BEGIN_SRC emacs-lisp
       (use-package avy
         :config
@@ -961,18 +961,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Have disabled automatically closing the *compilation* buffer if no
     errors occur. For one the function in [[https://www.emacswiki.org/emacs/ModeCompile#toc2][link]] doesn't properly swap
     to the correct buffer. Usually you end up with multiple frames
-    having the same buffer open, which is annoying.
+    having the same buffer open, which is annoying
 
     Second it will close the buffer if only warnings occured. I like
     to have my code warning free and thus I need to see if any
     warnings occured. And cannot force all warnings to be treated as
-    errors as others might not share the same idea about warnings.
+    errors as others might not share the same idea about warnings
 
     #+BEGIN_SRC emacs-lisp
       (use-package compile
         :init
         ;; Reuse the *compilaiton* window if open if not pick another window
-        ;; in another frame.
+        ;; in another frame
         (add-to-list 'display-buffer-alist
                      '("^\\*compilation\\*$"
                        (display-buffer-reuse-window display-buffer-use-some-frame)
@@ -989,14 +989,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (toggle-read-only))))
     #+END_SRC
 *** Version Control
-    Don't ask when following a symlink to a vc directory.
+    Don't ask when following a symlink to a vc directory
     #+BEGIN_SRC emacs-lisp
       (setq vc-follow-symlinks t)
     #+END_SRC
 *** Regexp builder
     Avoid escape-hell with regex builder, can toggle between styles
     with 'C-c <tab>'. See [[https://masteringemacs.org/article/re-builder-interactive-regexp-builder][masteringemacs]] for more info about regex
-    builder.
+    builder
 
     #+BEGIN_SRC emacs-lisp
       (use-package re-builder
@@ -1004,15 +1004,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq-default reb-re-syntax 'string))
     #+END_SRC
 ** Text
-  Packages for editing and viewing text.
+  Packages for editing and viewing text
 *** Emojify
 
     Need to be able to render emojis properly when reading emails. And
     since emacs in Linux doesn't support Color fonts (yet?) needed for
     it to work with Google's Noto Emoij font. MacOS had support but
-    got removed in [[https://github.com/emacs-mirror/emacs/blob/emacs-25.1/etc/NEWS#L1723][25.1]].
+    got removed in [[https://github.com/emacs-mirror/emacs/blob/emacs-25.1/etc/NEWS#L1723][25.1]]
 
-    I'll need to use emojify instead.
+    I'll need to use emojify instead
 
     #+BEGIN_SRC emacs-lisp
       (use-package emojify
@@ -1026,7 +1026,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 
     And added backend to company to be able to type emojis when
-    responding to messages.
+    responding to messages
 
     #+BEGIN_SRC emacs-lisp
       (use-package company-emoji
@@ -1039,13 +1039,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 
 *** Rainbow
-    Useful when debugging the theme. But is rarely used.
+    Useful when debugging the theme. But is rarely used
     #+BEGIN_SRC emacs-lisp
       (use-package rainbow-mode
        	:pin melpa-stable)
     #+END_SRC
 *** Move text
-    Move line up and down using arrow keys.
+    Move line up and down using arrow keys
     #+BEGIN_SRC emacs-lisp
       (use-package move-text
        	:bind (([C-S-up] . move-text-up)
@@ -1097,15 +1097,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** fancy-narrow
     Highlight section of code, run 'fancy-narrow-to-region' to narrow
     down on selection.  'fancy-widen' to go back to
-    normal. 'fancy-narrow-to-defun' to narrow down on function.
+    normal. 'fancy-narrow-to-defun' to narrow down on function
 
-    Nothing I use that often.
+    Nothing I use that often
     #+BEGIN_SRC emacs-lisp
       (use-package fancy-narrow
         :pin melpa-stable)
     #+END_SRC
 ** Nov
-   Epub reader mode.
+   Epub reader mode
    #+BEGIN_SRC emacs-lisp
      (use-package nov
        :mode (("\\.epub\\'" . nov-mode))
@@ -1113,13 +1113,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** Shell
    Enable color in shell and define the color theme. Also disable
-   yasnippet in shell mode since that's messing with the shell.
+   yasnippet in shell mode since that's messing with the shell
 
    Disabled the comint-highlight-prompt to use the colors from the
-   shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]].
+   shells prompt. Source: [[https://stackoverflow.com/questions/25819034/colors-in-emacs-shell-prompt][link]]
 
    Custom function to clear the shell in emacs. Bound to f8. Also
-   works for gdb.
+   works for gdb
    #+BEGIN_SRC emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
@@ -1158,7 +1158,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Packages
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
-    and characters.
+    and characters
     #+BEGIN_SRC emacs-lisp
       (use-package mc-extra-extra
         :after (multiple-cursors)
@@ -1168,7 +1168,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** newfile
     Functions for setting up a newfile in c++. I.e create the license
     boilerplate, add the include guard, header for the author etc and
-    namespaces based on directory structure.
+    namespaces based on directory structure
     #+BEGIN_SRC emacs-lisp
       (use-package newfile
         :ensure nil
@@ -1203,7 +1203,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (message "Refreshed open files.") )
     #+END_SRC
 *** Text
-    Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg.
+    Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg
     #+BEGIN_SRC emacs-lisp
       (defun duplicate-line ()
         "Clone line at cursor, leaving the latter intact."
@@ -1216,7 +1216,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (yank))))
     #+END_SRC
 *** Subversion
-    Function for dealing with subversion repos.
+    Function for dealing with subversion repos
 
     #+BEGIN_SRC emacs-lisp
       (defun svn-fetch-info (item)
@@ -1230,7 +1230,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (defun svn-fetch-repo-url ()
-        "Return a string of the repo url in the current svn repo.
+        "Return a string of the repo url in the current svn repo
            I.e the root url plus the name of the repo on the
            server. Prefixed will return the full url otherwise it will
            just return the relative."
@@ -1245,11 +1245,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Fetches the url of the repository. For example
     if we have the url
     http://svn.example.com/myrepo/branches/branch
-    It will return the whole thing.
+    It will return the whole thing
 
     #+BEGIN_SRC emacs-lisp
       (defun svn-url ()
-        "Get the repo url in the current svn repo.
+        "Get the repo url in the current svn repo
            I.e the root url plus the name of the repo on the server"
         (interactive)
         (insert (svn-fetch-info "url")))
@@ -1258,7 +1258,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Fetches the root url. For example if we have the url
     http://svn.example.com/myrepo/branches/branch
     ^^^^^^^^^^^^^^^^^^^^^^
-    This is the root url.
+    This is the root url
 
     #+BEGIN_SRC emacs-lisp
       (defun svn-root-url ()
@@ -1271,11 +1271,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     if we have the url
     http://svn.example.com/myrepo/branches/branch
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    This is the repo url.
+    This is the repo url
 
     #+BEGIN_SRC emacs-lisp
       (defun svn-repo-url ()
-        "Get the repo url in the current svn repo.
+        "Get the repo url in the current svn repo
            I.e the root url plus the name of the repo on the
            server. Prefixed will return the full url otherwise it will
            just return the relative."
@@ -1322,10 +1322,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
 *** Programming
 **** C++
-***** Expands a define macro for all matches in current buffer.
+***** Expands a define macro for all matches in current buffer
       #+BEGIN_SRC emacs-lisp
         (defun replace-define()
-          "Evaluating the define variable.
+          "Evaluating the define variable
         Place cursor on a #define <var> <content> and execute this command and it will
         replace all <var> with <content> in the file."
           (interactive)
@@ -1335,19 +1335,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                            (end (point-max)))
                   ;; Jump to the end of line
                   (end-of-line)
-                  ;; Replace the first with the second.
+                  ;; Replace the first with the second
                   (while (re-search-forward (concat "\\_<"(nth 1 line)"\\_>") end t )
                          (replace-match (nth 2 line)))
                   ;; return to the same position
                   (goto-char curr-pos)
-                  ;; move to the end of the line to indicate that it's done.
+                  ;; move to the end of the line to indicate that it's done
                   (end-of-line))
                    (message "Not a #define directive!" ))))
       #+END_SRC
-***** Undo replace-define.
+***** Undo replace-define
        #+BEGIN_SRC emacs-lisp
          (defun replace-define-undo()
-           "Undoing the expansion of the define variable.
+           "Undoing the expansion of the define variable
          Place cursor on a #define <var> <content> and execute this
           command and it will replace all <content> with <var> in the
           file."
@@ -1365,7 +1365,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
                    ;; return to the same position
                    (goto-char curr-pos)
-                   ;; move to the end of the line to indicate that it's done.
+                   ;; move to the end of the line to indicate that it's done
                    (end-of-line))
                (message "Not a #define directive!" ))))
 
@@ -1458,7 +1458,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
       #+BEGIN_SRC emacs-lisp
         (defun afs-insert-ifdef-else (macro)
-          "Insert C prepocessor conditional #ifdef MACRO with an else clause.
+          "Insert C prepocessor conditional #ifdef MACRO with an else clause
         Wrapper for (afs-insert-ifdef MACRO t)"
           (interactive "sName of macro: ")
           (afs-insert-ifdef macro t))
@@ -1495,8 +1495,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+END_SRC
 *** Workspace
-    Function for splitting emacs into three frames.
-    Really nice to use with i3wm.
+    Function for splitting emacs into three frames
+    Really nice to use with i3wm
     #+BEGIN_SRC emacs-lisp
       (defun setup-home ()
       "Splits the session into three frames"
@@ -1507,7 +1507,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (make-frame-command))
     #+END_SRC
 *** Split lines
-    Function for splitting lines at specified character. Default is ','.
+    Function for splitting lines at specified character. Default is ','
     #+BEGIN_SRC emacs-lisp
       (defun split-at (&optional delim)
       "Split region/line at DELIM, if there are multiple matches it
@@ -1555,9 +1555,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    they do. I wrapped them up into a minor mode. Can just run
    'describe-minor-mode' then plattfot-mode to get a quick list of
    them. Downside is that I lost a bit of structure in this file when
-   reading.
+   reading
 
-   Time will tell if that was a smart idea or not.
+   Time will tell if that was a smart idea or not
 
    #+BEGIN_SRC emacs-lisp
      (defvar plattfot-mode-map
@@ -1566,7 +1566,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-x f") 'find-file-at-point)
          ;; Text search
          ;; Rebinding the text search to the regex variants as
-         ;; use those far more than the normal ones.
+         ;; use those far more than the normal ones
          (define-key map (kbd "C-s") 'isearch-forward-regexp)
          (define-key map (kbd "C-r") 'isearch-backward-regexp)
          (define-key map (kbd "C-S-s") 'isearch-forward-symbol-at-point)
@@ -1588,7 +1588,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-c s b") 'svn-branch-url)
          (define-key map (kbd "C-c s R") 'svn-root-url)
          ;; UI
-         ;; Key bindings if I really need to see the menu and tool bar.
+         ;; Key bindings if I really need to see the menu and tool bar
          (define-key map (kbd "C-<f5>") 'menu-bar-mode)
          (define-key map (kbd "C-<f6>") 'tool-bar-mode)
          map)
@@ -1597,7 +1597,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (defvar plattfot-comint-mode-map
        (let ((map (copy-keymap plattfot-mode-map)))
          ;; Avoid overloading M-r in comint mode as that is used for
-         ;; fetching history.
+         ;; fetching history
          (define-key map (kbd "M-r") nil)
          map)
        "Custom keymap for `plattfot-comint-mode'.")
@@ -1626,11 +1626,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Added that I need to press ctrl and the function key for the UI keys
    as I was hitting these accidentaly from time to time when running
    'compile' or 'recompile'. Due to how my keyboard is layed out. See
-   my [[https://github.com/plattfot/qmk_firmware/tree/master/layouts/community/ergodox/plattfot][qmk fork]] for why that is.
+   my [[https://github.com/plattfot/qmk_firmware/tree/master/layouts/community/ergodox/plattfot][qmk fork]] for why that is
 
    Reason for having three different modes is to be able to disable
    the 'M-r' keybinding for comint modes, eg. shell and gud-gdb. This
-   was the cleanest way I could find doing this.
+   was the cleanest way I could find doing this
 
    #+BEGIN_SRC emacs-lisp
      (use-package plattfot
@@ -1638,7 +1638,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (plattfot-global-mode 1)
        (add-hook 'comint-mode-hook
                  (lambda ()
-                   ;; Change to the comint mode to get history search.
+                   ;; Change to the comint mode to get history search
                    (plattfot-mode 0)
                    (plattfot-comint-mode 1)))
        :ensure nil)
@@ -1647,10 +1647,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Macros
      "Macro" to quickly open a file that is located on my machine at
      work. As I'm just inserting text I switched the real macro to just
-     using insert instead.
+     using insert instead
 
      Updated it only bind the key when I'm in the minibuffer as I
-     don't have any use for this outside of that scope.
+     don't have any use for this outside of that scope
      #+BEGIN_SRC emacs-lisp
        (add-hook
         'minibuffer-setup-hook
@@ -1662,7 +1662,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** Registers
     Quickly jump to files by pressing C-x r j <register>
-    Jump to my init file with 'e' and init directory with 'i'.
+    Jump to my init file with 'e' and init directory with 'i'
     #+BEGIN_SRC emacs-lisp
       (set-register ?e (cons 'file "~/.emacs.d/init.el"))
       (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org"))
@@ -1672,7 +1672,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
    #+END_SRC
 
-   Store work related settings.
+   Store work related settings
    #+BEGIN_SRC emacs-lisp
      (when dotemacs-is-work
        (when (file-exists-p "~/.emacs.d/.work.el")
@@ -1705,7 +1705,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :load-path "~/.emacs.d/plugins")
      #+END_SRC
 **** houdini
-     Houdini related functions, mostly handle houdini versions.
+     Houdini related functions, mostly handle houdini versions
      #+BEGIN_SRC emacs-lisp
        (use-package houdini
          :bind ("C-x j" . hou-insert-version)
@@ -1731,11 +1731,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Functions
 **** PID
      Functions for getting the pid and other useful stuff regarding
-     PIDs.
+     PIDs
 
      #+BEGIN_SRC emacs-lisp
        (defun pid (regex &optional index newest)
-         "Get the pid of the first command matching REGEX.
+         "Get the pid of the first command matching REGEX
        If more than one is running it return the one at INDEX.  Where
        INDEX starts from 0 and up.  If NEWEST is t it will sort the
        commands based on elapsed time before picking one."
@@ -1747,7 +1747,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+BEGIN_SRC emacs-lisp
       (defun ps-match (regex)
-        "Call ps and return a list of info for each the command matching the REGEX.
+        "Call ps and return a list of info for each the command matching the REGEX
       The list format is '(pid etime ppid user comm)"
         (let ((ps_list
                (mapcar
@@ -1775,7 +1775,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+BEGIN_SRC emacs-lisp
        (defun sort-ps-etime (ps_list)
-         "Sort the PS_LIST based on the elapsed time.
+         "Sort the PS_LIST based on the elapsed time
        In ascending order."
          (seq-sort (lambda (a b) (time-less-p (cadr a) (cadr b))) ps_list))
      #+END_SRC
@@ -1784,7 +1784,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Get the PID for houdini
      #+BEGIN_SRC emacs-lisp
        (defun pid-houdini (&optional index newest)
-         "Get the pid for houdini.
+         "Get the pid for houdini
 
              If more than one is running it returns the one at INDEX.  Where
              INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
@@ -1797,7 +1797,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** PID Maya
      #+BEGIN_SRC emacs-lisp
        (defun pid-maya (&optional index newest)
-         "Get the pid for maya.
+         "Get the pid for maya
        If more than one is running it returns the one at INDEX.  Where
        INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
        before picking one."
@@ -1808,39 +1808,39 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** PID smeat
      #+BEGIN_SRC emacs-lisp
        (defun pid-smeat (&optional index newest)
-         "Get the pid for smeat.
+         "Get the pid for smeat
        If more than one is running it returns the one at INDEX.  Where
        INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
        before picking one."
          (interactive)
          (when (not index) (setq index 0))
-         ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
+         ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=..
          (pid "smeat(:?[^=]+|$$)" index newest))
      #+END_SRC
 **** Attach Houdini
-     Used with gdb, prints attach <pid of houdini> in the prompt.
+     Used with gdb, prints attach <pid of houdini> in the prompt
      #+BEGIN_SRC emacs-lisp
        (defun attach-houdini (&optional index)
-         "Prints attach <pid> into the buffer.
+         "Prints attach <pid> into the buffer
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1."
          (interactive"p")
 
-         ;; The default for index is one.
+         ;; The default for index is one
          (when (< index 1) (setq index 1))
          (insert (format "attach %s" (pid-houdini (- index 1)))))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
        (defun attach-houdini-newest (&optional index)
-         "Prints 'attach <pid>' into the buffer.
+         "Prints 'attach <pid>' into the buffer
 
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1.  PIDs are sorted on elapsed time
        before one is selected to return the newest houdini instance."
          (interactive"p")
 
-         ;; The default for index is one.
+         ;; The default for index is one
          (when (not index) (setq index 1))
          (when (< index 1) (setq index 1))
          (insert (format "attach %s" (pid-houdini (- index 1) t))))
@@ -1848,30 +1848,30 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Attach Maya
      #+BEGIN_SRC emacs-lisp
        (defun attach-maya (&optional index)
-         "Prints attach <pid> into the buffer.
+         "Prints attach <pid> into the buffer
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1."
          (interactive"p")
-         ;; The default for index is one.
+         ;; The default for index is one
          (when (< index 1) (setq index 1))
          (insert (concat "attach " (pid-maya index) )))
      #+END_SRC
 **** Attach smeat
      #+BEGIN_SRC emacs-lisp
        (defun attach-smeat (&optional index)
-	 "Prints attach <pid> into the buffer.
+	 "Prints attach <pid> into the buffer
        INDEX is use to select which one if there are multiple instances
        running, INDEX counts from 1."
 	 (interactive"p")
 
-	 ;; The default for index is one.
+	 ;; The default for index is one
 	 (when (< index 1) (setq index 1))
 	 (insert (concat "attach " (pid-smeat (- index 1)) )))
      #+END_SRC
 **** Kill Houdini
      #+BEGIN_SRC emacs-lisp
        (defun kill-houdini ()
-         "Kill houdini.
+         "Kill houdini
        If more than one houdini are running it will kill the
        first one in the ps list."
          (interactive)
@@ -1880,17 +1880,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Kill Maya
      #+BEGIN_SRC emacs-lisp
        (defun kill-maya ()
-         "Kill maya.
+         "Kill maya
        If more than one Maya process are running it will kill the
        first one in the ps list."
          (interactive)
          (shell-command (concat "kill -9 " (pid-maya))))
      #+END_SRC
 **** Smeat abort
-     Not quite working. But sends a signal to the smeat process to abort the sim.
+     Not quite working. But sends a signal to the smeat process to abort the sim
      #+BEGIN_SRC emacs-lisp
        (defun smeat-abort (&optional index )
-         "Sends USR1 signal to houdini which aborts the smeat client.
+         "Sends USR1 signal to houdini which aborts the smeat client
        INDEX is used to select which houdini instance to send to if
        multiple instances exist."
          (interactive"p")
@@ -1901,7 +1901,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Preproccess
      #+BEGIN_SRC emacs-lisp
        (defun preprocess-fix-macros ()
-         "Fix expanded macros when running only the preprocess on a file.
+         "Fix expanded macros when running only the preprocess on a file
        For example: g++ <flags> -E <file>.  Since they are expanded into
        a single line which makes them hard to debug."
          (interactive)
@@ -1917,7 +1917,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (goto-char start)))
      #+END_SRC
 **** Make
-     Functions to speed up the port of old style Makefiles to using modules.
+     Functions to speed up the port of old style Makefiles to using modules
      #+BEGIN_SRC emacs-lisp
        (defun make-boost-components ()
          "Convert old style boost libs to module style"
@@ -2031,7 +2031,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
-   Set the cursor color to white.
+   Set the cursor color to white
    #+BEGIN_SRC emacs-lisp
      (set-cursor-color "#ffffff")
    #+END_SRC
@@ -2042,7 +2042,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** Juniper VPN linux 4.5+
    Juniper VPN doesn't work in linux 4.5+, workaround is to disable
-   the ipv6.
+   the ipv6
    #+BEGIN_SRC sh :tangle no
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
    #+END_SRC
@@ -2062,10 +2062,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      # Tramp and emacs shell workaround
      if [[ $TERM == "dumb" ]]
      then
-         # Emacs shell/tramp cannot handle line editing, turning it off.
+         # Emacs shell/tramp cannot handle line editing, turning it off
          unsetopt zle
 
-         # The custom prompt will hang tramp.
+         # The custom prompt will hang tramp
          # Change to something simpler and stop
          if [[ $INSIDE_EMACS == '' ]]
          then
@@ -2076,7 +2076,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 
    Similar issue will happen with a bash shell on the other end. And
-   for that you can just remove the =unsetopt zle=.
+   for that you can just remove the =unsetopt zle=
 
    The [[https://www.gnu.org/software/emacs/manual/html_node/tramp/Remote-shell-setup.html][manual]] describe that you can customize the
    =tramp-shell-prompt-pattern= to match your remote prompt. Didn't
@@ -2088,11 +2088,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    locally or remote. When using a tramp connection it sets the
    HISTFILE to be a tramp file. That's the only way I found to
    distinguish between a shell that is running locally or from a tramp
-   connection.
+   connection
 ** Paragraph fill in empty message-mode buffer
    They changed the formating in emacs 26.1 so everything before
    --text follows this line--
-   Is treated as a headline and the first line is indented with some spaces.
+   Is treated as a headline and the first line is indented with some spaces
 
    #+BEGIN_SRC text
      I am sorry about your difficulties with git push.  It is true that in this
@@ -2114,7 +2114,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Skip code block
    You can use =:tangle no= in the =SRC_BLOCK= to ignore the code
    block from being exported aka tangled. Good for example blocks that
-   you don't want to end up in you config file.
+   you don't want to end up in you config file
 ** Flycheck
 *** Tweak flycheck
    To set specific compiler and flags for a specific project you can
@@ -2156,12 +2156,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 "-isystem/tools/include"
                 )))))
    #+END_SRC
-   For clang just replace gcc with clang.
+   For clang just replace gcc with clang
 
    If you want to play it more safe you can use the flychecks other
    variables (see C-c ! ?). Note that flycheck-include-path just
    prepend -I for all strings in the list. So for third party libs
-   it's better to use -isystem.
+   it's better to use -isystem
 
    Also prefer flycheck-gcc-includes over adding that in
    flycheck-gcc-args as if you do
@@ -2180,7 +2180,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       . ("-includeopenvdb/math/Vec3.h")
      )
    #+END_SRC
-   Which is not that readable.
+   Which is not that readable
 
 *** Language standard in c++
    Specify language standard in dir locals file: .dir-locals.el
@@ -2200,11 +2200,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     git commit --amend [-m ""]
 ** Github
 *** Preview site of a git hosted website
-    Prepend to the original url.
+    Prepend to the original url
     #+BEGIN_SRC org :tangle no
       http://htmlpreview.github.io/?
     #+END_SRC
-    For example to see an older page of the embree docs.
+    For example to see an older page of the embree docs
     #+BEGIN_SRC org :tangle no
       https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
     #+END_SRC
@@ -2214,31 +2214,31 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Check out the tags directory. Use --depth=empty to avoid
     populating all the tags as this can take a really long time
-    depending on how many tags exist.
+    depending on how many tags exist
     #+BEGIN_SRC sh :tangle no
       svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
     #+END_SRC
 
-    Locate the revision to roll back to.
+    Locate the revision to roll back to
     #+BEGIN_SRC sh :tangle no
       svn log SVN_URL/REPO/tags
     #+END_SRC
 
     Then cd into the working copy and update all tags involved in the
-    roll back. Otherwise svn will just ignore the roll back.
+    roll back. Otherwise svn will just ignore the roll back
     #+BEGIN_SRC sh :tangle no
       cd REPO-tag-fix
-      svn up TAG0 TAG1...
+      svn up TAG0 TAG1..
     #+END_SRC
 
     Roll back to the revision you want by simply merging the tags
-    directory backwards to that revision.
+    directory backwards to that revision
     #+BEGIN_SRC sh :tangle no
-      svn merge -rHEAD:REVISION .
+      svn merge -rHEAD:REVISION
     #+END_SRC
 
     Where REVISION is the revision number you picked previously. HEAD
-    is a svn built in keyword and points to the latest revision.
+    is a svn built in keyword and points to the latest revision
 
 ** Org mode
    Create source block type "<s" on a new line and press <tab>
@@ -2249,9 +2249,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     cpp -dM /dev/null
 **** Check what __cplusplus is set to when setting a language standard in c++
      Need to tell cpp that we only are interested in c++ then we can
-     just pass the flags we want.
+     just pass the flags we want
 
-     For example check what __cplusplus is set to when using c++14.
+     For example check what __cplusplus is set to when using c++14
      #+BEGIN_SRC sh
        cpp -dM -x c++ -std=c++14 /dev/null | grep __cplusplus
      #+END_SRC
@@ -2272,11 +2272,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       __attribute__((destructor)) void func(){}
     #+END_SRC
 *** Check what indentation rule is used for c++
-    Run the function ~c-show-syntactic-information~ normaly bound to.
+    Run the function ~c-show-syntactic-information~ normaly bound to
     #+BEGIN_SRC :tangle no
     C-c C-s
     #+END_SRC
-    Useful when customizing a style.
+    Useful when customizing a style
 ** Ledger
 *** Check what you spend on X
    #+BEGIN_SRC sh
@@ -2289,7 +2289,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Find
 *** Ignore directories while searching
     For example while searching for file named foobar, ignore all .svn
-    directories.
+    directories
     #+BEGIN_SRC sh
       find . -not \( -path '*/.svn' -prune \) -name "foobar"
     #+END_SRC
@@ -2306,32 +2306,32 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** houdini
 *** Expression for string parameters
     Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
-    Then edit the expression.
+    Then edit the expression
 ** KDE
 *** no borders
-    When disabled use ALT+F3 to bring the menu back.
+    When disabled use ALT+F3 to bring the menu back
 ** Install fonts local to user
    Install fonts to ~/.fonts then update the fontconfig cache by
-   running.
+   running
    #+BEGIN_SRC sh
      fc-cache -v ~/.fonts
    #+END_SRC
-   The option '-v' is just for verbose output and can be skipped.
+   The option '-v' is just for verbose output and can be skipped
 
    To see what fonts are installed run
    #+BEGIN_SRC sh
      fc-list
    #+END_SRC
 ** Remove/Keep lines matching regexp
-   use 'keep-lines' to keep lines matching regexp.
-   use 'flush-lines' to remove lines matching regexp.
+   use 'keep-lines' to keep lines matching regexp
+   use 'flush-lines' to remove lines matching regexp
 ** Terminfo files (ti)
    To compile FILE run
    #+BEGIN_SRC sh :tangle no
      tic FILE
    #+END_SRC
 ** Shell
-   Stop the shell from echoing the command.
+   Stop the shell from echoing the command
    #+BEGIN_SRC sh :tangle no
      stty -echo
    #+END_SRC
@@ -2339,7 +2339,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Argument parsing
      A good way of parsing the arguments for a shell script is using
      getopt (enhanced). There's also built in shell command in bash
-     called getopts. But that one doesn't handle long options.
+     called getopts. But that one doesn't handle long options
 
      To use getopt in a script simply do:
 
@@ -2382,12 +2382,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         done
      #+END_SRC
 ** CMake
-   Don't remove the rpath when installing.
+   Don't remove the rpath when installing
    #+BEGIN_SRC sh :tangle no
      CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
    #+END_SRC
 
-   Specify c++ compiler.
+   Specify c++ compiler
    #+BEGIN_SRC sh :tangle no
      CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
    #+END_SRC
