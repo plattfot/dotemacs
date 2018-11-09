@@ -295,6 +295,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                        (setq-local eldoc-documentation-function #'ignore))))
          :pin melpa-stable)
      #+END_SRC
+**** highlight symbol
+     Jump between symbols with M-n M-p.
+     #+BEGIN_SRC emacs-lisp
+       (use-package highlight-symbol
+         :init
+         (add-hook 'c-mode-common-hook 'highlight-symbol-nav-mode)
+         :pin melpa)
+     #+END_SRC
 *** Format
     #+BEGIN_SRC emacs-lisp
       (use-package clang-format
