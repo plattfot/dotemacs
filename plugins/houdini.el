@@ -2,12 +2,7 @@
 ;;; Commentary:
 
 ;;; Code:
-(defvar hou/comp-format '(("==" . "// %s")
-			  ("!=" . "// all but %s")
-			  (">=" . "// %s or later")
-			  ("<=" . "// %s or earlier")
-			  (">"  . "// later than %s")
-			  ("<"  . "// earlier than %s")))
+(require 'cpreproc)
 
 (defun hou-version-to-hex (version-string)
   "Convert VERSION-STRING to hex.  
@@ -63,7 +58,7 @@ UT_VERSION_INT or SYS_VERSION_INT and fetch the INT ."
 The specified VERSION in int format with the COMP being either
 ==, <=, >=, !=, < or >.  If a region is active it will place that
 in both the ifdef and else clause.  Example:
-(hou-insert-ifdef \"14.0.173\" \"==\") will insert this
+`(hou-insert-ifdef \"14.0.173\" \"==\")' will insert this
 #if( UT_VERSION_INT == 0x0e0000ad ) // 14.0.173
 <Cursor>
 #else
@@ -81,25 +76,8 @@ in both the ifdef and else clause.  Example:
 #else
 #endif"
 (interactive "sHoudini version: \nsCompare operator: ")
-(let ((str))
-  (if (region-active-p)
-      (progn (setq str (buffer-substring-no-properties (region-beginning) (region-end)))
-	     (kill-region (region-beginning) (region-end)))
-    (setq str "")
-    )
-  (let ((version_hex (hou-version-to-hex version))
-	(format_assoc (assoc comp hou/comp-format))
-	(done))
-    (when (not format_assoc)
-      (throw 'hou-tag (format "%s is not in comp list" comp)))
-
-    (insert "#if( UT_VERSION_INT " comp " " version_hex " ) "
-	    (format (cdr format_assoc) version) "\n")
-    (let ((done (point)))
-      (insert str "\n#else\n" str "\n#endif\n")
-      (goto-char done))
-    )
-  ))
+(let ((version_hex (hou-version-to-hex version)))
+  (cpreproc-insert-if "UT_VERSION_INT" comp version_hex version current-prefix-arg)))
 
 ;; Following the same naming convention as gtest
 ;; eq -> ==
