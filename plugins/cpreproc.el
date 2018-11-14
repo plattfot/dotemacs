@@ -69,7 +69,7 @@ insert
       (insert str "\n")
       (unless no-else
         (insert "#else\n" str "\n"))
-      (insert str "#endif\n")
+      (insert "#endif\n")
       (goto-char done)))))
 
 (defconst cpreproc-cplusplus
