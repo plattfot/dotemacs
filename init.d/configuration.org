@@ -1750,42 +1750,37 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (interactive)
          (when (not index) (setq index 0))
          (let ((ps_list (ps-match regex)))
-           (car (nth index (if newest (sort-ps-etime ps_list) ps_list)))))
+           (car (nth index (if newest (sort-ps-time ps_list) ps_list)))))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
-      (defun ps-match (regex)
-        "Call ps and return a list of info for each the command matching the REGEX.
-      The list format is '(pid etime ppid user comm)"
-        (let ((ps_list
-               (mapcar
-                (lambda (x) (split-string x))
-                (cl-remove-if
-                 'string-empty-p
-                 (split-string
-                  (shell-command-to-string
-                   (concat "ps axo pid,etime,ppid,user,comm | grep -e " regex)) "\n")))))
-          (mapcar (lambda (x) (setcar (nthcdr 1 x) (encode-ps-etime (cadr x)))) ps_list)
-          ps_list))
+       (defun ps-match (regex)
+         "Call ps and return a list of info for each the command matching the REGEX.
+       The list format is '(pid time ppid user comm), where time is the
+       elisp time value and corresponds to the time and date the process
+       was started."
+         (let ((ps_list
+                (mapcar
+                 (lambda (x) (split-string x))
+                 (cl-remove-if
+                  'string-empty-p
+                  (split-string
+                   (shell-command-to-string
+                    (concat "ps axo lstart,pid,ppid,user,comm | grep -e " regex))
+                   "\n")))))
+           (mapcar
+            (lambda (x)
+              (let ((proc (nthcdr 5 x))
+                    (time (date-to-time (mapconcat 'identity (butlast x 4) " "))))
+                (setq x (append (list (car proc) time) (cdr proc)))))
+            ps_list)))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
-      (defun encode-ps-etime (etime)
-        "Convert time returns from ps etime to an elisp time type."
-        (let ((time (mapcar 'string-to-number (nreverse (split-string etime "[:-]"))))
-              (units [0 0 0 0])
-              (index 0))
-          (while time
-            (aset units index (pop time))
-            (setq index (+ 1 index)))
-          (encode-time (elt units 0) (elt units 1) (elt units 2) (elt units 3) 0 0)))
-     #+END_SRC
-
-     #+BEGIN_SRC emacs-lisp
-       (defun sort-ps-etime (ps_list)
-         "Sort the PS_LIST based on the elapsed time.
+       (defun sort-ps-time (ps_list)
+         "Sort the PS_LIST based on the timestamp.
        In ascending order."
-         (seq-sort (lambda (a b) (time-less-p (cadr a) (cadr b))) ps_list))
+         (seq-sort (lambda (a b) (not (time-less-p (cadr a) (cadr b)))) ps_list))
      #+END_SRC
 
 **** PID Houdini
