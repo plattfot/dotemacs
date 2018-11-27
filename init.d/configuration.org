@@ -2418,3 +2418,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC :tangle no
    p/r VARIABLE
    #+END_SRC
+** python
+*** Reload module from another path
+
+    First modify the sys.path then call reload to update the
+    module. If it's a submodule you're trying to update, update the
+    main module first.
+
+    This is useful when developing extensions for gdb and you want to
+    replace an already installed and loaded extension with a developer
+    version.
+
+    #+BEGIN_SRC python :tangle no
+      import sys
+
+      sys.path.insert(0, 'new/path/to/module')
+      reload(module)
+    #+END_SRC
