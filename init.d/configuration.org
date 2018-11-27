@@ -2413,3 +2413,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      C-u C-x =
    #+END_SRC
    [[https://stackoverflow.com/a/1242760][source]]
+** gdb
+   Bypass the pretty printer and show the raw data.
+   #+BEGIN_SRC :tangle no
+   p/r VARIABLE
+   #+END_SRC
