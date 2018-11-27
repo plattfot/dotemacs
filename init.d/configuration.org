@@ -2112,141 +2112,146 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 
 * Notes
-** Lisp in search replace
-   To execute a lisp function in replace regexp do \,(<function>)
-** Skip code block
-   You can use =:tangle no= in the =SRC_BLOCK= to ignore the code
-   block from being exported aka tangled. Good for example blocks that
-   you don't want to end up in you config file.
-** Flycheck
-*** Tweak flycheck
-   To set specific compiler and flags for a specific project you can
-   use something like this in a .dir-locals.el file:
-   #+BEGIN_SRC emacs-lisp :tangle no
-     ;; File .dir-locals.el
-     ( ( c++-mode
-         . ((flycheck-c/c++-gcc-executable . "/tools/package/gcc/6.4.0/bin/g++" )
-            (flycheck-gcc-language-standard . "c++14")
-            (flycheck-gcc-include-path
-             . ("/dd/dept/software/users/fredriks/swdevl/corelibs/PRIVATE/include") )
-            (flycheck-gcc-includes . ("openvdb/math/Vec3.h"))
-            (flycheck-gcc-warnings . ("all"))
-            (flycheck-gcc-definitions
-             . ("_GLIBCXX_USE_CXX11_ABI=0"
-                "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
-                "DD_OPEN_MESH_POLYMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_PolyMeshT_Extension.hpp>"
-                "DD_OPEN_MESH_TRIMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_TriMeshT_Extension.hpp>"
-                "DD_CORELIBS_USE_OPENMESH"
-                "DD_CORELIBS_BUILD_LIBS"
-                "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
-                "EIGEN_MATRIX_PLUGIN=<DD/Utility/EigenMatrixAddon.hpp>"
-                ))
-            (flycheck-gcc-args
-             . ("-B/tools/package/binutils/2.29.1/bin"
-                "-isystem/tools/package/openvdb/4.0.1_dd01/include"
-                "-isystem/tools/package/eigen/3.3.4/include/eigen3"
-                "-isystem/tools/package/embree/2.15.1_gcc4.8/include"
-                "-isystem/tools/package/gtest/1.8.0/include"
-                "-isystem/tools/package/openmesh/6.3/include"
-                "-isystem/tools/package/tbb/4.4.6/include"
-                "-isystem/tools/package/boost/1.61.0/include"
-                "-isystem/tools/package/blosc/1.5.0/include"
-                "-isystem/tools/package/ilmbase/2.2.0/include/Ilmbase"
-                "-isystem/tools/package/ilmbase/2.2.0/include"
-                "-isystem/tools/package/ilmbase/2.2.0/include/OpenEXR"
-                "-isystem/tools/package/corelog/3.0.2/include"
-                "-isystem/tools/package/qhull/2012.1/include"
-                "-isystem/tools/include"
-                )))))
-   #+END_SRC
-   For clang just replace gcc with clang.
-
-   If you want to play it more safe you can use the flychecks other
-   variables (see C-c ! ?). Note that flycheck-include-path just
-   prepend -I for all strings in the list. So for third party libs
-   it's better to use -isystem.
-
-   Also prefer flycheck-gcc-includes over adding that in
-   flycheck-gcc-args as if you do
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (flycheck-gcc-args
-      . ("-include openvdb/math/Vec3.h")
-     )
-   #+END_SRC
-   You'll get an error about cannot find file, even though the file
-   actually exist. That's because the thing that parses this and
-   passes it to a shell escapes the whitespace after -include. So for
-   that to work you'll need to do:
-
-   #+BEGIN_SRC emacs-lisp :tangle no
-     (flycheck-gcc-args
-      . ("-includeopenvdb/math/Vec3.h")
-     )
-   #+END_SRC
-   Which is not that readable.
-
-*** Language standard in c++
-   Specify language standard in dir locals file: .dir-locals.el
-   For example
-   ((c++-mode
-     (flycheck-clang-language-standard . "c++14")
-     (flycheck-gcc-language-standard . "c++14")))
-** Links
-*** Elisp Regex
-    Link to elisp regular expression
-    https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
-** Change font size on the fly
-   Use commands
-   C-x C-+ and C-x C--
-** Git
-*** Change message in most recent commit
-    git commit --amend [-m ""]
-** Github
-*** Preview site of a git hosted website
-    Prepend to the original url.
-    #+BEGIN_SRC org :tangle no
-      http://htmlpreview.github.io/?
+** Emacs
+*** Lisp in search replace
+    To execute a lisp function in replace regexp do \,(<function>)
+*** Org
+**** Skip code block
+     You can use =:tangle no= in the =SRC_BLOCK= to ignore the code
+     block from being exported aka tangled. Good for example blocks that
+     you don't want to end up in you config file.
+**** Create block shortcut
+     Create source block type "<s" on a new line and press <tab>
+*** Flycheck
+**** Tweak flycheck
+    To set specific compiler and flags for a specific project you can
+    use something like this in a .dir-locals.el file:
+    #+BEGIN_SRC emacs-lisp :tangle no
+      ;; File .dir-locals.el
+      ( ( c++-mode
+          . ((flycheck-c/c++-gcc-executable . "/tools/package/gcc/6.4.0/bin/g++" )
+             (flycheck-gcc-language-standard . "c++14")
+             (flycheck-gcc-include-path
+              . ("/dd/dept/software/users/fredriks/swdevl/corelibs/PRIVATE/include") )
+             (flycheck-gcc-includes . ("openvdb/math/Vec3.h"))
+             (flycheck-gcc-warnings . ("all"))
+             (flycheck-gcc-definitions
+              . ("_GLIBCXX_USE_CXX11_ABI=0"
+                 "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
+                 "DD_OPEN_MESH_POLYMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_PolyMeshT_Extension.hpp>"
+                 "DD_OPEN_MESH_TRIMESHT_EXTENSION=<DD/Math/Geometry/OpenMesh/OpenMesh_TriMeshT_Extension.hpp>"
+                 "DD_CORELIBS_USE_OPENMESH"
+                 "DD_CORELIBS_BUILD_LIBS"
+                 "EIGEN_MATRIXBASE_PLUGIN=<DD/Utility/EigenMatrixBaseAddon.hpp>"
+                 "EIGEN_MATRIX_PLUGIN=<DD/Utility/EigenMatrixAddon.hpp>"
+                 ))
+             (flycheck-gcc-args
+              . ("-B/tools/package/binutils/2.29.1/bin"
+                 "-isystem/tools/package/openvdb/4.0.1_dd01/include"
+                 "-isystem/tools/package/eigen/3.3.4/include/eigen3"
+                 "-isystem/tools/package/embree/2.15.1_gcc4.8/include"
+                 "-isystem/tools/package/gtest/1.8.0/include"
+                 "-isystem/tools/package/openmesh/6.3/include"
+                 "-isystem/tools/package/tbb/4.4.6/include"
+                 "-isystem/tools/package/boost/1.61.0/include"
+                 "-isystem/tools/package/blosc/1.5.0/include"
+                 "-isystem/tools/package/ilmbase/2.2.0/include/Ilmbase"
+                 "-isystem/tools/package/ilmbase/2.2.0/include"
+                 "-isystem/tools/package/ilmbase/2.2.0/include/OpenEXR"
+                 "-isystem/tools/package/corelog/3.0.2/include"
+                 "-isystem/tools/package/qhull/2012.1/include"
+                 "-isystem/tools/include"
+                 )))))
     #+END_SRC
-    For example to see an older page of the embree docs.
-    #+BEGIN_SRC org :tangle no
-      https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
+    For clang just replace gcc with clang.
+
+    If you want to play it more safe you can use the flychecks other
+    variables (see C-c ! ?). Note that flycheck-include-path just
+    prepend -I for all strings in the list. So for third party libs
+    it's better to use -isystem.
+
+    Also prefer flycheck-gcc-includes over adding that in
+    flycheck-gcc-args as if you do
+    #+BEGIN_SRC emacs-lisp :tangle no
+      (flycheck-gcc-args
+       . ("-include openvdb/math/Vec3.h")
+      )
     #+END_SRC
-    source: [[https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview][stackoverflow]]
-** Subversion
-*** Roll back a tag
+    You'll get an error about cannot find file, even though the file
+    actually exist. That's because the thing that parses this and
+    passes it to a shell escapes the whitespace after -include. So for
+    that to work you'll need to do:
 
-    Check out the tags directory. Use --depth=empty to avoid
-    populating all the tags as this can take a really long time
-    depending on how many tags exist.
-    #+BEGIN_SRC sh :tangle no
-      svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
+    #+BEGIN_SRC emacs-lisp :tangle no
+      (flycheck-gcc-args
+       . ("-includeopenvdb/math/Vec3.h")
+      )
     #+END_SRC
+    Which is not that readable.
 
-    Locate the revision to roll back to.
-    #+BEGIN_SRC sh :tangle no
-      svn log SVN_URL/REPO/tags
+**** Language standard in c++
+    Specify language standard in dir locals file: .dir-locals.el
+    For example
+    ((c++-mode
+      (flycheck-clang-language-standard . "c++14")
+      (flycheck-gcc-language-standard . "c++14")))
+*** Elisp
+**** Elisp Regex
+     Link to elisp regular expression
+     https://www.gnu.org/software/emacs/manual/html_node/elisp/Regular-Expressions.html
+**** Change font size on the fly
+     Use commands
+     C-x C-+ and C-x C--
+**** Doc
+     Use C-h f to get docs on function
+*** Case-sensitive search
+    press M-c after search
+*** Remove/Keep lines matching regexp
+    use 'keep-lines' to keep lines matching regexp.
+    use 'flush-lines' to remove lines matching regexp.
+*** See what font is used under cursor
+    #+BEGIN_SRC text :tangle no
+      M-x describe-char
     #+END_SRC
-
-    Then cd into the working copy and update all tags involved in the
-    roll back. Otherwise svn will just ignore the roll back.
-    #+BEGIN_SRC sh :tangle no
-      cd REPO-tag-fix
-      svn up TAG0 TAG1...
+    or
+    #+BEGIN_SRC text :tangle no
+      C-u C-x =
     #+END_SRC
+    [[https://stackoverflow.com/a/1242760][source]]
+** VCS
+*** Git
+**** Change message in most recent commit
+     git commit --amend [-m ""]
+*** Subversion
+**** Roll back a tag
 
-    Roll back to the revision you want by simply merging the tags
-    directory backwards to that revision.
-    #+BEGIN_SRC sh :tangle no
-      svn merge -rHEAD:REVISION .
-    #+END_SRC
+     Check out the tags directory. Use --depth=empty to avoid
+     populating all the tags as this can take a really long time
+     depending on how many tags exist.
+     #+BEGIN_SRC sh :tangle no
+       svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
+     #+END_SRC
 
-    Where REVISION is the revision number you picked previously. HEAD
-    is a svn built in keyword and points to the latest revision.
+     Locate the revision to roll back to.
+     #+BEGIN_SRC sh :tangle no
+       svn log SVN_URL/REPO/tags
+     #+END_SRC
 
-** Org mode
-   Create source block type "<s" on a new line and press <tab>
-** Elisp
-   Use C-h f to get docs on function
+     Then cd into the working copy and update all tags involved in the
+     roll back. Otherwise svn will just ignore the roll back.
+     #+BEGIN_SRC sh :tangle no
+       cd REPO-tag-fix
+       svn up TAG0 TAG1...
+     #+END_SRC
+
+     Roll back to the revision you want by simply merging the tags
+     directory backwards to that revision.
+     #+BEGIN_SRC sh :tangle no
+       svn merge -rHEAD:REVISION .
+     #+END_SRC
+
+     Where REVISION is the revision number you picked previously. HEAD
+     is a svn built in keyword and points to the latest revision.
 ** Code
 *** Generate a list of all defined macros
     cpp -dM /dev/null
@@ -2280,158 +2285,156 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     C-c C-s
     #+END_SRC
     Useful when customizing a style.
-** Ledger
-*** Check what you spend on X
-   #+BEGIN_SRC sh
-     ledger -f data.dat reg payee "X" -s
-   #+END_SRC
-*** Scripts
-    #+BEGIN_SRC sh
-      env LEDGER_FILE=data.dat scripts/cashflow.sh
-    #+END_SRC
-** Find
-*** Ignore directories while searching
-    For example while searching for file named foobar, ignore all .svn
-    directories.
-    #+BEGIN_SRC sh
-      find . -not \( -path '*/.svn' -prune \) -name "foobar"
-    #+END_SRC
-** Case-sensitive search
-   press M-c after search
+*** python
+**** Reload module from another path
 
-** ssh
-*** ssh agent
-    Use the ssh agent to cache the private key to a terminal
-    #+BEGIN_SRC sh
-      eval $(ssh-agent)
-      ssh-add ~/.ssh/private-key
-    #+END_SRC
-** houdini
-*** Expression for string parameters
-    Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
-    Then edit the expression.
-** KDE
-*** no borders
-    When disabled use ALT+F3 to bring the menu back.
-** Install fonts local to user
-   Install fonts to ~/.fonts then update the fontconfig cache by
-   running.
-   #+BEGIN_SRC sh
-     fc-cache -v ~/.fonts
-   #+END_SRC
-   The option '-v' is just for verbose output and can be skipped.
+     First modify the sys.path then call reload to update the
+     module. If it's a submodule you're trying to update, update the
+     main module first.
 
-   To see what fonts are installed run
-   #+BEGIN_SRC sh
-     fc-list
-   #+END_SRC
-** Remove/Keep lines matching regexp
-   use 'keep-lines' to keep lines matching regexp.
-   use 'flush-lines' to remove lines matching regexp.
-** Terminfo files (ti)
-   To compile FILE run
-   #+BEGIN_SRC sh :tangle no
-     tic FILE
-   #+END_SRC
-** Shell
-   Stop the shell from echoing the command.
-   #+BEGIN_SRC sh :tangle no
-     stty -echo
-   #+END_SRC
-*** Shell script
-**** Argument parsing
-     A good way of parsing the arguments for a shell script is using
-     getopt (enhanced). There's also built in shell command in bash
-     called getopts. But that one doesn't handle long options.
+     This is useful when developing extensions for gdb and you want to
+     replace an already installed and loaded extension with a developer
+     version.
 
-     To use getopt in a script simply do:
+     #+BEGIN_SRC python :tangle no
+       import sys
 
-     #+BEGIN_SRC sh
-        # Use getopt to parse the command-line arguments
-        _args=$(getopt --options h --longoptions workspace:,update::,help -- "$@")
-        if [[ $? != 0 ]]
-        then
-            echo "Try '$0 --help for more information.'" >&2
-            exit $_error_input
-        fi
-
-        eval set -- "$_args"
-
-        while [[ $# -gt 0 ]]; do
-            case "$1" in
-                --workspace)
-                    _workspace=$2
-                    shift 2
-                    ;;
-                --update)
-                    _update_func=update
-                    # Filters separated by comma
-                    for arg in ${2//,/ }
-                    do
-                        _filter[$arg]=0
-                    done
-                    shift 2
-                    ;;
-                -h|--help)
-                    echo -e "${help}"
-                    exit
-                    ;;
-                --)
-                    # End of command-line arguments
-                    shift
-                    break
-                    ;;
-            esac
-        done
+       sys.path.insert(0, 'new/path/to/module')
+       reload(module)
      #+END_SRC
-** CMake
-   Don't remove the rpath when installing.
-   #+BEGIN_SRC sh :tangle no
-     CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
-   #+END_SRC
-
-   Specify c++ compiler.
-   #+BEGIN_SRC sh :tangle no
-     CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
-   #+END_SRC
-** Yum
-   Find what package a file belongs to:
-   #+BEGIN_SRC sh :tangle no
-     yum whatprovides /path/to/file
-   #+END_SRC
-** rpm
-   Find what package a file belongs to:
-   #+BEGIN_SRC sh :tangle no
-     rpm -qf /path/to/file
-   #+END_SRC
-** See what font is used under cursor
-   #+BEGIN_SRC text :tangle no
-     M-x describe-char
-   #+END_SRC
-   or
-   #+BEGIN_SRC text :tangle no
-     C-u C-x =
-   #+END_SRC
-   [[https://stackoverflow.com/a/1242760][source]]
-** gdb
-   Bypass the pretty printer and show the raw data.
-   #+BEGIN_SRC :tangle no
-   p/r VARIABLE
-   #+END_SRC
-** python
-*** Reload module from another path
-
-    First modify the sys.path then call reload to update the
-    module. If it's a submodule you're trying to update, update the
-    main module first.
-
-    This is useful when developing extensions for gdb and you want to
-    replace an already installed and loaded extension with a developer
-    version.
-
-    #+BEGIN_SRC python :tangle no
-      import sys
-
-      sys.path.insert(0, 'new/path/to/module')
-      reload(module)
+** Cli
+*** Install fonts local to user
+    Install fonts to ~/.fonts then update the fontconfig cache by
+    running.
+    #+BEGIN_SRC sh
+      fc-cache -v ~/.fonts
     #+END_SRC
+    The option '-v' is just for verbose output and can be skipped.
+
+    To see what fonts are installed run
+    #+BEGIN_SRC sh
+      fc-list
+    #+END_SRC
+*** Terminfo files (ti)
+    To compile FILE run
+    #+BEGIN_SRC sh :tangle no
+      tic FILE
+    #+END_SRC
+*** Shell
+    Stop the shell from echoing the command.
+    #+BEGIN_SRC sh :tangle no
+      stty -echo
+    #+END_SRC
+**** Shell script
+***** Argument parsing
+      A good way of parsing the arguments for a shell script is using
+      getopt (enhanced). There's also built in shell command in bash
+      called getopts. But that one doesn't handle long options.
+
+      To use getopt in a script simply do:
+
+      #+BEGIN_SRC sh
+         # Use getopt to parse the command-line arguments
+         _args=$(getopt --options h --longoptions workspace:,update::,help -- "$@")
+         if [[ $? != 0 ]]
+         then
+             echo "Try '$0 --help for more information.'" >&2
+             exit $_error_input
+         fi
+
+         eval set -- "$_args"
+
+         while [[ $# -gt 0 ]]; do
+             case "$1" in
+                 --workspace)
+                     _workspace=$2
+                     shift 2
+                     ;;
+                 --update)
+                     _update_func=update
+                     # Filters separated by comma
+                     for arg in ${2//,/ }
+                     do
+                         _filter[$arg]=0
+                     done
+                     shift 2
+                     ;;
+                 -h|--help)
+                     echo -e "${help}"
+                     exit
+                     ;;
+                 --)
+                     # End of command-line arguments
+                     shift
+                     break
+                     ;;
+             esac
+         done
+      #+END_SRC
+** Programs
+*** find
+**** Ignore directories while searching
+     For example while searching for file named foobar, ignore all .svn
+     directories.
+     #+BEGIN_SRC sh
+       find . -not \( -path '*/.svn' -prune \) -name "foobar"
+     #+END_SRC
+*** ssh
+**** ssh agent
+     Use the ssh agent to cache the private key to a terminal
+     #+BEGIN_SRC sh
+       eval $(ssh-agent)
+       ssh-add ~/.ssh/private-key
+     #+END_SRC
+*** houdini
+**** Expression for string parameters
+     Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
+     Then edit the expression.
+*** KDE
+**** no borders
+     When disabled use ALT+F3 to bring the menu back.
+*** CMake
+    Don't remove the rpath when installing.
+    #+BEGIN_SRC sh :tangle no
+      CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+    #+END_SRC
+
+    Specify c++ compiler.
+    #+BEGIN_SRC sh :tangle no
+      CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
+    #+END_SRC
+*** Yum
+    Find what package a file belongs to:
+    #+BEGIN_SRC sh :tangle no
+      yum whatprovides /path/to/file
+    #+END_SRC
+*** rpm
+    Find what package a file belongs to:
+    #+BEGIN_SRC sh :tangle no
+      rpm -qf /path/to/file
+    #+END_SRC
+*** GDB
+    Bypass the pretty printer and show the raw data.
+    #+BEGIN_SRC :tangle no
+    p/r VARIABLE
+    #+END_SRC
+*** Ledger
+**** Check what you spend on X
+    #+BEGIN_SRC sh
+      ledger -f data.dat reg payee "X" -s
+    #+END_SRC
+**** Scripts
+     #+BEGIN_SRC sh
+       env LEDGER_FILE=data.dat scripts/cashflow.sh
+     #+END_SRC
+*** Github
+**** Preview site of a git hosted website
+     Prepend to the original url.
+     #+BEGIN_SRC org :tangle no
+       http://htmlpreview.github.io/?
+     #+END_SRC
+     For example to see an older page of the embree docs.
+     #+BEGIN_SRC org :tangle no
+       https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
+     #+END_SRC
+     source: [[https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview][stackoverflow]]
