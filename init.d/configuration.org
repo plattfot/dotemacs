@@ -770,14 +770,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
               org-default-notes-file (concat org-directory "/Övrigt.org")
               org-src-fontify-natively t
-              org-src-tab-acts-natively t)
+              org-src-tab-acts-natively t
+              org-confirm-babel-evaluate nil)
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
 
         ;; Active Babel languages
         (org-babel-do-load-languages
          'org-babel-load-languages
-         '((scheme . t)))
+         '((calc . t)
+           (python . t)
+           (scheme . t)
+           (shell . t)))
         :pin org)
     #+END_SRC
 
@@ -854,6 +858,29 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (propertize "⎦ " 'face '(:foreground "ddd"))
                    ))
          eshell-prompt-regexp "^⎣.*⎦ "))
+    #+END_SRC
+*** emms
+    Using Arch's package manager to handle emms, as I need the
+    emms-print-metadata function for libtag.
+    #+BEGIN_SRC emacs-lisp
+      (use-package emms
+        :ensure nil
+        :if (not dotemacs-is-work)
+        :bind
+        (("<f7>" . emms)
+         ("<C-f7>" . emms-browser)
+         ("<XF86AudioPrev>" . emms-previous)
+         ("<XF86AudioNext>" . emms-next)
+         ("<XF86AudioPlay>" . emms-pause)
+         ("<XF86AudioStop>" . emms-stop))
+        :config
+        (require 'emms-setup)
+        (require 'emms-info-libtag)
+        (emms-all)
+        (setq emms-source-file-default-directory "/media/Valhalla/Music/"
+              emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+              emms-player-list '(emms-player-mpv)
+              emms-info-functions '(emms-info-libtag)))
     #+END_SRC
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
