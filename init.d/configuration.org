@@ -2245,6 +2245,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       C-u C-x =
     #+END_SRC
     [[https://stackoverflow.com/a/1242760][source]]
+*** Don't truncate messages in *scratch*
+    #+BEGIN_SRC emacs-lisp :tangle no
+      (setq eval-expression-print-length nil)
+    #+END_SRC
+
 ** VCS
 *** Git
 **** Change message in most recent commit
