@@ -1947,7 +1947,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (goto-char start)))
      #+END_SRC
 **** Make
-     Functions to speed up the port of old style Makefiles to using modules.
+***** Functions to speed up the port of old style Makefiles to using modules.
      #+BEGIN_SRC emacs-lisp
        (defun make-boost-components ()
          "Convert old style boost libs to module style"
