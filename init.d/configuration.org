@@ -771,17 +771,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-default-notes-file (concat org-directory "/Övrigt.org")
               org-src-fontify-natively t
               org-src-tab-acts-natively t
-              org-confirm-babel-evaluate nil)
+              org-confirm-babel-evaluate nil
+              org-src-window-setup 'other-window)
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
 
         ;; Active Babel languages
-        (org-babel-do-load-languages
-         'org-babel-load-languages
-         '((calc . t)
-           (python . t)
-           (scheme . t)
-           (shell . t)))
+        (if dotemacs-is-work
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((calc . t)
+               (python . t)
+               (scheme . t)))
+          (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((calc . t)
+               (python . t)
+               (scheme . t)
+               (shell . t))))
         :pin org)
     #+END_SRC
 
