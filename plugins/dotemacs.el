@@ -12,8 +12,11 @@
 (interactive "f")
   (load-file (expand-file-name file "~/.emacs.d/init.d")))
 
-;; Variable that is true if I'm at work
-(defvar dotemacs-is-work (string= (getenv "USER") "fredriks") )
+(defvar dotemacs-is-work (string= (getenv "USER") "fredriks")
+  "Non-nil if I'm at work.")
+
+(defvar dotemacs-guix-installed (file-directory-p "/var/guix")
+  "Non-nil if guix is installed.")
 
 (provide 'dotemacs)
 ;;; dotemacs.el ends here
