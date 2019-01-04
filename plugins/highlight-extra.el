@@ -32,6 +32,18 @@
   "Face for hi-lock mode."
   :group 'hi-lock-faces)
 
+(defface hi-yellow-b
+  '((((min-colors 88)) (:weight bold :foreground "#f9fd75"))
+    (t (:weight bold :foreground "#f9fd75")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-magenta-b
+  '((((min-colors 88)) (:weight bold :foreground "#ff00ff"))
+    (t (:weight bold :foreground "#ff00ff")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
 (defun highlight-gtest()
   "Highlight gtest output"
   (interactive)
@@ -74,19 +86,15 @@
   "Highlight flags, paranthesis, error, warning and const to
 easier find them when building."
   (interactive)
-  ( highlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" 'hi-grey)
-  ( highlight-regexp "[()]"    'hi-red-b )
-  ( highlight-regexp "warning" 'hi-green-b )
+  ( highlight-regexp "warning" 'hi-yellow-b )
   ( highlight-regexp "error"   'hi-red-b )
   ( highlight-regexp "const "  'hi-black-b )
   ( highlight-regexp "[a-zA-Z]+\.[a-zA-Z]+:[0-9]+" 'hi-orange )
-  ( highlight-regexp "undefined reference to" 'hi-orange ))
+  ( highlight-regexp "undefined reference to" 'hi-magenta-b ))
 
 (defun unhighlight-build()
   "Like the function name applies remove the highlights set by highlight-build."
   (interactive)
-  ( unhighlight-regexp "-\\{1,2\\}[a-zA-Z0-9_]+" )
-  ( unhighlight-regexp "[()]" )
   ( unhighlight-regexp "warning")
   ( unhighlight-regexp "error")
   ( unhighlight-regexp "const ")
