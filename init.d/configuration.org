@@ -1252,17 +1252,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (message "Refreshed open files.") )
     #+END_SRC
 *** Text
-    Taken from [[http://stackoverflow.com/questions/88399/how-do-i-duplicate-a-whole-line-in-emacs][here]], author mk-fg.
     #+BEGIN_SRC emacs-lisp
-      (defun duplicate-line ()
-        "Clone line at cursor, leaving the latter intact."
+      (defun duplicate-line()
+        "Clone line and paste it below."
         (interactive)
-        (save-excursion
-          (let ((kill-read-only-ok t) deactivate-mark)
-            (read-only-mode 1)
-            (kill-whole-line)
-            (read-only-mode 0)
-            (yank))))
+        (let ((line (buffer-substring (point-at-bol) (point-at-eol)))
+              (current (point)))
+          (goto-char (point-at-eol))
+          (insert "\n" line)
+          (goto-char current)))
     #+END_SRC
 *** Subversion
     Function for dealing with subversion repos.
