@@ -917,6 +917,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ("cmake" (mode . cmake-mode ))
                   ("scripts" (mode . sh-mode))
                   ("ag" (mode . ag-mode ))
+                  ("ivy" (mode . ivy-occur-mode))
                   ("docs" (or (mode . rst-mode)
                               (mode . Man-mode)))
                   ("org" (mode . org-mode))
@@ -960,6 +961,26 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+END_SRC
+*** ivy
+    Better multi-editing than ag.el.
+    See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package ivy
+        :config
+        (setq ivy-count-format "(%d/%d) ")
+        :pin melpa)
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package counsel
+        :pin melpa)
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package wgrep
+        :pin melpa-stable)
+    #+END_SRC
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
