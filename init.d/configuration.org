@@ -736,6 +736,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (pdf-loader-install)
         :pin melpa-stable)
     #+END_SRC
+*** man
+    #+BEGIN_SRC emacs-lisp
+      (use-package man
+        :config
+        (when dotemacs-is-work
+          (setf manual-program "pk man")))
+    #+END_SRC
 ** Web
   Packages for webbased content.
 *** nginx
