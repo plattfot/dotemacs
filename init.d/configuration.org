@@ -1228,10 +1228,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 ** guix
    #+BEGIN_SRC emacs-lisp
-     (use-package guix
-       :if dotemacs-guix-installed
-       :bind ("<f3>" . guix)
-       :pin melpa-stable)
+     (when dotemacs-guix-installed
+       (use-package guix
+         :bind ("<f3>" . guix)
+         :pin melpa-stable))
    #+END_SRC
 * Custom
 ** Packages
