@@ -461,6 +461,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       (setq show-trailing-whitespace t))))
         :pin melpa-stable)
     #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package jinja2-mode
+        :pin melpa-stable)
+    #+END_SRC
 *** Rust
 
     Packages for setting up a rust environment
