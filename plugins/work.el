@@ -7,18 +7,11 @@
 (require 'multi-term)
 
 ;; ============================= Functions ===================================
-(defun work-goc ()
-"Equivalent to typing go cyclone rd 1 work in the terminal."
-(interactive)
-(cd "/dd/shows/CYCLONE/RD/0001/user/work.fredriks")
-)
-
 (defun work-insert-eigen-pretty-printer ()
 "Insert command to add eigen pretty printer for gdb."
 (interactive )
-(insert "python execfile(\"/dd/dept/software/users/fredriks/swdevl"
-	"/CoreLibs/src/gdb/EigenPrettyPrinter.py\")")
-)
+(insert "python execfile(\"/dd/shows/DEV01/user/work.fredriks/swdevl"
+	"/CoreLibs/src/gdb/EigenPrettyPrinter.py\")"))
 
 ;; Functions for quickly set up the work environment
 (defun work-setup ()
@@ -27,8 +20,8 @@
 Use 'universal-argument' before calling this function to not
 delete all other frames.
 
-Code is split into three windows, the cwd is set to swdevl, it's
-moved to the right screen and fullscreen is toggled.
+Code is split into three windows, the cwd is set to DEV01's
+swdevl, it's moved to the right screen and fullscreen is toggled.
 
 Shell is split into two windows, multiple shells are spawned;
 3ps, release, cyclone, build and misc.  It's moved to the left
@@ -42,60 +35,39 @@ screen and is maximized"
   (work-setup-code)
   (select-frame
    (make-frame '((name . "Shell") (top . 28) (left . 0))))
-  (work-setup-build-fun #'shell)
-  (other-frame 1)
-)
+  (work-setup-build)
+  (other-frame 1))
 
 (defun work-setup-code ()
-  "Split the frame into three windows and set cwd to swdevl.
+  "Split the frame into three windows and set cwd to DEV01's swdevl.
 
 It also toggle the fullscreen for the frame."
   (interactive)
-  (cd "/dd/dept/software/users/fredriks/swdevl")
+  (cd "/dd/shows/DEV01/user/work.fredriks/swdevl")
   (delete-other-windows)
   (split-window-horizontally)
   (split-window-horizontally)
   (balance-windows)
   (toggle-frame-fullscreen))
 
-(defun work-setup-build-fun (terminal-type)
-  "Spawns multiple TERMINAL-TYPE.
-With the names 3ps, release, cyclone, build and misc"
+(defun work-setup-build ()
+  "Split the window horizontally and spawns multiple shells.
+With the names 3ps, cyclone, build and misc"
   (delete-other-windows)
   (split-window-horizontally)
-
-  (cd "/dd/dept/software/users/fredriks/swdevl")
-  (funcall terminal-type "3ps")
-  (highlight-build)
-
-  (funcall terminal-type "cyclone")
-  (highlight-build)
-  (highlight-gtest)
-
-  (funcall terminal-type "misc")
-  (highlight-build)
-
-  (funcall terminal-type "build")
-  (highlight-build)
-  (highlight-gtest)
-
+  (cd "/dd/shows/DEV01/user/work.fredriks/swdevl")
+  (let ((go-swdevl (lambda (name extra)
+                     (shell name)
+                     (work-run-emacs-shell-command "go dev01 work && cd swdevl")
+                     (mapcar (lambda (x) (funcall x)) extra))))
+    (funcall go-swdevl "cyclone" '(highlight-build highlight-gtest))
+    (funcall go-swdevl "misc" '(highlight-build))
+    (funcall go-swdevl "build" '(highlight-build highlight-gtest))
+    (funcall go-swdevl "3ps" '(highlight-build)))
   (toggle-frame-maximized))
 
-(defun work-setup-build-term()
-  "Spawns multiple multi-terms called cyclone, build and misc."
-  (interactive)
-  (work-setup-build-fun #'multi-term) ;; #'x short for (function x)
-)
-
-(defun work-setup-build()
-  "Spawns multiple shells.  Called cyclone, build, misc, release
-and git.  Using shell instead of multi-term for all except git."
-  (interactive)
-  (work-setup-build-fun #'shell) ;; #'x short for (function x)
-)
-
 (defun work-run-emacs-shell-command (command)
-  "Runs the COMMMAND in a emacs shell.
+  "Run the COMMAND in a Emacs shell.
 Works only if the current buffer is a shell."
   (let ((process (get-buffer-process (current-buffer))))
     (unless process
@@ -112,18 +84,13 @@ Using shell instead of multi-term."
   (split-window-horizontally)
   (cd "/dd/shows/DEV01/user/work.fredriks")
 
-  (shell "hou-misc")
-  (work-run-emacs-shell-command "go dev01 =fx work")
-
-  (shell "hou-beta")
-  (work-run-emacs-shell-command "go dev01 =fx_beta work")
-
-  (shell "hou-devl")
-  (work-run-emacs-shell-command "go dev01 =fx work")
-
-  (shell "hou-test")
-  (work-run-emacs-shell-command "go dev01 =fx work")
-
+  (let ((go-hou (lambda (name role)
+                  (shell name)
+                  (work-run-emacs-shell-command (format "go dev01 =%s work" role)))))
+    (funcall go-hou "hou-misc" "fx")
+    (funcall go-hou "hou-beta" "fx_beta")
+    (funcall go-hou "hou-devl" "fx")
+    (funcall go-hou "hou-test" "fx"))
   (toggle-frame-maximized))
 
 ;; --------------------------- Source BuildConfig ----------------------------
@@ -142,68 +109,56 @@ and FILE the config to search in."
 	     ;; Extract only the version number from the string and
 	     ;; pick the last one if there are multiple.
 	     " | cut -d = -f 2 | tail -n1"
-	     )
-     ))))
+	     )))))
 
 (defun work-get-version-from-build-config (name path)
   "Gets the version from the BuildConfig file.
 Where NAME is the name of the package you want the version for
 and PATH is where the BUILD.conf file is located."
   ;; Pick the first in the list
-  (work-get-version-from-config  name (concat path "/BUILD.conf"))
-)
-
-;; pk
-(defun work-pk-project (name)
-  "Parse pk files an replace {{ package.project }} with NAME."
-  (interactive "sSpecify name of project: ")
-  (while (search-forward-regexp "{{[ ]*package\.project.*}}" (point-max) t )
-    (let* ((start (match-beginning 0))
-	   (end (match-end 0))
-	   (str (buffer-substring-no-properties start end))
-	   (project (if (string-match "capitalize" str) (capitalize name)
-		      (if (string-match "upper" str) (upcase name) name))))
-      (kill-region start end)
-      (insert project)
-      )
-    )
-)
+  (work-get-version-from-config
+   name
+   (concat (file-name-as-directory path) "BUILD.conf")))
 
 ;; ============================ Registers ====================================
-(set-register ?f (cons 'file
-		       (concat "/dd/dept/software/users/fredriks/swdevl/"
-			       "CoreLibs/Math/Geometry/include/VDB/"
-			       "FieldImpl.hpp")))
 (set-register ?o
-	      (cons 'file
-		    (concat "/tools/package/openvdb/"
-		    	    (work-get-version-from-build-config
-		    	     "openvdb"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
-		    	    "/include/openvdb/")))
-
+              (cons 'file
+                    (mapconcat 'file-name-as-directory
+                               `("/tools/package/openvdb"
+                                 ,(work-get-version-from-build-config
+                                   "openvdb"
+                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
+                                 "include/openvdb")
+                               "")))
 (set-register ?m
-	      (cons 'file
-		    (concat "/tools/package/openmesh/"
-		    	    (work-get-version-from-build-config
-		    	     "openmesh"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
-		    	    "/include/OpenMesh/")))
-(set-register ?c (cons 'file "/dd/shows/CYCLONE/RD/0001/user/work.fredriks/"))
+              (cons 'file
+                    (mapconcat 'file-name-as-directory
+                               `("/tools/package/openmesh"
+                                 ,(work-get-version-from-build-config
+                                   "openmesh"
+                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
+                                 "include/OpenMesh")
+                               "")))
+
+(set-register ?d (cons 'file "/dd/shows/DEV01/user/work.fredriks/"))
 
 (set-register ?h
-	      (cons 'file
-		    (concat "/tools/package/houdini/"
-			    (work-get-version-from-build-config
-		    	     "houdini"
-			     "/dd/dept/software/users/fredriks/swdevl/cyclone")
-			    "/toolkit/include")))
+              (cons 'file
+                    (mapconcat 'file-name-as-directory
+                               `("/tools/package/houdini"
+                                 ,(work-get-version-from-build-config
+                                   "houdini"
+                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/cyclone")
+                                 "toolkit/include")
+                               "")))
 (set-register ?v
-	      (cons 'file
-		    (concat "/tools/package/eigen/"
-		    	    (work-get-version-from-build-config
-		    	     "eigen"
-		    	     "/dd/dept/software/users/fredriks/swdevl/cyclone")
-		    	    "/include/eigen3/Eigen/src")))
+              (cons 'file
+                    (mapconcat 'file-name-as-directory
+                               `("/tools/package/eigen"
+                                 ,(work-get-version-from-build-config
+                                   "eigen"
+                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
+                                 "include/eigen3/Eigen/src")
+                               "")))
 (provide 'work)
 ;;; work.el ends here
