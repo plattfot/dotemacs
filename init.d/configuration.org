@@ -2157,6 +2157,30 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (make-delete-libpaths-and-rpath)
          (make-delete-libs))
      #+END_SRC
+*** Modes
+**** Editing doc strings in the Make project
+
+     Using #: to mark comments as docstrings for the parser. But
+     they're a pain to format using fill-paragraph. Deriving a mode
+     from makefile-gmake-mode that changes the comments to match these
+     tags to easier editing. Note that it will not see # as comments
+     anymore and will mess up the format for those, only use this mode
+     when editing the docstrings.
+
+     Another option would be to modify the `paragraph-start' regexp
+     but it's a pain to get it right and you'll need to change the
+     `fill-prefix' to make it work. Which messes up the the
+     rest. Probably better when dealing with doxygen comments as this
+     [[https://stackoverflow.com/q/1972219][stackoverflow question]] is wondering about.
+
+     #+BEGIN_SRC emacs-lisp
+       (define-derived-mode makefile-bs-mode makefile-gmake-mode "BSmakefile"
+         "An adapted `makefile-mode' that uses #: as comments."
+         (setq-local comment-start "#:")
+         (setq-local comment-end "")
+         (setq-local comment-start-skip "#:+[ \t]*"))
+     #+END_SRC
+
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
