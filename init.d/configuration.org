@@ -1090,6 +1090,30 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq-default reb-re-syntax 'string))
     #+END_SRC
+*** Projectile
+
+    Quicker way of navigating between projects. And other nice stuff.
+    #+BEGIN_SRC emacs-lisp
+      (use-package projectile
+        :after (ivy counsel)
+        :bind
+        (:map projectile-mode-map
+              ("C-c p" .  projectile-command-map))
+        :config
+        (setq projectile-completion-system 'ivy)
+        (projectile-mode +1)
+        :pin melpa-stable)
+    #+END_SRC
+
+    Better integration with counsel. Using the melpa version as
+    melpa-stable doesn't work with projectile-2.0.0
+    #+BEGIN_SRC emacs-lisp
+      (use-package counsel-projectile
+        :after (projectile counsel)
+        :config
+        (counsel-projectile-mode)
+        :pin melpa)
+    #+END_SRC
 ** Text
   Packages for editing and viewing text.
 *** Emojify
