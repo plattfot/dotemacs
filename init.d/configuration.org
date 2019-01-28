@@ -887,7 +887,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                  'face '(:foreground "#ddd"))
                      " "
                      (propertize (replace-regexp-in-string
-                                  (getenv "HOME") "~"
+                                  (format "^%s"(getenv "HOME")) "~"
                                   (if remote (string-remove-prefix remote pwd) pwd))
                                  'face '(:foreground "#666"))
                      (propertize "⎦ " 'face '(:foreground "ddd"))
