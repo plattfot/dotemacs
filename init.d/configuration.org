@@ -102,6 +102,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         indent-tabs-mode nil)           ;; Don't use tab for indenting.
      (show-paren-mode 1)                ;; Highlight matching brackets.
    #+END_SRC
+
+   Don't popup a new frame but reuse one that is already open. If no
+   other frame is open, open in the same frame.
+   #+BEGIN_SRC emacs-lisp
+     (setq display-buffer--other-frame-action
+           '((display-buffer-reuse-window display-buffer-use-some-frames)
+             (reusable-frames . visible)
+             (inhibit-same-window . t)
+             (inhibit-switch-frame . t)))
+   #+END_SRC
 ** Calender
    #+BEGIN_SRC emacs-lisp
      (setq-default
@@ -900,11 +910,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          eshell-save-history-on-exit t
          eshell-prefer-lisp-functions nil
          eshell-destroy-buffer-when-process-dies t)
-        (add-hook 'eshell-mode-hook
-                  (eshell/alias "ff" "find-file $1")
-                  (eshell/alias "ffw" "find-file-other-window $1")
-                  ;; TODO: Fix that it reuses an already open frame first
-                  (eshell/alias "fff" "find-file-other-frame $1")))
+        (add-hook
+         'eshell-mode-hook
+         (lambda ()
+           (eshell/alias "ff" "find-file $1")
+           (eshell/alias "ffw" "find-file-other-window $1")
+           (eshell/alias "fff" "find-file-other-frame $1"))))
     #+END_SRC
 *** emms
     Using Arch's package manager to handle emms, as I need the
