@@ -107,7 +107,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    other frame is open, open in the same frame.
    #+BEGIN_SRC emacs-lisp
      (setq display-buffer--other-frame-action
-           '((display-buffer-reuse-window display-buffer-use-some-frames)
+           '((display-buffer-reuse-window display-buffer-use-some-frame)
              (reusable-frames . visible)
              (inhibit-same-window . t)
              (inhibit-switch-frame . t)))
