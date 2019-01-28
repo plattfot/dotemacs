@@ -917,6 +917,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (eshell/alias "ffw" "find-file-other-window $1")
            (eshell/alias "fff" "find-file-other-frame $1"))))
     #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (defun eshell/lcd (&optional directory)
+        "Locally cd to a DIRECTORY when on a remote host."
+        (if (file-remote-p default-directory)
+            (with-parsed-tramp-file-name default-directory nil
+              (eshell/cd (tramp-make-tramp-file-name
+                          (tramp-file-name-method v)
+                          (tramp-file-name-user v)
+                          (tramp-file-name-host v)
+                          (or directory "")
+                          (tramp-file-name-hop v))))
+          (eshell/cd directory)))
+    #+END_SRC
+    Function taken from this [[https://www.reddit.com/r/emacs/comments/5pziif/cd_to_home_directory_of_server_when_using_eshell/de9olb7][reddit answer]]
 *** emms
     Using Arch's package manager to handle emms, as I need the
     emms-print-metadata function for libtag.
