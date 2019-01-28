@@ -1003,7 +1003,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ("emacs" (name . "^\\*[[:alnum:]]+\\*$")))))
        (add-hook 'ibuffer-mode-hook
                  (lambda ()
-                   (ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
+                   ;; Sucks up a lot of cpu time when using projectile
+                   ;;(ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+END_SRC
 *** ivy
