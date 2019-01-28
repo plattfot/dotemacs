@@ -868,24 +868,38 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (mapc 'find-file fn-list))))
     #+END_SRC
 *** Eshell
+    Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
+
     #+BEGIN_SRC emacs-lisp
       (use-package eshell
         :config
         (setq-default
          eshell-prompt-function
          (lambda ()
-           (concat (propertize "⎣" 'face '(:foreground "#ddd"))
-                   (propertize (user-login-name) 'face '(:foreground "#3387cc"))
-                   (propertize "@" 'face '(:foreground "#ddd"))
-                   (propertize (system-name) 'face '(:foreground "#ddd"))
-                   " "
-                   (propertize (if (string-prefix-p (getenv "HOME") (eshell/pwd))
-                                   (replace-regexp-in-string (getenv "HOME") "~"
-                                                             (eshell/pwd))
-                                 (eshell/pwd)) 'face '(:foreground "#666"))
-                   (propertize "⎦ " 'face '(:foreground "ddd"))
-                   ))
-         eshell-prompt-regexp "^⎣.*⎦ "))
+           (let* ((pwd (eshell/pwd))
+                  (remote (file-remote-p pwd))
+                  (remote-name (when remote
+                                 (cadr (split-string remote ":")))))
+             (concat (propertize "⎣" 'face '(:foreground "#ddd"))
+                     (propertize (user-login-name) 'face '(:foreground "#3387cc"))
+                     (propertize "@" 'face `(:foreground ,(if remote "#f9fd75" "#ddd")))
+                     (propertize (if remote remote-name (system-name))
+                                 'face '(:foreground "#ddd"))
+                     " "
+                     (propertize (replace-regexp-in-string
+                                  (getenv "HOME") "~"
+                                  (if remote (string-remove-prefix remote pwd) pwd))
+                                 'face '(:foreground "#666"))
+                     (propertize "⎦ " 'face '(:foreground "ddd"))
+                     )))
+         eshell-prompt-regexp "^⎣.*⎦ "
+         ;; eshell-buffer-shorthand t ...  Can't see Bug#19391
+         eshell-scroll-to-bottom-on-input 'all
+         eshell-error-if-no-glob t
+         eshell-hist-ignoredups t
+         eshell-save-history-on-exit t
+         eshell-prefer-lisp-functions nil
+         eshell-destroy-buffer-when-process-dies t))
     #+END_SRC
 *** emms
     Using Arch's package manager to handle emms, as I need the
