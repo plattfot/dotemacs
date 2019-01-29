@@ -788,6 +788,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     The variable 'org-directory' is set in '.custom.el', as it changes
     from compute to computer at the moment.
 
+    The org structure template el (expand using <el) is from
+    [[https://github.com/freetonik/emacs-dotfiles/blob/master/init.org#org][EmacsCast]].
+
     #+BEGIN_SRC emacs-lisp
       (use-package org
         :mode ("\\.org\\'" . org-mode)
@@ -806,6 +809,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-src-window-setup 'other-window)
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
+
+        (add-to-list 'org-structure-template-alist
+                     '("el" "#+BEGIN_SRC emacs-lisp \n?\n#+END_SRC"))
 
         ;; Active Babel languages
         (if dotemacs-is-work
