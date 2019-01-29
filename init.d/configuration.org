@@ -1134,6 +1134,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Projectile
 
     Quicker way of navigating between projects. And other nice stuff.
+
     #+BEGIN_SRC emacs-lisp
       (use-package projectile
         :after (ivy counsel)
@@ -1141,7 +1142,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (:map projectile-mode-map
               ("C-c p" .  projectile-command-map))
         :config
-        (setq projectile-completion-system 'ivy)
+        (setq projectile-completion-system 'ivy
+              projectile-mode-line-prefix " ")
         (projectile-mode +1)
         :pin melpa-stable)
     #+END_SRC
