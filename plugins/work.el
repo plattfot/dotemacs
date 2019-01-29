@@ -93,6 +93,34 @@ Using shell instead of multi-term."
     (funcall go-hou "hou-test" "fx"))
   (toggle-frame-maximized))
 
+;; ============================ Projectile ===================================
+(defvar work-package-re
+  "package/[[:lower:][:digit:]_]+/[[:lower:][:digit:]._]+$"
+  "Regex to classify a package at work as a projectile project.")
+
+(projectile-register-project-type 'dd '("manifest"))
+(add-to-list 'projectile-project-root-files "manifest")
+
+(defun work-project-name (root)
+  "Get a better name from the packages at work.
+
+ROOT is the path to the project and is used to extract the name.
+
+If not a facility package return the name of the last
+directory. Same as `projectile-default-project-name'"
+
+  (let ((dir (directory-file-name root)))
+    (if (string-match-p work-package-re dir)
+        ;; Layout is <packages root>/<name>/<version>
+        (format "%s-%s"
+                ;; name
+                (file-name-nondirectory (directory-file-name (file-name-directory dir)))
+                ;; version
+                (file-name-nondirectory dir))
+      (file-name-nondirectory dir))))
+
+(setq projectile-project-name-function #'work-project-name)
+
 ;; --------------------------- Source BuildConfig ----------------------------
 (defun work-get-version-from-config (name file)
   "Gets the version from a file.
