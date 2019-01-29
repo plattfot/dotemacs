@@ -175,7 +175,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                company-dabbrev-downcase nil
                company-dabbrev-ignore-case nil
                company-dabbrev-other-buffers t
-               company-dabbrev-code-other-buffers t)
+               company-dabbrev-code-other-buffers t
+               company-lighter-base "c")
 
          (add-hook 'org-mode-hook
                    (lambda ()
