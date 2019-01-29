@@ -279,18 +279,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; Patching ggtags to not use compilation-info-face for the project
          ;; root in the mode-line. Was sticking out like a sore thumb.
          (defvar ggtags-mode-line-project-name
-           '("[" (:eval (let ((name (if (stringp ggtags-project-root)
-                                        (file-name-nondirectory
-                                         (directory-file-name ggtags-project-root))
-                                      "?")))
-                          (propertize
-                           name
-                           'help-echo (if (stringp ggtags-project-root)
-                                          (concat "mouse-1 to visit " ggtags-project-root)
-                                        "mouse-1 to set project")
-                           'mouse-face 'mode-line-highlight
-                           'keymap ggtags-mode-line-project-keymap)))
-             "]")
+           '(" "
+             (:eval
+                  (let ((name (if (stringp ggtags-project-root) "✓" "✗")))
+                    (propertize
+                     name
+                     'help-echo (if (stringp ggtags-project-root)
+                                    (concat "mouse-1 to visit " ggtags-project-root)
+                                  "mouse-1 to set project")
+                     'mouse-face 'mode-line-highlight
+                     'keymap ggtags-mode-line-project-keymap))))
            "Mode line construct for displaying current project name.
        The value is the name of the project root directory. Setting it
        to nil disables displaying this information.")
