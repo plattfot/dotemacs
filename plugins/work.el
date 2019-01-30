@@ -149,44 +149,43 @@ and PATH is where the BUILD.conf file is located."
    (concat (file-name-as-directory path) "BUILD.conf")))
 
 ;; ============================ Registers ====================================
-(set-register ?o
-              (cons 'file
-                    (mapconcat 'file-name-as-directory
-                               `("/tools/package/openvdb"
-                                 ,(work-get-version-from-build-config
-                                   "openvdb"
-                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
-                                 "include/openvdb")
-                               "")))
-(set-register ?m
-              (cons 'file
-                    (mapconcat 'file-name-as-directory
-                               `("/tools/package/openmesh"
-                                 ,(work-get-version-from-build-config
-                                   "openmesh"
-                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
-                                 "include/OpenMesh")
-                               "")))
+(defvar work-swdevl
+  (substitute-in-file-name "$DD_SHOWS_ROOT/DEV01/user/work.$USER/swdevl")
+  "Path to my default workspace at work.")
 
-(set-register ?d (cons 'file "/dd/shows/DEV01/user/work.fredriks/"))
+(defvar work-package-root (substitute-in-file-name "$DD_TOOLS_ROOT/$DD_OS/package")
+  "Default location for packages at work.")
 
-(set-register ?h
-              (cons 'file
-                    (mapconcat 'file-name-as-directory
-                               `("/tools/package/houdini"
-                                 ,(work-get-version-from-build-config
-                                   "houdini"
-                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/cyclone")
-                                 "toolkit/include")
-                               "")))
-(set-register ?v
-              (cons 'file
-                    (mapconcat 'file-name-as-directory
-                               `("/tools/package/eigen"
-                                 ,(work-get-version-from-build-config
-                                   "eigen"
-                                   "/dd/shows/DEV01/user/work.fredriks/swdevl/CoreLibs")
-                                 "include/eigen3/Eigen/src")
-                               "")))
+(defun work-pkg-path (name include &optional config use-config-verbatim)
+  "Create include path to NAME.
+
+INCLUDE is the relative path from the package root to the include
+directory.  Default is \"include/NAME'\".
+
+CONFIG is where it should look for the version.  It's
+relative to `work-swdevl'.  By default it is CoreLibs.
+
+If USE-CONFIG-VERBATIM is not nil it will just use the value
+of CONFIG as the version."
+  (directory-file-name
+   (mapconcat
+    'file-name-as-directory
+    `(,work-package-root
+      ,name
+      ,(if use-config-verbatim
+           (or config "")
+         (work-get-version-from-build-config
+          name
+          (concat (file-name-as-directory work-swdevl) (or config "CoreLibs"))))
+      ,include)
+    "")))
+
+(set-register ?o (work-pkg-path "openvdb" "include/openvdb"))
+(set-register ?m (work-pkg-path "openmesh" "include/OpenMesh"))
+(set-register ?h (work-pkg-path "houdini" "toolkit/include" "cyclone"))
+(set-register ?v (work-pkg-path "eigen" "include/eigen3/Eigen/src"))
+
+(set-register ?d (cons 'file work-swdevl))
+
 (provide 'work)
 ;;; work.el ends here
