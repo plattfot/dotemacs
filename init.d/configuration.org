@@ -1085,10 +1085,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Cool tool that I use far too seldom.
     #+BEGIN_SRC emacs-lisp
       (use-package avy
+        :bind (("M-j" . avy-goto-char))
         :config
         (setq avy-all-windows nil)
         (setq avy-background t)
-        :bind (("M-j" . avy-goto-char))
         :pin melpa-stable)
     #+END_SRC
 *** Compilation
