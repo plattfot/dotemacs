@@ -1852,17 +1852,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (set-register ?e (cons 'file "~/.emacs.d/init.el"))
       (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org"))
     #+END_SRC
-** Behaviour
-   #+BEGIN_SRC emacs-lisp
-     (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
-   #+END_SRC
-
-   Store work related settings.
-   #+BEGIN_SRC emacs-lisp
-     (when dotemacs-is-work
-       (when (file-exists-p "~/.emacs.d/.work.el")
-         (load "~/.emacs.d/.work.el")))
-   #+END_SRC
 * Work
 ** Custom
 *** Packages
@@ -2231,6 +2220,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (setq-local comment-end "")
          (setq-local comment-start-skip "#:+[ \t]*"))
      #+END_SRC
+
+** Behaviour
+   Use bash at work.
+   #+BEGIN_SRC emacs-lisp
+     (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
+   #+END_SRC
+
+   Store work related settings.
+   #+BEGIN_SRC emacs-lisp
+     (when dotemacs-is-work
+       (when (file-exists-p "~/.emacs.d/.work.el")
+         (load "~/.emacs.d/.work.el")))
+   #+END_SRC
 
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
