@@ -5,6 +5,7 @@
 
 (require 'highlight-extra)
 (require 'multi-term)
+(require 'string-inflection)
 
 ;; ============================= Functions ===================================
 (defun work-insert-eigen-pretty-printer ()
@@ -93,13 +94,33 @@ Using shell instead of multi-term."
     (funcall go-hou "hou-test" "fx"))
   (toggle-frame-maximized))
 
+(defun work-parse-manifest (manifest-file)
+  "Read the manifest and return an alist with the entries.
+
+Where MANIFEST-FILE is the path to the manifest file.
+
+Currently only supports the simple ones. I.e type: [']value[']."
+  (with-temp-buffer
+    (insert-file-contents manifest-file)
+    (setq case-fold-search t)
+    (let ((manifest '())
+          (type-value-re "\\([[:alnum:]_]+\\):[ ']*\\([[:alnum:]_.]+\\)[ ']*"))
+      (goto-char (point-min))
+      (while (re-search-forward type-value-re nil t)
+        (let ((type (string-inflection-lower-camelcase-function (match-string 1)))
+              (value (match-string 2)))
+          (add-to-list 'manifest `(,(intern type) . ,value))))
+      manifest)))
+
 ;; ============================ Projectile ===================================
 (defvar work-package-re
   "package/[[:lower:][:digit:]_]+/[[:lower:][:digit:]._]+$"
   "Regex to classify a package at work as a projectile project.")
 
-(projectile-register-project-type 'dd '("manifest"))
+(projectile-register-project-type 'pkg '("manifest") :src-dir "include")
+(projectile-register-project-type 'hou '("houdini_setup") :src-dir "toolkit/include")
 (add-to-list 'projectile-project-root-files "manifest")
+(add-to-list 'projectile-project-root-files "houdini_setup")
 
 (defun work-project-name (root)
   "Get a better name from the packages at work.
