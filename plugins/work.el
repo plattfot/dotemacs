@@ -147,18 +147,14 @@ directory. Same as `projectile-default-project-name'"
   "Gets the version from a file.
 Where NAME is the name of the package you want the version for
 and FILE the config to search in."
-  ;; Pick the first in the list
-  (car
-   ;; Remove newlines and convert the string to a list if there's more
-   ;; than one version.
-   (split-string
-    (shell-command-to-string
-     ;; Look for the string matching the name.
-     (concat "grep -iE " name "_version " file
-	     ;; Extract only the version number from the string and
-	     ;; pick the last one if there are multiple.
-	     " | cut -d = -f 2 | tail -n1"
-	     )))))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (setq case-fold-search t)
+    (if (re-search-forward
+         (format "^[ ]*%s_version[ ]*\\(?:\\?=\\|=\\)[ ]*\\([[:alnum:]_.]+\\)" name)
+         nil t)
+        (match-string 1)
+      (error "No version found for %s" name))))
 
 (defun work-get-version-from-build-config (name path)
   "Gets the version from the BuildConfig file.
