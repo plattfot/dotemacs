@@ -197,10 +197,10 @@ of CONFIG as the version."
       ,include)
     "")))
 
-(set-register ?o (work-pkg-path "openvdb" "include/openvdb"))
-(set-register ?m (work-pkg-path "openmesh" "include/OpenMesh"))
-(set-register ?h (work-pkg-path "houdini" "toolkit/include" "cyclone"))
-(set-register ?v (work-pkg-path "eigen" "include/eigen3/Eigen/src"))
+(set-register ?o (cons 'file (work-pkg-path "openvdb" "include/openvdb")))
+(set-register ?m (cons 'file (work-pkg-path "openmesh" "include/OpenMesh")))
+(set-register ?h (cons 'file (work-pkg-path "houdini" "toolkit/include" "cyclone")))
+(set-register ?v (cons 'file (work-pkg-path "eigen" "include/eigen3/Eigen/src")))
 
 (set-register ?d (cons 'file work-swdevl))
 
