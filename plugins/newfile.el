@@ -240,7 +240,7 @@ dependent."
               (setq namespaces (nf-insert-before (list namespace) idx namespaces))))))
 
        ;; Append namespace
-       (t (setq namespaces `(,@namespaces ,value)))))
+       (t (setq namespaces `(,@namespaces ,(list value))))))
     namespaces))
 
 (defun nf-insert-after (element idx list)
