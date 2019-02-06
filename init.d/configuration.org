@@ -1036,8 +1036,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa)
     #+END_SRC
 
+    Use counsel-imenu instead of imenu. To avoid hunting down all
+    keymaps that defines imenu, easier to just alias the function.
     #+BEGIN_SRC emacs-lisp
       (use-package counsel
+        :init
+        (defalias 'imenu 'counsel-imenu)
         :pin melpa)
     #+END_SRC
 
