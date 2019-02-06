@@ -697,7 +697,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package magit
-        :bind ( "C-x g" . magit-status)
+        :bind ("C-x g" . magit-status)
         :config
         (setq vc-handled-backends (delq 'Git vc-handled-backends))
         :pin melpa-stable)
