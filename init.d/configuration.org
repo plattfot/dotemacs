@@ -1796,7 +1796,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
           (list hi lo msecs))) ; regurgitate the new values
     #+END_SRC
-
 ** Keybindings
 *** Minor mode
    To better organize what my custom keys are and also easy see what
