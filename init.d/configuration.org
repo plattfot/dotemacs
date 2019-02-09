@@ -1400,6 +1400,69 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (insert "\n" line)
           (goto-char current)))
     #+END_SRC
+**** Format
+
+     Different functions to quickly format text.
+     #+BEGIN_SRC emacs-lisp
+       (defun fmt-parens-loosen ()
+         "Add a space between parens and content.
+
+       e.g. (foo) -> ( foo ).
+
+       It will not expand () by default. Use prefix to include it."
+         (interactive)
+         (let ((regexp
+                (if (not current-prefix-arg)
+                    ;; Ignore ()
+                    "\\(?:\\(?1:(\\)\\(?2:[^ \n)]\\)\\|\\(?1:[^ (]\\)\\(?2:)\\)\\)"
+                  ;; Include ()
+                  "\\(?:\\(?1:(\\)\\(?2:[^ \n]\\)\\|\\(?1:[^ ]\\)\\(?2:)\\)\\)")))
+           (my-replace-regexp regexp "\\1 \\2")))
+     #+END_SRC
+
+     #+BEGIN_SRC emacs-lisp
+       (defun fmt-parens-tighten ()
+         "Remove spaces between parens and content.
+
+       e.g. (  foo ) -> (foo)"
+         (interactive)
+         (my-replace-regexp
+          "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"
+          "\\1\\2"))
+     #+END_SRC
+
+     #+BEGIN_SRC emacs-lisp
+       (defun fmt-one-space-after-comma ()
+         "Make sure there's just one space after comma.
+
+       e.g. foo(bar,baz,  boo) -> foo(bar, baz, boo)"
+         (interactive)
+         (my-replace-regexp
+          "\\(?:\\(?1:,\\)[ ]*\\(?2:[^ \n]\\)\\)"
+          "\\1 \\2"))
+     #+END_SRC
+
+     #+BEGIN_SRC emacs-lisp
+       (defun fmt-replace-regexp (regexp to-string)
+         "Replace everything matching REGEXP with TO-STRING.
+
+       Starting from point and to the end of the buffer.
+
+       If a region is defined it will just replace text inside that.
+
+       This is similar to `replace-regexp' but using `re-search-forward'
+       and `replace-match'."
+         (interactive)
+         (let ((curr-point (point))
+               (start (point))
+               (end nil))
+           (when (region-active-p)
+             (setq start (region-beginning)
+                   end (region-end)))
+           (goto-char start)
+           (while (re-search-forward regexp end t)
+             (replace-match to-string))))
+     #+END_SRC
 *** Subversion
     Function for dealing with subversion repos.
 
