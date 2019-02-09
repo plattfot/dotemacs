@@ -383,8 +383,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; (add-hook 'python-mode 'turn-on-smartparens-mode)
          (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
          :bind (:map smartparens-mode-map
-                     ("M-k" . sp-kill-hybrid-sexp)
-                     ("C-M-k" . sp-backward-kill-sexp)
                      ("C-)" . sp-forward-slurp-sexp)
                      ("C-(" . sp-backward-slurp-sexp)
                      ("C-}" . sp-forward-barf-sexp)
