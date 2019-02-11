@@ -705,6 +705,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq vc-handled-backends (delq 'Git vc-handled-backends))
         :pin melpa-stable)
     #+END_SRC
+*** Magithub (disabled)
+
+    Has a bug, see [[https://github.com/magit/ghub/issues/81][#81]]. Disabling it until a work around is found. As I
+    haven't started using this just yet.
+    #+BEGIN_SRC emacs-lisp
+      (use-package magithub
+        :after magit
+        :disabled t
+        :ensure t
+        :config (magithub-feature-autoinject t)
+        :pin melpa-stable)
+    #+END_SRC
 *** The Silver Searcher
     #+BEGIN_SRC emacs-lisp
       (use-package ag
