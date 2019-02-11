@@ -1890,9 +1890,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package plattfot
        :init
        (plattfot-global-mode 1)
+       ;; Change to the comint mode to get history search.
        (add-hook 'comint-mode-hook
                  (lambda ()
-                   ;; Change to the comint mode to get history search.
+                   (plattfot-mode 0)
+                   (plattfot-comint-mode 1)))
+       (add-hook 'eshell-mode-hook
+                 (lambda ()
                    (plattfot-mode 0)
                    (plattfot-comint-mode 1)))
        :ensure nil)
