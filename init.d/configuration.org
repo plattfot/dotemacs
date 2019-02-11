@@ -2,6 +2,11 @@
 Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[https://github.com/pierre-lecocq/emacs.d/tree/literal][pierre-lecocq]] org configs
 
 * General
+** Lexical binding
+   Enable lexical binding in this config
+   #+BEGIN_SRC emacs-lisp
+   ;; -*- lexical-binding: t -*-
+   #+END_SRC
 ** Package management
 
    Setup repositories for package and auto download use-package if it's missing.
