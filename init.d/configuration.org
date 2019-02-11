@@ -648,14 +648,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
        :bind (:map ledger-mode-map
-                   ("C-c c" . ledger-mode-clean-buffer))
+                   ("C-c C" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
+       (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+       (add-hook 'ledger-mode-hook (lambda () (flycheck-mode -1)))
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 0
              ledger-schedule-look-forward 30)
-       :pin melpa-stable)
+       :pin melpa)
    #+END_SRC
 *** Arduino
     Function for setting up a arduino template sketch
