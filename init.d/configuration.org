@@ -1156,6 +1156,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :bind
         (:map projectile-mode-map
               ("C-c p" .  projectile-command-map))
+        :init
+        (projectile-mode +1)
         :config
         (setq projectile-completion-system 'ivy
               projectile-mode-line-prefix " ")
