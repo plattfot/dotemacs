@@ -1345,6 +1345,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
      (when dotemacs-guix-installed
        (use-package guix
+         :ensure nil
          :bind ("<f3>" . guix)
          :pin melpa-stable))
    #+END_SRC
