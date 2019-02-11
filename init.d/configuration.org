@@ -572,13 +572,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** REPL
 **** Geiser
-
-     - *TODO:* Update to :hook when that comes available.
-
      #+BEGIN_SRC emacs-lisp
        (use-package geiser
-         :init
-         (add-hook 'scheme-mode-hook 'geiser-mode)
+         :hook (scheme-mode-hook)
          :config
          (setq geiser-default-implementation 'guile)
          :pin melpa-stable)
