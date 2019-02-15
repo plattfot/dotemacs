@@ -127,4 +127,5 @@ else clause."
     (error (format "\"%s\" is not a supported/valid c++ language standard." std)))
   (cpreproc-insert-if "__cplusplus" comp (cdr std-version) std current-prefix-arg)))
 
+(provide 'cpreproc)
 ;;; cpreproc.el ends here
