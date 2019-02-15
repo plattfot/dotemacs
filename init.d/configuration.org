@@ -1379,6 +1379,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil
         :load-path "~/.emacs.d/plugins")
     #+END_SRC
+*** cpreproc
+    Functions to help with c/c++ development
+    #+BEGIN_SRC emacs-lisp
+      (use-package cpreproc
+        :ensure nil
+        :load-path "plugins")
+    #+END_SRC
 ** Functions
 *** Buffer
     Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
