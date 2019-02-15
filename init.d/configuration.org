@@ -826,7 +826,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (add-to-list 'org-agenda-files org-directory))
 
         (add-to-list 'org-structure-template-alist
-                     '("el" "#+BEGIN_SRC emacs-lisp \n?\n#+END_SRC"))
+                     '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 
         ;; Active Babel languages
         (if dotemacs-is-work
