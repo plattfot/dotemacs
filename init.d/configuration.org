@@ -65,7 +65,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
    #+BEGIN_SRC emacs-lisp
-     (setq custom-file "~/.emacs.d/.custom.el")
+     (setq custom-file (concat user-emacs-directory ".custom.el"))
      (when (file-exists-p custom-file) (load custom-file))
    #+END_SRC
 ** Custom plugins
@@ -74,7 +74,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package dotemacs
         :ensure nil
-        :load-path "~/.emacs.d/plugins")
+        :load-path "plugins")
     #+END_SRC
 ** UI
 *** Maximize work area
@@ -136,8 +136,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    over the place.  Fixing that by dumping all backup/autosave files
    in to one directory.
    #+BEGIN_SRC emacs-lisp
-     (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
-     (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+     (defvar backup-dir (concat user-emacs-directory "backup"))
+     (defvar autosave-dir (concat user-emacs-directory "autosave"))
      (setq backup-directory-alist (list (cons ".*" backup-dir))
 	   auto-save-list-file-prefix autosave-dir
 	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
@@ -145,7 +145,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 ** Theme
    Point emacs to where it can find the sunburst theme.
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/sunburst-theme")
+     (add-to-list 'custom-theme-load-path
+                  (dotemacs-build-path user-emacs-directory "themes" "sunburst-theme"))
      (load-theme `sunburst t)
    #+END_SRC
 ** Path
@@ -1368,7 +1369,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package mc-extra-extra
         :after (multiple-cursors)
         :ensure nil
-        :load-path "~/emacs.d/plugins")
+        :load-path "plugins")
     #+END_SRC
 *** newfile
     Functions for setting up a newfile in c++. I.e create the license
@@ -1377,7 +1378,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package newfile
         :ensure nil
-        :load-path "~/.emacs.d/plugins")
+        :load-path "plugins")
     #+END_SRC
 *** cpreproc
     Functions to help with c/c++ development
