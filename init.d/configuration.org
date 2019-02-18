@@ -645,19 +645,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Settings for ledger.
    Set the default mode for .dat files to ledger.
 
-   Clean the buffer with C-c c.
+   Clean the buffer with C-c C.
+
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
        :bind (:map ledger-mode-map
                    ("C-c C" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
-       (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
-       (add-hook 'ledger-mode-hook (lambda () (flycheck-mode -1)))
+       ;; (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+       ;; (add-hook 'ledger-mode-hook (lambda () (flycheck-mode -1)))
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 0
              ledger-schedule-look-forward 30)
+       :pin melpa)
+   #+END_SRC
+
+   Using flycheck instead of flymake to lint ledger. As it works much
+   better for my workflow.
+   #+BEGIN_SRC emacs-lisp
+     (use-package flycheck-ledger
+       :after (ledger-mode flycheck)
        :pin melpa)
    #+END_SRC
 *** Arduino
