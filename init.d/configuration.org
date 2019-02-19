@@ -658,7 +658,26 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 0
-             ledger-schedule-look-forward 30)
+             ledger-schedule-look-forward 30
+             ledger-amount-regex
+             (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
+                     "(?"
+                     "\\(?:"
+                     "\\([A-Z$€£₹_(]+ *\\)?"
+                     ;; We either match just a number after the commodity with no
+                     ;; decimal or thousand separators or a number with thousand
+                     ;; separators.  If we have a decimal part starting with `,'
+                     ;; or `.', because the match is non-greedy, it must leave at
+                     ;; least one of those symbols for the following capture
+                     ;; group, which then finishes the decimal part.
+                     "\\(-?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
+                     "\\([,.][0-9)]+\\)?"
+                     "\\( *[[:word:]€£₹_\"]+\\)?"
+                     "\\(?:[ \t]*[+*/-][ \t]*\\)?"
+                     "\\)+"
+                     ")?"
+                     "\\([ \t]*[@={]@?[^\n;]+?\\)?"
+                     "\\([ \t]+;.+?\\|[ \t]*\\)?$"))
        :pin melpa)
    #+END_SRC
 
