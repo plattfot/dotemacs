@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Secs * Sets
+# key: <ts
+# --
+($1s * $2 sets) @${3:1}${4:bw} ; RPE: ${5:9}$0

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: reps + reps + ...
+# key: <rr
+# type: command
+# --
+(let ((yas-good-grace nil)
+      (count (read-number "Number of sets: ")))
+  (yas-expand-snippet
+   (concat
+    "("
+    (mapconcat
+     (lambda (num) (format "$%d reps" num)) (number-sequence 1 count nil) " + ")
+    (format ") @$%d${%d:lbs} ; RPE: ${%d:9}$0" (+ 1 count) (+ 2 count) (+ 3 count)))))

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Reps * Sets
+# key: <rs
+# --
+($1 reps * $2 sets) @$3${4:lbs} ; RPE: ${5:9}$0
