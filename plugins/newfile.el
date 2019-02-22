@@ -15,14 +15,14 @@
                          path )
   "Add header, namespaces and include guard.
 
-MODIFY_NAMESPACES are passed on to 'nf-insert-namespace'.  See
+MODIFY_NAMESPACES are passed on to `nf-insert-namespace'.  See
 'nf-insert-namespace' for the description on syntax it accepts.
 
 The header consist of the AUTHOR, EMAIL and optionally the
 BOILERPLATE if defined.
 
 WORKSPACE_ROOT and PATH are optional arguments that will be
-passed to 'nf-insert-namespace'.  Again see description on that
+passed to `nf-insert-namespace'.  Again see description on that
 function.
 
 '~/.emacs.d/boilerplates/dd.txt'."
