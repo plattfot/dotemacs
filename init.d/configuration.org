@@ -29,7 +29,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      ;; Pin melpa-stable for packages not under use-package control, i.e
      ;; dependencies and use-package itself.
      (setq package-pinned-packages
-           '((use-package . "melpa-stable")
+           '((use-package . "melpa")
              ;; Deps
              (async       . "melpa-stable")
              (bind-key    . "melpa-stable")
