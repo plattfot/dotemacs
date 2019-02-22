@@ -134,6 +134,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
      #+END_SRC
 
+**** Read only
+
+     Change the cursor when in a read only buffer.
+     #+BEGIN_SRC emacs-lisp
+       (add-hook 'read-only-mode-hook
+                 (lambda () (setq-local cursor-type (if buffer-read-only 'hbar 'box))))
+     #+END_SRC
+
 ** Calender
    #+BEGIN_SRC emacs-lisp
      (setq-default
