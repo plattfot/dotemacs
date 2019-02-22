@@ -1478,7 +1478,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     "\\(?:\\(?1:(\\)\\(?2:[^ \n)]\\)\\|\\(?1:[^ (]\\)\\(?2:)\\)\\)"
                   ;; Include ()
                   "\\(?:\\(?1:(\\)\\(?2:[^ \n]\\)\\|\\(?1:[^ ]\\)\\(?2:)\\)\\)")))
-           (my-replace-regexp regexp "\\1 \\2")))
+           (fmt-replace-regexp regexp "\\1 \\2")))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
@@ -1487,7 +1487,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
        e.g. (  foo ) -> (foo)"
          (interactive)
-         (my-replace-regexp
+         (fmt-replace-regexp
           "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"
           "\\1\\2"))
      #+END_SRC
