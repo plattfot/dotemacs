@@ -934,6 +934,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (let ((fn-list (dired-get-marked-files nil arg)))
                (mapc 'find-file fn-list))))
     #+END_SRC
+*** Diff
+
+    Enable whitespace mode for diff-mode to see trailing whitespace in
+    diffs.
+    #+BEGIN_SRC emacs-lisp
+      (use-package whitespace
+        :ensure nil
+        :hook (diff-mode . whitespace-mode))
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package diff
+        :ensure nil
+        :config
+        (add-hook 'diff-mode-hook (lambda () (setq show-trailing-whitespace nil))))
+    #+END_SRC
 *** Eshell
     Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
 
