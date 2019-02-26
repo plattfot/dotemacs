@@ -956,7 +956,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package diff
         :ensure nil
         :config
-        (add-hook 'diff-mode-hook (lambda () (setq show-trailing-whitespace nil))))
+        (add-hook 'diff-mode-hook 'dotemacs-hide-trailing-whitespace))
     #+END_SRC
 *** Eshell
     Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
@@ -1385,6 +1385,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ;; Use the prompts colours instead of ansi-color
        (set-face-attribute 'comint-highlight-prompt nil
                            :inherit nil)
+       (add-hook 'shell-mode-hook 'dotemacs-hide-trailing-whitespace)
        (add-hook 'shell-mode-hook
                  (lambda ()
                    ;; Enable color in shell
@@ -1404,8 +1405,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (yas-minor-mode -1)
                    ;; Add go and goc to the dirtrack, Need tweak the regexp
                    ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
-                   ;; Not useful in the shell
-                   (setq show-trailing-whitespace nil)))
+                   ))
        (defun clear-shell ()
          "Clear the shell buffer"
          (interactive)
