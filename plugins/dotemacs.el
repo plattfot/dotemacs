@@ -22,6 +22,10 @@ file use `directory-file-name' to strip that away."
 (interactive "f")
   (load-file (dotemacs-build-path user-emacs-directory "init.d")))
 
+(defun dotemacs-hide-trailing-whitespace ()
+  "Hides trailing whitespaces by setting `show-trailing-whitespace' to nil."
+  (setq show-trailing-whitespace nil))
+
 (defvar dotemacs-is-work (string= (getenv "USER") "fredriks")
   "Non-nil if I'm at work.")
 
