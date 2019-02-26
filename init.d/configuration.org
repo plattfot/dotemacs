@@ -1122,6 +1122,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package wgrep
         :pin melpa-stable)
     #+END_SRC
+*** info
+    #+BEGIN_SRC emacs-lisp
+      (use-package info
+        :ensure nil
+        :config
+        (add-hook 'Info-mode-hook 'dotemacs-hide-trailing-whitespace))
+    #+END_SRC
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
