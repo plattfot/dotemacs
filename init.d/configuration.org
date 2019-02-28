@@ -1091,7 +1091,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             (mode . magit-wip-before-change-mode)))
                   ("shell" (mode . shell-mode))
                   ("gdb" (mode . gdb-script-mode))
-                  ("emacs" (name . "^\\*[[:alnum:]]+\\*$")))))
+                  ("emacs" (name . "^\\*.*?\\*$")))))
        (add-hook 'ibuffer-mode-hook
                  (lambda ()
                    ;; Sucks up a lot of cpu time when using projectile
