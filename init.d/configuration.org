@@ -159,11 +159,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    over the place.  Fixing that by dumping all backup/autosave files
    in to one directory.
    #+BEGIN_SRC emacs-lisp
-     (defvar backup-dir (concat user-emacs-directory "backup"))
-     (defvar autosave-dir (concat user-emacs-directory "autosave"))
+     (defvar backup-dir (file-name-as-directory (concat user-emacs-directory "backup")))
+     (defvar autosave-dir
+       (file-name-as-directory (concat user-emacs-directory "autosave")))
      (setq backup-directory-alist (list (cons ".*" backup-dir))
-	   auto-save-list-file-prefix autosave-dir
-	   auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+           auto-save-list-file-prefix autosave-dir
+           auto-save-file-name-transforms `((".*" ,autosave-dir t)))
    #+END_SRC
 ** Theme
    Point emacs to where it can find the sunburst theme.
