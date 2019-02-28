@@ -1050,7 +1050,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ("cmake" (mode . cmake-mode ))
                   ("scripts" (mode . sh-mode))
                   ("ag" (mode . ag-mode ))
-                  ("ivy" (mode . ivy-occur-mode))
+                  ("ivy" (name . "^\\*ivy-.*$"))
                   ("docs" (or (mode . rst-mode)
                               (mode . Man-mode)))
                   ("org" (mode . org-mode))
