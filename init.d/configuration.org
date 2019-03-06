@@ -781,6 +781,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             "mark thread as read"
             (interactive (notmuch-search-interactive-region))
             (notmuch-search-tag (list "-unread") beg end)))
+        (add-hook 'notmuch-show-hook 'dotemacs-hide-trailing-whitespace)
         (setq-default
          sendmail-program "msmtp"
          send-mail-function 'sendmail-send-it
