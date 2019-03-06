@@ -226,6 +226,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                           '((company-capf
                              company-dabbrev-code
                              :separate)))))
+         (add-hook 'c-mode-common-hook
+                     (lambda ()
+                       (when (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+                         (set (make-local-variable 'company-backends)
+                            '(company-dabbrev-code)))))
          ;; Only reliable backend at work
          (when dotemacs-is-work
            (add-hook 'c-mode-common-hook
