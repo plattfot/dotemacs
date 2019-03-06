@@ -120,7 +120,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (inhibit-same-window . t)
              (inhibit-switch-frame . t)))
    #+END_SRC
-
 **** Trailing Whitespaces
 
      Show trailing whitespaces by default for writeable buffers. Turn it
@@ -1390,10 +1389,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Custom function to clear the shell in emacs. Bound to f8. Also
    works for gdb.
+
+   Always use bash as the backend for the shell as not every machine
+   has zsh.
+
    #+BEGIN_SRC emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
        :init
+       (setenv "ESHELL" "bash")
        :config
        ;; Use the prompts colours instead of ansi-color
        (set-face-attribute 'comint-highlight-prompt nil
