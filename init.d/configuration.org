@@ -657,6 +657,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package gud
         :mode (("\\.gdbinit$" . gdb-script-mode))
+        (add-hook 'gud-mode-hook 'dotemacs-hide-trailing-whitespace)
         :ensure nil)
     #+END_SRC
 ** Programs
