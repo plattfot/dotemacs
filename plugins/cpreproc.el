@@ -52,7 +52,7 @@ insert
 #if( __cplusplus >= 201103L t) // 201103L or later
 <Cursor>
 #endif"
-(let ((str ""))
+(let ((str nil))
   (when (region-active-p)
     (setq str (buffer-substring-no-properties (region-beginning) (region-end)))
     (delete-region (region-beginning) (region-end)))
@@ -66,9 +66,9 @@ insert
                     variable comp version (format (cdr format_assoc) version-str)))
 
     (let ((done (point)))
-      (insert str "\n")
+      (insert (or str "\n"))
       (unless no-else
-        (insert "#else\n" str "\n"))
+        (insert "#else\n" (or str "\n")))
       (insert "#endif\n")
       (goto-char done)))))
 
