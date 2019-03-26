@@ -143,7 +143,7 @@ directory. Same as `projectile-default-project-name'"
 (setq projectile-project-name-function #'work-project-name)
 
 ;; --------------------------- Source BuildConfig ----------------------------
-(defun work-get-version-from-config (name file)
+(defun work-get-version-pk-lock (name file)
   "Gets the version from a file.
 Where NAME is the name of the package you want the version for
 and FILE the config to search in."
@@ -151,19 +151,22 @@ and FILE the config to search in."
     (insert-file-contents file)
     (setq case-fold-search t)
     (if (re-search-forward
-         (format "^[ ]*%s_version[ ]*\\(?:\\?=\\|=\\)[ ]*\\([[:alnum:]_.]+\\)" name)
+         (format (concat "\"%s\":[[:blank:]]+{\n"
+                         "[[:blank:]]+\"version\":[[:blank:]]"
+                         "\"\\([[:graph:]_]+\\)\"")
+                 name)
          nil t)
         (match-string 1)
       (error "No version found for %s" name))))
 
-(defun work-get-version-from-build-config (name path)
-  "Gets the version from the BuildConfig file.
+(defun work-get-version-from-pk-lock (name path)
+  "Gets the version from the pk lock file.
 Where NAME is the name of the package you want the version for
-and PATH is where the BUILD.conf file is located."
+and PATH is where the pk.lock file is located."
   ;; Pick the first in the list
-  (work-get-version-from-config
+  (work-get-version-pk-lock
    name
-   (concat (file-name-as-directory path) "BUILD.conf")))
+   (concat (file-name-as-directory path) "pk.lock")))
 
 ;; ============================ Registers ====================================
 (defvar work-swdevl
@@ -191,7 +194,7 @@ of CONFIG as the version."
       ,name
       ,(if use-config-verbatim
            (or config "")
-         (work-get-version-from-build-config
+         (work-get-version-from-pk-lock
           name
           (concat (file-name-as-directory work-swdevl) (or config "CoreLibs"))))
       ,include)
