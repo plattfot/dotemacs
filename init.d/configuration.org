@@ -661,6 +661,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'gud-mode-hook 'dotemacs-hide-trailing-whitespace)
         :ensure nil)
     #+END_SRC
+*** lua
+    #+BEGIN_SRC emacs-lisp
+      (use-package lua-mode
+        :pin melpa)
+    #+END_SRC
 ** Programs
   Packages that communicates with external processes.
 *** Ledger
