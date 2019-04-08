@@ -584,7 +584,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'makefile-mode-hook
                    (lambda ()
                      ;; Always show trailing whitespace for Makefiles
-                     (setq show-trailing-whitespace t))))
+                     ;; Don't break words
+                     (setq show-trailing-whitespace t
+                           word-wrap t))))
      #+END_SRC
 **** CMake
      #+BEGIN_SRC emacs-lisp
