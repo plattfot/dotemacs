@@ -4,7 +4,6 @@
 ;;; Code:
 
 (require 'highlight-extra)
-(require 'multi-term)
 (require 'string-inflection)
 
 ;; ============================= Functions ===================================
@@ -78,8 +77,7 @@ Works only if the current buffer is a shell."
     (comint-send-input nil t )))
 
 (defun work-setup-houdini ()
-  "Spawns four shells at the cyclone test show.
-Using shell instead of multi-term."
+  "Spawns four shells at the cyclone test show."
   (interactive)
   (delete-other-windows)
   (split-window-horizontally)
