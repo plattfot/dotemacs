@@ -648,7 +648,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Julia
     #+BEGIN_SRC emacs-lisp
       (use-package julia-mode
-        :pin melpa-stable)
+        :pin melpa)
     #+END_SRC
 *** Systemd
     #+BEGIN_SRC emacs-lisp
