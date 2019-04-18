@@ -377,14 +377,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (lambda ()
                     (font-lock-add-keywords nil hexcolour-keywords))))
     #+END_SRC
-**** lispy (disabled)
-    #+BEGIN_SRC emacs-lisp
-      (use-package lispy
-        :disabled t
-        :init
-        (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
-        :pin melpa-stable)
-    #+END_SRC
 **** adjust-parens (disabled)
     #+BEGIN_SRC emacs-lisp
       (use-package adjust-parens
