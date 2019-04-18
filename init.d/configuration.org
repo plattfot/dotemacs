@@ -1307,7 +1307,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Useful when debugging the theme. But is rarely used.
     #+BEGIN_SRC emacs-lisp
       (use-package rainbow-mode
-       	:pin melpa-stable)
+       	:pin gnu)
     #+END_SRC
 *** Move text
     Move line up and down using arrow keys.
