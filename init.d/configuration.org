@@ -1615,57 +1615,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      end t )
                (replace-match "using \\2 = \\1;"))))
        #+END_SRC
-***** Convert LinSys to LinAlg
-      #+BEGIN_SRC emacs-lisp
-        (defun convert-LinSys-Solver ()
-          "Converts Physics::Fluids::LinSys to Math::LinAlg::Solver"
-          (interactive)
-          (let ((begin) (end))
-            (if (use-region-p)
-                (progn (setq begin (region-beginning) end (region-end)))
-              (progn (setq begin (point) end nil)))
-            (goto-char begin)
-            (while (re-search-forward "Physics\\([^/:.]\\)" end t ) (replace-match "Math\\1"))
-            (goto-char begin)
-            (while (re-search-forward "Fluids\\([^/:.]\\)" end t ) (replace-match "LinAlg\\1"))
-            (goto-char begin)
-            (while (re-search-forward "LinSys\\([^/:.]\\)" end t ) (replace-match "Solver\\1"))
-
-            (goto-char begin)
-            (while (re-search-forward "Physics::Fluids::LinSys" end t )
-              (replace-match "Math::LinAlg::Solver"))
-
-            (goto-char (point-min))
-            (while (re-search-forward "PHYSICS_FLUIDS_LINSYS" end t )
-              (replace-match "MATH_LINALG_SOLVER"))
-            (goto-char begin)))
-      #+END_SRC
-***** Convert LinAlg to LinSys
-      #+BEGIN_SRC emacs-lisp
-        (defun convert-Solver-LinSys ()
-          "Converts Math::LinAlg::Solver to Physics::Fluids::LinSys"
-          (interactive)
-          (let ((begin) (end))
-            (if (use-region-p)
-                (progn (setq begin (region-beginning) end (region-end)))
-              (progn (setq begin (point) end nil)))
-            (goto-char begin)
-            (while (re-search-forward "Math\\([^/:.]\\)" end t ) (replace-match "Physics\\1"))
-            (goto-char begin)
-            (while (re-search-forward "LinAlg\\([^/:.]\\)" end t ) (replace-match "Fluids\\1"))
-            (goto-char begin)
-            (while (re-search-forward "Solver\\([^/:.]\\)" end t ) (replace-match "LinSys\\1"))
-
-            (goto-char begin)
-            (while (re-search-forward "Math::LinAlg::Solver" end t )
-              (replace-match "Physics::Fluids::LinSys"))
-
-            (goto-char (point-min))
-            (while (re-search-forward "MATH_LINALG_SOLVER" end t )
-              (replace-match "PHYSICS_FLUIDS_LINSYS"))
-            (goto-char begin)))
-      #+END_SRC
-
 ***** Insert ifdef clauses
 
       #+BEGIN_SRC emacs-lisp
