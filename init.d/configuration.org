@@ -7,6 +7,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+BEGIN_SRC emacs-lisp
    ;; -*- lexical-binding: t -*-
    #+END_SRC
+** Customizations
+   Set emacs to save the customizations in a separate file to avoid
+   having them in the git repo.
+   #+BEGIN_SRC emacs-lisp
+     (setq custom-file (concat user-emacs-directory ".custom.el"))
+     (when (file-exists-p custom-file) (load custom-file))
+   #+END_SRC
 ** Package management
 
    Setup repositories for package and auto download use-package if it's missing.
@@ -60,13 +67,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Install missing packages.
    #+BEGIN_SRC emacs-lisp
      (setq use-package-always-ensure t)
-   #+END_SRC
-** Customizations
-   Set emacs to save the customizations in a separate file to avoid
-   having them in the git repo.
-   #+BEGIN_SRC emacs-lisp
-     (setq custom-file (concat user-emacs-directory ".custom.el"))
-     (when (file-exists-p custom-file) (load custom-file))
    #+END_SRC
 ** Custom plugins
 *** Dotemacs
