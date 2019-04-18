@@ -379,7 +379,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 **** Smartparens
 
-     Having issues with turning of auto balancing, i.e
+     Having issues with turning off auto balancing, i.e
      (|) - insert () -> (()|
      #+BEGIN_SRC emacs-lisp
        (use-package smartparens
