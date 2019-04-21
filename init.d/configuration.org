@@ -846,7 +846,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq org-ellipsis "⤵"
               org-todo-keywords
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
-              org-default-notes-file (concat org-directory "/Övrigt.org")
+              org-default-notes-file (concat org-directory "/Anteckningar.org")
               org-src-fontify-natively t
               org-src-tab-acts-natively t
               org-confirm-babel-evaluate nil
