@@ -153,6 +153,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       calendar-time-display-form '(24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))
       calendar-date-style 'european)
    #+END_SRC
+
+   Hide trailing whitespaces for calendar mode, as there are a bunch
+   of those showing up in the calendar.
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'calendar-mode-hook 'dotemacs-hide-trailing-whitespace)
+   #+END_SRC
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
    over the place.  Fixing that by dumping all backup/autosave files
