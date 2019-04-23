@@ -978,6 +978,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          eshell-save-history-on-exit t
          eshell-prefer-lisp-functions nil
          eshell-destroy-buffer-when-process-dies t)
+        (add-hook 'eshell-mode-hook 'dotemacs-hide-trailing-whitespace)
         (add-hook
          'eshell-mode-hook
          (lambda ()
