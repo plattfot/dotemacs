@@ -994,8 +994,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             (define-key eshell-mode-map key nil))
                           '([up] [C-up] [down] [C-down]))
                     (define-key eshell-mode-map (kbd "C-M-p") 'eshell-previous-prompt)
-                    (define-key eshell-mode-map (kbd "C-M-n") 'eshell-next-prompt)))
-        )
+                    (define-key eshell-mode-map (kbd "C-M-n") 'eshell-next-prompt))))
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
