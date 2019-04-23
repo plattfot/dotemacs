@@ -961,14 +961,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (let* ((pwd (eshell/pwd))
                   (remote (file-remote-p pwd))
                   (remote-name (when remote (cadr (split-string remote ":")))))
-             (format (propertize "⎣%s%s%s %s⎦ " 'face '(:foreground "#ddd"))
-                     (propertize (user-login-name) 'face '(:foreground "#3387cc"))
-                     (propertize "@" 'face `(:foreground ,(if remote "#f9fd75" "#ddd")))
-                     (or remote-name (system-name))
-                     (propertize (file-name-base
-                                  (abbreviate-file-name
-                                   (if remote (string-remove-prefix remote pwd) pwd)))
-                                 'face '(:foreground "#666")))))
+             (format "⎣%s%s%s %s⎦ "
+               (propertize (user-login-name) 'face '(:foreground "#3387cc"))
+               (propertize "@" 'face `(:foreground ,(if remote "#f9fd75" "#ddd")))
+               (propertize (or remote-name (system-name)) 'face '(:foreground "#ddd"))
+               (propertize (file-name-base
+                            (abbreviate-file-name
+                             (if remote (string-remove-prefix remote pwd) pwd)))
+                           'face '(:foreground "#666")))))
+         eshell-highlight-prompt nil
          eshell-prompt-regexp "^⎣.*⎦ "
          ;; eshell-buffer-shorthand t ...  Can't see Bug#19391
          eshell-scroll-to-bottom-on-input 'all
