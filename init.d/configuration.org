@@ -583,7 +583,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (use-package geiser
          :hook (scheme-mode-hook)
          :config
-         (setq geiser-default-implementation 'guile)
+         (setq geiser-default-implementation 'guile
+               geiser-repl-use-other-window nil)
          :pin melpa-stable)
      #+END_SRC
      Auto complete backend for geiser
