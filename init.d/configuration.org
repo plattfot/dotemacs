@@ -133,6 +133,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
      #+END_SRC
 
+     Show trailing whitespaces for all comint modes: shell, gdb,
+     geiser REPL etc.
+
+     #+BEGIN_SRC emacs-lisp
+       (use-package comint
+         :ensure nil ; Built in
+         :config
+         (add-hook 'comint-mode-hook 'dotemacs-hide-trailing-whitespace))
+     #+END_SRC
+
 **** Read only
 
      Change the cursor when in a read only buffer.
@@ -583,7 +593,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (use-package geiser
          :hook (scheme-mode-hook)
          :config
-         (setq geiser-default-implementation 'guile)
+         (setq geiser-default-implementation 'guile
+               geiser-repl-use-other-window nil)
          :pin melpa-stable)
      #+END_SRC
      Auto complete backend for geiser
@@ -635,8 +646,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package gud
         :mode (("\\.gdbinit$" . gdb-script-mode))
-        :config
-        (add-hook 'gud-mode-hook 'dotemacs-hide-trailing-whitespace)
         :ensure nil)
     #+END_SRC
 *** lua
@@ -1402,7 +1411,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ;; Use the prompts colours instead of ansi-color
        (set-face-attribute 'comint-highlight-prompt nil
                            :inherit nil)
-       (add-hook 'shell-mode-hook 'dotemacs-hide-trailing-whitespace)
        (add-hook 'shell-mode-hook
                  (lambda ()
                    ;; Enable color in shell
