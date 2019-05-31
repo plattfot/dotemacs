@@ -2436,7 +2436,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp :tangle no
       (setq eval-expression-print-length nil)
     #+END_SRC
-
+*** Reload dir-locals for buffer
+    #+BEGIN_SRC emacs-lisp
+      (hack-dir-local-variables-non-file-buffer)
+    #+END_SRC
 ** VCS
 *** Git
 **** Change message in most recent commit
