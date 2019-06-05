@@ -963,6 +963,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package eshell
+        :bind (:map eshell-mode-map ("C-<tab>" . eshell-complete-lisp-symbol))
         :config
         (setq-default
          eshell-prompt-function
@@ -986,7 +987,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          eshell-hist-ignoredups t
          eshell-save-history-on-exit t
          eshell-prefer-lisp-functions nil
-         eshell-destroy-buffer-when-process-dies t)
+         eshell-destroy-buffer-when-process-dies t
+         eshell-cmpl-cycle-completions nil)
         (add-hook 'eshell-mode-hook 'dotemacs-hide-trailing-whitespace)
         (add-hook
          'eshell-mode-hook
