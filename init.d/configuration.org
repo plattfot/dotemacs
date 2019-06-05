@@ -1522,64 +1522,72 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      Different functions to quickly format text.
      #+BEGIN_SRC emacs-lisp
-       (defun fmt-parens-loosen ()
-         "Add a space between parens and content.
+       (defun fmt-parens-loosen (start end)
+         "Add a space between parens and content for the region START END.
 
        e.g. (foo) -> ( foo ).
 
-       It will not expand () by default. Use prefix to include it."
-         (interactive)
+       It will not expand () by default. Use prefix to include it.
+
+       When using this interactive it will pick the region from current
+       point to the end of the buffer. If a region is active it will
+       pick that instead."
+         (interactive (if (region-active-p)
+                          (list (region-beginning) (region-end))
+                        (list (point) (point-max))))
          (let ((regexp
                 (if (not current-prefix-arg)
                     ;; Ignore ()
                     "\\(?:\\(?1:(\\)\\(?2:[^ \n)]\\)\\|\\(?1:[^ (]\\)\\(?2:)\\)\\)"
                   ;; Include ()
                   "\\(?:\\(?1:(\\)\\(?2:[^ \n]\\)\\|\\(?1:[^ ]\\)\\(?2:)\\)\\)")))
-           (fmt-replace-regexp regexp "\\1 \\2")))
+           (fmt-replace-regexp regexp "\\1 \\2" start end)))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
-       (defun fmt-parens-tighten ()
-         "Remove spaces between parens and content.
+       (defun fmt-parens-tighten (start end)
+         "Remove spaces between parens and content inside START and END.
 
-       e.g. (  foo ) -> (foo)"
-         (interactive)
-         (fmt-replace-regexp
-          "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"
-          "\\1\\2"))
+       e.g. (  foo ) -> (foo)
+
+       When using this interactive it will pick the region from current
+       point to the end of the buffer. If a region is active it will
+       pick that instead."
+         (interactive (if (region-active-p)
+                   (list (region-beginning) (region-end))
+                 (list (point) (point-max))))
+         (let ((regex "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"))
+           (fmt-replace-regexp regex "\\1\\2" start end)))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
-       (defun fmt-one-space-after-comma ()
-         "Make sure there's just one space after comma.
+       (defun fmt-one-space-after-comma (start end)
+         "Make sure there is just one space after comma inside START and END.
 
-       e.g. foo(bar,baz,  boo) -> foo(bar, baz, boo)"
-         (interactive)
-         (my-replace-regexp
-          "\\(?:\\(?1:,\\)[ ]*\\(?2:[^ \n]\\)\\)"
-          "\\1 \\2"))
+       e.g. foo(bar,baz,  boo) -> foo(bar, baz, boo).
+
+       When using this interactive it will pick the region from current
+       point to the end of the buffer. If a region is active it will
+       pick that instead."
+         (interactive (if (region-active-p)
+                   (list (region-beginning) (region-end))
+                 (list (point) (point-max))))
+         (my-replace-regexp "\\(?:\\(?1:,\\)[ ]*\\(?2:[^ \n]\\)\\)" "\\1 \\2" start end))
      #+END_SRC
 
      #+BEGIN_SRC emacs-lisp
-       (defun fmt-replace-regexp (regexp to-string)
-         "Replace everything matching REGEXP with TO-STRING.
-
-       Starting from point and to the end of the buffer.
-
-       If a region is defined it will just replace text inside that.
+       (defun fmt-replace-regexp (regexp to-string start end)
+         "Replace everything matching REGEXP with TO-STRING from START to END.
 
        This is similar to `replace-regexp' but using `re-search-forward'
        and `replace-match'."
-         (interactive)
-         (let ((curr-point (point))
-               (start (point))
-               (end nil))
-           (when (region-active-p)
-             (setq start (region-beginning)
-                   end (region-end)))
+         (save-excursion
            (goto-char start)
            (while (re-search-forward regexp end t)
-             (replace-match to-string))))
+             (let ((current-point (point)))
+               (replace-match to-string)
+               ;; The end point will shift when replacing text in the buffer
+               (setq end (+ end (- (point) current-point)))))))
      #+END_SRC
 *** Programming
 **** C++
