@@ -52,7 +52,7 @@ It will use the 'dd-author-mail' as the author's mail address for the header."
               (format "%s: " prompt))
             dd-setup-newfile-default
             'dd-newfile-history))))
-  
+
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
          (prefix_dd '("!^DD$" "^DD"))
          (replace '("^houdini$=Houdini"))
@@ -66,7 +66,7 @@ It will use the 'dd-author-mail' as the author's mail address for the header."
                       dd-author-mail
                       dd-boilerplate
                       workspace_root)))
-  
+
 (defun dd-find-workspace (path)
   "Find the path to the last WORKSPACE file, in the PATH.
 For absolute paths it will return the root of the path if not
@@ -80,6 +80,81 @@ found.  For relative it will return nil."
     (when (not found-path-p)
       (error "Workspace not found!"))
     abs_path))
+
+(defun dd-rename-namespaces ()
+  "Update the outer namespaces in the file to the new location.
+
+Outer namespaces are classified as top namespaces that are
+clumped together. For example
+
+namespace DD {
+namespace Maelstrom {
+namespace Geometry3D {
+namespace Remesh {
+namespace Voxelize {
+...
+}
+}
+}
+}
+}
+
+All of them are classified as outer namespaces and will be
+replaced.
+
+namespace DD {
+  namespace Maelstrom {
+    namespace Geometry3D {
+      namespace Remesh {
+        namespace Voxelize {
+        ...
+        }
+      }
+    }
+  }
+}
+
+Only the DD namespace will be replaced."
+  (interactive)
+  (save-mark-and-excursion
+    (beginning-of-buffer)
+    ;; (while (re-search-forward "^namespace [[:graph:]]+ {" nil t))
+    (re-search-forward "\\(?:^namespace [[:graph:]]+ {\n\\)+")
+    (re-search-backward "{")
+    (mark-sexp)
+    (let ((code (buffer-substring (region-beginning) (region-end))))
+      (delete-region (region-beginning) (region-end))
+      (while (re-search-backward "^namespace [[:graph:]]+ {" nil t)
+        (re-search-forward "{")
+        (backward-char)
+        (mark-sexp)
+        (delete-region (region-beginning) (region-end)))
+      (delete-region (point-at-bol) (point-at-eol))
+      (let ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
+            (prefix_dd '("!^DD$" "^DD"))
+            (replace '("^houdini$=Houdini"))
+            (workspace_root (dd-find-workspace default-directory)))
+        (nf-insert-namespace `(,@prefix_dd ,@blacklist ,@replace) workspace_root)
+        (re-search-backward "{")
+        (mark-sexp)
+        (delete-region (region-beginning) (region-end))
+        (insert code)))))
+
+(defun dd-rename-include-guard ()
+  "Rename the include guard to match the namespaces in the file."
+  (interactive)
+  (save-mark-and-excursion
+    (beginning-of-buffer)
+    (re-search-forward "^#ifndef [[:graph:]]+\n#define [[:graph:]]+\n")
+    (set-mark (point))
+    (previous-line 2)
+    (delete-region (point-at-bol) (region-end))
+    (let ((curr-point (point)))
+      (end-of-buffer)
+      (re-search-backward "^#endif")
+      (delete-region (point-at-bol) (point-at-eol))
+      (goto-char curr-point))
+    (nf-include-guard-from-namespaces)))
 
 (provide 'dd-newfile)
 ;;; dd-newfile.el ends here
