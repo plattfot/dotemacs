@@ -58,12 +58,23 @@ Where PATH is a string.
 
 Will pick the directory directly after trunk, branches or tags.
 If no directory is found it returns nil"
-  (when (and path (> (length path) 1))
-    (let ((path (directory-file-name path)))
+  (let* ((path (directory-file-name path))
+         (parent (svn-parent-path path)))
+    ;; Check that we aren't at the root.
+    (when (not (string-equal path parent))
       (if (string-match "^\\(trunk\\|branches\\|tags\\)$"
                         (file-name-base path))
-          (file-name-base (directory-file-name (file-name-directory path)))
-        (svn-repository-name-from-path (file-name-directory path))))))
+          (file-name-base parent)
+        (svn-repository-name-from-path parent)))))
+
+(defun svn-parent-path (path)
+  "Return the parent path of PATH.
+PATH must be string.
+Examples:
+/foo/bar/baz -> /foo/bar
+/foo/bar/  -> /foo/bar
+/ -> /"
+  (directory-file-name (file-name-directory path)))
 
 (defun svn-combine-logs (&rest logs)
   "Combine the svn LOGS, sorted by date.
