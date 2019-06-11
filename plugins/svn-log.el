@@ -3,6 +3,9 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'dash)
+(require 's)
+
 (cl-defstruct svn-logentry revision author date paths msg name)
 (cl-defstruct svn-path prop-mods text-mods kind action name)
 
@@ -93,7 +96,7 @@ Each entry in the log will be a line in the string."
      (format "%s: [%s] %s"
              (format-time-string "%Y %b %d T%k:%M" (svn-logentry-date logentry))
              (svn-logentry-name logentry)
-             (car (split-string (svn-logentry-msg logentry) "\n"))))
+             (car (s-lines (svn-logentry-msg logentry)))))
    svn-log
    "\n"))
 
@@ -104,7 +107,7 @@ This clump log entries per day. Assume SVN-LOG is sorted by date."
     (mapconcat
      (lambda (logentry)
        (let* ((date (svn-logentry-date logentry))
-              (header (car (split-string (or (svn-logentry-msg logentry) "") "\n")))
+              (header (car (s-lines (or (svn-logentry-msg logentry) ""))))
               (day (format-time-string "%d" date))
               (prefix (if (string-equal day prev-day)
                           ""
