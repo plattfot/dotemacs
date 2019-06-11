@@ -186,6 +186,19 @@ STATS is assumed to be an alist with the cells (key . count)."
                      ,stats)
        (push (cons ,key 1) ,stats))))
 
+(defun svn-stats-generate-percentage (stats)
+  "Generate the percentage of each key in STATS.
+Where STATS is an alist with the cells (key . count). Return a
+string or nil if stats is empty."
+  (when stats
+    (let ((percentage (let ((total (--reduce-from (+ acc (cdr it)) 0 stats)))
+                        #'(lambda (a) (* (/ (float a) total) 100)))))
+      (--reduce-from (format "%s, %s: %s%%" acc (car it) (funcall percentage (cdr it)))
+                     (format "%s: %s%%"
+                             (car (car stats))
+                             (funcall percentage (cdr (car stats))))
+                     (cdr stats)))))
+
 (defun svn-show-summary-in-org-buffer (svn-xml-log-path buffer-name)
 "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
 Supports wildcards for combining multiple logs into one summary.
