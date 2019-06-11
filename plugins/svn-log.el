@@ -177,6 +177,15 @@ This format the string as an org buffer. Assume SVN-LOG is sorted by date."
                    (progn (string-match "^\n*" (reverse body)) (match-end 0)))))
       (substring body 0 end))))
 
+(defmacro svn-stats-increment-count! (key stats)
+  "Increment KEY in STATS with one.
+If NAME doesn't exist in stats, add it and increment it by one.
+STATS is assumed to be an alist with the cells (key . count)."
+  `(let ((cell (assoc-string ,key ,stats)))
+     (if cell (progn (setcdr cell (+ 1 (cdr cell)))
+                     ,stats)
+       (push (cons ,key 1) ,stats))))
+
 (defun svn-show-summary-in-org-buffer (svn-xml-log-path buffer-name)
 "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
 Supports wildcards for combining multiple logs into one summary.
