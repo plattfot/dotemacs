@@ -118,9 +118,66 @@ This clump log entries per day. Assume SVN-LOG is sorted by date."
      svn-log
      "\n")))
 
-(defun svn-show-summary-in-buffer (svn-xml-log-path buffer-name)
+(defun svn-summary-org (svn-log)
+  "Return a summary of SVN-LOG as a string.
+This format the string as an org buffer. Assume SVN-LOG is sorted by date."
+  (let ((prev-day "")
+        (prev-month "")
+        (prev-year ""))
+    (mapconcat
+     (lambda (logentry)
+       (let* ((date (svn-logentry-date logentry))
+              (msg-lines (split-string (or (svn-logentry-msg logentry) "") "\n"))
+              (header (car msg-lines))
+              (body (svn-trim-leading-and-trailing-newlines
+                     (string-join (or (cdr msg-lines) "") "\n")))
+              (year (format-time-string "%Y" date))
+              (month (format-time-string "%Y%m" date))
+              (day (format-time-string "%Y%m%d" date))
+              (prefix-year (if (string-equal year prev-year)
+                               ""
+                             (format "* %s\n" year)))
+              (prefix-month (if (string-equal month prev-month)
+                              ""
+                            (format "** %s\n" (format-time-string "%B" date))))
+              (prefix-day (if (string-equal day prev-day)
+                              ""
+                            (format "*** %s\n" (format-time-string "%A %d" date)))))
+         (setf prev-year year)
+         (setf prev-month month)
+         (setf prev-day day)
+         (format "%s%s%s%s - %s :%s:%s"
+                 prefix-year
+                 prefix-month
+                 prefix-day
+                 (format-time-string "**** %k:%M" date)
+                 header
+                 (svn-logentry-name logentry)
+                 (if (not (string-empty-p body)) (format "\n%s" body) ""))))
+     svn-log
+     "\n")))
+
+(defun svn-trim-leading-and-trailing-newlines (body)
+  "Remove newline from the beginning and end of BODY."
+  (svn-trim-trailing-newlines (svn-trim-leading-newlines body)))
+
+(defun svn-trim-leading-newlines (body)
+  "Remove newline from the beginning of BODY."
+  (save-match-data
+    (let* ((start (progn (string-match "^\n*" body) (match-end 0))))
+      (substring body start))))
+
+(defun svn-trim-trailing-newlines (body)
+  "Remove newline from the end of BODY."
+  (save-match-data
+    (let* ((end (- (length body)
+                   (progn (string-match "^\n*" (reverse body)) (match-end 0)))))
+      (substring body 0 end))))
+
+(defun svn-show-summary-in-org-buffer (svn-xml-log-path buffer-name)
 "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
-Supports wildcards for combining multiple logs into one summary."
+Supports wildcards for combining multiple logs into one summary.
+This will generate the summary in a org buffer"
   (interactive "FSVN xml log(s): \nBbuffer to print the summary to: ")
   (let ((buffer (get-buffer-create buffer-name))
         (logs (file-expand-wildcards svn-xml-log-path)))
@@ -129,8 +186,9 @@ Supports wildcards for combining multiple logs into one summary."
       (error "File path does not exist"))
 
     (switch-to-buffer buffer)
-    (insert (svn-summary-day
-             (apply 'svn-combine-logs (mapcar 'svn-parse-log logs))))))
+    (insert (svn-summary-org
+             (apply 'svn-combine-logs (mapcar 'svn-parse-log logs))))
+    (org-mode)))
 
 (provide 'svn-log)
 ;;; svn-log.el ends here
