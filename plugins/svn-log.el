@@ -126,39 +126,56 @@ This clump log entries per day. Assume SVN-LOG is sorted by date."
 This format the string as an org buffer. Assume SVN-LOG is sorted by date."
   (let ((prev-day "")
         (prev-month "")
-        (prev-year ""))
-    (mapconcat
-     (lambda (logentry)
-       (let* ((date (svn-logentry-date logentry))
-              (msg-lines (split-string (or (svn-logentry-msg logentry) "") "\n"))
-              (header (car msg-lines))
-              (body (svn-trim-leading-and-trailing-newlines
-                     (string-join (or (cdr msg-lines) "") "\n")))
-              (year (format-time-string "%Y" date))
-              (month (format-time-string "%Y%m" date))
-              (day (format-time-string "%Y%m%d" date))
-              (prefix-year (if (string-equal year prev-year)
+        (prev-year "")
+        (stats-day '()))
+    (concat
+     (mapconcat
+      (lambda (logentry)
+        (let* ((date (svn-logentry-date logentry))
+               (msg-lines (s-lines (or (svn-logentry-msg logentry) "")))
+               (header (car msg-lines))
+               (body (svn-trim-leading-and-trailing-newlines
+                      (s-join "\n" (or (cdr msg-lines) ""))))
+               (year (format-time-string "%Y" date))
+               (month (format-time-string "%Y%m" date))
+               (day (format-time-string "%Y%m%d" date))
+               (prefix-year (if (string-equal year prev-year)
+                                ""
+                              (format "* %s\n" year)))
+               (prefix-month (if (string-equal month prev-month)
+                                 ""
+                               (format "** %s\n" (format-time-string "%B" date))))
+               (same-day? (string-equal day prev-day))
+               (prefix-day (if same-day?
                                ""
-                             (format "* %s\n" year)))
-              (prefix-month (if (string-equal month prev-month)
-                              ""
-                            (format "** %s\n" (format-time-string "%B" date))))
-              (prefix-day (if (string-equal day prev-day)
-                              ""
-                            (format "*** %s\n" (format-time-string "%A %d" date)))))
-         (setf prev-year year)
-         (setf prev-month month)
-         (setf prev-day day)
-         (format "%s%s%s%s - %s :%s:%s"
-                 prefix-year
-                 prefix-month
-                 prefix-day
-                 (format-time-string "**** %k:%M" date)
-                 header
-                 (svn-logentry-name logentry)
-                 (if (not (string-empty-p body)) (format "\n%s" body) ""))))
-     svn-log
-     "\n")))
+                             (format "*** %s\n" (format-time-string "%A %d" date))))
+               (name (svn-logentry-name logentry))
+               (prefix-stats ""))
+          (setf prev-year year
+                prev-month month
+                prev-day day)
+
+          (if (and (not same-day?) stats-day)
+              (setf prefix-stats (format "**** Stats for the day\n%s\n"
+                                         (svn-stats-generate-percentage stats-day))
+                    stats-day '()))
+          (svn-increment-stats! name stats-day)
+          (concat
+           prefix-stats
+           prefix-year
+           prefix-month
+           prefix-day
+           (format "**** %s - %s :%s:"
+                   (format-time-string "%k:%M" date)
+                   header
+                   (svn-logentry-name logentry))
+           (if (not (s-blank? body)) (format "\n%s" body) ""))))
+      svn-log
+      "\n")
+     (if stats-day
+         (format "\n**** Stats for the day\n%s\n"
+                 (svn-stats-generate-percentage stats-day))
+       ""))))
 
 (defun svn-trim-leading-and-trailing-newlines (body)
   "Remove newline from the beginning and end of BODY."
