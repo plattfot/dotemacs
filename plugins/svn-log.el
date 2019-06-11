@@ -1,4 +1,4 @@
-;;; svn-log --- Functions to parse svn xml logs
+;;; svn-log --- Functions to parse svn xml logs -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
