@@ -218,6 +218,10 @@ string or nil if stats is empty."
                              (car (car stats))
                              (funcall percentage (cdr (car stats))))
                      (cdr stats)))))
+(defun svn-stats-to-string (stats)
+  "Convert STATS to string."
+  (mapconcat (lambda (x) (format "%s: %#.2f%%" (car x) (cdr x))) stats "\n"))
+
 ;; Modified version of https://stackoverflow.com/a/10061513
 (defun svn-merge-stats (stats1 stats2)
   "Merge alists STATS1 and STATS2."
