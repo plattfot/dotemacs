@@ -5,6 +5,7 @@
 ;;; Code:
 (require 'dash)
 (require 's)
+(require 'cl-lib)
 
 (cl-defstruct svn-logentry revision author date paths msg name)
 (cl-defstruct svn-path prop-mods text-mods kind action name)
