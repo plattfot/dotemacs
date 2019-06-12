@@ -218,6 +218,16 @@ string or nil if stats is empty."
                              (car (car stats))
                              (funcall percentage (cdr (car stats))))
                      (cdr stats)))))
+;; Modified version of https://stackoverflow.com/a/10061513
+(defun svn-merge-stats (stats1 stats2)
+  "Merge alists STATS1 and STATS2."
+  (let ((ac (copy-alist stats1)))
+    (dolist (x stats2)
+      (let ((r (assoc-string (car x) ac)))
+        (if (null r)
+            (push x ac)
+          (setcdr r (+ (cdr x) (cdr r))))))
+    ac))
 
 (defun svn-show-summary-in-org-buffer (svn-xml-log-path buffer-name)
 "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
