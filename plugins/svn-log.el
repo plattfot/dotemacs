@@ -218,6 +218,10 @@ string or nil if stats is empty."
                              (car (car stats))
                              (funcall percentage (cdr (car stats))))
                      (cdr stats)))))
+(defun svn-stats-sort (stats)
+  "Sort STATS in descending order based on the value."
+  (--sort (> (cdr it) (cdr other)) stats))
+
 (defun svn-stats-to-string (stats)
   "Convert STATS to string."
   (mapconcat (lambda (x) (format "%s: %#.2f%%" (car x) (cdr x))) stats "\n"))
