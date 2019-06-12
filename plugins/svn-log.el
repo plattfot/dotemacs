@@ -206,18 +206,20 @@ STATS is assumed to be an alist with the cells (key . count)."
                      ,stats)
        (push (cons ,key 1) ,stats))))
 
-(defun svn-stats-generate-percentage (stats)
-  "Generate the percentage of each key in STATS.
-Where STATS is an alist with the cells (key . count). Return a
-string or nil if stats is empty."
+(defun svn-stats-pretty-format (stats)
+  "Return a string containing the percentages of the keys in STATS.
+The keys are sorted in descending order based on the
+percentage."
+  (svn-stats-to-string (svn-stats-sort (svn-stats-compute-percentage stats))))
+
+(defun svn-stats-compute-percentage (stats)
+  "Compute the percentage of each key in STATS.
+Where STATS is an alist with the cells (key . count).
+Return an alist with count replaced with percentage as a float."
   (when stats
-    (let ((percentage (let ((total (--reduce-from (+ acc (cdr it)) 0 stats)))
-                        #'(lambda (a) (* (/ (float a) total) 100)))))
-      (--reduce-from (format "%s, %s: %s%%" acc (car it) (funcall percentage (cdr it)))
-                     (format "%s: %s%%"
-                             (car (car stats))
-                             (funcall percentage (cdr (car stats))))
-                     (cdr stats)))))
+    (let ((total (--reduce-from (+ acc (cdr it)) 0 stats)))
+      (--map (cons (car it) (* (/ (float (cdr it)) total) 100)) stats))))
+
 (defun svn-stats-sort (stats)
   "Sort STATS in descending order based on the value."
   (--sort (> (cdr it) (cdr other)) stats))
