@@ -130,54 +130,75 @@ This format the string as an org buffer. Assume SVN-LOG is sorted by date."
   (let ((prev-day "")
         (prev-month "")
         (prev-year "")
-        (stats-day '()))
+        (stats-day '())
+        (stats-month '())
+        (stats-year '()))
     (concat
      (mapconcat
       (lambda (logentry)
         (let* ((date (svn-logentry-date logentry))
-               (msg-lines (s-lines (or (svn-logentry-msg logentry) "")))
-               (header (car msg-lines))
-               (body (svn-trim-leading-and-trailing-newlines
-                      (s-join "\n" (or (cdr msg-lines) ""))))
                (year (format-time-string "%Y" date))
                (month (format-time-string "%Y%m" date))
                (day (format-time-string "%Y%m%d" date))
-               (prefix-year (if (string-equal year prev-year)
-                                ""
-                              (format "* %s\n" year)))
-               (prefix-month (if (string-equal month prev-month)
-                                 ""
-                               (format "** %s\n" (format-time-string "%B" date))))
+               (same-year? (string-equal year prev-year))
+               (same-month? (string-equal month prev-month))
                (same-day? (string-equal day prev-day))
-               (prefix-day (if same-day?
-                               ""
-                             (format "*** %s\n" (format-time-string "%A %d" date))))
-               (name (svn-logentry-name logentry))
-               (prefix-stats ""))
+               (prefix-stats-year "")
+               (prefix-stats-month "")
+               (prefix-stats-day ""))
+
           (setf prev-year year
                 prev-month month
                 prev-day day)
 
           (if (and (not same-day?) stats-day)
-              (setf prefix-stats (format "**** Stats for the day\n%s\n"
-                                         (svn-stats-generate-percentage stats-day))
-                    stats-day '()))
-          (svn-increment-stats! name stats-day)
-          (concat
-           prefix-stats
-           prefix-year
-           prefix-month
-           prefix-day
-           (format "**** %s - %s :%s:"
-                   (format-time-string "%k:%M" date)
-                   header
-                   (svn-logentry-name logentry))
-           (if (not (s-blank? body)) (format "\n%s" body) ""))))
+              (progn
+                (setf stats-month (svn-merge-stats stats-month stats-day))
+                (unless same-month?
+                  (setf stats-year (svn-merge-stats stats-year stats-month)
+                        prefix-stats-month
+                        (format "*** Stats for the month\n%s\n"
+                                (svn-stats-pretty-format stats-month))
+                        stats-month '())
+                  (unless same-year?
+                    (setf prefix-stats-year
+                          (format "** Stats for the year\n%s\n"
+                                  (svn-stats-pretty-format stats-year))
+                          stats-year '())))
+                (setf prefix-stats-day (format "**** Stats for the day\n%s\n"
+                                               (svn-stats-pretty-format stats-day))
+                      stats-day '())))
+          (let* ((name (svn-logentry-name logentry))
+                 (msg-lines (s-lines (or (svn-logentry-msg logentry) "")))
+                 (header (car msg-lines))
+                 (body (svn-trim-leading-and-trailing-newlines
+                        (s-join "\n" (or (cdr msg-lines) "")))))
+            (svn-increment-stats! name stats-day)
+            (concat
+             prefix-stats-day
+             prefix-stats-month
+             prefix-stats-year
+             (if same-year? "" (format "* %s\n" year))
+             (if same-month? "" (format "** %s\n" (format-time-string "%B" date)))
+             (if same-day? "" (format "*** %s\n" (format-time-string "%A %d" date)))
+             (format "**** %s - %s :%s:"
+                     (format-time-string "%k:%M" date)
+                     header
+                     (svn-logentry-name logentry))
+             (if (not (s-blank? body)) (format "\n%s" body) "")))))
       svn-log
       "\n")
      (if stats-day
          (format "\n**** Stats for the day\n%s\n"
-                 (svn-stats-generate-percentage stats-day))
+                 (svn-stats-pretty-format stats-day))
+       "")
+     (if stats-month
+         (format "\n*** Stats for the month\n%s\n"
+                 (svn-stats-pretty-format stats-month))
+       "")
+     (if stats-year
+         (format "\n** Stats for the year\n%s\n"
+                 (svn-stats-pretty-format stats-year))
        ""))))
 
 (defun svn-trim-leading-and-trailing-newlines (body)
