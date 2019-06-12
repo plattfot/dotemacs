@@ -52,8 +52,11 @@ To get a svn log in xml use 'svn log --xml --verbose'."
   "Pick out a name based on file PATHS.
 
 This assumes all files touched are local to one repository.
-Therefore it will just pick the directory before trunk|branches|tags."
-  (svn-repository-name-from-path (svn-path-name (car paths))))
+Therefore it will just pick the directory before
+trunk|branches|tags. If no name can be found it will just take
+the base name of the path."
+  (or (svn-repository-name-from-path (svn-path-name (car paths)))
+      (file-name-base (directory-file-name (svn-path-name (car paths))))))
 
 (defun svn-repository-name-from-path (path)
   "Return repository name from PATH.
