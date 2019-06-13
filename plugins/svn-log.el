@@ -461,5 +461,57 @@ is `identity'."
               t1 (cdr t1)
               t2 (cdr t2))))
     greater))
+
+(defun svn-show-summary-in-org-buffer-time (svn-xml-log-path
+                                            buffer-name
+                                            stats-func
+                                            &optional
+                                            stats-print
+                                            text-transform)
+  "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
+Supports wildcards for combining multiple logs into one summary.
+This will generate the summary in a org buffer.
+
+Stats will be gathered by calling the STATS-FUNC with a logentry
+and an alist.
+
+STATS-PRINT is the function called when converting the stats to a
+string. Default is `svn-stats-pretty-print-count'. Note that time
+will be converted to seconds before this is called.
+
+TEXT-TRANSFORM is called on the header and body of the commit
+message. And the result is added to the buffer. By default this
+is `identity'."
+  (interactive (svn-show--parse-interactive-input))
+
+  (svn-show--org-buffer-skeleton
+   svn-xml-log-path
+   buffer-name
+   (let ((prev-time nil))
+     #'(lambda (logentry stats)
+         (let* ((time (svn-logentry-date logentry))
+                (time-spent))
+           (when (or (null prev-time)
+                     (not (string-equal (format-time-string "%Y%m%d" time)
+                                        (format-time-string "%Y%m%d" prev-time))))
+             ;; Set it to the start of the day
+             (setf prev-time (date-to-time (format-time-string "%Y-%m-%d 09:00" time))))
+           (setf time-spent (time-subtract time prev-time))
+
+           (let ((time-start-lunch
+                  (date-to-time (format-time-string "%Y-%m-%d 13:00" time)))
+                 (time-end-lunch
+                  (date-to-time (format-time-string "%Y-%m-%d 14:00" time)))
+                 (time-hour (seconds-to-time (* 60 60))))
+             (when (and (time-less-p prev-time time-start-lunch)
+                        (time-greater-p time time-end-lunch))
+               (setf time-spent (time-subtract time-spent time-hour))))
+           (funcall stats-func logentry stats time-spent 'time-add))))
+   #'(lambda (stats)
+       (funcall (or stats-print 'svn-stats-pretty-print-count)
+        (svn-stats--convert-value stats 'time-to-seconds)))
+   'time-add
+   (or text-transform 'identity)))
+
 (provide 'svn-log)
 ;;; svn-log.el ends here
