@@ -125,10 +125,18 @@ This clump log entries per day. Assume SVN-LOG is sorted by date."
      svn-log
      "\n")))
 
-(defun svn-summary-org (svn-log stats-func text-transform)
+(defun svn-summary-org (svn-log
+                        stats-func
+                        stats-print
+                        stats-merge-op
+                        text-transform)
   "Return a summary of SVN-LOG as a string.
 Statistics are updated by a call to STATS-FUNC, it takes two
 arguments logentry and stats.
+
+STATS-PRINT function to convert the stats alist to string.
+
+STATS-MERGE-OP function use to combine two stats values.
 
 TEXT-TRANSFORM is called on the header and body before they are
 added to the output.
@@ -161,53 +169,77 @@ by date."
 
           (if (and (not same-day?) stats-day)
               (progn
-                (setf stats-month (svn-merge-stats stats-month stats-day))
+                (setf stats-month (svn-merge-stats stats-month stats-day stats-merge-op))
                 (unless same-month?
-                  (setf stats-year (svn-merge-stats stats-year stats-month)
+                  (setf stats-year (svn-merge-stats
+                                    stats-year stats-month stats-merge-op)
                         prefix-stats-month
                         (format "*** Stats for the month\n%s\n"
-                                (svn-stats--pretty-format stats-month))
+                                (funcall stats-print stats-month))
                         stats-month '())
                   (unless same-year?
                     (setf prefix-stats-year
                           (format "** Stats for the year\n%s\n"
-                                  (svn-stats--pretty-format stats-year))
+                                  (funcall stats-print stats-year))
                           stats-year '())))
                 (setf prefix-stats-day (format "**** Stats for the day\n%s\n"
-                                               (svn-stats--pretty-format stats-day))
+                                               (funcall stats-print stats-day))
                       stats-day '())))
-          (let* ((msg-lines (s-lines (or (svn-logentry-msg logentry) "")))
-                 (header (funcall text-transform (car msg-lines)))
-                 (body (funcall text-transform
-                                (svn-trim-leading-and-trailing-newlines
-                                 (s-join "\n" (or (cdr msg-lines) ""))))))
-            (setf stats-day (funcall stats-func logentry stats-day))
-            (concat
-             prefix-stats-day
-             prefix-stats-month
-             prefix-stats-year
-             (if same-year? "" (format "* %s\n" year))
-             (if same-month? "" (format "** %s\n" (format-time-string "%B" date)))
-             (if same-day? "" (format "*** %s\n" (format-time-string "%A %d" date)))
-             (format "**** %s - %s :%s:"
-                     (format-time-string "%k:%M" date)
-                     header
-                     (svn-logentry-name logentry))
-             (if (not (s-blank? body)) (format "\n%s" body) "")))))
+          (setf stats-day (funcall stats-func logentry stats-day))
+          (svn-summary-generate-entry logentry
+                                      prefix-stats-day
+                                      prefix-stats-month
+                                      prefix-stats-year
+                                      same-year?
+                                      same-month?
+                                      same-day?
+                                      text-transform)))
       svn-log
       "\n")
      (if stats-day
-         (format "\n**** Stats for the day\n%s\n"
-                 (svn-stats--pretty-format stats-day))
+         (format "\n**** Stats for the day\n%s\n" (funcall stats-print stats-day))
        "")
      (if stats-month
-         (format "\n*** Stats for the month\n%s\n"
-                 (svn-stats--pretty-format stats-month))
+         (format "\n*** Stats for the month\n%s\n" (funcall stats-print stats-month))
        "")
      (if stats-year
-         (format "\n** Stats for the year\n%s\n"
-                 (svn-stats--pretty-format stats-year))
+         (format "\n** Stats for the year\n%s\n" (funcall stats-print stats-year))
        ""))))
+
+(defun svn-summary-generate-entry (logentry
+                                   prefix-stats-day
+                                   prefix-stats-month
+                                   prefix-stats-year
+                                   same-year?
+                                   same-month?
+                                   same-day?
+                                   text-transform)
+  "Generate the entry from LOGENTRY.
+PREFIX-STATS-DAY will be added first to the entry, then
+PREFIX-STATS-MONTH, then PREFIX-STATS-YEAR. After that it will
+add a year entry if SAME-YEAR? is true. Then a month entry if
+SAME-MONTH? is true. Then a day entry if the SAME-DAY? is true.
+Before the commit message is added it passes through the
+TEXT-TRANSFORM."
+  (let* ((date (svn-logentry-date logentry))
+         (msg-lines (s-lines (or (svn-logentry-msg logentry) "")))
+         (header (funcall text-transform (car msg-lines)))
+         (body (funcall text-transform
+                        (svn-trim-leading-and-trailing-newlines
+                         (s-join "\n" (or (cdr msg-lines) ""))))))
+    (concat
+     prefix-stats-day
+     prefix-stats-month
+     prefix-stats-year
+     (if same-year? "" (format-time-string "* %Y\n" date))
+     (if same-month? "" (format-time-string "** %B\n" date))
+     (if same-day? "" (format-time-string "*** %A %d\n"  date))
+     (format "**** %s - %s :%s:"
+             (format-time-string "%k:%M" date)
+             header
+             (svn-logentry-name logentry))
+     (if (not (s-blank? body)) (format "\n%s" body) ""))))
+
 
 (defun svn-trim-leading-and-trailing-newlines (body)
   "Remove newline from the beginning and end of BODY."
@@ -226,29 +258,44 @@ by date."
                    (progn (string-match "^\n*" (reverse body)) (match-end 0)))))
       (substring body 0 end))))
 
+(defmacro svn-stats--append! (key value stats &optional add)
+  "Increment KEY in STATS with VALUE.
+If KEY doesn't exist in STATS, add (KEY . VALUE). Otherwise add
+VALUE to KEY cell using function ADD. STATS is assumed to be an
+alist with the cells (key . count). This will modify STATS in place."
+
+  `(let ((cell (assoc-string ,key ,stats)))
+     (if cell (progn (setcdr cell (funcall (or ,add '+) ,value (cdr cell)))
+                     ,stats)
+       (push (cons ,key ,value) ,stats))))
+
+(defun svn-stats--append (key value stats &optional add)
+  "Increment KEY in STATS with VALUE.
+If KEY doesn't exist in STATS, add (KEY . VALUE). Otherwise add
+VALUE to KEY cell using function ADD. STATS is assumed to be an
+alist with the cells (key . count). This is non-destructive,
+STATS will not change."
+  (let* ((stats-mod (copy-alist stats))
+         (cell (assoc-string key stats-mod)))
+    (if cell (progn (setf (cdr cell) (funcall (or add '+) value (cdr cell)))
+                    stats-mod)
+      (push (cons key value) stats-mod))))
+
 (defmacro svn-stats--increment-count! (key stats)
   "Increment KEY in STATS with one.
 If NAME doesn't exist in stats, add it and increment it by one.
 STATS is assumed to be an alist with the cells (key . count).
 This will modify STATS in place."
-  `(let ((cell (assoc-string ,key ,stats)))
-     (if cell (progn (setcdr cell (+ 1 (cdr cell)))
-                     ,stats)
-       (push (cons ,key 1) ,stats))))
+  `(svn-stats--append! ,key 1 ,stats))
 
 (defun svn-stats--increment-count (key stats)
   "Increment KEY in STATS with one.
 If NAME doesn't exist in stats, add it and increment it by one.
 STATS is assumed to be an alist with the cells (key . count).
 This is non-destructive, STATS will not change."
+  (svn-stats--append key 1 stats))
 
-  (let* ((stats-mod (copy-alist stats))
-         (cell (assoc-string key stats-mod)))
-    (if cell (progn (setf (cdr cell) (+ 1 (cdr cell)))
-                    stats-mod)
-      (push (cons key 1) stats-mod))))
-
-(defun svn-stats--pretty-format (stats)
+(defun svn-stats-pretty-print-count (stats)
   "Return a string containing the percentages of the keys in STATS.
 The keys are sorted in descending order based on the
 percentage."
@@ -262,6 +309,12 @@ Return an alist with count replaced with percentage as a float."
     (let ((total (--reduce-from (+ acc (cdr it)) 0 stats)))
       (--map (cons (car it) (* (/ (float (cdr it)) total) 100)) stats))))
 
+(defun svn-stats--convert-value (stats convert-func)
+  "Convert the value in STATS using CONVERT-FUNC.
+
+Retun a new alist with (KEY . (CONVERT-FUNC VALUE))"
+  (when stats (--map (cons (car it) (funcall convert-func (cdr it))) stats)))
+
 (defun svn-stats--sort (stats)
   "Sort STATS in descending order based on the value."
   (--sort (> (cdr it) (cdr other)) stats))
@@ -271,39 +324,75 @@ Return an alist with count replaced with percentage as a float."
   (mapconcat (lambda (x) (format "%s: %#.2f%%" (car x) (cdr x))) stats "\n"))
 
 ;; Modified version of https://stackoverflow.com/a/10061513
-(defun svn-merge-stats (stats1 stats2)
-  "Merge alists STATS1 and STATS2."
-  (let ((ac (copy-alist stats1)))
+(defun svn-merge-stats (stats1 stats2 &optional add)
+  "Merge alists STATS1 and STATS2 using ADD.
+Default for ADD is +."
+  (let ((ac (copy-alist stats1))
+        (add (or add '+)))
     (dolist (x stats2)
       (let ((r (assoc-string (car x) ac)))
         (if (null r)
             (push x ac)
-          (setf (cdr r) (+ (cdr x) (cdr r))))))
+          (setf (cdr r) (funcall add (cdr x) (cdr r))))))
     ac))
 
-(defun svn-stats-name-count (logentry stats)
-  "Increment the LOGENTRY's name in STATS."
-  (svn-stats--increment-count (svn-logentry-name logentry) stats))
+(defun svn-stats-name-count (logentry stats &optional value add)
+  "Increment the LOGENTRY's name in STATS with VALUE using ADD.
+Default for VALUE is 1 and + for ADD."
+  (svn-stats--append (svn-logentry-name logentry) (or value 1) stats add))
 
-(defun svn-stats-path-count (logentry stats)
-  "Increment the LOGENTRY's paths in STATS."
-  (let ((stats-mod (copy-alist stats)))
+(defun svn-stats-path-count (logentry stats &optional value add)
+  "Increment the LOGENTRY's paths in STATS with VALUE using ADD.
+Default for VALUE is 1 and + for ADD."
+  (let ((stats-mod (copy-alist stats))
+        (val (or value 1)))
     (--each (svn-logentry-paths logentry)
-      (svn-stats--increment-count! (svn-path-name it) stats-mod))
+      (svn-stats--append! (svn-path-name it) val stats-mod add))
     stats-mod))
 
-(defun svn-stats-filename-count (logentry stats)
-  "Increment the LOGENTRY's filenames in STATS."
-  (let ((stats-mod (copy-alist stats)))
+(defun svn-stats-filename-count (logentry stats &optional value add)
+  "Increment the LOGENTRY's filenames in STATS with VALUE using ADD.
+Default for VALUE is 1 and + for ADD."
+  (let ((stats-mod (copy-alist stats))
+        (val (or value 1)))
     (--each (svn-logentry-paths logentry)
-      (svn-stats--increment-count!
-       (file-name-nondirectory (svn-path-name it)) stats-mod))
+      (svn-stats--append!
+       (file-name-nondirectory (svn-path-name it)) val stats-mod add))
     stats-mod))
 
-(defun svn-show-summary-in-org-buffer (svn-xml-log-path
-                                       buffer-name
-                                       stats-func
-                                       &optional text-transform)
+(defun svn-show--parse-interactive-input (&optional no-optional)
+  "Parse the input to `svn-show-summary-in-org-buffer' or similar.
+
+Functitons that takes a svn xml log path, buffer name, stats
+function and optionally a text-transform.
+
+If NO-OPTIONAL is true it will skip reading the optional
+arguments."
+  (let ((path (read-file-name "SVN xml log(s): ")))
+    (list path
+          (read-buffer "Write summary to buffer: "
+                       (let ((default (file-name-base path)))
+                         (if (or (null default) (string-equal "*.xml" default))
+                             (current-buffer)
+                           (format "*%s*" default))))
+          (intern (completing-read  "Statistics function: "
+                                    '(svn-stats-name-count
+                                      svn-stats-path-count
+                                      svn-stats-filename-count)
+                                    'fboundp
+                                    t))
+          nil
+          (when (and (null no-optional) current-prefix-arg)
+            (intern
+             (completing-read  "Text transform function: "
+                               obarray 'fboundp t  nil nil 'identity ))))))
+
+(defun svn-show--org-buffer-skeleton (svn-xml-log-path
+                                      buffer-name
+                                      stats-func
+                                      stats-print
+                                      stats-merge-op
+                                      text-transform)
   "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
 Supports wildcards for combining multiple logs into one summary.
 This will generate the summary in a org buffer.
@@ -311,21 +400,14 @@ This will generate the summary in a org buffer.
 Stats will be gathered by calling the STATS-FUNC with a logentry
 and an alist.
 
+STATS-MERGE-OP operator use to merge two stats cells.
+
+STATS-PRINT is the function called when converting the stats to a
+string.
+
 TEXT-TRANSFORM is called on the header and body of the commit
-message. And the result is added to the buffer. By default this
-is `identity'."
-  (interactive (list (read-file-name "SVN xml log(s): ")
-                     (read-buffer "Write summary to buffer: " (current-buffer))
-                     (intern (completing-read  "Statistics function: "
-                                               '(svn-stats-name-count
-                                                 svn-stats-path-count
-                                                 svn-stats-filename-count)
-                                               'fboundp
-                                               t))
-                     (when current-prefix-arg
-                       (intern
-                        (completing-read  "Text transform function: "
-                                          obarray 'fboundp t  nil nil 'identity )))))
+message. And the result is added to the buffer."
+
   (let ((buffer (get-buffer-create buffer-name))
         (logs (file-expand-wildcards svn-xml-log-path)))
 
@@ -336,8 +418,48 @@ is `identity'."
     (insert (svn-summary-org
              (apply 'svn-combine-logs (mapcar 'svn-parse-log logs))
              stats-func
+             (or stats-print 'svn-stats-pretty-print-count)
+             stats-merge-op
              (or text-transform 'identity)))
     (org-mode)))
 
+(defun svn-show-summary-in-org-buffer (svn-xml-log-path
+                                       buffer-name
+                                       stats-func
+                                       &optional
+                                       stats-print
+                                       text-transform)
+  "Print out a summar of SVN-XML-LOG-PATH file(s) to BUFFER-NAME.
+Supports wildcards for combining multiple logs into one summary.
+This will generate the summary in a org buffer.
+
+Stats will be gathered by calling the STATS-FUNC with a logentry
+and an alist.
+
+STATS-PRINT is the function called when converting the stats to a
+string. Default is `svn-stats-pretty-print-count'.
+
+TEXT-TRANSFORM is called on the header and body of the commit
+message. And the result is added to the buffer. By default this
+is `identity'."
+  (interactive (svn-show--parse-interactive-input))
+  (svn-show--org-buffer-skeleton
+   svn-xml-log-path
+   buffer-name
+   stats-func
+   (or stats-print 'svn-stats-pretty-print-count)
+   '+
+   (or text-transform 'identity)))
+
+(defun time-greater-p (t1 t2)
+  "Return t if T1 is greater than T2."
+  (let ((greater nil))
+    (while (and t1 t2 (not greater))
+      (let ((x1 (car t1))
+            (x2 (car t2)))
+        (setf greater (when (not (= x1 x2)) (> x1 x2))
+              t1 (cdr t1)
+              t2 (cdr t2))))
+    greater))
 (provide 'svn-log)
 ;;; svn-log.el ends here
