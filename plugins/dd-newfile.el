@@ -33,39 +33,43 @@ By default this is empty."
 (defvar dd-newfile-history nil
   "History for dd-setup-newfile.")
 
-(defun dd-setup-newfile (modify_namespaces)
+(defun dd-setup-newfile (modify-namespaces)
   "Add boilerplate, description, namespaces and include guard.
-MODIFY_NAMESPACES are passed on to insert-namespace.  Extra
-namespaces in MODIFY_NAMESPACES are separated by whitespace.  See
-'nf-insert-namespaces' for the syntax on MODIFY_NAMESPACES.
+MODIFY-NAMESPACES are passed on to insert-namespace.  Extra
+namespaces in MODIFY-NAMESPACES are separated by whitespace.  See
+'nf-insert-namespaces' for the syntax on MODIFY-NAMESPACES.
 
 It will use the 'dd-boilerplate' as the boilerplate.
 It will use the 'dd-author-name' as the author name for the header.
 It will use the 'dd-author-mail' as the author's mail address for the header."
 
-  (interactive
-   (let ((prompt "Add/Remove/Modify namespaces"))
-     (list (read-regexp
-            (if (and dd-setup-newfile-default
-                     (not (string-empty-p dd-setup-newfile-default)))
-                (format "%s (default %s): " prompt dd-setup-newfile-default)
-              (format "%s: " prompt))
-            dd-setup-newfile-default
-            'dd-newfile-history))))
-
+  (interactive (list (dd--input-modify-namespaces)))
   (let* ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
          (prefix_dd '("!^DD$" "^DD"))
          (replace '("^houdini$=Houdini"))
-         (user_args (if modify_namespaces
-                        (if (stringp modify_namespaces)
-                            (split-string modify_namespaces))))
-         (modify_namespaces (append prefix_dd replace blacklist user_args))
+         (user_args (if modify-namespaces
+                        (if (stringp modify-namespaces)
+                            (split-string modify-namespaces))))
+         (modify-namespaces (append prefix_dd replace blacklist user_args))
          (workspace_root (dd-find-workspace default-directory)))
-    (nf-setup-newfile modify_namespaces
+    (nf-setup-newfile modify-namespaces
                       dd-author-name
                       dd-author-mail
                       dd-boilerplate
                       workspace_root)))
+
+(defun dd--input-modify-namespaces ()
+  "Parse the input for modify-namespaces.
+
+Return a string with the namespaces."
+  (let ((prompt "Add/Remove/Modify namespaces"))
+    (read-regexp
+     (if (and dd-setup-newfile-default
+              (not (string-empty-p dd-setup-newfile-default)))
+         (format "%s (default %s): " prompt dd-setup-newfile-default)
+       (format "%s: " prompt))
+     dd-setup-newfile-default
+     'dd-newfile-history)))
 
 (defun dd-find-workspace (path)
   "Find the path to the last WORKSPACE file, in the PATH.
