@@ -1496,6 +1496,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (kill-buffer nil))))
         nil)
     #+END_SRC
+
     To sync all open buffers with their respective files on disk. [[https://www.emacswiki.org/emacs/RevertBuffer][Source]]
     #+BEGIN_SRC emacs-lisp
       (defun revert-all-buffers ()
@@ -1506,6 +1507,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (when (and (buffer-file-name) (not (buffer-modified-p)))
                 (revert-buffer t t t) )))
           (message "Refreshed open files.") )
+    #+END_SRC
+
+    Similar to projectile's ibuffer filter. Except this isn't locked
+    to the project root.
+    #+BEGIN_SRC emacs-lisp
+      (defun ibuffer-at-directory (dir)
+        "Open an ibuffer with buffers containg files with matching prefix DIR."
+        (interactive "DDirectory to filter on: ")
+        (ibuffer t (format "*%s-buffers*" dir) (list (cons 'directory dir))))
     #+END_SRC
 *** Text
     #+BEGIN_SRC emacs-lisp
@@ -1532,6 +1542,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        When using this interactive it will pick the region from current
        point to the end of the buffer. If a region is active it will
        pick that instead."
+
          (interactive (if (region-active-p)
                           (list (region-beginning) (region-end))
                         (list (point) (point-max))))
