@@ -85,8 +85,12 @@ found.  For relative it will return nil."
       (error "Workspace not found!"))
     abs_path))
 
-(defun dd-rename-namespaces ()
+(defun dd-rename-namespaces (modify-namespaces)
   "Update the outer namespaces in the file to the new location.
+
+MODIFY-NAMESPACES can be used to add/remove/append namespaces
+when renaming the old ones. See `dd-setup-newfile' for the
+syntax.
 
 Outer namespaces are classified as top namespaces that are
 clumped together. For example
@@ -119,30 +123,37 @@ namespace DD {
 }
 
 Only the DD namespace will be replaced."
-  (interactive)
+  (interactive (list (dd--input-modify-namespaces)))
   (save-mark-and-excursion
     (beginning-of-buffer)
     ;; (while (re-search-forward "^namespace [[:graph:]]+ {" nil t))
-    (re-search-forward "\\(?:^namespace [[:graph:]]+ {\n\\)+")
-    (re-search-backward "{")
-    (mark-sexp)
-    (let ((code (buffer-substring (region-beginning) (region-end))))
-      (delete-region (region-beginning) (region-end))
-      (while (re-search-backward "^namespace [[:graph:]]+ {" nil t)
-        (re-search-forward "{")
-        (backward-char)
-        (mark-sexp)
-        (delete-region (region-beginning) (region-end)))
-      (delete-region (point-at-bol) (point-at-eol))
-      (let ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
-            (prefix_dd '("!^DD$" "^DD"))
-            (replace '("^houdini$=Houdini"))
-            (workspace_root (dd-find-workspace default-directory)))
-        (nf-insert-namespace `(,@prefix_dd ,@blacklist ,@replace) workspace_root)
-        (re-search-backward "{")
-        (mark-sexp)
+    (when (re-search-forward "\\(?:^namespace [[:graph:]]+ {\n\\)+" nil t)
+      (re-search-backward "{")
+      (mark-sexp)
+      (let ((code (buffer-substring (region-beginning) (region-end))))
         (delete-region (region-beginning) (region-end))
-        (insert code)))))
+        (while (re-search-backward "^namespace [[:graph:]]+ {" nil t)
+          (re-search-forward "{")
+          (backward-char)
+          (mark-sexp)
+          (delete-region (region-beginning) (region-end)))
+        (delete-region (point-at-bol) (point-at-eol))
+        (let ((blacklist '("!^CoreLibs$" "!^Utility$" "!^Common$" "!^[.a-z]+"))
+              (prefix_dd '("!^DD$" "^DD"))
+              (replace '("^houdini$=Houdini"))
+              (workspace_root (dd-find-workspace default-directory))
+              (modify-namespaces (if (stringp modify-namespaces)
+                                     (split-string modify-namespaces)
+                                   modify-namespaces)))
+          (nf-insert-namespace `(,@modify-namespaces
+                                 ,@prefix_dd
+                                 ,@blacklist
+                                 ,@replace)
+                               workspace_root)
+          (re-search-backward "{")
+          (mark-sexp)
+          (delete-region (region-beginning) (region-end))
+          (insert code))))))
 
 (defun dd-rename-include-guard ()
   "Rename the include guard to match the namespaces in the file."
