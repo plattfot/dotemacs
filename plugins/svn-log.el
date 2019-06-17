@@ -70,7 +70,7 @@ If no directory is found it returns nil"
     ;; Check that we aren't at the root.
     (when (not (string-equal path parent))
       (if (string-match "^\\(trunk\\|branches\\|tags\\)$"
-                        (file-name-base path))
+                        (file-name-nondirectory path))
           (file-name-base parent)
         (svn-repository-name-from-path parent)))))
 
