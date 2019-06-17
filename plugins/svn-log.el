@@ -74,6 +74,37 @@ If no directory is found it returns nil"
           (file-name-base parent)
         (svn-repository-name-from-path parent)))))
 
+(defun svn-repository-path (path)
+  "Return repository path from PATH.
+Where PATH is a string.
+
+Will pick the path directly after trunk, branches + name or tags + name.
+If no directory is found it returns nil"
+  (let* ((path-prefix (directory-file-name path))
+         (parent (svn-parent-path path-prefix))
+         (child nil)
+         (basename nil)
+         (found nil)
+         (repo-path nil))
+    (while (and (not found) (not (string-equal path-prefix parent)))
+      (setf basename (file-name-nondirectory path-prefix))
+      (cond
+       ((string-match "^trunk$" basename)
+        (setf found t
+              repo-path (s-chop-prefix path-prefix path)))
+       ((string-match "^\\(branches\\|tags\\)$" basename)
+        (setf found t
+              repo-path (s-chop-prefix
+                         (if child
+                             (concat (file-name-as-directory path-prefix) child)
+                           path-prefix)
+                         path)))
+       (t
+        (setf path-prefix parent
+              parent (svn-parent-path parent)
+              child basename))))
+    (unless (s-blank? repo-path) repo-path)))
+
 (defun svn-parent-path (path)
   "Return the parent path of PATH.
 PATH must be string.
