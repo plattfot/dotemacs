@@ -447,7 +447,9 @@ arguments."
           (intern (completing-read  "Statistics function: "
                                     '(svn-stats-name-count
                                       svn-stats-path-count
-                                      svn-stats-filename-count)
+                                      svn-stats-filename-count
+                                      svn-stats-repo-path-count
+                                      svn-stats-repo-path-dir-only-count)
                                     'fboundp
                                     t))
           nil
