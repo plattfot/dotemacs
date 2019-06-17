@@ -5,6 +5,8 @@
 
 (require 'highlight-extra)
 (require 'string-inflection)
+;; Load libyaml bindings if they exist.
+(require 'libyaml nil t)
 
 ;; ============================= Functions ===================================
 (defun work-insert-eigen-pretty-printer ()
@@ -97,18 +99,22 @@ Works only if the current buffer is a shell."
 
 Where MANIFEST-FILE is the path to the manifest file.
 
-Currently only supports the simple ones. I.e type: [']value[']."
-  (with-temp-buffer
-    (insert-file-contents manifest-file)
-    (setq case-fold-search t)
-    (let ((manifest '())
-          (type-value-re "\\([[:alnum:]_]+\\):[ ']*\\([[:alnum:]_.]+\\)[ ']*"))
-      (goto-char (point-min))
-      (while (re-search-forward type-value-re nil t)
-        (let ((type (string-inflection-lower-camelcase-function (match-string 1)))
-              (value (match-string 2)))
-          (add-to-list 'manifest `(,(intern type) . ,value))))
-      manifest)))
+If libyaml isn't loaded it only supports the simple structure.
+I.e key: [']value[']. No nesting.
+Return a hash table."
+  (if (featurep 'libyaml)
+      (yaml-read-file manifest-file)
+    (with-temp-buffer
+      (insert-file-contents manifest-file)
+      (setq case-fold-search t)
+      (let ((manifest (make-hash-table :test 'equal))
+            (type-value-re "^\\([[:alnum:]_]+\\):[ ']*\\([[:alnum:]_.]+\\)[ ']*"))
+        (goto-char (point-min))
+        (while (re-search-forward type-value-re nil t)
+          (let ((type (string-inflection-lower-camelcase-function (match-string 1)))
+                (value (match-string 2)))
+            (puthash type value manifest)))
+        manifest))))
 
 ;; ============================ Projectile ===================================
 (defvar work-package-re
