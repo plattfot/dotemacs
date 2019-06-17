@@ -408,6 +408,27 @@ Repo paths means removing repository prefix."
                    (file-name-nondirectory path))))
        val stats-mod add))
     stats-mod))
+
+(defun svn-stats-repo-path-dir-only-count (logentry stats &optional value add)
+  "Increment the LOGENTRY's repo paths in STATS with VALUE using ADD.
+
+This will only count the directory names, not the files. Use
+`svn-stats-repo-path-count' for that. Default for VALUE is 1 and
++ for ADD. Repo paths means removing repository prefix."
+  (let ((stats-mod (copy-alist stats))
+        (val (or value 1)))
+    (--each (svn-logentry-paths logentry)
+      (svn-stats--append!
+       (let* ((path (svn-path-name it))
+              (repo-path (svn-repository-path path)))
+         (format "[%s]%s"
+                 (svn-logentry-name logentry)
+                 (if repo-path
+                     (file-name-directory repo-path)
+                   (file-name-nondirectory path))))
+       val stats-mod add))
+    stats-mod))
+
 (defun svn-show--parse-interactive-input (&optional no-optional)
   "Parse the input to `svn-show-summary-in-org-buffer' or similar.
 
