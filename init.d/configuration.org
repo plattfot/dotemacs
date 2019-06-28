@@ -692,6 +692,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ")?"
                      "\\([ \t]*[@={]@?[^\n;]+?\\)?"
                      "\\([ \t]+;.+?\\|[ \t]*\\)?$"))
+       (add-hook 'ledger-mode-hook
+                 (lambda ()
+                   (setq-local tab-always-indent 'complete)
+                   (setq-local completion-ignore-case t)
+                   (setq-local ledger-complete-in-steps t)))
        :pin melpa)
    #+END_SRC
 
