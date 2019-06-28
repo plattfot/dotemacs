@@ -745,7 +745,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Key =C-x g= to run magit on current buffer.
 
     #+BEGIN_SRC emacs-lisp
+      (use-package transient
+        :pin melpa-stable)
+    #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
       (use-package magit
+        :after (transient)
         :bind ("C-x g" . magit-status)
         :config
         (setq vc-handled-backends (delq 'Git vc-handled-backends))
