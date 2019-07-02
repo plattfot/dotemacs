@@ -2566,6 +2566,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        sys.path.insert(0, 'new/path/to/module')
        reload(module)
      #+END_SRC
+*** Print out debug info
+    #+BEGIN_SRC sh :tangle no
+      readelf --debug-dump=<option> <elf>
+    #+END_SRC
+
+    Print out the decoded source path use the
+    src_sh[:tangle no]{--debug-dump=decodedline} option.
 ** Cli
 *** Install fonts local to user
     Install fonts to ~/.fonts then update the fontconfig cache by
