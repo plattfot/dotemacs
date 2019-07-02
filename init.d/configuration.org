@@ -466,6 +466,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (lambda ()
                     ;; Set keybinding for all cc-modes
                     (local-set-key  (kbd "<backtab>") 'ff-find-other-file)
+                    (local-set-key  (kbd "<C-iso-lefttab>") 'ff-extension-other-impl)
 
                     (setq indent-tabs-mode nil)
                     (when dotemacs-is-work (c-set-style "dd"))
