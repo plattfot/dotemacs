@@ -1734,6 +1734,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (replace-match "///\\1"))))
 
      #+END_SRC
+***** Jump between template header and implementation
+      #+BEGIN_SRC emacs-lisp
+        (defun ff-extension-other-impl ()
+          "Return name of the header or template file corresponding to the current file."
+          (interactive)
+          (let* ((pathname (or (ff-buffer-file-name) "/none.none"))
+                 (directory (file-name-directory pathname))
+                 (filename (file-name-nondirectory pathname))
+                 (ext (s-replace "c" "h" (file-name-extension filename)))
+                 (base (file-name-base filename)))
+            (ff-get-file `(,directory)
+                         (format "%s.%s"
+                                 (if (s-ends-with? "-impl" base)
+                                     (s-chop-suffix "-impl" base)
+                                   (s-append "-impl" base))
+                                 ext))))
+      #+END_SRC
 *** Workspace
     Function for splitting emacs into three frames.
     Really nice to use with i3wm.
