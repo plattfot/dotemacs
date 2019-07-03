@@ -975,7 +975,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package eshell
-        :bind (:map eshell-mode-map ("C-<tab>" . eshell-complete-lisp-symbol))
+        ;;:bind (:map eshell-mode-map ("C-<tab>" . eshell-complete-lisp-symbol))
         :config
         (setq-default
          eshell-prompt-function
