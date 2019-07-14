@@ -38,17 +38,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (setq package-pinned-packages
            '((use-package . "melpa")
              ;; Deps
-             (async       . "melpa-stable")
+             (async       . "melpa")
              (bind-key    . "melpa-stable")
-             (dash        . "melpa-stable")
+             (dash        . "melpa")
              (diminish    . "melpa-stable")
              (epl         . "melpa-stable")
-             (git-commit  . "melpa-stable")
-             (magit-popup . "melpa-stable")
+             (git-commit  . "melpa")
+             (magit-popup . "melpa")
              (pkg-info    . "melpa-stable")
              (popup       . "melpa-stable")
              (s           . "melpa-stable")
-             (with-editor . "melpa-stable")))
+             (with-editor . "melpa")))
 
      (unless (package-installed-p 'use-package)
        (package-install 'use-package))
@@ -747,7 +747,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package transient
-        :pin melpa-stable)
+        :pin melpa)
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
@@ -756,7 +756,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :bind ("C-x g" . magit-status)
         :config
         (setq vc-handled-backends (delq 'Git vc-handled-backends))
-        :pin melpa-stable)
+        :pin melpa)
     #+END_SRC
 *** Magithub (disabled)
 
