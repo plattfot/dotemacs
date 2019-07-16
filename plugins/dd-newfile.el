@@ -37,7 +37,7 @@ By default this is empty."
   "Add boilerplate, description, namespaces and include guard.
 MODIFY-NAMESPACES are passed on to insert-namespace.  Extra
 namespaces in MODIFY-NAMESPACES are separated by whitespace.  See
-'nf-insert-namespaces' for the syntax on MODIFY-NAMESPACES.
+`nf-insert-namespaces' for the syntax on MODIFY-NAMESPACES.
 
 It will use the 'dd-boilerplate' as the boilerplate.
 It will use the 'dd-author-name' as the author name for the header.
