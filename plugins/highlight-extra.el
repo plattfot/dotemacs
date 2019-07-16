@@ -58,30 +58,6 @@
   ( unhighlight-regexp "[ ]\\{2\\}PASSED[ ]\\{2\\}" )
   ( unhighlight-regexp "[ ]\\{2\\}FAILED[ ]\\{2\\}" ))
 
-(defun highlight-dd-logger()
-  "Highlight DD_LOGGER."
-  (interactive)
-  ( highlight-regexp "^\\+-.*\\]:" 'hi-blue )
-  ( highlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" 'hi-green )
-  ( highlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" 'hi-pink )
-  ( highlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" 'hi-yellow )
-  ( highlight-regexp "^\\(| \\)\\{3\\}" 'hi-pink )
-  ( highlight-regexp "^\\(| \\)\\{2\\}" 'hi-green )
-  ( highlight-regexp "^\\(| \\)\\{1\\}" 'hi-blue )
-  ( highlight-regexp "[0-9]+\\.[0-9]+[a-z]+" 'hi-blue-b ))
-
-(defun unhighlight-dd-logger()
-  "Unhighlight DD_LOGGER."
-  (interactive)
-  ( unhighlight-regexp "^\\+-.*\\]:" )
-  ( unhighlight-regexp "^\\(| \\)\\{1\\}\\+-.*\\]:" )
-  ( unhighlight-regexp "^\\(| \\)\\{2\\}\\+-.*\\]:" )
-  ( unhighlight-regexp "^\\(| \\)\\{3\\}\\+-.*\\]:" )
-  ( unhighlight-regexp "^\\(| \\)\\{3\\}" )
-  ( unhighlight-regexp "^\\(| \\)\\{2\\}" )
-  ( unhighlight-regexp "^\\(| \\)\\{1\\}" )
-  ( unhighlight-regexp "[0-9]+\\.[0-9]+\\w" ))
-
 (defun highlight-build()
   "Highlight flags, paranthesis, error, warning and const to
 easier find them when building."
