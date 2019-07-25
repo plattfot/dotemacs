@@ -2552,6 +2552,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC sh
       gcc <options> -Wl,--trace-symbols=<symbol>
     #+END_SRC
+*** Don't allow undefined symbols in shared libraries
+    When enabled it will error out if it finds any undefined symbols
+    when linking a shared library.
+    #+BEGIN_SRC sh :tangle no
+      gcc <options> -Wl,--no-undefined
+    #+END_SRC
+    or
+    #+BEGIN_SRC sh :tangle no
+      gcc <options> -Wl,z defs
+    #+END_SRC
 *** Run functions when loading/unloading shared libraries
     Call function when shared library is loaded, with gcc use:
     #+BEGIN_SRC c++
