@@ -2549,7 +2549,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Trace undefined symbol
     use ld's --trace-symbol=<symbol> when linking to get a list of
     what file(s) are using that symbol. Using it with gcc it would be
-    #+BEGIN_SRC sh
+    #+BEGIN_SRC sh :tangle no
       gcc <options> -Wl,--trace-symbols=<symbol>
     #+END_SRC
 *** Don't allow undefined symbols in shared libraries
