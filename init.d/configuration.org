@@ -1510,18 +1510,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         nil)
     #+END_SRC
 
-    To sync all open buffers with their respective files on disk. [[https://www.emacswiki.org/emacs/RevertBuffer][Source]]
-    #+BEGIN_SRC emacs-lisp
-      (defun revert-all-buffers ()
-          "Refreshes all open buffers from their respective files."
-          (interactive)
-          (dolist (buf (buffer-list))
-            (with-current-buffer buf
-              (when (and (buffer-file-name) (not (buffer-modified-p)))
-                (revert-buffer t t t) )))
-          (message "Refreshed open files.") )
-    #+END_SRC
 
+    To sync all open buffers with their respective files on disk.
+    Based on [[https://www.emacswiki.org/emacs/RevertBuffer][link]] but skips buffers which file no longer exist.
+    #+BEGIN_SRC emacs-lisp
+        (defun revert-all-buffers ()
+            "Refreshes all open buffers from their respective files."
+            (interactive)
+            (dolist (buf (buffer-list))
+              (with-current-buffer buf
+                (when (and (buffer-file-name)
+                           (not (buffer-modified-p))
+                           (file-exists-p (buffer-file-name)))
+                  (revert-buffer t t t) )))
+            (message "Refreshed open files."))
+    #+END_SRC
     Similar to projectile's ibuffer filter. Except this isn't locked
     to the project root.
     #+BEGIN_SRC emacs-lisp
