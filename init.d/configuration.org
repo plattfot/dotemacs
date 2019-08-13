@@ -1494,8 +1494,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 ** Functions
 *** Buffer
-    Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
-    #+BEGIN_SRC emacs-lisp
+**** Rename current file or buffer
+     Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
+     #+BEGIN_SRC emacs-lisp
       (defun rename-current-file-or-buffer ()
         "Rename current file and buffer, similar to save-as but removes
       the old file"
@@ -1508,9 +1509,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (dired-do-rename)
               (kill-buffer nil))))
         nil)
-    #+END_SRC
-
-
+     #+END_SRC
+**** Revert all buffers
     To sync all open buffers with their respective files on disk.
     Based on [[https://www.emacswiki.org/emacs/RevertBuffer][link]] but skips buffers which file no longer exist.
     #+BEGIN_SRC emacs-lisp
@@ -1525,6 +1525,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (revert-buffer t t t) )))
             (message "Refreshed open files."))
     #+END_SRC
+**** ibuffer filters
     Similar to projectile's ibuffer filter. Except this isn't locked
     to the project root.
     #+BEGIN_SRC emacs-lisp
