@@ -1534,6 +1534,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (interactive "DDirectory to filter on: ")
         (ibuffer t (format "*%s-buffers*" dir) (list (cons 'directory dir))))
     #+END_SRC
+
+    List all buffers which file no longer exist.
+    #+BEGIN_SRC emacs-lisp
+      (define-ibuffer-filter dangling-buffer
+          "True if buffer is visiting a file but the file no longer exist."
+        (:reader nil :description "dangling-buffer")
+        (with-current-buffer buf
+          (and (buffer-file-name)
+               (not (file-exists-p (buffer-file-name))))))
+
+      (defun ibuffer-dangling-buffers ()
+        (interactive)
+        "Open an ibuffer with buffers which file no longer exist."
+
+        (ibuffer t "*dangling-buffers*" (list (cons 'dangling-buffer ""))))
+    #+END_SRC
 *** Text
     #+BEGIN_SRC emacs-lisp
       (defun duplicate-line()
