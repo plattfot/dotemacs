@@ -2699,6 +2699,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC sh
        find . -not \( -path '*/.svn' -prune \) -name "foobar"
      #+END_SRC
+*** grep
+    Print only the grouping of the regex that matched
+
+    Can use perl's look around assertions. For example only print out
+    the ticket number of a tool that outputs
+    #+BEGIN_SRC text :tangle no
+    Ticket created: 145704
+    #+END_SRC
+
+    #+BEGIN_SRC shell :tangle no
+    tool | grep -Po "Ticket created: \K145704"
+    #+END_SRC
+    [[https://unix.stackexchange.com/a/13472][source]]
 *** ssh
 **** ssh agent
      Use the ssh agent to cache the private key to a terminal
