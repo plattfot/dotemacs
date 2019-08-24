@@ -90,5 +90,16 @@ For example:
        "\\([0-9]+\\)x\\([0-9]+\\)" "\\1 reps * \\2 sets"
        volume))))))
 
+(defun tr-exercise-history ()
+  "Display temporary buffer with history of the exercise."
+  (interactive)
+  (save-mark-and-excursion
+    (beginning-of-line)
+    (search-forward-regexp "[^[:blank:]]")
+    (let ((exercise-start (- (point) 1))
+          (truncate-lines t))
+      (search-forward-regexp "[ ]\\{2\\}")
+      (occur (buffer-substring-no-properties exercise-start (- (point) 2))))))
+
 (provide 'training)
 ;;; training.el ends here
