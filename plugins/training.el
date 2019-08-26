@@ -9,7 +9,7 @@
 
 (cl-defstruct exercise name load volume rpe comments)
 
-(defun tr-log-to-dat ()
+(defun training-log-to-dat ()
 "Convert old training log to something ledger can understand.
 
 Will read the current buffer and output it to a buffer named training.dat."
@@ -48,11 +48,11 @@ Will read the current buffer and output it to a buffer named training.dat."
     (let ((buf.dat (generate-new-buffer "training.dat")))
       (switch-to-buffer buf.dat)
       (maphash (lambda (key value)
-                 (insert (format "%s * \n" (tr-valid-date key)))
+                 (insert (format "%s * \n" (training-valid-date key)))
                  (mapc (lambda (exercise)
                          (insert (format "    Övning:%s  (%s) @%slbs ; RPE: %s %s\n"
                                          (exercise-name exercise)
-                                         (tr-valid-volume (exercise-volume exercise))
+                                         (training-valid-volume (exercise-volume exercise))
                                          (string-to-number (exercise-load exercise))
                                          (exercise-rpe exercise)
                                          (exercise-comments exercise))))
@@ -67,11 +67,11 @@ Will read the current buffer and output it to a buffer named training.dat."
       (delete-trailing-whitespace)
       (goto-char (point-max)))))
 
-(defun tr-valid-date (date)
+(defun training-valid-date (date)
   "Convert DATE from dd/mm/YY to 20YY/mm/dd."
   (concat "20" (string-join (reverse (split-string date "/")) "/")))
 
-(defun tr-valid-volume (volume)
+(defun training-valid-volume (volume)
   "Convert VOLUME to a volume ledger can understand.
 
 For example:
@@ -92,7 +92,7 @@ For example:
        "\\([0-9]+\\)x\\([0-9]+\\)" "\\1 reps * \\2 sets"
        volume))))))
 
-(defun tr-exercise-history ()
+(defun training-exercise-history ()
   "Display temporary buffer with history of the exercise."
   (interactive)
   (save-mark-and-excursion
@@ -104,29 +104,29 @@ For example:
       (occur (buffer-substring-no-properties exercise-start (- (point) 2))))))
 
 ;; TODO: locale
-(define-transient-command tr-popup ()
+(define-transient-command training-popup ()
   "Show popup buffer for training commands."
   ["Start an exercise"
-   [("ö" "övning" tr-insert-exercise)]]
+   [("ö" "övning" training-insert-exercise)]]
   ["Gym"
-   [("s" "Steve Nash" tr-insert-steve-nash)]])
+   [("s" "Steve Nash" training-insert-steve-nash)]])
 
-(defun tr-indent-and-insert-text (text)
+(defun training-indent-and-insert-text (text)
   "Insert TEXT at correct indentation."
   (interactive)
   (indent-for-tab-command)
   (insert text))
 
-(defun tr-insert-exercise (&optional exercise)
+(defun training-insert-exercise (&optional exercise)
   "Insert EXERCISE at correct indentation.
 If EXERCISE is empty insert 'Övning:'"
   (interactive)
-  (tr-indent-and-insert-text (or exercise "Övning:")))
+  (training-indent-and-insert-text (or exercise "Övning:")))
 
-(defun tr-insert-steve-nash ()
+(defun training-insert-steve-nash ()
   "Insert 'Gym:Steve Nash' at correct indentation."
   (interactive)
-  (tr-indent-and-insert-text "Gym:Steve Nash"))
+  (training-indent-and-insert-text "Gym:Steve Nash"))
 
 (provide 'training)
 ;;; training.el ends here
