@@ -4,6 +4,8 @@
 ;;; Code:
 (require 'subr-x)
 (require 'ledger-mode)
+(require 'transient)
+
 
 (cl-defstruct exercise name load volume rpe comments)
 
@@ -100,6 +102,31 @@ For example:
           (truncate-lines t))
       (search-forward-regexp "[ ]\\{2\\}")
       (occur (buffer-substring-no-properties exercise-start (- (point) 2))))))
+
+;; TODO: locale
+(define-transient-command tr-popup ()
+  "Show popup buffer for training commands."
+  ["Start an exercise"
+   [("ö" "övning" tr-insert-exercise)]]
+  ["Gym"
+   [("s" "Steve Nash" tr-insert-steve-nash)]])
+
+(defun tr-indent-and-insert-text (text)
+  "Insert TEXT at correct indentation."
+  (interactive)
+  (indent-for-tab-command)
+  (insert text))
+
+(defun tr-insert-exercise (&optional exercise)
+  "Insert EXERCISE at correct indentation.
+If EXERCISE is empty insert 'Övning:'"
+  (interactive)
+  (tr-indent-and-insert-text (or exercise "Övning:")))
+
+(defun tr-insert-steve-nash ()
+  "Insert 'Gym:Steve Nash' at correct indentation."
+  (interactive)
+  (tr-indent-and-insert-text "Gym:Steve Nash"))
 
 (provide 'training)
 ;;; training.el ends here
