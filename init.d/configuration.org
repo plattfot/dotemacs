@@ -883,7 +883,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-src-fontify-natively t
               org-src-tab-acts-natively t
               org-confirm-babel-evaluate nil
-              org-src-window-setup 'other-window)
+              org-src-window-setup 'other-window
+              org-link-search-must-match-exact-headline nil)
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
 
