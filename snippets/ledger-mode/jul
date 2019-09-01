@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: July
-# key: july
+# key: jul
 # --
 `(format-time-string "%Y/07/")`$0
