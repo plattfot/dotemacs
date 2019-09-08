@@ -571,7 +571,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :mode (("Makefile.*" . makefile-gmake-mode)
                 ("\\.mk$" . makefile-gmake-mode)
                 ("Make/.*Rules$" . makefile-gmake-mode)
-                ("modules/.*" . makefile-gmake-mode)
+                ("Make/modules/.*" . makefile-gmake-mode)
                 ("BUILD\\.conf$" . makefile-gmake-mode)
                 ("Make/Project$" . makefile-gmake-mode)
                 ("\\.tdpackage$" . makefile-gmake-mode))
