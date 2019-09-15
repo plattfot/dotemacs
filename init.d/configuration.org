@@ -1499,6 +1499,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil
         :load-path "plugins")
     #+END_SRC
+*** training
+    Functions for using ledger as a training log.
+    #+BEGIN_SRC emacs-lisp
+      (use-package training
+        :ensure nil
+        :load-path "plugins")
+    #+END_SRC
 ** Functions
 *** Buffer
 **** Rename current file or buffer
