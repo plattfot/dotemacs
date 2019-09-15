@@ -1287,6 +1287,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (counsel-projectile-mode)
         :pin melpa)
     #+END_SRC
+*** evil
+    Vim bindings are a lot easier to use on the phone than normal
+    emacs bindings. Enable *evil-mode* when it detects android.
+    #+BEGIN_SRC emacs-lisp
+      (use-package evil
+        :config
+        (when (getenv "ANDROID_ROOT")
+          (evil-mode 1))
+        :pin melpa-stable)
+    #+END_SRC
 ** Text
   Packages for editing and viewing text.
 *** Emojify
