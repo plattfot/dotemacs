@@ -417,7 +417,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("C-M-a" . sp-beginning-of-sexp)
                      ("C-M-e" . sp-end-of-sexp)
                      ("C-M-t" . sp-transpose-hybrid-sexp)
-                     ("C-M-s" . sp-splice-sexp)
+                     ("C-M-s" . sp-splice-sexp-killing-around)
                      ("M-s" . sp-split-sexp)
                      ("M-[" . sp-backward-unwrap-sexp)
                      ("M-]" . sp-unwrap-sexp)
