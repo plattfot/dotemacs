@@ -846,12 +846,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 ** Emacs
   Packages that augments emacs.
-*** elisp
-    A simple wrapper around asynchronous processes
-    #+BEGIN_SRC emacs-lisp
-      (use-package pfuture
-        :pin melpa)
-    #+END_SRC
 *** Org
 
     Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
