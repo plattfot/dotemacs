@@ -2347,8 +2347,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Store work related settings.
    #+BEGIN_SRC emacs-lisp
-     (when (and dotemacs-is-work (file-exists-p "~/.emacs.d/.work.el"))
-       (load "~/.emacs.d/.work.el"))
+     (let ((.work (concat user-emacs-directory ".work.el")))
+       (when (file-exists-p .work)
+         (load .work)))
    #+END_SRC
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
