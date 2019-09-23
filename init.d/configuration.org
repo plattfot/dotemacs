@@ -1977,7 +1977,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (use-package dd-newfile
          :after newfile
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 **** dd-log-parser
      Functions for parsing the =DD::Logger=
@@ -1985,14 +1985,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (use-package dd-log-parser
          :if dotemacs-is-work
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 **** dd-pybuild2
      #+BEGIN_SRC emacs-lisp
        (use-package dd-pybuild2
          :if dotemacs-is-work
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 **** houdini
      Houdini related functions, mostly handle houdini versions.
@@ -2001,24 +2001,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :bind ("C-x j" . hou-insert-version)
          :if dotemacs-is-work
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 **** highlight-extra
      Functions for highlighting my shells when building etc
      #+BEGIN_SRC emacs-lisp
        (use-package highlight-extra
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 **** work
 
      Bunch of functions to setup my work area when at work.
-
      #+BEGIN_SRC emacs-lisp
        (use-package work
          :if dotemacs-is-work
          :ensure nil
-         :load-path "~/.emacs.d/plugins")
+         :load-path "plugins")
      #+END_SRC
 *** Functions
 **** PID
