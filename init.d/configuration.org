@@ -1965,8 +1965,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Quickly jump to files by pressing C-x r j <register>
     Jump to my init file with 'e' and init directory with 'i'.
     #+BEGIN_SRC emacs-lisp
-      (set-register ?e (cons 'file "~/.emacs.d/init.el"))
-      (set-register ?i (cons 'file "~/.emacs.d/init.d/configuration.org"))
+      (set-register ?e (cons 'file (concat user-emacs-directory "init.el")))
+      (set-register ?i (cons 'file (concat user-emacs-directory
+                                           "init.d/configuration.org")))
     #+END_SRC
 * Work
 ** Custom
