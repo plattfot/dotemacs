@@ -103,7 +103,9 @@ If libyaml isn't loaded it only supports the simple structure.
 I.e key: [']value[']. No nesting.
 Return a hash table."
   (if (featurep 'libyaml)
-      (yaml-read-file manifest-file)
+      (with-temp-buffer
+        (insert-file-contents manifest-file)
+        (yaml-read-from-string (buffer-substring (point-min) (point-max))))
     (with-temp-buffer
       (insert-file-contents manifest-file)
       (setq case-fold-search t)
