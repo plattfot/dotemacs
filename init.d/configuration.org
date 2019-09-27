@@ -821,13 +821,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** pdftools
+
+    NOTE: To use this, install it externally via the distribution's
+    package manager. As installing this from melpa tends to break a
+    lot due it needs to be compiled.
     #+BEGIN_SRC emacs-lisp
       (use-package pdf-tools
         :if (not dotemacs-is-work)
         :mode ("\\.pdf\\'" . pdf-view-mode)
-        :config
-        (pdf-loader-install)
-        :pin melpa-stable)
+        :ensure nil)
     #+END_SRC
 *** man
     #+BEGIN_SRC emacs-lisp
