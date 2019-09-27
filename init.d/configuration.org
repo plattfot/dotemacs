@@ -1288,9 +1288,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     emacs bindings. Enable *evil-mode* when it detects android.
     #+BEGIN_SRC emacs-lisp
       (use-package evil
+        :if (getenv "ANDROID_ROOT")
         :config
-        (when (getenv "ANDROID_ROOT")
-          (evil-mode 1))
+        (evil-mode 1)
         :pin melpa-stable)
     #+END_SRC
 ** Text
