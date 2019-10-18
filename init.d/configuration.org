@@ -1145,6 +1145,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     keymaps that defines imenu, easier to just alias the function.
     #+BEGIN_SRC emacs-lisp
       (use-package counsel
+        :bind (("C-M-s" . counsel-ag))
         :init
         (defalias 'imenu 'counsel-imenu)
         :pin melpa)
