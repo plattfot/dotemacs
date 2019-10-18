@@ -7,6 +7,7 @@
 (require 'string-inflection)
 ;; Load libyaml bindings if they exist.
 (require 'libyaml nil t)
+(require 'projectile)
 
 ;; ============================= Functions ===================================
 (defun work-insert-eigen-pretty-printer ()
