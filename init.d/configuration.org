@@ -1290,6 +1290,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package evil
         :if (getenv "ANDROID_ROOT")
+        :bind (:map evil-normal-state-map ("SPC t" . 'training-popup))
         :config
         (evil-mode 1)
         :pin melpa-stable)
