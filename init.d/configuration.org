@@ -2799,3 +2799,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        gcc <options> -Wl,z defs
      #+END_SRC
 
+**** Record flags in object file
+     Will record the flags used to build the object into the object
+     file.
+     #+BEGIN_SRC sh :tangle no
+       gcc -frecord-gcc-switches
+     #+END_SRC
+
+     There is also =-grecord-gcc-switches= that works similarly.
+
