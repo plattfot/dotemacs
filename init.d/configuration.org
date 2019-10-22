@@ -2808,3 +2808,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      There is also =-grecord-gcc-switches= that works similarly.
 
+**** Output absolute path to a library
+
+     #+BEGIN_SRC sh :tangle no
+       gcc -print-file-name=<library>
+     #+END_SRC
+
+     This will print out the absolute path to the =<library>=. The
+     library needs to have it's prefix =lib= and extenssion for it to
+     print it out. For example
+
+     #+BEGIN_SRC sh :tangle no
+       gcc -print-file-name="stdc++"
+     #+END_SRC
+
+     Will just print out =stdc++=. Where as
+
+     #+BEGIN_SRC sh :tangle no
+       gcc -print-file-name="libstdc++.so"
+     #+END_SRC
+
+     Will print out the absolute path to the =libstdc++= it will use
+     to link against.
