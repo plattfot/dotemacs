@@ -2808,6 +2808,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      There is also =-grecord-gcc-switches= that works similarly.
 
+     To extract the flags from the object file:
+     #+BEGIN_SRC sh :tangle no
+       objdump -s -j .GCC.command.line <object file> | sed -En 's/ [[:xdigit:]]{4}( [[:xdigit:] ]{8}){4}  ([^ ]*)/\2/p' | tr -d "\n" | sed -E -e 's/\.-/ -/g' -e 's/[. ]+$/\n/'
+     #+END_SRC
 **** Output absolute path to a library
 
      #+BEGIN_SRC sh :tangle no
