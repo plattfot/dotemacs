@@ -2830,3 +2830,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      Will print out the absolute path to the =libstdc++= it will use
      to link against.
+**** Print only the commands it will run
+
+     #+BEGIN_SRC sh :tangle no
+       gcc -###
+     #+END_SRC
+
+     It's similar to =-v= except it will quote the arguments and not
+     run the commands
