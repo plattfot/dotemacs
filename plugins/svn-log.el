@@ -18,35 +18,29 @@ To get a svn log in xml use 'svn log --xml --verbose'."
     (insert-file-contents svn-xml-log)
     (let ((log (libxml-parse-xml-region (point-min) (point-max)))
           (name (file-name-base svn-xml-log)))
-      (mapcar (lambda (logentry-xml)
-                (let* ((fourth-entry (nth 4 logentry-xml))
-                       (paths)
-                       (msg))
-                  ;; paths are only included if svn log is run with --verbose
-                  (if (eq (car fourth-entry) 'paths)
-                      (setf paths (svn-parse-paths (nthcdr 2 fourth-entry))
-                            msg (nth 2 (nth 5 logentry-xml)))
-                    (setf paths '()
-                          msg (nth 2 (nth 4 logentry-xml))))
-                  (make-svn-logentry
-                   :revision (cdr (assoc 'revision (nth 1 logentry-xml)))
-                   :author (nth 2 (nth 2 logentry-xml))
-                   :date (date-to-time (nth 2 (nth 3 logentry-xml)))
-                   :paths paths
-                   :msg msg
-                   :name (if paths (svn-name-from-paths-naive paths) name))))
-              (nthcdr 2 log)))))
+      (-map (lambda (logentry-xml)
+              (let* ((paths-item (assoc 'paths logentry-xml))
+                     (paths (when paths-item (svn-parse-paths (nthcdr 2 paths-item)))))
+                ;; paths are only included if svn log is run with --verbose
+                (make-svn-logentry
+                 :revision (string-to-number (alist-get 'revision (nth 1 logentry-xml)))
+                 :author (nth 2 (assoc 'author logentry-xml))
+                 :date (date-to-time (nth 2 (assoc 'date logentry-xml)))
+                 :paths paths
+                 :msg (nth 2 (assoc 'msg logentry-xml))
+                 :name (if paths (svn-name-from-paths-naive paths) name))))
+            (nthcdr 2 log)))))
 
 (defun svn-parse-paths (paths-xml)
   "Extract the paths in the list PATHS-XML as svn-path structs."
-  (mapcar (lambda (path-xml)
-            (let ((metadata (nth 1 path-xml)))
-              (make-svn-path
-               :prop-mods (string-equal "true" (cdr (assoc 'prop-mods metadata)))
-               :text-mods (string-equal "true" (cdr (assoc 'text-mods metadata)))
-               :kind (cdr (assoc 'kind metadata))
-               :action (cdr (assoc 'action metadata))
-               :name (nth 2 path-xml))))
+  (-map (lambda (path-xml)
+          (let ((metadata (nth 1 path-xml)))
+            (make-svn-path
+             :prop-mods (s-equals? "true" (alist-get 'prop-mods metadata))
+             :text-mods (s-equals? "true" (alist-get 'text-mods metadata))
+             :kind (alist-get 'kind metadata)
+             :action (alist-get 'action metadata)
+             :name (nth 2 path-xml))))
           paths-xml))
 
 (defun svn-name-from-paths-naive (paths)
