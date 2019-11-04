@@ -290,7 +290,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package flycheck
          :config
-         (setq flycheck-mode-line-prefix "!")
+         (setq-default flycheck-mode-line-prefix "!"
+                       flycheck-emacs-lisp-load-path 'inherit)
          (add-hook 'after-init-hook #'global-flycheck-mode)
          ;; Current version of rst-sphinx for flycheck disabling it
          (add-to-list 'auto-mode-alist '("\\.rst\\'" .
