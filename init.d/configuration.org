@@ -2752,6 +2752,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC :tangle no
     p/r VARIABLE
     #+END_SRC
+*** PDB
+    To use pdb with emacs, simply =M-x= =pbd=. If =pdb= does not exist
+    as an executable on the machine, use =python -m pdb= instead in
+    the prompt.
 *** Ledger
 **** Check what you spend on X
     #+BEGIN_SRC sh
