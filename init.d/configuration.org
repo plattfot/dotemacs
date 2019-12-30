@@ -559,23 +559,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Set following files to use makefile-gmake-mode as the default.
      - Files that starts with =Makefile=.
      - Has extension =.mk=.
-     - Files that are located in a directory called Make and ends with
-       =Rules=.
-     - Files that are located in a directory called =modules=.
-     - Files called =BUILD.conf= (pb2 file).
-     - Files called =Project= that are located in a directory called Make.
-     - Has extension =.tdpackage=.
 
      Show trailing whitespace as those can mess up make pretty bad.
      #+BEGIN_SRC emacs-lisp
        (use-package make-mode
          :mode (("Makefile.*" . makefile-gmake-mode)
-                ("\\.mk$" . makefile-gmake-mode)
-                ("Make/.*Rules$" . makefile-gmake-mode)
-                ("Make/modules/.*" . makefile-gmake-mode)
-                ("BUILD\\.conf$" . makefile-gmake-mode)
-                ("Make/Project$" . makefile-gmake-mode)
-                ("\\.tdpackage$" . makefile-gmake-mode))
+                ("\\.mk$" . makefile-gmake-mode))
          :config
          (add-hook 'makefile-mode-hook
                    (lambda ()
