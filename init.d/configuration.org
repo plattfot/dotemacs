@@ -470,7 +470,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (local-set-key  (kbd "<C-iso-lefttab>") 'ff-extension-other-impl)
 
                     (setq indent-tabs-mode nil)
-                    (when dotemacs-is-work (c-set-style "dd"))
+                    (c-set-style "dd")
                     ;; enable camelCase
                     (subword-mode 1)))
         (setq ff-search-directories '("." "../src" "../include"))
