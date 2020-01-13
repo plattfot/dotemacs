@@ -1240,6 +1240,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                        ))
         :config
         (use-package ansi-color)
+        (setf compilation-scroll-output t)
         (add-hook 'compilation-filter-hook
                   (lambda ()
                     (toggle-read-only)
