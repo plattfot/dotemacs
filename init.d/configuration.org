@@ -834,6 +834,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package jupyter
         :pin melpa-stable)
     #+END_SRC
+*** telegram
+    #+BEGIN_SRC emacs-lisp
+      (use-package telega
+        :if (not dotemacs-is-work)
+        :config
+        (add-hook 'telega-root-mode-hook 'dotemacs-hide-trailing-whitespace)
+        (add-hook 'telega-chat-mode-hook 'dotemacs-hide-trailing-whitespace)
+        :pin melpa-stable)
+    #+END_SRC
 ** Web
   Packages for webbased content.
 *** nginx
