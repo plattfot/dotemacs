@@ -2621,6 +2621,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        sys.path.insert(0, 'new/path/to/module')
        reload(module)
      #+END_SRC
+**** Generate etags
+     #+BEGIN_SRC shell :tangle no
+       find . -name "*.py" -print | etags -
+     #+END_SRC
 *** Print out debug info
     #+BEGIN_SRC sh :tangle no
       readelf --debug-dump=<option> <elf>
