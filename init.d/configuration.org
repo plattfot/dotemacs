@@ -2765,6 +2765,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     To use pdb with emacs, simply =M-x= =pbd=. If =pdb= does not exist
     as an executable on the machine, use =python -m pdb= instead in
     the prompt.
+
+    To change working directory (default it uses the path of the script). Use
+    #+BEGIN_SRC python :tangle no
+    import os; os.chdir('PATH')
+    #+END_SRC
+    in the =pdb= prompt.
 *** Ledger
 **** Check what you spend on X
     #+BEGIN_SRC sh
