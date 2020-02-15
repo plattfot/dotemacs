@@ -5,6 +5,11 @@
 ;;; Code:
 (require 'cl-lib)
 (require 's)
+(require 'dash)
+(require 'simple)
+(require 'bfuture)
+(require 'dired)
+
 (cl-defun bank-fix-timestring (file)
   "Fixing time strings on statement files.
 
@@ -39,5 +44,15 @@ e.g. 2020Feb15. and the other is the to date."
                 (funcall fix-date to)
                 "." ext)
         file))))
+
+(defun bank-dired-map-rename (func)
+  "Apply FUNC on each marked file to rename."
+  (interactive "aFunction: ")
+  (let ((procs
+         (--map
+          (bfuture-new "mv" it (funcall func it))
+          (dired-get-marked-files))))
+    (bfuture-result-when-all-done procs)))
+
 (provide 'bank)
 ;;; bank.el ends here
