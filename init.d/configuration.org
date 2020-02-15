@@ -1488,6 +1488,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 * Custom
 ** Packages
+*** bank
+    Functions for handling bank statements
+    #+BEGIN_SRC emacs-lisp
+      (use-package bank
+        :ensure nil
+        :load-path "plugins")
+    #+END_SRC
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
     and characters.
