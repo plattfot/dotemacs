@@ -1,3 +1,6 @@
 [submodule "themes/sunburst-theme"]
 	path = themes/sunburst-theme
 	url = git@github.com:plattfot/sunburst-theme.el.git
+[submodule "bfuture.el"]
+	path = bfuture.el
+	url = git@github.com:plattfot/bfuture.el.git
