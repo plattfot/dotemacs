@@ -2656,7 +2656,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      contains build and install artifacts.
 
      #+BEGIN_SRC shell :tangle no
-     find . -type d -name private -prune -or -name "*.py" -print | etags -
+       find . -type d -name private -prune -or -name "*.py" -print | etags -
      #+END_SRC
 
 *** Print out debug info
