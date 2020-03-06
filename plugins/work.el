@@ -8,6 +8,9 @@
 ;; Load libyaml bindings if they exist.
 (require 'libyaml nil t)
 (require 'projectile)
+(require 'dash)
+(require 'json)
+(require 'cl-lib)
 
 ;; ============================= Functions ===================================
 (defun work-insert-eigen-pretty-printer ()
@@ -150,21 +153,29 @@ directory. Same as `projectile-default-project-name'"
 (setq projectile-project-name-function #'work-project-name)
 
 ;; --------------------------- Source BuildConfig ----------------------------
-(defun work-get-version-pk-lock (name file)
+(cl-defun work-get-version-pk-lock (name file &key (recipe 'build) flavour)
   "Gets the version from a file.
 Where NAME is the name of the package you want the version for
-and FILE the config to search in."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (setq case-fold-search t)
-    (if (re-search-forward
-         (format (concat "\"%s\":[[:blank:]]+{\n"
-                         "[[:blank:]]+\"version\":[[:blank:]]"
-                         "\"\\([[:graph:]_]+\\)\"")
-                 name)
-         nil t)
-        (match-string 1)
-      (error "No version found for %s" name))))
+and FILE the config to search in.
+
+RECIPE specifies what recipe it should fetch the VERSION from, default is build.
+
+FLAVOUR specifies what flavour it should fetch from, default is the first one.
+"
+  (let* ((pk.lock (json-read-file file))
+         (get-symbol (lambda (x) (if (symbolp x) x (intern x))))
+         (version
+          (-as-> (alist-get 'flavours pk.lock) x
+                 (if flavour
+                     (alist-get (funcall get-symbol flavour) x)
+                   (cdar x))
+                 (alist-get (funcall get-symbol recipe) x)
+                 (alist-get 'packages x)
+                 (alist-get (funcall get-symbol name) x)
+                 (alist-get 'version x))))
+    (unless version
+      (error "No version found for %s" name))
+    version))
 
 (defun work-get-version-from-pk-lock (name path)
   "Gets the version from the pk lock file.
