@@ -1510,8 +1510,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** bfuture
     #+BEGIN_SRC emacs-lisp
       (use-package bfuture
-          :ensure nil
-          :load-path "bfuture.el")
+        :ensure nil
+        :load-path "bfuture.el")
     #+END_SRC
 *** bank
     Functions for handling bank statements
