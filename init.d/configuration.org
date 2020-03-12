@@ -1501,6 +1501,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+END_SRC
 * Custom
 ** Packages
+*** home
+    #+BEGIN_SRC emacs-lisp
+      (use-package home
+        :ensure nil
+        :load-path "plugins")
+    #+END_SRC
 *** bfuture
     #+BEGIN_SRC emacs-lisp
       (use-package bfuture
@@ -1830,18 +1836,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                    (s-append "-impl" base))
                                  ext))))
       #+END_SRC
-*** Workspace
-    Function for splitting emacs into three frames.
-    Really nice to use with i3wm.
-    #+BEGIN_SRC emacs-lisp
-      (defun setup-home ()
-      "Splits the session into three frames"
-      (interactive)
-      (delete-other-frames)
-      (delete-other-windows)
-      (make-frame-command)
-      (make-frame-command))
-    #+END_SRC
+
 *** Split lines
     Function for splitting lines at specified character. Default is ','.
     #+BEGIN_SRC emacs-lisp
