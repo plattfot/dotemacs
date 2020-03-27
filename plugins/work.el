@@ -77,7 +77,7 @@ With the names 3ps, cyclone, build and misc"
 Works only if the current buffer is a shell."
   (let ((process (get-buffer-process (current-buffer))))
     (unless process
-      (error "No process in %s" buffer-or-name))
+      (error "No process in %s" (buffer-name)))
     (goto-char (process-mark process))
     (insert command)
     (comint-send-input nil t )))
