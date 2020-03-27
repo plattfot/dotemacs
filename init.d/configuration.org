@@ -108,7 +108,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         indent-tabs-mode nil            ;; Don't use tab for indenting.
         sentence-end-double-space nil   ;; Use sane defaults for sentences.
         show-trailing-whitespace t
-        display-time-24hr-format t)
+        display-time-24hr-format t
+        scroll-step           1         ;; smooth scrolling
+        scroll-conservatively 10000)
      (show-paren-mode 1)                ;; Highlight matching brackets.
    #+END_SRC
 
