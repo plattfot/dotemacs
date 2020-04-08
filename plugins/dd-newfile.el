@@ -72,14 +72,14 @@ Return a string with the namespaces."
      'dd-newfile-history)))
 
 (defun dd-find-workspace (path)
-  "Find the path to the last WORKSPACE file, in the PATH.
+  "Find the path to the last manifest.yaml file, in the PATH.
 For absolute paths it will return the root of the path if not
 found.  For relative it will return nil."
 
   (let ((found-path-p nil)
         (abs_path (expand-file-name path)))
     (while (and (not (string-equal abs_path "/")) (not found-path-p))
-      (setq found-path-p (directory-files abs_path nil "WORKSPACE"))
+      (setq found-path-p (directory-files abs_path nil "manifest.yaml"))
       (setq abs_path (file-name-directory (directory-file-name abs_path))))
     (when (not found-path-p)
       (error "Workspace not found!"))
