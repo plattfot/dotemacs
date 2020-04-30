@@ -2776,6 +2776,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        eval $(ssh-agent)
        ssh-add ~/.ssh/private-key
      #+END_SRC
+**** multihop with same key
+     Use an intermediate machine (=JUMPHOST=) to ssh to the remote
+     host (=REALHOST=) without needing to generate a key on the
+     =JUMPHOST=.
+     #+BEGIN_SRC sh
+     ssh -A -t -l USER1 JUMPHOST ssh -A -t -l USER2 REALHOST
+     #+END_SRC
+**** Setup a socks proxy
+     Setup a socks tunnel to HOST at port 9090. The option =-N= is to
+     disable the prompt to make it easier to keep track of which
+     terminal runs the tunnel.
+     #+BEGIN_SRC sh
+     ssh -ND9090 HOST
+     #+END_SRC
 *** houdini
 **** Expression for string parameters
      Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
