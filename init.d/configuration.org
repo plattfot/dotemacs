@@ -938,11 +938,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (python . t)
                (scheme . t)))
           (org-babel-do-load-languages
-             'org-babel-load-languages
-             '((calc . t)
-               (python . t)
-               (scheme . t)
-               (shell . t))))
+           'org-babel-load-languages
+           '((calc . t)
+             (python . t)
+             (scheme . t)
+             (shell . t))))
         :pin org)
     #+END_SRC
 
