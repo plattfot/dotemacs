@@ -1264,16 +1264,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ([M-down]  . windmove-down)) ; move to downer window
        	:pin melpa-stable)
     #+END_SRC
-*** avy
-    Cool tool that I use far too seldom.
-    #+BEGIN_SRC emacs-lisp
-      (use-package avy
-        :bind (("M-j" . avy-goto-char))
-        :config
-        (setq avy-all-windows nil)
-        (setq avy-background t)
-        :pin melpa-stable)
-    #+END_SRC
 *** Compilation
     Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
 
