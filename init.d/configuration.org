@@ -912,9 +912,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-default-notes-file (concat org-directory "/Anteckningar.org")
               org-src-fontify-natively t
               org-src-tab-acts-natively t
+              org-enforce-todo-dependencies t
               org-confirm-babel-evaluate nil
               org-src-window-setup 'other-window
-              org-link-search-must-match-exact-headline nil)
+              org-link-search-must-match-exact-headline nil
+              org-log-into-drawer "LOGBOOK")
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
 
@@ -937,6 +939,35 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin org)
     #+END_SRC
 
+    #+begin_src emacs-lisp
+      (use-package org-agenda
+        :ensure nil
+        :config
+        (setq org-agenda-prefix-format '((agenda . " %i %?-12t% s")
+                                         (todo . " %i %-12:c")
+                                         (tags . " %i %-12:c")
+                                         (search . " %i %-12:c"))))
+    #+END_SRC
+
+    The =org-agenda-prefix-format= is taken from [[https://github.com/m-cat/init.el/blob/master/init.el#L2082][m-cat's init.el]] and
+    removes file name and category. No need to see the file name as
+    everything is in the same file.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-super-agenda
+        :config
+        (setq org-super-agenda-groups
+              '((:name "Idag"
+                       :time-grid t)
+                (:name "Avakta" :todo "WAIT" :order 100)
+                (:name "Tid över" :priority "C" :order 50)
+                (:name "Låg prio" :priority "B" :order 50)
+                (:name "Hög prio" :priority "A" :order 1)
+                (:name "Att göra" :todo "TODO")
+              ))
+        (org-super-agenda-mode)
+        :pin melpa)
+    #+END_SRC
     Use pretty bullet points instead of asterix
     #+BEGIN_SRC emacs-lisp
       (use-package org-bullets
