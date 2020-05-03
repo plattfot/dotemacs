@@ -971,6 +971,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (:name "Låg prio" :priority "B" :order 50)
                 (:name "Hög prio" :priority "A" :order 1)
                 (:name "Att göra" :todo "TODO")
+                (:name "Klart" :todo ("DONE" "CANCELLED") :order 200)
               ))
         (org-super-agenda-mode)
         :pin melpa)
