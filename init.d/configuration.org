@@ -327,7 +327,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+END_SRC
 *** Navigation
    Packages for navigating code.
-**** GTags
+**** GTags (disabled)
      Key bindings for finding tag, reference and usage of symbol.
 
      TODO: Find out why ggtags messes with the for theme auto complete.
@@ -335,6 +335,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
          :after (cc-mode)
+         :disabled t
          :diminish ggtags-mode
          :init
          ;; Patching ggtags to not use compilation-info-face for the project
