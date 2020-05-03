@@ -850,9 +850,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+END_SRC
 *** vterm
+
+    Workaround for killing text in vterm to the kill ring.
+    #+BEGIN_SRC emacs-lisp
+      (defun vterm-send-C-k ()
+        "Send `C-k' to libvterm."
+        (interactive)
+        (kill-ring-save (point) (vterm-end-of-line))
+        (vterm-send-key "k" nil nil t))
+    #+END_SRC
     #+BEGIN_SRC emacs-lisp
       (use-package vterm
-        :bind (:map vterm-mode-map ("<f8>" . vterm-clear))
+        :bind (:map vterm-mode-map
+                    ("<f8>" . vterm-clear)
+                    ("C-k" . vterm-send-C-k))
         :config
         (setf vterm-max-scrollback 10000)
         (add-hook 'vterm-mode-hook 'dotemacs-hide-trailing-whitespace))
