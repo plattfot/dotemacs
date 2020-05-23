@@ -704,6 +704,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :after (ledger-mode flycheck)
        :pin melpa)
    #+END_SRC
+*** direnv
+    #+begin_src emacs-lisp
+      (use-package direnv
+       :config
+       (direnv-mode))
+    #+end_src
 *** Arduino
     Function for setting up a arduino template sketch
     #+BEGIN_SRC emacs-lisp
