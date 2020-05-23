@@ -212,7 +212,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+BEGIN_SRC emacs-lisp
        (use-package company
-                                               ;:disabled t
          :bind ( ("C-<tab>" . company-complete-common)
                  :map company-active-map
                  ("C-n" . company-select-next)
