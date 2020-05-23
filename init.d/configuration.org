@@ -787,7 +787,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 *** pdftools
 
-    NOTE: To use this, install it externally via the distribution's
+    *NOTE:* To use this, install it externally via the distribution's
     package manager. As installing this from melpa tends to break a
     lot due it needs to be compiled.
     #+BEGIN_SRC emacs-lisp
