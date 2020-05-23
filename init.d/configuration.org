@@ -1237,11 +1237,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      navigation instead.
     #+BEGIN_SRC emacs-lisp
       (use-package windmove
-       	:bind (([M-left]  . windmove-left)  ; move to left window
+        :bind (([M-left]  . windmove-left)  ; move to left window
                ([M-right] . windmove-right) ; move to right window
                ([M-up]    . windmove-up)    ; move to upper window
                ([M-down]  . windmove-down)) ; move to downer window
-       	:pin melpa-stable)
+        :pin melpa-stable)
     #+END_SRC
 *** Compilation
     Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
