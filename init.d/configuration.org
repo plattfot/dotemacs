@@ -1282,34 +1282,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq-default reb-re-syntax 'string))
     #+END_SRC
-*** Projectile
-
-    Quicker way of navigating between projects. And other nice stuff.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package projectile
-        :after (ivy counsel)
-        :bind
-        (:map projectile-mode-map
-              ("C-c p" .  projectile-command-map))
-        :init
-        (projectile-mode +1)
-        :config
-        (setq projectile-completion-system 'ivy
-              projectile-mode-line-prefix " ")
-        (projectile-mode +1)
-        :pin melpa-stable)
-    #+END_SRC
-
-    Better integration with counsel. Using the melpa version as
-    melpa-stable doesn't work with projectile-2.0.0
-    #+BEGIN_SRC emacs-lisp
-      (use-package counsel-projectile
-        :after (projectile counsel)
-        :config
-        (counsel-projectile-mode)
-        :pin melpa)
-    #+END_SRC
 *** evil
     Vim bindings are a lot easier to use on the phone than normal
     emacs bindings. Enable *evil-mode* when it detects android.
