@@ -956,16 +956,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     This can happen when you bind ‘yas-expand’ outside of the ‘yas-minor-mode-map’.
 
-*** Org-noter (disabled)
-    Not quite working yet.
-    #+BEGIN_SRC emacs-lisp
-      (use-package org-noter
-        :disabled t
-        :after org
-        :config
-        (setq-default org-noter-notes-search-path `("~/Documents" ,org-directory))
-        :pin melpa-stable)
-    #+END_SRC
 *** Buffer move
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
