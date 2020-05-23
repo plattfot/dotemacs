@@ -463,6 +463,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
+        :ensure nil ;; built in
         :config
         ;; Call everytime an c-mode-common file is opened
         (add-hook 'c-mode-common-hook
@@ -541,6 +542,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Set files associated with glsl to use glsl mode
      #+BEGIN_SRC emacs-lisp
        (use-package glsl-mode
+         :ensure t
          :mode (("\\.vert\\'" . glsl-mode)
                 ("\\.frag\\'" . glsl-mode)
                 ("\\.geom\\'" . glsl-mode)
@@ -616,6 +618,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Meson
    #+BEGIN_SRC emacs-lisp
      (use-package meson-mode
+       :ensure t
        :pin melpa)
    #+END_SRC
 *** Julia
@@ -637,6 +640,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** lua
     #+BEGIN_SRC emacs-lisp
       (use-package lua-mode
+        :ensure t
         :pin melpa)
     #+END_SRC
 ** Programs
@@ -649,6 +653,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
+       :ensure t
        :bind (:map ledger-mode-map
                    ("C-c C" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
@@ -719,6 +724,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package magit
+        :ensure t
         :after (transient)
         :bind ("C-x g" . magit-status)
         :pin melpa)
@@ -779,6 +785,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package org-mime
         :after (org notmuch)
+        :ensure t
         :config
         (setq
          org-mime-library 'mml
@@ -866,6 +873,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package org
+        :ensure t
         :mode ("\\.org\\'" . org-mode)
         :bind (("C-c l" . org-store-link)
                ("C-c a" . org-agenda)
@@ -925,6 +933,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+BEGIN_SRC emacs-lisp
       (use-package org-super-agenda
+        :ensure t
         :config
         (setq org-super-agenda-groups
               '((:name "Idag"
@@ -943,6 +952,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+BEGIN_SRC emacs-lisp
       (use-package org-bullets
         :after (org)
+        :ensure t
         :init
         (add-hook 'org-mode-hook
                   (lambda ()
@@ -960,6 +970,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
       (use-package buffer-move
+        :ensure t
         :bind ( ("<M-S-up>"    . buf-move-up)
                 ("<M-S-down>"  . buf-move-down)
                 ("<M-S-left>"  . buf-move-left)
@@ -1227,6 +1238,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      navigation instead.
     #+BEGIN_SRC emacs-lisp
       (use-package windmove
+        :ensure t
         :bind (([M-left]  . windmove-left)  ; move to left window
                ([M-right] . windmove-right) ; move to right window
                ([M-up]    . windmove-up)    ; move to upper window
