@@ -543,10 +543,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+BEGIN_SRC emacs-lisp
        (use-package glsl-mode
          :mode (("\\.vert\\'" . glsl-mode)
-               	("\\.frag\\'" . glsl-mode)
-               	("\\.geom\\'" . glsl-mode)
-               	("\\.prog\\'" . glsl-mode)
-               	("\\.glsl\\'" . glsl-mode))
+                ("\\.frag\\'" . glsl-mode)
+                ("\\.geom\\'" . glsl-mode)
+                ("\\.prog\\'" . glsl-mode)
+                ("\\.glsl\\'" . glsl-mode))
          :pin melpa)
      #+END_SRC
 
