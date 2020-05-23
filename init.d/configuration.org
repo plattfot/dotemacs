@@ -403,7 +403,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (|) - insert () -> (()|
      #+BEGIN_SRC emacs-lisp
        (use-package smartparens
-         ;; :disabled t
          :init
          ;;(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
          ;;(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
