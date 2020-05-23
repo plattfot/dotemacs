@@ -1314,20 +1314,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'notmuch-message-mode-hook 'emojify-mode)
         :pin melpa-stable)
     #+END_SRC
-
-    And added backend to company to be able to type emojis when
-    responding to messages.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package company-emoji
-        :after (company)
-        :init
-        (add-hook 'notmuch-message-mode-hook
-                  (lambda ()
-                    (add-to-list 'company-backends 'company-emoji)))
-        :pin melpa-stable)
-    #+END_SRC
-
 *** Rainbow
     Useful when debugging the theme. But is rarely used.
     #+BEGIN_SRC emacs-lisp
