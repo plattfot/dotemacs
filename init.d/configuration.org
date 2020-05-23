@@ -970,11 +970,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Move buffers around between windows
     #+BEGIN_SRC emacs-lisp
       (use-package buffer-move
-       	:bind ( ("<M-S-up>"    . buf-move-up)
-               	("<M-S-down>"  . buf-move-down)
-               	("<M-S-left>"  . buf-move-left)
-               	("<M-S-right>" . buf-move-right))
-       	:pin melpa-stable)
+        :bind ( ("<M-S-up>"    . buf-move-up)
+                ("<M-S-down>"  . buf-move-down)
+                ("<M-S-left>"  . buf-move-left)
+                ("<M-S-right>" . buf-move-right))
+        :pin melpa-stable)
     #+END_SRC
 *** Dired
     Settings for dired.
