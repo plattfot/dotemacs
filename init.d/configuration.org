@@ -357,46 +357,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 *** Lint
    Packages that helps inspecting code, report errors etc.
-**** Flycheck
-     Enable flycheck globably.
 **** Flymake
 
-     Disable clang check, gcc check works better.
-     #+BEGIN_SRC emacs-lisp
-       (use-package flycheck
-         :config
-         (setq-default flycheck-mode-line-prefix "!"
-                       flycheck-emacs-lisp-load-path 'inherit)
-         (add-hook 'after-init-hook #'global-flycheck-mode)
-         ;; Current version of rst-sphinx for flycheck disabling it
-         (add-to-list 'auto-mode-alist '("\\.rst\\'" .
-                                         (lambda () (rst-mode) (flycheck-mode -1))))
-         :pin melpa-stable)
      Moved over to using ~flymake~ instead of ~flycheck~. Mainly
      because it is the only one that works with ~eglot~ so keeping it
      consitent between modes.
 
-     #+END_SRC
-     Tell emacs it's safe to change these in a .dir-locals.el file.
-     #+BEGIN_SRC emacs-lisp
-       (put 'flycheck-c/c++-gcc-executable 'safe-local-variable #'stringp)
-       (put 'flycheck-gcc-language-standard 'safe-local-variable #'stringp)
-       (put 'flycheck-gcc-include-path 'safe-local-variable #'listp)
-       (put 'flycheck-gcc-includes 'safe-local-variable #'listp)
-       (put 'flycheck-gcc-warnings 'safe-local-variable #'listp)
-       (put 'flycheck-gcc-definitions 'safe-local-variable #'listp)
-       (put 'flycheck-gcc-args 'safe-local-variable #'listp)
-
-       (put 'flycheck-c/c++-clang-executable 'safe-local-variable #'stringp)
-       (put 'flycheck-clang-language-standard 'safe-local-variable #'stringp)
-       (put 'flycheck-clang-include-path 'safe-local-variable #'listp)
-       (put 'flycheck-clang-includes 'safe-local-variable #'listp)
-       (put 'flycheck-clang-warnings 'safe-local-variable #'listp)
-       (put 'flycheck-clang-definitions 'safe-local-variable #'listp)
-       (put 'flycheck-clang-args 'safe-local-variable #'listp)
-
-       (put 'flycheck-checkers 'safe-local-variable #'listp)
-     #+END_SRC
 *** Navigation
    Packages for navigating code.
 **** GTags (disabled)
@@ -600,19 +566,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Add key combinations to perform cargo tasks within a Rust project.
     #+BEGIN_SRC emacs-lisp
       (use-package cargo
+        :ensure t
         :after (rust-mode)
         :init
         (add-hook 'rust-mode-hook 'cargo-minor-mode)
         :pin melpa-stable)
     #+END_SRC
-
-    Lint rust code with flycheck
-    #+BEGIN_SRC emacs-lisp
-      (use-package flycheck-rust
-        :after (rust-mode)
-        :pin melpa)
-    #+END_SRC
-
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
@@ -770,17 +729,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      "\\([ \t]+;.+?\\|[ \t]*\\)?$"))
        (add-hook 'ledger-mode-hook
                  (lambda ()
+                   (setq-local company-backends '(company-capf))
                    (setq-local tab-always-indent 'complete)
                    (setq-local completion-ignore-case t)
                    (setq-local ledger-complete-in-steps t)))
-       :pin melpa)
-   #+END_SRC
-
-   Using flycheck instead of flymake to lint ledger. As it works much
-   better for my workflow.
-   #+BEGIN_SRC emacs-lisp
-     (use-package flycheck-ledger
-       :after (ledger-mode flycheck)
        :pin melpa)
    #+END_SRC
 *** direnv
