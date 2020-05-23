@@ -353,8 +353,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      because it is the only one that works with ~eglot~ so keeping it
      consitent between modes.
 
-*** Navigation
-   Packages for navigating code.
      #+begin_src emacs-lisp
        (use-package flymake
          :ensure nil ; built-in
