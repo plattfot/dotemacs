@@ -372,14 +372,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-hook 'prog-mode-hook 'flymake-mode))
      #+end_src
 
-**** highlight symbol
-     Jump between symbols with M-n M-p.
-     #+BEGIN_SRC emacs-lisp
-       (use-package highlight-symbol
          :init
-         (add-hook 'c-mode-common-hook 'highlight-symbol-nav-mode)
-         :pin melpa)
-     #+END_SRC
 ** Programming languages
   Modes for highlighting different programing languages.
 *** Haskell
