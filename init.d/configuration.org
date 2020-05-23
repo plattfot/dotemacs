@@ -1107,6 +1107,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (eshell/cd directory)))
     #+END_SRC
     Function taken from this [[https://www.reddit.com/r/emacs/comments/5pziif/cd_to_home_directory_of_server_when_using_eshell/de9olb7][reddit answer]]
+*** Eldoc
+    #+begin_src emacs-lisp
+      (use-package eldoc
+        :ensure nil
+        :diminish t
+        :config
+        (setf eldoc-echo-area-use-multiline-p nil))
+    #+end_src
 *** emms
     Using Arch's package manager to handle emms, as I need the
     emms-print-metadata function for libtag.
