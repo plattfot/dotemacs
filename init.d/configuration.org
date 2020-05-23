@@ -832,10 +832,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setf vterm-max-scrollback 10000)
         (add-hook 'vterm-mode-hook 'dotemacs-hide-trailing-whitespace))
     #+END_SRC
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package vterm-toggle)
-    #+END_SRC
 *** mpdel
     #+BEGIN_SRC emacs-lisp
       (use-package libmpdel
