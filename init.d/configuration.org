@@ -1370,16 +1370,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (diminish 'abbrev-mode)
     #+END_SRC
 
-*** fancy-narrow
-    Highlight section of code, run 'fancy-narrow-to-region' to narrow
-    down on selection.  'fancy-widen' to go back to
-    normal. 'fancy-narrow-to-defun' to narrow down on function.
-
-    Nothing I use that often.
-    #+BEGIN_SRC emacs-lisp
-      (use-package fancy-narrow
-        :pin melpa-stable)
-    #+END_SRC
 *** isearch
 
     Integrate packages as expand-region with isearch. This function
