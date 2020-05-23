@@ -804,11 +804,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (when dotemacs-is-work
           (setf manual-program "pk man")))
     #+END_SRC
-*** jupyter
-    #+BEGIN_SRC emacs-lisp
-      (use-package jupyter
-        :pin melpa-stable)
-    #+END_SRC
 *** telegram
     #+BEGIN_SRC emacs-lisp
       (use-package telega
