@@ -709,22 +709,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       }")
       )
     #+END_SRC
-*** Gnuplot
-    Enable gnuplot to be able to plot tables in org mode.
-
-    Bind the F9 key to open a buffer into gnuplot mode
-
-    Set that all files ending in .gp will use the gnuplot-mode
-    #+BEGIN_SRC emacs-lisp
-      (use-package gnuplot
-       	:bind ([(f9)] . gnuplot-make-buffer)
-       	:config
-       	(autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
-       	(autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
-       	;; Set files with ext .gp to use gnuplot
-       	(setq auto-mode-alist (append '(("\\.gp$" . gnuplot-mode)) auto-mode-alist))
-       	:pin melpa-stable)
-    #+END_SRC
 *** Magit
     A Git porcelain inside Emacs
     Key =C-x g= to run magit on current buffer.
