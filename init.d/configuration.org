@@ -286,6 +286,49 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        	 (setq yas-indent-line nil)
        	 :pin melpa-stable)
      #+END_SRC
+**** eglot
+     Client for Language Server Protocol (lsp) servers.
+
+     Tried both ~lsp-mode~ and ~eglot~. And for my use case ~eglot~ is
+     better. ~lsp-mode~ involved a lot more tweaking to get it working
+     (e.g. make sure ~company-capf~ is first in ~company-backends~).
+     Once I got it working the completion menu in company was a lot
+     nosier than what I get from ~eglot~. Only issue I have with
+     ~eglot~ is the face in the mode-line. My mode-line is monochrome
+     and is grayed out when the frame is not in focus. Which ~eglot~
+     does not respect and by default it stands out like a sore thumb
+     (I have the same issue with ~flymake~ and ~compilation~). I have
+     tweaked my theme so it is not so bad. Still annoying though.
+
+     *NOTE:* clangd also accepts arguments from the environment
+      variable ~CLANGD_FLAGS~. I'm using that combined with ~direnv~
+      to specify where the ~compile_commands.json~ is located. As that
+      can change from project to project.
+
+      For example set that ~compile_commands.json~ is in the
+      subdirectory ~build~ in the root of the project.
+
+     #+begin_src sh :tangle no
+       # .envrc
+       export CLANGD_FLAGS="--compile-commands-dir=./build"
+     #+end_src
+
+     #+begin_src emacs-lisp
+       (use-package eglot
+         :hook ((c++-mode . eglot-ensure))
+         :ensure t
+         :config
+         (setq gc-cons-threshold 100000000
+               read-process-output-max (* 1024 1024) ;; 1mb
+               company-minimum-prefix-length 1
+               company-idle-delay 0.0)
+         (add-to-list 'eglot-server-programs
+                      '(c++-mode . ("clangd"
+                                    "--background-index"
+                                    "--header-insertion=iwyu"
+                                    "--pch-storage=memory"
+                                    "-j=6"))))
+     #+end_src
 *** Lint
    Packages that helps inspecting code, report errors etc.
 **** Flycheck
