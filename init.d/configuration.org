@@ -67,7 +67,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Install missing packages.
    #+BEGIN_SRC emacs-lisp
-     (setq use-package-always-ensure t)
+     (setq use-package-always-ensure (not (getenv "GUIX_PROFILE")))
    #+END_SRC
 ** Custom plugins
 *** Dotemacs
