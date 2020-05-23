@@ -359,6 +359,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Packages that helps inspecting code, report errors etc.
 **** Flycheck
      Enable flycheck globably.
+**** Flymake
 
      Disable clang check, gcc check works better.
      #+BEGIN_SRC emacs-lisp
@@ -371,6 +372,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (add-to-list 'auto-mode-alist '("\\.rst\\'" .
                                          (lambda () (rst-mode) (flycheck-mode -1))))
          :pin melpa-stable)
+     Moved over to using ~flymake~ instead of ~flycheck~. Mainly
+     because it is the only one that works with ~eglot~ so keeping it
+     consitent between modes.
 
      #+END_SRC
      Tell emacs it's safe to change these in a .dir-locals.el file.
@@ -399,6 +403,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Key bindings for finding tag, reference and usage of symbol.
 
      TODO: Find out why ggtags messes with the for theme auto complete.
+     #+begin_src emacs-lisp
+       (use-package flymake
+         :ensure nil ; built-in
+         :config
+         (add-hook 'prog-mode-hook 'flymake-mode))
+     #+end_src
 
      #+BEGIN_SRC emacs-lisp
        (use-package ggtags
