@@ -4,21 +4,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * General
 ** Lexical binding
    Enable lexical binding in this config
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    ;; -*- lexical-binding: t -*-
-   #+END_SRC
+   #+end_src
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq custom-file (concat user-emacs-directory ".custom.el"))
      (when (file-exists-p custom-file)
          (load custom-file))
-   #+END_SRC
+   #+end_src
 ** Package management
 
    Setup repositories for package and auto download use-package if it's missing.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (require 'package)
 
      (setq package-archives
@@ -55,50 +55,50 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (package-install 'use-package))
      (unless (package-installed-p 'diminish)
        (package-install 'diminish))
-   #+END_SRC
+   #+end_src
 
    Let use-package handle all the packages I use
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (eval-when-compile
        (require 'use-package))
      (require 'diminish)                ;; if you use :diminish
      (require 'bind-key)                ;; if you use any :bind variant
-   #+END_SRC
+   #+end_src
 
    Install missing packages.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq use-package-always-ensure (not (getenv "GUIX_PROFILE")))
-   #+END_SRC
+   #+end_src
 ** Custom plugins
 *** Dotemacs
     Export a variable if I'm at work or not.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package dotemacs
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 ** UI
 *** Maximize work area
    Disable the menu, tool and scroll bar since they just take up
    space.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (menu-bar-mode 0)
      (tool-bar-mode 0)
      (when (window-system) (scroll-bar-mode 0))
-   #+END_SRC
+   #+end_src
 *** Font
     Set font and font size
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (set-frame-font "Hack:pixelsize=12" nil t)
-    #+END_SRC
+    #+end_src
 *** Column number
    Show column number in the info bar
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (column-number-mode 1)
-   #+END_SRC
+   #+end_src
 ** Behaviour
    Changing the default emacs behavior to better suite me.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq-default
       electric-indent-mode nil        ;; Disable electric-indent-mode, C-j is used for that.
       load-prefer-newer t             ;; Avoid loading outdated byte code files.
@@ -115,50 +115,50 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (show-paren-mode 1)                ;; Highlight matching brackets.
      (minibuffer-depth-indicate-mode 1) ;; Keep track of which minibuffer
 
-   #+END_SRC
+   #+end_src
 
    Don't popup a new frame but reuse one that is already open. If no
    other frame is open, open in the same frame.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq display-buffer--other-frame-action
            '((display-buffer-reuse-window display-buffer-use-some-frame)
              (reusable-frames . visible)
              (inhibit-same-window . t)
              (inhibit-switch-frame . t)))
-   #+END_SRC
+   #+end_src
 **** Trailing Whitespaces
 
      Show trailing whitespaces by default for writeable buffers. Turn it
      off for read only as it is distracting and you cannot remove them
      anyway.
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (add-hook 'find-file-hook
                  (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
        (add-hook 'read-only-mode-hook
                  (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
-     #+END_SRC
+     #+end_src
 
      Show trailing whitespaces for all comint modes: shell, gdb,
      geiser REPL etc.
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package comint
          :ensure nil ; Built in
          :config
          (add-hook 'comint-mode-hook 'dotemacs-hide-trailing-whitespace))
-     #+END_SRC
+     #+end_src
 
 **** Read only
 
      Change the cursor when in a read only buffer.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (add-hook 'read-only-mode-hook
                  (lambda () (setq-local cursor-type (if buffer-read-only 'hbar 'box))))
-     #+END_SRC
+     #+end_src
 
 ** Calender
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq-default
       calendar-week-start-day 1       ;; Week starts on Monday.
       calendar-day-name-array
@@ -168,36 +168,36 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        "juli" "augusti" "september" "oktober" "november" "december"]
       calendar-time-display-form '(24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))
       calendar-date-style 'european)
-   #+END_SRC
+   #+end_src
 
    Hide trailing whitespaces for calendar mode, as there are a bunch
    of those showing up in the calendar.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (add-hook 'calendar-mode-hook 'dotemacs-hide-trailing-whitespace)
-   #+END_SRC
+   #+end_src
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
    over the place.  Fixing that by dumping all backup/autosave files
    in to one directory.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (let ((backup-dir (file-name-as-directory (concat user-emacs-directory "backup")))
            (autosave-dir
             (file-name-as-directory (concat user-emacs-directory "autosave"))))
        (setq backup-directory-alist (list (cons ".*" backup-dir))
              auto-save-list-file-prefix autosave-dir
              auto-save-file-name-transforms `((".*" ,autosave-dir t))))
-   #+END_SRC
+   #+end_src
 ** Theme
    Point emacs to where it can find the sunburst theme.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (add-to-list 'custom-theme-load-path
                   (dotemacs-build-path user-emacs-directory "themes" "plattfot-theme"))
      (load-theme `plattfot t)
-   #+END_SRC
+   #+end_src
 ** Path
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (add-to-list 'exec-path (expand-file-name "~/bin"))
-   #+END_SRC
+   #+end_src
 * Packages
 ** Code
 *** Autocomplete
@@ -210,7 +210,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      trying to complete stuff. The company-dabbrev-code works similar
      to what I had before with ac.
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package company
          :bind ( ("C-<tab>" . company-complete-common)
                  :map company-active-map
@@ -258,24 +258,24 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                        (set (make-local-variable 'company-backends)
                             '(company-dabbrev-code)))))
          :pin melpa-stable)
-     #+END_SRC
+     #+end_src
 
      Tell emacs it's safe to change these company variables in a
      .dir-locals.el file.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (put 'company-clang-executable 'safe-local-variable #'stringp)
        (put 'company-clang-arguments 'safe-local-variable #'listp)
-     #+END_SRC
+     #+end_src
 
 **** Yasnippet
      Enable yasnippet
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package yasnippet
        	 :config
        	 (yas-global-mode 1)
        	 (setq yas-indent-line nil)
        	 :pin melpa-stable)
-     #+END_SRC
+     #+end_src
 **** eglot
      Client for Language Server Protocol (lsp) servers.
 
@@ -373,17 +373,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
   Modes for highlighting different programing languages.
 *** Haskell
     Settings for programming haskell in emacs
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package haskell-mode
         :config
         (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
         (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
         (autoload 'ghc-init "ghc" nil t)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Lisp
     Color haxvalues with their respective color.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package lisp-mode
         :ensure nil ; Built in
         :config
@@ -396,12 +396,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'lisp-mode-hook
                   (lambda ()
                     (font-lock-add-keywords nil hexcolour-keywords))))
-    #+END_SRC
+    #+end_src
 **** Smartparens
 
      Having issues with turning off auto balancing, i.e
      (|) - insert () -> (()|
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package smartparens
          :init
          ;;(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
@@ -432,7 +432,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            (sp-local-pair "'" nil :actions nil)
            (sp-local-pair "`" nil :actions nil))
          :pin melpa-stable)
-     #+END_SRC
+     #+end_src
 *** C family
     Specific for C, C++ and other in the c family
     - Set indentation to be two spaces.
@@ -449,7 +449,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     When in a c family buffer use shift tab to switch between header
     and source.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (c-add-style "dd"
                    '("gnu"
                      (c-basic-offset . 2)
@@ -459,8 +459,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       (arglist-intro . +)
                       (statement-case-open . 0)
                       (brace-list-intro . +))))
-    #+END_SRC
-    #+BEGIN_SRC emacs-lisp
+    #+end_src
+    #+begin_src emacs-lisp
       (use-package cc-mode
         :mode ("\\.h\\'" . c++-mode)
         :ensure nil ;; built in
@@ -478,13 +478,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (subword-mode 1)))
         (setq ff-search-directories '("." "../src" "../include"))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Python
     Package name is python but the mode is python-mode
     Set indentation to 2 white spaces.
 
     Set the default for pb2 files (=PROJECT=) to use python.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package python
         :mode (("\\.py\\'" . python-mode)
                ("PROJECT$" . python-mode))
@@ -495,39 +495,39 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (setq indent-tabs-mode nil
                           python-indent-offset 4)))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package jinja2-mode
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Rust
 
     Packages for setting up a rust environment
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package rust-mode
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 
     Mode for editing Cargo files.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package toml-mode
         :pin melpa)
-    #+END_SRC
+    #+end_src
 
     Add key combinations to perform cargo tasks within a Rust project.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package cargo
         :ensure t
         :after (rust-mode)
         :init
         (add-hook 'rust-mode-hook 'cargo-minor-mode)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package go-mode
         :config
         (add-hook 'go-mode-hook
@@ -536,11 +536,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                           standard-indent 2
                           indent-tabs-mode nil)))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Shaders
 **** GLSL
      Set files associated with glsl to use glsl mode
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package glsl-mode
          :ensure t
          :mode (("\\.vert\\'" . glsl-mode)
@@ -549,7 +549,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ("\\.prog\\'" . glsl-mode)
                 ("\\.glsl\\'" . glsl-mode))
          :pin melpa)
-     #+END_SRC
+     #+end_src
 
 *** Build
 **** Makefile
@@ -558,7 +558,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      - Has extension =.mk=.
 
      Show trailing whitespace as those can mess up make pretty bad.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package make-mode
          :mode (("Makefile.*" . makefile-gmake-mode)
                 ("\\.mk$" . makefile-gmake-mode))
@@ -569,80 +569,80 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ;; Don't break words
                      (setq show-trailing-whitespace t
                            word-wrap t))))
-     #+END_SRC
+     #+end_src
 **** CMake
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package cmake-mode
        	 :pin melpa-stable)
-     #+END_SRC
+     #+end_src
 *** REPL
 **** Geiser
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package geiser
          :hook (scheme-mode-hook)
          :config
          (setq geiser-default-implementation 'guile
                geiser-repl-use-other-window nil)
          :pin melpa-stable)
-     #+END_SRC
+     #+end_src
      Auto complete backend for geiser
-     #+BEGIN_SRC emacs-lips
+     #+begin_src emacs-lips
 	 (use-package ac-geiser
 	   :pin melpa-stable)
-     #+END_SRC
+     #+end_src
 **** Sh
      Indent using 2 spaces for shell scripts.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package sh-script
          :config
          (add-hook 'sh-mode-hook
                (lambda ()
                  (setq indent-tabs-mode nil
                        c-basic-offset 2))))
-     #+END_SRC
+     #+end_src
 *** Yaml
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package yaml-mode
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** json
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package json-mode
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Markdown
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package markdown-mode
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Meson
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package meson-mode
        :ensure t
        :pin melpa)
-   #+END_SRC
+   #+end_src
 *** Julia
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package julia-mode
         :pin melpa)
-    #+END_SRC
+    #+end_src
 *** Systemd
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package systemd
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** GDB script
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package gud
         :mode (("\\.gdbinit$" . gdb-script-mode))
         :ensure nil)
-    #+END_SRC
+    #+end_src
 *** lua
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package lua-mode
         :ensure t
         :pin melpa)
-    #+END_SRC
+    #+end_src
 ** Programs
   Packages that communicates with external processes.
 *** Ledger
@@ -651,7 +651,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Clean the buffer with C-c C.
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package ledger-mode
        :ensure t
        :bind (:map ledger-mode-map
@@ -689,7 +689,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (setq-local completion-ignore-case t)
                    (setq-local ledger-complete-in-steps t)))
        :pin melpa)
-   #+END_SRC
+   #+end_src
 *** direnv
     #+begin_src emacs-lisp
       (use-package direnv
@@ -698,7 +698,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Arduino
     Function for setting up a arduino template sketch
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun init-arduino ()
       "Template arduino sketch"
       (interactive)
@@ -712,44 +712,44 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
       }")
       )
-    #+END_SRC
+    #+end_src
 *** Magit
     A Git porcelain inside Emacs
     Key =C-x g= to run magit on current buffer.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package transient
         :pin melpa)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package magit
         :ensure t
         :after (transient)
         :bind ("C-x g" . magit-status)
         :pin melpa)
-    #+END_SRC
+    #+end_src
 *** Magithub (disabled)
 
     Has a bug, see [[https://github.com/magit/ghub/issues/81][#81]]. Disabling it until a work around is found. As I
     haven't started using this just yet.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package magithub
         :after magit
         :disabled t
         :ensure t
         :config (magithub-feature-autoinject t)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** The Silver Searcher
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package ag
 	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** notmuch
 
     Using notmuch to index my emails.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package notmuch
         :bind ("C-c m" . notmuch)
         :config
@@ -779,10 +779,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                   (:name "order" :query "tag:order" :key "b")
                                   (:name "allt" :query "*" :key "a")))
         :ensure nil)
-    #+END_SRC
+    #+end_src
 
     For HTML email see [[https://orgmode.org/worg/org-contrib/org-mime.html][org-mime]] for more information.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org-mime
         :after (org notmuch)
         :ensure t
@@ -791,45 +791,45 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          org-mime-library 'mml
          org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** pdftools
 
     *NOTE:* To use this, install it externally via the distribution's
     package manager. As installing this from melpa tends to break a
     lot due it needs to be compiled.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package pdf-tools
         :if (not dotemacs-is-work)
         :mode ("\\.pdf\\'" . pdf-view-mode)
         :ensure nil)
-    #+END_SRC
+    #+end_src
 *** man
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package man
         :config
         (when dotemacs-is-work
           (setf manual-program "pk man")))
-    #+END_SRC
+    #+end_src
 *** telegram
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package telega
         :if (not dotemacs-is-work)
         :config
         (add-hook 'telega-root-mode-hook 'dotemacs-hide-trailing-whitespace)
         (add-hook 'telega-chat-mode-hook 'dotemacs-hide-trailing-whitespace)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** vterm
 
     Workaround for killing text in vterm to the kill ring.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun vterm-send-C-k ()
         "Send `C-k' to libvterm."
         (interactive)
         (kill-ring-save (point) (vterm-end-of-line))
         (vterm-send-key "k" nil nil t))
-    #+END_SRC
-    #+BEGIN_SRC emacs-lisp
+    #+end_src
+    #+begin_src emacs-lisp
       (use-package vterm
         :bind (:map vterm-mode-map
                     ("<f8>" . vterm-clear)
@@ -837,22 +837,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setf vterm-max-scrollback 10000)
         (add-hook 'vterm-mode-hook 'dotemacs-hide-trailing-whitespace))
-    #+END_SRC
+    #+end_src
 *** mpdel
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package libmpdel
         :config)
       (use-package mpdel
         :requires libmpdel)
-    #+END_SRC
+    #+end_src
 ** Web
   Packages for webbased content.
 *** nginx
     Major mode for editing nginx.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package nginx-mode
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 ** Emacs
   Packages that augments emacs.
 *** Org
@@ -871,7 +871,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     The org structure template el (expand using <el) is from
     [[https://github.com/freetonik/emacs-dotfiles/blob/master/init.org#org][EmacsCast]].
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org
         :ensure t
         :mode ("\\.org\\'" . org-mode)
@@ -908,16 +908,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (scheme . t)
              (shell . t))))
         :pin org)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org-tempo
         :ensure nil
         :config
         (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org-agenda
         :ensure nil
         :config
@@ -925,13 +925,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                          (todo . " %i %-12:c")
                                          (tags . " %i %-12:c")
                                          (search . " %i %-12:c"))))
-    #+END_SRC
+    #+end_src
 
     The =org-agenda-prefix-format= is taken from [[https://github.com/m-cat/init.el/blob/master/init.el#L2082][m-cat's init.el]] and
     removes file name and category. No need to see the file name as
     everything is in the same file.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org-super-agenda
         :ensure t
         :config
@@ -947,9 +947,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               ))
         (org-super-agenda-mode)
         :pin melpa)
-    #+END_SRC
+    #+end_src
     Use pretty bullet points instead of asterix
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package org-bullets
         :after (org)
         :ensure t
@@ -958,7 +958,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   (lambda ()
                     (org-bullets-mode t)))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 
     *NOTE:*
     "Doesn't work with yasnippet getting:
@@ -968,7 +968,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
 *** Buffer move
     Move buffers around between windows
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package buffer-move
         :ensure t
         :bind ( ("<M-S-up>"    . buf-move-up)
@@ -976,11 +976,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ("<M-S-left>"  . buf-move-left)
                 ("<M-S-right>" . buf-move-right))
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Dired
     Settings for dired.
     Source for the afs-dired-find-file function: [[https://stackoverflow.com/questions/1110118/in-emacs-dired-how-to-find-visit-multiple-files][Source]]
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package dired
        	:ensure nil
        	;; Map afs-dired-find-file to F
@@ -993,27 +993,27 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (interactive "P")
              (let ((fn-list (dired-get-marked-files nil arg)))
                (mapc 'find-file fn-list))))
-    #+END_SRC
+    #+end_src
 *** Diff
 
     Enable whitespace mode for diff-mode to see trailing whitespace in
     diffs.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package whitespace
         :ensure nil
         :hook (diff-mode . whitespace-mode))
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package diff
         :ensure nil
         :config
         (add-hook 'diff-mode-hook 'dotemacs-hide-trailing-whitespace))
-    #+END_SRC
+    #+end_src
 *** Eshell
     Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package eshell
         ;;:bind (:map eshell-mode-map ("C-<tab>" . eshell-complete-lisp-symbol))
         :config
@@ -1058,9 +1058,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                           '([up] [C-up] [down] [C-down]))
                     (define-key eshell-mode-map (kbd "C-M-p") 'eshell-previous-prompt)
                     (define-key eshell-mode-map (kbd "C-M-n") 'eshell-next-prompt))))
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun eshell/lcd (&optional directory)
         "Locally cd to a DIRECTORY when on a remote host."
         (if (file-remote-p default-directory)
@@ -1072,7 +1072,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                           (or directory "")
                           (tramp-file-name-hop v))))
           (eshell/cd directory)))
-    #+END_SRC
+    #+end_src
     Function taken from this [[https://www.reddit.com/r/emacs/comments/5pziif/cd_to_home_directory_of_server_when_using_eshell/de9olb7][reddit answer]]
 *** Eldoc
     #+begin_src emacs-lisp
@@ -1085,7 +1085,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** emms
     Using Arch's package manager to handle emms, as I need the
     emms-print-metadata function for libtag.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package emms
         :ensure nil
         :if (not dotemacs-is-work)
@@ -1104,13 +1104,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
               emms-player-list '(emms-player-mpv)
               emms-info-functions '(emms-info-libtag)))
-    #+END_SRC
+    #+end_src
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
 
      Sort buffers by placing them in different groups. Hide empty
      groups to avoid cluttering the ibuffer.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package ibuffer
          :config
          (defalias 'list-buffers 'ibuffer)
@@ -1174,43 +1174,43 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    ;; Sucks up a lot of cpu time when using projectile
                    ;;(ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
-     #+END_SRC
+     #+end_src
 *** ivy
     Better multi-editing than ag.el.
     See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package ivy
         :config
         (setq ivy-count-format "(%d/%d) ")
         :pin melpa)
-    #+END_SRC
+    #+end_src
 
     Use counsel-imenu instead of imenu. To avoid hunting down all
     keymaps that defines imenu, easier to just alias the function.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package counsel
         :bind (("C-M-s" . counsel-ag))
         :init
         (defalias 'imenu 'counsel-imenu)
         :pin melpa)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package wgrep
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** info
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package info
         :ensure nil
         :config
         (add-hook 'Info-mode-hook 'dotemacs-hide-trailing-whitespace))
-    #+END_SRC
+    #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package tramp
         :config
         (setq tramp-default-method "ssh")
@@ -1222,21 +1222,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-to-list 'tramp-remote-path "/run/current-system/profile/bin")
         (add-to-list 'tramp-remote-path "/run/current-system/profile/sbin")
         :pin gnu)
-    #+END_SRC
+    #+end_src
 *** Sudo edit
     Sudo edit the current file
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package sudo-edit
        	:bind ("C-c C-r" . sudo-edit)
        	:pin melpa)
-    #+END_SRC
+    #+end_src
 *** Windmove
     Jump between windows using the arrow keys instead of cycling with
     "C-x o". Note that this Doesn't work in org mode.
 
     *TIP:* If using i3wm. Use frames instead of windows then use i3's
      navigation instead.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package windmove
         :ensure t
         :bind (([M-left]  . windmove-left)  ; move to left window
@@ -1244,7 +1244,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ([M-up]    . windmove-up)    ; move to upper window
                ([M-down]  . windmove-down)) ; move to downer window
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Compilation
     Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
 
@@ -1258,7 +1258,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     warnings occured. And cannot force all warnings to be treated as
     errors as others might not share the same idea about warnings.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package compile
         :init
         ;; Reuse the *compilaiton* window if open if not pick another window
@@ -1278,33 +1278,33 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (toggle-read-only)
                     (ansi-color-apply-on-region compilation-filter-start (point))
                     (toggle-read-only))))
-    #+END_SRC
+    #+end_src
 *** Version Control
     Don't ask when following a symlink to a vc directory.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (setq vc-follow-symlinks t)
-    #+END_SRC
+    #+end_src
 *** Regexp builder
     Avoid escape-hell with regex builder, can toggle between styles
     with 'C-c <tab>'. See [[https://masteringemacs.org/article/re-builder-interactive-regexp-builder][masteringemacs]] for more info about regex
     builder.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package re-builder
         :config
         (setq-default reb-re-syntax 'string))
-    #+END_SRC
+    #+end_src
 *** evil
     Vim bindings are a lot easier to use on the phone than normal
     emacs bindings. Enable *evil-mode* when it detects android.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package evil
         :if (getenv "ANDROID_ROOT")
         :bind (:map evil-normal-state-map ("SPC t" . 'training-popup))
         :config
         (evil-mode 1)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 ** Text
   Packages for editing and viewing text.
 *** Emojify
@@ -1316,7 +1316,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     I'll need to use emojify instead.
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package emojify
         :after (notmuch)
         :init
@@ -1325,31 +1325,31 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'notmuch-show-mode-hook 'emojify-mode)
         (add-hook 'notmuch-message-mode-hook 'emojify-mode)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Rainbow
     Useful when debugging the theme. But is rarely used.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package rainbow-mode
        	:pin gnu)
-    #+END_SRC
+    #+end_src
 *** Move text
     Move line up and down using arrow keys.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package move-text
        	:bind (([C-S-up] . move-text-up)
                ([C-S-down] . move-text-down))
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 
 *** Expand region
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package expand-region
        	:bind ("C-=" . er/expand-region)
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Multiple cursors
     Keybindings for the mc package
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package multiple-cursors
         :bind (("C-S-c C-S-c" . mc/edit-lines)
                ("C->"         . mc/mark-next-like-this)
@@ -1363,30 +1363,30 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ("C-c m s c"   . mc/insert-same-chars-per-line))
         :config
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package mc-extras
         :after (multiple-cursors)
         :pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** String inflections
     Keybinding for cycle between snake case, camel case etc
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package string-inflection
        	:bind ("C-;" . string-inflection-cycle)
        	:pin melpa-stable)
-    #+END_SRC
+    #+end_src
 *** Abbrev
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (diminish 'abbrev-mode)
-    #+END_SRC
+    #+end_src
 
 *** isearch
 
     Integrate packages as expand-region with isearch. This function
     comes from issue [[https://github.com/magnars/expand-region.el/issues/17][#17]] on expand-region.el.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package isearch
         :ensure nil
         :config
@@ -1397,14 +1397,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (deactivate-mark))  ;;fully optional, but I don't like unnecesary highlighting
         (isearch-yank-internal (lambda () (mark))))
         :bind (:map isearch-mode-map ("C-o" . isearch-yank-selection)))
-    #+END_SRC
+    #+end_src
 ** Nov
    Epub reader mode.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package nov
        :mode (("\\.epub\\'" . nov-mode))
        :pin melpa-stable)
-   #+END_SRC
+   #+end_src
 ** Shell
    Enable color in shell and define the color theme. Also disable
    yasnippet in shell mode since that's messing with the shell.
@@ -1418,7 +1418,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Always use bash as the backend for the shell as not every machine
    has zsh.
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package shell
        :bind ("<f8>" . clear-shell)
        :init
@@ -1457,73 +1457,73 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (interactive)
          (let ((comint-buffer-maximum-size 0))
            (comint-truncate-buffer))))
-   #+END_SRC
+   #+end_src
 ** guix
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (when dotemacs-guix-installed
        (use-package guix
          :ensure nil
          :bind ("<f3>" . guix)
          :pin melpa-stable))
-   #+END_SRC
+   #+end_src
 * Custom
 ** Packages
 *** home
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package home
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 *** bfuture
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package bfuture
         :ensure nil
         :load-path "bfuture.el")
-    #+END_SRC
+    #+end_src
 *** bank
     Functions for handling bank statements
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package bank
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
     and characters.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package mc-extra-extra
         :after (multiple-cursors)
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 *** newfile
     Functions for setting up a newfile in c++. I.e create the license
     boilerplate, add the include guard, header for the author etc and
     namespaces based on directory structure.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package newfile
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 *** cpreproc
     Functions to help with c/c++ development
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package cpreproc
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 *** training
     Functions for using ledger as a training log.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package training
         :ensure nil
         :load-path "plugins")
-    #+END_SRC
+    #+end_src
 ** Functions
 *** Buffer
 **** Rename current file or buffer
      Function for renaming buffer and file. [[http://www.stringify.com/2006/apr/24/rename/][Source]]
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
       (defun rename-current-file-or-buffer ()
         "Rename current file and buffer, similar to save-as but removes
       the old file"
@@ -1536,11 +1536,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (dired-do-rename)
               (kill-buffer nil))))
         nil)
-     #+END_SRC
+     #+end_src
 **** Revert all buffers
     To sync all open buffers with their respective files on disk.
     Based on [[https://www.emacswiki.org/emacs/RevertBuffer][link]] but skips buffers which file no longer exist.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
         (defun revert-all-buffers ()
             "Refreshes all open buffers from their respective files."
             (interactive)
@@ -1551,19 +1551,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                            (file-exists-p (buffer-file-name)))
                   (revert-buffer t t t) )))
             (message "Refreshed open files."))
-    #+END_SRC
+    #+end_src
 **** ibuffer filters
     Similar to projectile's ibuffer filter. Except this isn't locked
     to the project root.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun ibuffer-at-directory (dir)
         "Open an ibuffer with buffers containg files with matching prefix DIR."
         (interactive "DDirectory to filter on: ")
         (ibuffer t (format "*%s-buffers*" dir) (list (cons 'directory dir))))
-    #+END_SRC
+    #+end_src
 
     List all buffers which file no longer exist.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package ibuf-ext
         :ensure nil
         :after (ibuffer)
@@ -1579,9 +1579,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           "Open an ibuffer with buffers which file no longer exist."
 
           (ibuffer t "*dangling-buffers*" (list (cons 'dangling-buffer "")))))
-    #+END_SRC
+    #+end_src
 *** Text
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun duplicate-line()
         "Clone line and paste it below."
         (interactive)
@@ -1590,11 +1590,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (goto-char (point-at-eol))
           (insert "\n" line)
           (goto-char current)))
-    #+END_SRC
+    #+end_src
 **** Format
 
      Different functions to quickly format text.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun fmt-parens-loosen (start end)
          "Add a space between parens and content for the region START END.
 
@@ -1616,9 +1616,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ;; Include ()
                   "\\(?:\\(?1:(\\)\\(?2:[^ \n]\\)\\|\\(?1:[^ ]\\)\\(?2:)\\)\\)")))
            (fmt-replace-regexp regexp "\\1 \\2" start end)))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun fmt-parens-tighten (start end)
          "Remove spaces between parens and content inside START and END.
 
@@ -1632,9 +1632,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (list (point) (point-max))))
          (let ((regex "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"))
            (fmt-replace-regexp regex "\\1\\2" start end)))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun fmt-one-space-after-comma (start end)
          "Make sure there is just one space after comma inside START and END.
 
@@ -1647,9 +1647,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (list (region-beginning) (region-end))
                  (list (point) (point-max))))
          (my-replace-regexp "\\(?:\\(?1:,\\)[ ]*\\(?2:[^ \n]\\)\\)" "\\1 \\2" start end))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun fmt-replace-regexp (regexp to-string start end)
          "Replace everything matching REGEXP with TO-STRING from START to END.
 
@@ -1662,11 +1662,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (replace-match to-string)
                ;; The end point will shift when replacing text in the buffer
                (setq end (+ end (- (point) current-point)))))))
-     #+END_SRC
+     #+end_src
 *** Programming
 **** C++
 ***** Expands a define macro for all matches in current buffer.
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun replace-define()
           "Evaluating the define variable.
         Place cursor on a #define <var> <content> and execute this command and it will
@@ -1686,9 +1686,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                   ;; move to the end of the line to indicate that it's done.
                   (end-of-line))
                    (message "Not a #define directive!" ))))
-      #+END_SRC
+      #+end_src
 ***** Undo replace-define.
-       #+BEGIN_SRC emacs-lisp
+       #+begin_src emacs-lisp
          (defun replace-define-undo()
            "Undoing the expansion of the define variable.
          Place cursor on a #define <var> <content> and execute this
@@ -1712,10 +1712,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (end-of-line))
                (message "Not a #define directive!" ))))
 
-       	   #+END_SRC
+       	   #+end_src
 
 ***** Convert typedef to c++11's alias
-       #+BEGIN_SRC emacs-lisp
+       #+begin_src emacs-lisp
          (defun convert-typedef-to-using ()
            "Converts typedef statements to using statements"
            (interactive)
@@ -1729,10 +1729,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                              "[[:print:]]+?\\)[ \t]+\\([[:alnum:]_]+\\)[ ]*;" )
                      end t )
                (replace-match "using \\2 = \\1;"))))
-       #+END_SRC
+       #+end_src
 ***** Insert ifdef clauses
 
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun afs-insert-ifdef (macro &optional add-else ifndef)
           "Insert C preprocessor conditional #ifdef MACRO. To add an else
           clause set ADD-ELSE to t. To invert the ifdef to #ifndef MACRO
@@ -1746,32 +1746,32 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             (when add-else (format "#else\n%s\n" text))
                             "#endif"))
             ))
-      #+END_SRC
+      #+end_src
 
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun afs-insert-ifdef-else (macro)
           "Insert C prepocessor conditional #ifdef MACRO with an else clause.
         Wrapper for (afs-insert-ifdef MACRO t)"
           (interactive "sName of macro: ")
           (afs-insert-ifdef macro t))
-      #+END_SRC
+      #+end_src
 
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun afs-insert-ifndef (macro)
           "Insert C prepocessor conditional #ifndef MACRO."
           (interactive "sName of macro: ")
           (afs-insert-ifdef macro nil t))
-      #+END_SRC
+      #+end_src
 
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun afs-insert-ifndef-else (macro)
           "Insert C prepocessor conditional #ifndef MACRO."
           (interactive "sName of macro: ")
           (afs-insert-ifdef macro t t))
-      #+END_SRC
+      #+end_src
 
 ***** Convert java style comment to doxygen
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun convert-java-comment-to-doxygen ()
            "Convert java style comment to doxygen"
          (interactive)
@@ -1785,9 +1785,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    end t )
              (replace-match "///\\1"))))
 
-     #+END_SRC
+     #+end_src
 ***** Jump between template header and implementation
-      #+BEGIN_SRC emacs-lisp
+      #+begin_src emacs-lisp
         (defun ff-extension-other-impl ()
           "Return name of the header or template file corresponding to the current file."
           (interactive)
@@ -1802,11 +1802,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                      (s-chop-suffix "-impl" base)
                                    (s-append "-impl" base))
                                  ext))))
-      #+END_SRC
+      #+end_src
 
 *** Split lines
     Function for splitting lines at specified character. Default is ','.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun split-at (&optional delim)
       "Split region/line at DELIM, if there are multiple matches it
       will split each one. DELIM will default to \",\" if no delim is
@@ -1828,10 +1828,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       "wrapper for split-at for use with key command"
       (interactive)
       (split-at ","))
-    #+END_SRC
+    #+end_src
 *** Yesterday-time
     Computes the time 24 hours ago
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (defun yesterday-time ()
       "Provide the date/time 24 hours before the time now in the format
       of `current-time'."
@@ -1845,7 +1845,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (setq hi (- hi 1) lo (- lo 20864)))   ; else, add 86400 seconds (in two parts)
 
           (list hi lo msecs))) ; regurgitate the new values
-    #+END_SRC
+    #+end_src
 ** Keybindings
 *** Minor mode
    To better organize what my custom keys are and also easy see what
@@ -1856,7 +1856,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    Time will tell if that was a smart idea or not.
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (defvar plattfot-mode-map
        (let ((map (make-sparse-keymap)))
          ;; Navigation
@@ -1926,7 +1926,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :keymap plattfot-comint-mode-map
        nil)
      (provide 'plattfot)
-   #+END_SRC
+   #+end_src
 
    Added that I need to press ctrl and the function key for the UI keys
    as I was hitting these accidentaly from time to time when running
@@ -1937,7 +1937,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    the 'M-r' keybinding for comint modes, eg. shell and gud-gdb. This
    was the cleanest way I could find doing this.
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (use-package plattfot
        :init
        (plattfot-global-mode 1)
@@ -1951,7 +1951,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (plattfot-mode 0)
                    (plattfot-comint-mode 1)))
        :ensure nil)
-   #+END_SRC
+   #+end_src
 
 *** Macros
      "Macro" to quickly open a file that is located on my machine at
@@ -1960,7 +1960,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      Updated it only bind the key when I'm in the minibuffer as I
      don't have any use for this outside of that scope.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (add-hook
         'minibuffer-setup-hook
         (lambda ()
@@ -1968,72 +1968,72 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (lambda ()
               (interactive)
               (insert "/-:pd-ws-he03.d2.com:/dd/dept/software/users/fredriks/swdevl")))))
-     #+END_SRC
+     #+end_src
 *** Registers
     Quickly jump to files by pressing C-x r j <register>
     Jump to my init file with 'e' and init directory with 'i'.
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (set-register ?e (cons 'file (concat user-emacs-directory "init.el")))
       (set-register ?i (cons 'file (concat user-emacs-directory
                                            "init.d/configuration.org")))
-    #+END_SRC
+    #+end_src
 * Work
 ** Custom
 *** Packages
 **** dd-newfile
      Function that inserts the DD template for a new file
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package dd-newfile
          :after newfile
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 **** dd-log-parser
      Functions for parsing the =DD::Logger=
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package dd-log-parser
          :if dotemacs-is-work
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 **** dd-pybuild2
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package dd-pybuild2
          :if dotemacs-is-work
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 **** houdini
      Houdini related functions, mostly handle houdini versions.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package houdini
          :bind ("C-x j" . hou-insert-version)
          :if dotemacs-is-work
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 **** highlight-extra
      Functions for highlighting my shells when building etc
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package highlight-extra
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 **** work
 
      Bunch of functions to setup my work area when at work.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (use-package work
          :if dotemacs-is-work
          :ensure nil
          :load-path "plugins")
-     #+END_SRC
+     #+end_src
 *** Functions
 **** PID
      Functions for getting the pid and other useful stuff regarding
      PIDs.
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun pid (regex &optional index newest)
          "Get the pid of the first command matching REGEX.
        If more than one is running it return the one at INDEX.  Where
@@ -2043,9 +2043,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (when (not index) (setq index 0))
          (let ((ps_list (ps-match regex)))
            (car (nth index (if newest (sort-ps-time ps_list) ps_list)))))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun ps-match (regex)
          "Call ps and return a list of info for each the command matching the REGEX.
        The list format is '(pid time ppid user comm), where time is the
@@ -2066,18 +2066,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     (time (date-to-time (mapconcat 'identity (butlast x 4) " "))))
                 (setq x (append (list (car proc) time) (cdr proc)))))
             ps_list)))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun sort-ps-time (ps_list)
          "Sort the PS_LIST based on the timestamp.
        In ascending order."
          (seq-sort (lambda (a b) (not (time-less-p (cadr a) (cadr b)))) ps_list))
-     #+END_SRC
+     #+end_src
 
 **** PID Houdini
      Get the PID for houdini
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun pid-houdini (&optional index newest)
          "Get the pid for houdini.
 
@@ -2088,9 +2088,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (interactive)
          (when (not index) (setq index 0))
          (pid "houdini-bin" index newest))
-     #+END_SRC
+     #+end_src
 **** PID Maya
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun pid-maya (&optional index newest)
          "Get the pid for maya.
        If more than one is running it returns the one at INDEX.  Where
@@ -2099,9 +2099,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (interactive)
          (when (not index) (setq index 0))
          (pid "maya\\.bin" index newest))
-     #+END_SRC
+     #+end_src
 **** PID smeat
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun pid-smeat (&optional index newest)
          "Get the pid for smeat.
        If more than one is running it returns the one at INDEX.  Where
@@ -2111,10 +2111,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (when (not index) (setq index 0))
          ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
          (pid "smeat(:?[^=]+|$$)" index newest))
-     #+END_SRC
+     #+end_src
 **** Attach Houdini
      Used with gdb, prints attach <pid of houdini> in the prompt.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun attach-houdini (&optional index)
          "Prints attach <pid> into the buffer.
        INDEX is use to select which one if there are multiple instances
@@ -2124,9 +2124,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; The default for index is one.
          (when (< index 1) (setq index 1))
          (insert (format "attach %s" (pid-houdini (- index 1)))))
-     #+END_SRC
+     #+end_src
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun attach-houdini-newest (&optional index)
          "Prints 'attach <pid>' into the buffer.
 
@@ -2139,9 +2139,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (when (not index) (setq index 1))
          (when (< index 1) (setq index 1))
          (insert (format "attach %s" (pid-houdini (- index 1) t))))
-     #+END_SRC
+     #+end_src
 **** Attach Maya
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun attach-maya (&optional index)
          "Prints attach <pid> into the buffer.
        INDEX is use to select which one if there are multiple instances
@@ -2150,9 +2150,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; The default for index is one.
          (when (< index 1) (setq index 1))
          (insert (concat "attach " (pid-maya index) )))
-     #+END_SRC
+     #+end_src
 **** Attach smeat
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun attach-smeat (&optional index)
 	 "Prints attach <pid> into the buffer.
        INDEX is use to select which one if there are multiple instances
@@ -2162,28 +2162,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 	 ;; The default for index is one.
 	 (when (< index 1) (setq index 1))
 	 (insert (concat "attach " (pid-smeat (- index 1)) )))
-     #+END_SRC
+     #+end_src
 **** Kill Houdini
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun kill-houdini ()
          "Kill houdini.
        If more than one houdini are running it will kill the
        first one in the ps list."
          (interactive)
          (shell-command (concat "kill -9 " (pid-houdini))))
-     #+END_SRC
+     #+end_src
 **** Kill Maya
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun kill-maya ()
          "Kill maya.
        If more than one Maya process are running it will kill the
        first one in the ps list."
          (interactive)
          (shell-command (concat "kill -9 " (pid-maya))))
-     #+END_SRC
+     #+end_src
 **** Smeat abort
      Not quite working. But sends a signal to the smeat process to abort the sim.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun smeat-abort (&optional index )
          "Sends USR1 signal to houdini which aborts the smeat client.
        INDEX is used to select which houdini instance to send to if
@@ -2192,9 +2192,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (when (< index 1) (setq index 1))
          (let ((hou-pid (pid-houdini index)))
            (shell-command (concat "kill -s USR1 " hou-pid))))
-     #+END_SRC
+     #+end_src
 **** Preproccess
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun preprocess-fix-macros ()
          "Fix expanded macros when running only the preprocess on a file.
        For example: g++ <flags> -E <file>.  Since they are expanded into
@@ -2210,10 +2210,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (setq end (1+ end)))
            (indent-region start (point))
            (goto-char start)))
-     #+END_SRC
+     #+end_src
 **** Make
 ***** Functions to speed up the port of old style Makefiles to using modules.
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (defun make-boost-components ()
          "Convert old style boost libs to module style"
          (interactive)
@@ -2322,7 +2322,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (make-boost-components)
          (make-delete-libpaths-and-rpath)
          (make-delete-libs))
-     #+END_SRC
+     #+end_src
 *** Modes
 **** Editing doc strings in the Make project
 
@@ -2339,57 +2339,57 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      rest. Probably better when dealing with doxygen comments as this
      [[https://stackoverflow.com/q/1972219][stackoverflow question]] is wondering about.
 
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
        (define-derived-mode makefile-bs-mode makefile-gmake-mode "BSmakefile"
          "An adapted `makefile-mode' that uses #: as comments."
          (setq-local comment-start "#:")
          (setq-local comment-end "")
          (setq-local comment-start-skip "#:+[ \t]*"))
-     #+END_SRC
+     #+end_src
 
 ** Behaviour
    Use bash at work.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
-   #+END_SRC
+   #+end_src
 
    Store work related settings.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (let ((.work (concat user-emacs-directory ".work.el")))
        (when (file-exists-p .work)
          (load .work)))
-   #+END_SRC
+   #+end_src
 * Bug workarounds
   Workarounds for bugs I have encountered through out the years
 ** Cursor turns black
    Set the cursor color to white.
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (set-cursor-color "#ffffff")
-   #+END_SRC
+   #+end_src
 ** Maximize emacs under KDE
    Issue maximizing emacs with KDE at work
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (setq frame-resize-pixelwise t)
-   #+END_SRC
+   #+end_src
 ** Juniper VPN linux 4.5+
    Juniper VPN doesn't work in linux 4.5+, workaround is to disable
    the ipv6.
-   #+BEGIN_SRC sh :tangle no
+   #+begin_src sh :tangle no
    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-   #+END_SRC
+   #+end_src
 ** Tramp hangs after password entry
    :PROPERTIES:
    :CUSTOM_ID:  tramp-hang-workaround
    :END:
    See [[https://www.emacswiki.org/emacs/TrampMode#toc7][EmacsWiki]]
    Simple fix if you don't want to use emacs shells is to add this to your .zshrc
-   #+BEGIN_SRC sh :tangle no
+   #+begin_src sh :tangle no
      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
-   #+END_SRC
+   #+end_src
 
    Problem with this though it that it messes up with the prompt when
    running a emacs shell. For that use:
-   #+BEGIN_SRC sh :tangle no
+   #+begin_src sh :tangle no
      # Tramp and emacs shell workaround
      if [[ $TERM == "dumb" ]]
      then
@@ -2404,7 +2404,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              return
          fi
      fi
-   #+END_SRC
+   #+end_src
 
    Similar issue will happen with a bash shell on the other end. And
    for that you can just remove the =unsetopt zle=.
@@ -2425,19 +2425,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    --text follows this line--
    Is treated as a headline and the first line is indented with some spaces.
 
-   #+BEGIN_SRC text
+   #+begin_src text
      I am sorry about your difficulties with git push.  It is true that in this
          situation
      --text follows this line--
      I am sorry about your difficulties with git push.  It is true that in
      this situation
-   #+END_SRC
+   #+end_src
    [[https://emacs.stackexchange.com/a/41803][source]]
 
    Workaround is just to add
-   #+BEGIN_SRC test
+   #+begin_src test
    --text follows this line--
-   #+END_SRC
+   #+end_src
 
 * Notes
 ** Emacs
@@ -2454,7 +2454,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Tweak flycheck
     To set specific compiler and flags for a specific project you can
     use something like this in a .dir-locals.el file:
-    #+BEGIN_SRC emacs-lisp :tangle no
+    #+begin_src emacs-lisp :tangle no
       ;; File .dir-locals.el
       ( ( c++-mode
           . ((flycheck-c/c++-gcc-executable . "/tools/package/gcc/6.4.0/bin/g++" )
@@ -2490,7 +2490,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  "-isystem/tools/package/qhull/2012.1/include"
                  "-isystem/tools/include"
                  )))))
-    #+END_SRC
+    #+end_src
     For clang just replace gcc with clang.
 
     If you want to play it more safe you can use the flychecks other
@@ -2500,21 +2500,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Also prefer flycheck-gcc-includes over adding that in
     flycheck-gcc-args as if you do
-    #+BEGIN_SRC emacs-lisp :tangle no
+    #+begin_src emacs-lisp :tangle no
       (flycheck-gcc-args
        . ("-include openvdb/math/Vec3.h")
       )
-    #+END_SRC
+    #+end_src
     You'll get an error about cannot find file, even though the file
     actually exist. That's because the thing that parses this and
     passes it to a shell escapes the whitespace after -include. So for
     that to work you'll need to do:
 
-    #+BEGIN_SRC emacs-lisp :tangle no
+    #+begin_src emacs-lisp :tangle no
       (flycheck-gcc-args
        . ("-includeopenvdb/math/Vec3.h")
       )
-    #+END_SRC
+    #+end_src
     Which is not that readable.
 
 **** Language standard in c++
@@ -2538,22 +2538,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     use 'keep-lines' to keep lines matching regexp.
     use 'flush-lines' to remove lines matching regexp.
 *** See what font is used under cursor
-    #+BEGIN_SRC text :tangle no
+    #+begin_src text :tangle no
       M-x describe-char
-    #+END_SRC
+    #+end_src
     or
-    #+BEGIN_SRC text :tangle no
+    #+begin_src text :tangle no
       C-u C-x =
-    #+END_SRC
+    #+end_src
     [[https://stackoverflow.com/a/1242760][source]]
 *** Don't truncate messages in *scratch*
-    #+BEGIN_SRC emacs-lisp :tangle no
+    #+begin_src emacs-lisp :tangle no
       (setq eval-expression-print-length nil)
-    #+END_SRC
+    #+end_src
 *** Reload dir-locals for buffer
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (hack-dir-local-variables-non-file-buffer)
-    #+END_SRC
+    #+end_src
 ** VCS
 *** Git
 **** Change message in most recent commit
@@ -2564,46 +2564,46 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Check out the tags directory. Use --depth=empty to avoid
      populating all the tags as this can take a really long time
      depending on how many tags exist.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        svn checkout SVN_URL/REPO/tags  --depth=empty REPO-tag-fix
-     #+END_SRC
+     #+end_src
 
      Locate the revision to roll back to.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        svn log SVN_URL/REPO/tags
-     #+END_SRC
+     #+end_src
 
      Then cd into the working copy and update all tags involved in the
      roll back. Otherwise svn will just ignore the roll back.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        cd REPO-tag-fix
        svn up --set-depth=infinity TAG0 TAG1...
-     #+END_SRC
+     #+end_src
 
      Roll back to the revision you want by simply merging the tags
      directory backwards to that revision.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        svn merge -rHEAD:REVISION .
-     #+END_SRC
+     #+end_src
 
      Where REVISION is the revision number you picked previously. HEAD
      is a svn built in keyword and points to the latest revision.
 ** Code
 *** Run functions when loading/unloading shared libraries
     Call function when shared library is loaded, with gcc use:
-    #+BEGIN_SRC c++
+    #+begin_src c++
       __attribute__((constructor)) void func(){}
-    #+END_SRC
+    #+end_src
 
     Call function when shared lbirary is unloaded, with gcc use:
-    #+BEGIN_SRC c++
+    #+begin_src c++
       __attribute__((destructor)) void func(){}
-    #+END_SRC
+    #+end_src
 *** Check what indentation rule is used for c++
     Run the function ~c-show-syntactic-information~ normaly bound to.
-    #+BEGIN_SRC :tangle no
+    #+begin_src :tangle no
     C-c C-s
-    #+END_SRC
+    #+end_src
     Useful when customizing a style.
 *** python
 **** Reload module from another path
@@ -2616,28 +2616,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      replace an already installed and loaded extension with a developer
      version.
 
-     #+BEGIN_SRC python :tangle no
+     #+begin_src python :tangle no
        import sys
 
        sys.path.insert(0, 'new/path/to/module')
        reload(module)
-     #+END_SRC
+     #+end_src
 **** Generate etags
-     #+BEGIN_SRC shell :tangle no
+     #+begin_src shell :tangle no
        find . -name "*.py" -print | etags -
-     #+END_SRC
+     #+end_src
 
      To ignore a specific directory, for example =private= which
      contains build and install artifacts.
 
-     #+BEGIN_SRC shell :tangle no
+     #+begin_src shell :tangle no
        find . -type d -name private -prune -or -name "*.py" -print | etags -
-     #+END_SRC
+     #+end_src
 
 *** Print out debug info
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       readelf --debug-dump=<option> <elf>
-    #+END_SRC
+    #+end_src
 
     Print out the decoded source path use the
     src_sh[:tangle no]{--debug-dump=decodedline} option.
@@ -2645,25 +2645,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Install fonts local to user
     Install fonts to ~/.fonts then update the fontconfig cache by
     running.
-    #+BEGIN_SRC sh
+    #+begin_src sh
       fc-cache -v ~/.fonts
-    #+END_SRC
+    #+end_src
     The option '-v' is just for verbose output and can be skipped.
 
     To see what fonts are installed run
-    #+BEGIN_SRC sh
+    #+begin_src sh
       fc-list
-    #+END_SRC
+    #+end_src
 *** Terminfo files (ti)
     To compile FILE run
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       tic FILE
-    #+END_SRC
+    #+end_src
 *** Shell
     Stop the shell from echoing the command.
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       stty -echo
-    #+END_SRC
+    #+end_src
 **** Shell script
 ***** Argument parsing
       A good way of parsing the arguments for a shell script is using
@@ -2672,7 +2672,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
       To use getopt in a script simply do:
 
-      #+BEGIN_SRC sh
+      #+begin_src sh
          # Use getopt to parse the command-line arguments
          _args=$(getopt --options h --longoptions workspace:,update::,help -- "$@")
          if [[ $? != 0 ]]
@@ -2709,49 +2709,49 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ;;
              esac
          done
-      #+END_SRC
+      #+end_src
 ** Programs
 *** find
 **** Ignore directories while searching
      For example while searching for file named foobar, ignore all .svn
      directories.
-     #+BEGIN_SRC sh
+     #+begin_src sh
        find . -not \( -path '*/.svn' -prune \) -name "foobar"
-     #+END_SRC
+     #+end_src
 *** grep
     Print only the grouping of the regex that matched
 
     Can use perl's look around assertions. For example only print out
     the ticket number of a tool that outputs
-    #+BEGIN_SRC text :tangle no
+    #+begin_src text :tangle no
     Ticket created: 145704
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC shell :tangle no
+    #+begin_src shell :tangle no
     tool | grep -Po "Ticket created: \K145704"
-    #+END_SRC
+    #+end_src
     [[https://unix.stackexchange.com/a/13472][source]]
 *** ssh
 **** ssh agent
      Use the ssh agent to cache the private key to a terminal
-     #+BEGIN_SRC sh
+     #+begin_src sh
        eval $(ssh-agent)
        ssh-add ~/.ssh/private-key
-     #+END_SRC
+     #+end_src
 **** multihop with same key
      Use an intermediate machine (=JUMPHOST=) to ssh to the remote
      host (=REALHOST=) without needing to generate a key on the
      =JUMPHOST=.
-     #+BEGIN_SRC sh
+     #+begin_src sh
      ssh -A -t -l USER1 JUMPHOST ssh -A -t -l USER2 REALHOST
-     #+END_SRC
+     #+end_src
 **** Setup a socks proxy
      Setup a socks tunnel to HOST at port 9090. The option =-N= is to
      disable the prompt to make it easier to keep track of which
      terminal runs the tunnel.
-     #+BEGIN_SRC sh
+     #+begin_src sh
      ssh -ND9090 HOST
-     #+END_SRC
+     #+end_src
 *** houdini
 **** Expression for string parameters
      Create a keyframe (Alt+LMB or "Channels and keyframes" -> "set Keyframe")
@@ -2761,58 +2761,58 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      When disabled use ALT+F3 to bring the menu back.
 *** CMake
     Don't remove the rpath when installing.
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
-    #+END_SRC
+    #+end_src
 
     Specify c++ compiler.
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       CMAKE_CXX_COMPILER=$(GCC_PACKAGE_ROOT)/bin/g++
-    #+END_SRC
+    #+end_src
 *** Yum
     Find what package a file belongs to:
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       yum whatprovides /path/to/file
-    #+END_SRC
+    #+end_src
 *** rpm
     Find what package a file belongs to:
-    #+BEGIN_SRC sh :tangle no
+    #+begin_src sh :tangle no
       rpm -qf /path/to/file
-    #+END_SRC
+    #+end_src
 *** GDB
     Bypass the pretty printer and show the raw data.
-    #+BEGIN_SRC :tangle no
+    #+begin_src :tangle no
     p/r VARIABLE
-    #+END_SRC
+    #+end_src
 *** PDB
     To use pdb with emacs, simply =M-x= =pbd=. If =pdb= does not exist
     as an executable on the machine, use =python -m pdb= instead in
     the prompt.
 
     To change working directory (default it uses the path of the script). Use
-    #+BEGIN_SRC python :tangle no
+    #+begin_src python :tangle no
     import os; os.chdir('PATH')
-    #+END_SRC
+    #+end_src
     in the =pdb= prompt.
 *** Ledger
 **** Check what you spend on X
-    #+BEGIN_SRC sh
+    #+begin_src sh
       ledger -f data.dat reg payee "X" -s
-    #+END_SRC
+    #+end_src
 **** Scripts
-     #+BEGIN_SRC sh
+     #+begin_src sh
        env LEDGER_FILE=data.dat scripts/cashflow.sh
-     #+END_SRC
+     #+end_src
 *** Github
 **** Preview site of a git hosted website
      Prepend to the original url.
-     #+BEGIN_SRC org :tangle no
+     #+begin_src org :tangle no
        http://htmlpreview.github.io/?
-     #+END_SRC
+     #+end_src
      For example to see an older page of the embree docs.
-     #+BEGIN_SRC org :tangle no
+     #+begin_src org :tangle no
        https://htmlpreview.github.io/?https://raw.githubusercontent.com/embree/embree.github.com/v2.15.0/index.html
-     #+END_SRC
+     #+end_src
      source: [[https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview][stackoverflow]]
 *** gcc
 **** Generate a list of all defined macros
@@ -2822,66 +2822,66 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       just pass the flags we want.
 
       For example check what __cplusplus is set to when using c++14.
-      #+BEGIN_SRC sh
+      #+begin_src sh
         cpp -dM -x c++ -std=c++14 /dev/null | grep __cplusplus
-      #+END_SRC
+      #+end_src
 **** Trace undefined symbol
      use ld's --trace-symbol=<symbol> when linking to get a list of
      what file(s) are using that symbol. Using it with gcc it would be
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc <options> -Wl,--trace-symbols=<symbol>
-     #+END_SRC
+     #+end_src
 **** Don't allow undefined symbols in shared libraries
      When enabled it will error out if it finds any undefined symbols
      when linking a shared library.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc <options> -Wl,--no-undefined
-     #+END_SRC
+     #+end_src
      or
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc <options> -Wl,z defs
-     #+END_SRC
+     #+end_src
 
 **** Record flags in object file
      Will record the flags used to build the object into the object
      file.
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc -frecord-gcc-switches
-     #+END_SRC
+     #+end_src
 
      There is also =-grecord-gcc-switches= that works similarly.
 
      To extract the flags from the object file:
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        objdump -s -j .GCC.command.line <object file> | sed -En 's/ [[:xdigit:]]{4}( [[:xdigit:] ]{8}){4}  ([^ ]*)/\2/p' | tr -d "\n" | sed -E -e 's/\.-/ -/g' -e 's/[. ]+$/\n/'
-     #+END_SRC
+     #+end_src
 **** Output absolute path to a library
 
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc -print-file-name=<library>
-     #+END_SRC
+     #+end_src
 
      This will print out the absolute path to the =<library>=. The
      library needs to have it's prefix =lib= and extenssion for it to
      print it out. For example
 
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc -print-file-name="stdc++"
-     #+END_SRC
+     #+end_src
 
      Will just print out =stdc++=. Where as
 
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc -print-file-name="libstdc++.so"
-     #+END_SRC
+     #+end_src
 
      Will print out the absolute path to the =libstdc++= it will use
      to link against.
 **** Print only the commands it will run
 
-     #+BEGIN_SRC sh :tangle no
+     #+begin_src sh :tangle no
        gcc -###
-     #+END_SRC
+     #+end_src
 
      It's similar to =-v= except it will quote the arguments and not
      run the commands
