@@ -260,16 +260,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable)
      #+END_SRC
 
-     #+BEGIN_SRC emacs-lisp
-       ;; Shell autocomplete
-       (use-package company-shell
-         :disabled t
-         :after (company)
-         :config
-         :pin melpa-stable)
-
-     #+END_SRC
-
      Tell emacs it's safe to change these company variables in a
      .dir-locals.el file.
      #+BEGIN_SRC emacs-lisp
