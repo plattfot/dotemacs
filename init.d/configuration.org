@@ -654,8 +654,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    ("C-c C" . ledger-mode-clean-buffer))
        :mode "\\.dat\\'"
        :config
-       ;; (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
-       ;; (add-hook 'ledger-mode-hook (lambda () (flycheck-mode -1)))
+       (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 5
