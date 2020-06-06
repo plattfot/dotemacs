@@ -1231,7 +1231,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      navigation instead.
     #+begin_src emacs-lisp
       (use-package windmove
-        :ensure t
         :bind (([M-left]  . windmove-left)  ; move to left window
                ([M-right] . windmove-right) ; move to right window
                ([M-up]    . windmove-up)    ; move to upper window
