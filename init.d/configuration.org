@@ -826,6 +826,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (kill-ring-save (point) (vterm-end-of-line))
         (vterm-send-key "k" nil nil t))
     #+end_src
+
+    Sometimes I need to run ~emacs~ inside of ~vterm~, and cannot use
+    the normal ~C-x C-c~ command to exit as that will exit my real
+    emacs session.
+    #+BEGIN_SRC emacs-lisp
+      (defun vterm-exit-emacs ()
+        "Send `C-x C-c' to libvterm.
+
+      Useful when running emacs inside of an vterm"
+        (interactive)
+        (vterm-send-C-x)
+        (vterm-send-C-c))
+    #+END_SRC
+
     #+begin_src emacs-lisp
       (use-package vterm
         :bind (:map vterm-mode-map
