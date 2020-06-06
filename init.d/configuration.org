@@ -964,7 +964,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Move buffers around between windows
     #+begin_src emacs-lisp
       (use-package buffer-move
-        :ensure t
         :bind ( ("<M-S-up>"    . buf-move-up)
                 ("<M-S-down>"  . buf-move-down)
                 ("<M-S-left>"  . buf-move-left)
