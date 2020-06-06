@@ -722,7 +722,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package magit
-        :ensure t
         :after (transient)
         :bind ("C-x g" . magit-status)
         :pin melpa)
