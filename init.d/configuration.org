@@ -778,17 +778,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil)
     #+end_src
 
-    For HTML email see [[https://orgmode.org/worg/org-contrib/org-mime.html][org-mime]] for more information.
-    #+begin_src emacs-lisp
-      (use-package org-mime
-        :after (org notmuch)
-        :ensure t
-        :config
-        (setq
-         org-mime-library 'mml
-         org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil))
-        :pin melpa-stable)
-    #+end_src
 *** pdftools
 
     *NOTE:* To use this, install it externally via the distribution's
