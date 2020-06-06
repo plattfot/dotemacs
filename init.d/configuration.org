@@ -617,7 +617,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Meson
    #+begin_src emacs-lisp
      (use-package meson-mode
-       :ensure t
        :pin melpa)
    #+end_src
 *** Julia
