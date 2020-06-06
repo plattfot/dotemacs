@@ -870,7 +870,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package org
-        :ensure t
         :mode ("\\.org\\'" . org-mode)
         :bind (("C-c l" . org-store-link)
                ("C-c a" . org-agenda)
@@ -930,7 +929,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package org-super-agenda
-        :ensure t
         :config
         (setq org-super-agenda-groups
               '((:name "Idag"
@@ -949,7 +947,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (use-package org-bullets
         :after (org)
-        :ensure t
         :init
         (add-hook 'org-mode-hook
                   (lambda ()
