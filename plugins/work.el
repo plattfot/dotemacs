@@ -122,6 +122,16 @@ Return a hash table."
             (puthash type value manifest)))
         manifest))))
 
+(defun work-insert-sources (&optional directory regex)
+  "Go to DIRECTORY and fetch all files matching the REGEX.
+
+Will print them out as a meson source list. The files will be
+relative to the `default-directory'."
+  (interactive (list
+                (read-directory-name "Source: ")
+                (read-regexp "regex: ")))
+  (let ((files (directory-files (or directory default-directory) t regex)))
+    (--each files (insert (format "'%s',\n" (file-relative-name it))))))
 ;; ============================ Projectile ===================================
 (defvar work-package-re
   "package/[[:lower:][:digit:]_]+/[[:lower:][:digit:]._]+$"
