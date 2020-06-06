@@ -515,15 +515,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa)
     #+end_src
 
-    Add key combinations to perform cargo tasks within a Rust project.
-    #+begin_src emacs-lisp
-      (use-package cargo
-        :ensure t
-        :after (rust-mode)
-        :init
-        (add-hook 'rust-mode-hook 'cargo-minor-mode)
-        :pin melpa-stable)
-    #+end_src
 *** Golang
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
