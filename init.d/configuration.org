@@ -542,7 +542,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Set files associated with glsl to use glsl mode
      #+begin_src emacs-lisp
        (use-package glsl-mode
-         :ensure t
          :mode (("\\.vert\\'" . glsl-mode)
                 ("\\.frag\\'" . glsl-mode)
                 ("\\.geom\\'" . glsl-mode)
