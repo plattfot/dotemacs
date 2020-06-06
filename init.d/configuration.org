@@ -307,7 +307,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package eglot
          :hook ((c++-mode . eglot-ensure))
-         :ensure t
          :config
          (setq gc-cons-threshold 100000000
                read-process-output-max (* 1024 1024) ;; 1mb
