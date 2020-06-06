@@ -34,27 +34,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      (setq package-enable-at-startup nil)
 
-     ;; Pin melpa-stable for packages not under use-package control, i.e
-     ;; dependencies and use-package itself.
-     (setq package-pinned-packages
-           '((use-package . "melpa")
-             ;; Deps
-             (async       . "melpa")
-             (bind-key    . "melpa-stable")
-             (dash        . "melpa")
-             (diminish    . "melpa-stable")
-             (epl         . "melpa-stable")
-             (git-commit  . "melpa")
-             (magit-popup . "melpa")
-             (pkg-info    . "melpa-stable")
-             (popup       . "melpa-stable")
-             (s           . "melpa-stable")
-             (with-editor . "melpa")))
+     (unless (getenv "GUIX_PROFILE")
+       ;; Pin melpa-stable for packages not under use-package control, i.e
+       ;; dependencies and use-package itself.
+       (setq package-pinned-packages
+             '((use-package . "melpa")
+               ;; Deps
+               (async       . "melpa")
+               (bind-key    . "melpa-stable")
+               (dash        . "melpa")
+               (diminish    . "melpa-stable")
+               (epl         . "melpa-stable")
+               (git-commit  . "melpa")
+               (magit-popup . "melpa")
+               (pkg-info    . "melpa-stable")
+               (popup       . "melpa-stable")
+               (s           . "melpa-stable")
+               (with-editor . "melpa")))
 
-     (unless (package-installed-p 'use-package)
-       (package-install 'use-package))
-     (unless (package-installed-p 'diminish)
-       (package-install 'diminish))
+       (unless (package-installed-p 'use-package)
+         (package-install 'use-package))
+       (unless (package-installed-p 'diminish)
+         (package-install 'diminish)))
    #+end_src
 
    Let use-package handle all the packages I use
