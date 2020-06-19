@@ -752,6 +752,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          send-mail-function 'sendmail-send-it
          message-kill-buffer-on-exit t
          message-send-mail-function 'message-send-mail-with-sendmail
+         message-signature "s/Fred[re]+i[ck]+/Fredrik/g"
          mm-text-html-renderer 'gnus-w3m
          notmuch-search-oldest-first nil
          notmuch-fcc-dirs `((,user-mail-address . "gmail/[Gmail]/Skickat"))
