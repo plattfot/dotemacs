@@ -1291,6 +1291,125 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (evil-mode 1)
         :pin melpa-stable)
     #+end_src
+*** elfeed
+    #+begin_src emacs-lisp
+      (defun plt/elfeed-youtube-feeds (feeds)
+        "Process FEEDS and return a list of youtube feeds.
+      Where the layout of FEEDS is '((NAME CHANNEL-ID TAGS...)...)"
+        (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
+          (--map (cons (s-prepend yt-prefix (cadr it)) (cddr it)) feeds)))
+    #+end_src
+
+    RSS reeder
+    #+begin_src emacs-lisp
+      (use-package elfeed
+        :bind (("C-c n" . 'elfeed)
+               :map elfeed-search-mode-map
+               ("l" . 'elfeed-search-untag-all-unread)
+               ("o" . 'elfeed-search-tag-all-unread)
+               ;; Mark all as read
+               ("L" . (lambda ()
+                        (interactive)
+                        (mark-whole-buffer)
+                        (elfeed-search-untag-all-unread)))
+               ;; Mark all as unread
+               ("O" . (lambda ()
+                  (interactive)
+                  (mark-whole-buffer)
+                  (elfeed-search-tag-all-unread)))
+               ("v" . plt/elfeed-view-mpv)
+               )
+        :config
+        (add-hook 'elfeed-show-mode-hook 'dotemacs-hide-trailing-whitespace)
+        (add-hook 'elfeed-search-mode-hook 'dotemacs-hide-trailing-whitespace)
+        (add-hook 'elfeed-new-entry-hook
+                  (elfeed-make-tagger :before "1 week ago"
+                                      :remove 'unread))
+        (setf elfeed-feeds
+              `(("https://rebusinla.wordpress.com/feed/" fun blog)
+                ("https://warpdrive.se/rss/" fun)
+                ("https://xkcd.com/atom.xml" fun)
+                ("https://c0de517e.blogspot.com/feeds/posts/default" cg)
+                ("https://animationphysics.wordpress.com/feed/"  cg)
+                ("https://www.realtimerendering.com/blog/feed/" cg blog)
+                ("https://www.vfxblog.com/feed/" cg)
+                ("https://www.fz.se/rss/fznews_rss20.xml" news)
+                ("https://rss.slashdot.org/Slashdot/slashdot" news)
+                ("https://www.reddit.com/r/MechGroupBuys/.rss" keebs)
+                ("https://www.reddit.com/r/emacs/.rss" emacs)
+                ("https://www.reddit.com/r/MechanicalKeyboards/.rss" keebs)
+                ("https://www.engadget.com/rss.xml" news)
+                ("https://www.anandtech.com/rss/" news nerd)
+                ("https://www.macrumors.com/macrumors.xml" news)
+                ("https://www.sweclockers.com/feeds/news.xml" news nerd)
+                ("https://www.raspberrypi.org/feed" news)
+                ("https://lwn.net/headlines/newrss" news linux)
+                ("https://feeds.arstechnica.com/arstechnica/index/" news nerd)
+                ("https://www.phoronix.com/rss.php" news linux)
+                ("https://feeds.feedburner.com/TheHackersNews" news nerd)
+                ("https://www.gnu.org/software/guix/feeds/blog.atom" blog linux)
+                ("https://www.linuxjournal.com/node/feed" linux)
+                ("https://www.reddit.com/r/ErgoMechKeyboards/.rss" keebs)
+                ("https://www.dpreview.com/feeds/news.xml" photo)
+                ("https://nikonrumors.com/feed" photo)
+                ("https://www.archlinux.org/feeds/news/" linux)
+                ,@(plt/elfeed-youtube-feeds
+                   '(("Avatar" "UCyaPf0E-PRRZH3UvvxNPeEw" youtube music)
+                     ("Blackbriar" "UCjR-qXRBNkysQ0Threo1Bfg" youtube music)
+                     ("Cppcon" "UCMlGfpWw-RUdWX_JbLCukXg" youtube talks)
+                     ("Fosdem" "UC9NuJImUbaSNKiwF2bdSfAw" youtube talks)
+                     ("Gamers Nexus" "UChIs72whgZI9w6d6FhwGGHA" youtube news nerd)
+                     ("Ghost" "UCAOiVaJJlH0Oduv48NN0mMA" youtube music)
+                     ("HackersOnBoard" "UChGDEluRG9r5kCecRAQTx_Q" youtube talks)
+                     ("Infidelamsterdam" "UCTp0MnlTlmqC3NdrPzD08EA" youtube news vlog)
+                     ("Intermit.Tech" "UCv7UOhZ2XuPwm9SN5oJsCjA" youtube news vlog)
+                     ("Knyght Errant" "UC1T4KJG1L_kTrP9RcdU5Csw" youtube history)
+                     ("Level1Linux" "UCOWcZ6Wicl-1N34H0zZe38w" youtube linux)
+                     ("Level1Techs" "UC4w1YQAJMWOz4qtxinq55LQ" youtube nerd)
+                     ("Lindybeige" "UC9pgQfOXRsp4UKrI8q0zjXQ" youtube history)
+                     ("Mark Furneaux" "UCRDQEDxAVuxcsyeEoOpSoRA" youtube nerd)
+                     ("Matgeek" "UCSGHj0YjencmGUSksbMbBVQ" youtube food)
+                     ("Orbit Culture" "UC2XMr58U7rZnL4AW0n9Ca8g" youtube music)
+                     ("Paul's Hardware" "UCvWWf-LYjaujE50iYai8WgQ" youtube news nerd)
+                     ("Sabaton" "UCjQhd1APsd5NQhiVZV7GYzg" youtube music)
+                     ("Sabaton History" "UCaG4CBbZih6nLzD08bTBGfw" youtube history)
+                     ("Skallagrim" "UC3WIohkLkH4GFoMrrWVZZFA" youtube history)
+                     ("Sweclockers" "UCW64r1wPzfj0W1qbzzfCgFg" youtube news nerd)
+                     ("Sweclockers Extra" "UCfK96bDQdSkKFAdqNv0YOmw" youtube nerd fun)
+                     ("The Hu" "UCs6vRDdkZ8bP8Xt6WHbvrwA" youtube music)
+                     ("Nuclear Blast Records" "UCoxg3Kml41wE3IPq-PC-LQw" youtube music)
+                     ("Century Media Records" "UCnK9PxMozTYs8ELOvgMNKFA" youtube music)
+                     ))
+                )))
+    #+end_src
+
+    Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]]. But made some
+    small changes to open up multiple videos with one mpv window.
+
+    #+begin_src emacs-lisp
+      (defun plt/elfeed-mpv (urls)
+        "Watch videos from URLS in mpv."
+        (async-shell-command (s-join " " `("mpv" ,@(--map (format "%S" it) urls)))))
+
+      ;; Don't show the async buffer
+      (add-to-list 'display-buffer-alist
+                   '("^\\*Async Shell Command\\*$"
+                     (display-buffer-no-window)))
+
+      (defun plt/elfeed-view-mpv ()
+        "Grab youtube-feed links."
+        (interactive)
+        (let ((entries (elfeed-search-selected)))
+          (->> entries
+               (-map #'elfeed-entry-link)
+               -non-nil
+               plt/elfeed-mpv)
+          (-each entries
+            (lambda (entry)
+              (elfeed-untag entry 'unread)
+              (elfeed-search-update-entry entry))))
+        (unless (use-region-p) (forward-line)))
+    #+end_src
 ** Text
   Packages for editing and viewing text.
 *** Emojify
