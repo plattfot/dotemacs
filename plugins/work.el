@@ -7,7 +7,6 @@
 (require 'string-inflection)
 ;; Load libyaml bindings if they exist.
 (require 'libyaml nil t)
-(require 'projectile)
 (require 'dash)
 (require 'json)
 (require 'cl-lib)
@@ -132,36 +131,6 @@ relative to the `default-directory'."
                 (read-regexp "regex: ")))
   (let ((files (directory-files (or directory default-directory) t regex)))
     (--each files (insert (format "'%s',\n" (file-relative-name it))))))
-;; ============================ Projectile ===================================
-(defvar work-package-re
-  "package/[[:lower:][:digit:]_]+/[[:lower:][:digit:]._]+$"
-  "Regex to classify a package at work as a projectile project.")
-
-(projectile-register-project-type 'pkg '("manifest") :src-dir "include")
-(projectile-register-project-type 'hou '("houdini_setup") :src-dir "toolkit/include")
-(add-to-list 'projectile-project-root-files "manifest")
-(add-to-list 'projectile-project-root-files "houdini_setup")
-
-(defun work-project-name (root)
-  "Get a better name from the packages at work.
-
-ROOT is the path to the project and is used to extract the name.
-
-If not a facility package return the name of the last
-directory. Same as `projectile-default-project-name'"
-
-  (let ((dir (directory-file-name root)))
-    (if (string-match-p work-package-re dir)
-        ;; Layout is <packages root>/<name>/<version>
-        (format "%s-%s"
-                ;; name
-                (file-name-nondirectory (directory-file-name (file-name-directory dir)))
-                ;; version
-                (file-name-nondirectory dir))
-      (file-name-nondirectory dir))))
-
-(setq projectile-project-name-function #'work-project-name)
-
 ;; --------------------------- Source BuildConfig ----------------------------
 (cl-defun work-get-version-pk-lock (name file &key (recipe 'build) flavour)
   "Gets the version from a file.
