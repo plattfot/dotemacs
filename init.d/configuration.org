@@ -1297,7 +1297,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         "Process FEEDS and return a list of youtube feeds.
       Where the layout of FEEDS is '((NAME CHANNEL-ID TAGS...)...)"
         (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
-          (--map (cons (s-prepend yt-prefix (cadr it)) (cddr it)) feeds)))
+          (--map `(,(s-prepend yt-prefix (cadr it)) youtube ,@(cddr it)) feeds)))
     #+end_src
 
     RSS reeder
