@@ -1379,6 +1379,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("The Hu" "UCs6vRDdkZ8bP8Xt6WHbvrwA" music)
                      ("Nuclear Blast Records" "UCoxg3Kml41wE3IPq-PC-LQw" music)
                      ("Century Media Records" "UCnK9PxMozTYs8ELOvgMNKFA" music)
+                     ("Metal Blade Records" "UCSldglor1t-5E-Gy2eBdMrA" music)
                      ))
                 )))
     #+end_src
