@@ -1388,6 +1388,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("Nuclear Blast Records" "UCoxg3Kml41wE3IPq-PC-LQw" music)
                      ("Century Media Records" "UCnK9PxMozTYs8ELOvgMNKFA" music)
                      ("Metal Blade Records" "UCSldglor1t-5E-Gy2eBdMrA" music)
+                     ("DistroTube" "UCVls1GmFKf6WlTraIb_IaJg" linux)
                      ))
                 )))
     #+end_src
