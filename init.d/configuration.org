@@ -902,6 +902,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin org)
     #+end_src
 
+    Enable linking notmuch emails in org
+    #+begin_src emacs-lisp
+      (use-package ol-notmuch
+        :after org
+        :ensure nil)
+    #+end_src
+
     #+begin_src emacs-lisp
       (use-package org-tempo
         :ensure nil
