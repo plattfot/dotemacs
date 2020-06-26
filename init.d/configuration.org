@@ -1322,6 +1322,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                :map elfeed-search-mode-map
                ("l" . 'elfeed-search-untag-all-unread)
                ("o" . 'elfeed-search-tag-all-unread)
+               ("t" . (lambda ()
+                        (interactive)
+                        (-each (elfeed-search-selected)
+                          (lambda (entry)
+                            (if (member 'later (elfeed-entry-tags entry))
+                                (elfeed-untag entry 'later)
+                              (elfeed-tag entry 'later))
+                            (elfeed-search-update-entry entry)))))
                ;; Mark all as read
                ("L" . (lambda ()
                         (interactive)
