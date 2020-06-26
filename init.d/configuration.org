@@ -1320,6 +1320,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package elfeed
         :bind (("C-c n" . 'elfeed)
                :map elfeed-search-mode-map
+               ;; Use similar bindings as notmuch
                ("l" . 'elfeed-search-untag-all-unread)
                ("o" . 'elfeed-search-tag-all-unread)
                ("t" . (lambda ()
