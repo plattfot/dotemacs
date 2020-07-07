@@ -306,8 +306,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+begin_src emacs-lisp
        (use-package eglot
-         :hook ((c++-mode . eglot-ensure))
          :config
+         ;; Only run eglot on local buffers, too slow on bad connections.
+         (add-hook 'c++-mode-hook
+                   (lambda ()
+                     (when (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+                       (eglot-ensure))))
          (setq gc-cons-threshold 100000000
                read-process-output-max (* 1024 1024) ;; 1mb
                company-minimum-prefix-length 1
