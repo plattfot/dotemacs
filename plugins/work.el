@@ -131,6 +131,118 @@ relative to the `default-directory'."
                 (read-regexp "regex: ")))
   (let ((files (directory-files (or directory default-directory) t regex)))
     (--each files (insert (format "'%s',\n" (file-relative-name it))))))
+
+(defun work-git--fetch-version (change-re version-re error-msg)
+  "Extract version change from a diff.
+
+Search for change using CHANGE-RE regex. If it finds a change
+extract it using VERSION-RE. And return it. The VERSION-RE must
+contains one capture group.
+
+If nothing is found it will error out with ERROR-MSG as the error
+message."
+  (save-mark-and-excursion
+    (goto-char (point-min))
+    (diff-beginning-of-hunk t)
+    (if (re-search-forward change-re nil t)
+        (let ((result (s-match version-re
+                               (buffer-substring-no-properties
+                                (point-at-bol)
+                                (point-at-eol)))))
+          (if result
+              (nth 1 result)
+            (error error-msg)))
+      (error "No changes found"))))
+
+(defun work-git--fetch-old-new-version ()
+  "Return the old and new version using git diff."
+  (with-temp-buffer
+    (insert (shell-command-to-string "git diff manifest.yaml"))
+    (diff-mode)
+
+    (let* ((regex-fmt (rx bol "%sversion:" (* blank)
+                          (zero-or-one (or "\"" "'"))
+                          (group (+ (any alnum "_.")))
+                          (zero-or-one (or "\"" "'"))))
+           (old-version-re (format regex-fmt (rx "-")))
+           (new-version-re (format regex-fmt (rx "+")))
+           (old-version (work-git--fetch-version (rx bol "-")
+                                                 old-version-re
+                                                 "Old version not found"))
+           (new-version (work-git--fetch-version (rx bol "+")
+                                                 new-version-re
+                                                 "New version not found")))
+      `(,old-version ,new-version))))
+
+(defun work-git--version-commit-prefix-message (old-version new-version)
+  "Return the first part of the version commit message.
+
+The prefix is based on the changes between OLD-VERSION and
+NEW-VERSION. Assuming the versions following semver and
+new-version > old-version."
+  (let* ((split-version (lambda (version)
+                          (s-split (rx ".")
+                                   (car (s-split "_" version)))))
+         (old-version-c (funcall split-version old-version))
+         (new-version-c (funcall split-version new-version)))
+    (cond
+     ((not (string-equal (nth 0 old-version-c) (nth 0 new-version-c)))
+      "Bump up major")
+     ((and (>= (length old-version-c) 1)
+           (>= (length new-version-c) 1)
+           (not (string-equal (nth 1 old-version-c) (nth 1 new-version-c))))
+      "Bump up minor")
+     ((and (>= (length old-version-c) 2)
+           (>= (length new-version-c) 2)
+           (not (string-equal (nth 2 old-version-c) (nth 2 new-version-c))))
+      "Bump up patch")
+     ((and (< (length old-version-c) 3)
+           (>= (length new-version-c) 3)
+           (s-starts-with? "DD" (nth 3 new-version-c)))
+      "Bump up revision")
+     ((and (>= (length old-version-c) 3)
+           (>= (length new-version-c) 3)
+           (s-starts-with? "DD" (nth 3 old-version-c))
+           (s-starts-with? "DD" (nth 3 new-version-c))
+           (not (string-equal (nth 3 old-version-c) (nth 3 new-version-c))))
+      "Bump up revision")
+     (t "Version change"))))
+
+(defun work-git--version-commit-message ()
+  "Return the version commit message.
+In the form of \"`prefix: old -> new\""
+  (with-temp-buffer
+    (insert (shell-command-to-string "git diff manifest.yaml"))
+    (diff-mode)
+
+    (let ((check-changes
+           (lambda (change-re)
+             (goto-char (point-min))
+             (diff-beginning-of-hunk t)
+             (let ((changes 0))
+               (while (re-search-forward change-re nil t)
+                 (setf changes (+ 1 changes)))
+               (when (> changes 1)
+                 (error "Diff contains more changes than just version, aborting"))))))
+      ;; Make sure there is only one remove and add
+      (funcall check-changes (rx bol "-"))
+      (funcall check-changes (rx bol "+")))
+    (let* ((old-new-version (work-git--fetch-old-new-version))
+           (old (car old-new-version))
+           (new (cadr old-new-version)))
+      (format "%s: %s -> %s"
+              (work-git--version-commit-prefix-message old new) old new))))
+
+(defun work-git-add-version ()
+  "Add a commit with the version change.
+
+Will give an error if something other than the version has
+changed in the manifest.yaml."
+  (interactive)
+  (async-shell-command
+   (format "git add manifest.yaml && git commit -m %S"
+           (work-git--version-commit-message))))
+
 ;; --------------------------- Source BuildConfig ----------------------------
 (cl-defun work-get-version-pk-lock (name file &key (recipe 'build) flavour)
   "Gets the version from a file.
