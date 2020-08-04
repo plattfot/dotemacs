@@ -310,7 +310,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; Only run eglot on local buffers, too slow on bad connections.
          (add-hook 'c++-mode-hook
                    (lambda ()
-                     (when (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+                     (when (and (buffer-file-name) (not (file-remote-p (buffer-file-name))))
                        (eglot-ensure))))
          (setq gc-cons-threshold 100000000
                read-process-output-max (* 1024 1024) ;; 1mb
