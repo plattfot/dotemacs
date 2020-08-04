@@ -165,6 +165,23 @@ and PATH is where the pk.lock file is located."
    name
    (concat (file-name-as-directory path) "pk.lock")))
 
+(defun work-list-distributions (&optional path)
+  "Return a list of all installed distributions at PATH.
+
+This assumes the distributions are installed as package/version
+
+PATH supports the tramp syntax.
+
+If no PATH is given use `default-directory'."
+  ;; Way faster to use `shell-command-to-string' than `directory-files' over tramp.
+  (let* ((default-directory (or path default-directory))
+         (tree (json-read-from-string (shell-command-to-string "tree -L 2 -J"))))
+    (-flatten
+     (--map (-map (lambda (version)
+                    (format "%s-%s" (alist-get 'name it) (alist-get 'name version)))
+                  (alist-get 'contents it))
+            (alist-get 'contents (elt tree 0))))))
+
 ;; ============================ Registers ====================================
 (defvar work-swdevl
   (substitute-in-file-name "$DD_SHOWS_ROOT/DEV01/user/work.$USER/swdevl")
