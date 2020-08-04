@@ -2047,7 +2047,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (let ((map (copy-keymap plattfot-mode-map)))
          ;; Avoid overloading M-r in comint mode as that is used for
          ;; fetching history.
-         (define-key map (kbd "M-r") nil)
+         (define-key map (kbd "M-r") 'counsel-shell-history)
          map)
        "Custom keymap for `plattfot-comint-mode'.")
 
