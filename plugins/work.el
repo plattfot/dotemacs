@@ -244,25 +244,28 @@ changed in the manifest.yaml."
            (work-git--version-commit-message))))
 
 ;; --------------------------- Source BuildConfig ----------------------------
-(cl-defun work-get-version-pk-lock (name file &key (recipe 'build) flavour)
+(defun work-get-symbol (x)
+  "Return the symbol name of X.
+If variable already contains a symbol it will just return that."
+  (if (symbolp x) x (intern x)))
+
+(cl-defun work-pk-lock-get-version (name file &key (recipe 'build) flavour)
   "Gets the version from a file.
 Where NAME is the name of the package you want the version for
 and FILE the config to search in.
 
 RECIPE specifies what recipe it should fetch the VERSION from, default is build.
 
-FLAVOUR specifies what flavour it should fetch from, default is the first one.
-"
+FLAVOUR specifies what flavour it should fetch from, default is the first one."
   (let* ((pk.lock (json-read-file file))
-         (get-symbol (lambda (x) (if (symbolp x) x (intern x))))
          (version
           (-as-> (alist-get 'flavours pk.lock) x
                  (if flavour
-                     (alist-get (funcall get-symbol flavour) x)
+                     (alist-get (work-get-symbol flavour) x)
                    (cdar x))
-                 (alist-get (funcall get-symbol recipe) x)
+                 (alist-get (work-get-symbol recipe) x)
                  (alist-get 'packages x)
-                 (alist-get (funcall get-symbol name) x)
+                 (alist-get (work-get-symbol name) x)
                  (alist-get 'version x))))
     (unless version
       (error "No version found for %s" name))
