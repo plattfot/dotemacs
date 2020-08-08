@@ -853,6 +853,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 ** Emacs
   Packages that augments emacs.
+*** All the Icons
+    #+begin_src emacs-lisp
+    (use-package all-the-icons)
+    #+end_src
 *** Org
 
     Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
