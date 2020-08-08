@@ -932,11 +932,29 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package org-agenda
         :ensure nil
         :config
-        (setq org-agenda-prefix-format '((agenda . " %i %?-12t% s")
-                                         (todo . " %i %-12:c")
-                                         (tags . " %i %-12:c")
-                                         (search . " %i %-12:c"))))
+        (setq
+         org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
+                                    (todo . " %-2i ")
+                                    (tags . " %i ")
+                                    (search . " %i ")))
+        (customize-set-value
+         'org-agenda-category-icon-alist
+         `(
+           ("backup" ,(list (all-the-icons-material "backup" :height 1.2)) nil nil :ascent center)
+           ("bug" ,(list (all-the-icons-octicon "bug" :height 1.2)) nil nil :ascent center)
+           ("computer" ,(list (all-the-icons-faicon "server" :height 1.2)) nil nil :ascent center)
+           ("economy" ,(list (all-the-icons-material "euro_symbol" :height 1.2)) nil nil :ascent center)
+           ("emacs" ,(list (all-the-icons-fileicon "emacs" :height 1.2)) nil nil :ascent center)
+           ("exercise" ,(list (all-the-icons-material "fitness_center" :height 1.2)) nil nil :ascent center)
+           ("home" ,(list (all-the-icons-faicon "home" :height 1.2)) nil nil :ascent center)
+           ("keyboard" ,(list (all-the-icons-material "keyboard" :height 1.2)) nil nil :ascent center)
+           ("misc" ,(list (all-the-icons-octicon "inbox" :height 1.2)) nil nil :ascent center)
+           ("photo" ,(list (all-the-icons-material "camera_roll" :height 1.2)) nil nil :ascent center)
+           ("project" ,(list (all-the-icons-faicon "flask" :height 1.2)) nil nil :ascent center)
+           ("task" ,(list (all-the-icons-faicon "question-circle-o" :height 1.2)) nil nil :ascent center)
+           )))
     #+end_src
+
 
     The =org-agenda-prefix-format= is taken from [[https://github.com/m-cat/init.el/blob/master/init.el#L2082][m-cat's init.el]] and
     removes file name and category. No need to see the file name as
@@ -944,17 +962,43 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package org-super-agenda
+        :after (org)
         :config
+        (defun plt-strip-org-agenda-header (header)
+          "Remove todo, priority and tags from HEADER."
+          ;; Hardcode the todo keywords as I cannot figure out how to use
+          ;; them from `org-todo-keywords'. But something causing it to
+          ;; expand to empty when passing it via the :transformer.
+          (let* ((remove-re (rx (or "TODO" "WAIT" "CANCELLED" "DONE" ;; todo
+                                    (seq"[#"(any "A" "B" "C")"]") ;; priority
+                                    (seq ":" (+ (any ":" alnum)) (+":")) ;; tags
+                                    )))
+                 ;; Need to split it in two, otherwise the filter will
+                 ;; remove the icons in the prefix.
+                 (prefix (substring header 0 14))
+                 (rest (->> (substring header 14)
+                            (s-split " ")
+                            (--filter (not (s-matches? remove-re it)))
+                            (s-join " " )
+                            (s-trim-right ))))
+            (s-concat prefix rest)))
+
         (setq org-super-agenda-groups
               '((:name "Idag"
                        :time-grid t)
-                (:name "Avakta" :todo "WAIT" :order 100)
-                (:name "Tid över" :priority "C" :order 50)
-                (:name "Låg prio" :priority "B" :order 50)
-                (:name "Hög prio" :priority "A" :order 1)
-                (:name "Att göra" :todo "TODO")
-                (:name "Klart" :todo ("DONE" "CANCELLED") :order 200)
-              ))
+                (:name "Avakta" :todo "WAIT" :order 100
+                       :transformer plt-strip-org-agenda-header)
+                (:name "Tid över" :priority "C" :order 50
+                       :transformer plt-strip-org-agenda-header)
+                (:name "Låg prio" :priority "B" :order 50
+                       :transformer plt-strip-org-agenda-header)
+                (:name "Hög prio" :priority "A" :order 1
+                       :transformer plt-strip-org-agenda-header)
+                (:name "Att göra" :todo "TODO"
+                       :transformer plt-strip-org-agenda-header)
+                (:name "Klart" :todo ("DONE" "CANCELLED") :order 200
+                       :transformer plt-strip-org-agenda-header)
+                ))
         (org-super-agenda-mode)
         :pin melpa)
     #+end_src
