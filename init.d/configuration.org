@@ -1466,6 +1466,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ("Metal Blade Records" "UCSldglor1t-5E-Gy2eBdMrA" music)
                      ("DistroTube" "UCVls1GmFKf6WlTraIb_IaJg" linux)
                      ("A&P Reacts" "UC0NpEEcmONWuTU3nfURmyKw" music)
+                     ("Protesilaos Stavrou" "UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs)
                      ))
                 )))
     #+end_src
