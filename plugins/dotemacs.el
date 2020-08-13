@@ -32,5 +32,24 @@ file use `directory-file-name' to strip that away."
 (defvar dotemacs-guix-installed (file-directory-p "/var/guix")
   "Non-nil if guix is installed.")
 
+(defun dotemacs-font-hidpi ()
+  "Change the font size to be more readable on a 4k monitor."
+  (interactive)
+  (set-frame-font "Hack:pixelsize=20" nil nil))
+
+(defun dotemacs-font-lowdpi ()
+  "Change the font size to be more readable on a standard monitor."
+  (interactive)
+  (set-frame-font "Hack:pixelsize=12" nil nil))
+
+(defun dotemacs-font-setup ()
+  "Change the font size depending on if GDK_SCALE is defined.
+If defined it will use the `dotemacs-font-hidpi' otherwise it
+will use `dotemacs-font-lowdpi'."
+  (interactive)
+  (if (getenv "GDK_SCALE")
+      (dotemacs-font-hidpi)
+    (dotemacs-font-lowdpi)))
+
 (provide 'dotemacs)
 ;;; dotemacs.el ends here
