@@ -3,13 +3,17 @@
 ;;; Commentary:
 
 ;;; Code:
+
+(require 'dotemacs)
+
 (defun home-setup ()
   "Splits the session into three frames."
   (interactive)
   (delete-other-frames)
   (delete-other-windows)
-  (make-frame-command)
-  (make-frame-command))
+  (let ((frame-inherited-parameters '(font)))
+    (make-frame)
+    (make-frame)))
 
 (provide 'home)
 ;;; home.el ends here
