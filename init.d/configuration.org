@@ -1712,6 +1712,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil
         :load-path "plugins")
     #+end_src
+*** tile
+    Functions for tiling window managers
+    #+begin_src emacs-lisp
+      (use-package tile
+        :ensure nil
+        :load-path "plugins")
+    #+end_src
 ** Functions
 *** Buffer
 **** Rename current file or buffer
