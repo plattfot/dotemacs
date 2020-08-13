@@ -88,9 +88,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (when (window-system) (scroll-bar-mode 0))
    #+end_src
 *** Font
-    Set font and font size
+    Set font and font size depending on if using HiDPI or not.
     #+begin_src emacs-lisp
-      (set-frame-font "Hack:pixelsize=12" nil t)
+      (dotemacs-font-setup)
     #+end_src
 *** Column number
    Show column number in the info bar
