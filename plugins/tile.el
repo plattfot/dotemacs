@@ -10,6 +10,41 @@
 (cl-defstruct tile-window-properties class instance title)
 (cl-defstruct tile-node id name type shell app-id window-properties num output)
 (cl-defstruct tile-pretty-print-column header get)
+
+(defun tile-sway-application-info ()
+  "Show all applications and what shell they're using in sway."
+  (interactive)
+  (tile--application-info (tile--shell-command-to-json "swaymsg -t get_tree")))
+
+(defun tile--shell-command-to-json (command)
+  "Run shell COMMAND and parse it as json."
+  (json-read-from-string (shell-command-to-string command)))
+
+(defun tile--application-info (tile-tree)
+  "Show all applications and what shell they're using in TILE-TREE.
+
+Where TILE-TREE is a json object."
+  (with-output-to-temp-buffer "*tile info*"
+    (->> tile-tree
+         (tile--collect-nodes)
+         (-flatten)
+         (-filter 'tile-node-shell)
+         (tile-pretty-print-node
+          `(,(make-tile-pretty-print-column
+              :header "Shell"
+              :get 'tile-node-shell)
+            ,(make-tile-pretty-print-column
+              :header "Class/App ID"
+              :get (lambda (x)
+                     (cond
+                      ((tile-node-app-id x) (tile-node-app-id x))
+                      ((tile-node-window-properties x)
+                       (tile-window-properties-class (tile-node-window-properties x)))
+                      (t "Unknown"))))
+            ,(make-tile-pretty-print-column
+              :header "Name"
+              :get 'tile-node-name))))))
+
 (defun tile-pretty-print-node (columns tile-nodes)
   "Pretty print COLUMNS for TILE-NODES.
 
@@ -41,37 +76,6 @@ xwayland   Emacs-27.0.91 tile.el"
                       (-map (lambda (column)
                               (funcall (tile-pretty-print-column-get column) it))
                             columns)))))))
-
-(defun tile--application-info (tile-tree)
-  "Show all applications and what shell they're using in TILE-TREE.
-
-Where TILE-TREE is a json object."
-  (with-output-to-temp-buffer "*tile info*"
-    (->> tile-tree
-         (tile--collect-nodes)
-         (-flatten)
-         (-filter 'tile-node-shell)
-         (tile-pretty-print-node
-          `(,(make-tile-pretty-print-column
-              :header "Shell"
-              :get 'tile-node-shell)
-            ,(make-tile-pretty-print-column
-              :header "Class/App ID"
-              :get (lambda (x)
-                     (cond
-                      ((tile-node-app-id x) (tile-node-app-id x))
-                      ((tile-node-window-properties x)
-                       (tile-window-properties-class (tile-node-window-properties x)))
-                      (t "Unknown"))))
-            ,(make-tile-pretty-print-column
-              :header "Name"
-              :get 'tile-node-name))))))
-
-(defun tile-sway-application-info ()
-  "Show all applications and what shell they're using in sway."
-  (interactive)
-  (tile--application-info (->> (shell-command-to-string "swaymsg -t get_tree")
-                               (json-read-from-string))))
 
 (defun tile--collect-nodes (tile-tree-json)
   "Recursively extract the nodes in the TILE-TREE-JSON.
