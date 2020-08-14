@@ -7,7 +7,6 @@
 (require 'string-inflection)
 ;; Load libyaml bindings if they exist.
 (require 'libyaml nil t)
-(require 'projectile)
 (require 'dash)
 (require 'json)
 (require 'cl-lib)
@@ -122,56 +121,151 @@ Return a hash table."
             (puthash type value manifest)))
         manifest))))
 
-;; ============================ Projectile ===================================
-(defvar work-package-re
-  "package/[[:lower:][:digit:]_]+/[[:lower:][:digit:]._]+$"
-  "Regex to classify a package at work as a projectile project.")
+(defun work-insert-sources (&optional directory regex)
+  "Go to DIRECTORY and fetch all files matching the REGEX.
 
-(projectile-register-project-type 'pkg '("manifest") :src-dir "include")
-(projectile-register-project-type 'hou '("houdini_setup") :src-dir "toolkit/include")
-(add-to-list 'projectile-project-root-files "manifest")
-(add-to-list 'projectile-project-root-files "houdini_setup")
+Will print them out as a meson source list. The files will be
+relative to the `default-directory'."
+  (interactive (list
+                (read-directory-name "Source: ")
+                (read-regexp "regex: ")))
+  (let ((files (directory-files (or directory default-directory) t regex)))
+    (--each files (insert (format "'%s',\n" (file-relative-name it))))))
 
-(defun work-project-name (root)
-  "Get a better name from the packages at work.
+(defun work-git--fetch-version (change-re version-re error-msg)
+  "Extract version change from a diff.
 
-ROOT is the path to the project and is used to extract the name.
+Search for change using CHANGE-RE regex. If it finds a change
+extract it using VERSION-RE. And return it. The VERSION-RE must
+contains one capture group.
 
-If not a facility package return the name of the last
-directory. Same as `projectile-default-project-name'"
+If nothing is found it will error out with ERROR-MSG as the error
+message."
+  (save-mark-and-excursion
+    (goto-char (point-min))
+    (diff-beginning-of-hunk t)
+    (if (re-search-forward change-re nil t)
+        (let ((result (s-match version-re
+                               (buffer-substring-no-properties
+                                (point-at-bol)
+                                (point-at-eol)))))
+          (if result
+              (nth 1 result)
+            (error error-msg)))
+      (error "No changes found"))))
 
-  (let ((dir (directory-file-name root)))
-    (if (string-match-p work-package-re dir)
-        ;; Layout is <packages root>/<name>/<version>
-        (format "%s-%s"
-                ;; name
-                (file-name-nondirectory (directory-file-name (file-name-directory dir)))
-                ;; version
-                (file-name-nondirectory dir))
-      (file-name-nondirectory dir))))
+(defun work-git--fetch-old-new-version ()
+  "Return the old and new version using git diff."
+  (with-temp-buffer
+    (insert (shell-command-to-string "git diff manifest.yaml"))
+    (diff-mode)
 
-(setq projectile-project-name-function #'work-project-name)
+    (let* ((regex-fmt (rx bol "%sversion:" (* blank)
+                          (zero-or-one (or "\"" "'"))
+                          (group (+ (any alnum "_.")))
+                          (zero-or-one (or "\"" "'"))))
+           (old-version-re (format regex-fmt (rx "-")))
+           (new-version-re (format regex-fmt (rx "+")))
+           (old-version (work-git--fetch-version (rx bol "-")
+                                                 old-version-re
+                                                 "Old version not found"))
+           (new-version (work-git--fetch-version (rx bol "+")
+                                                 new-version-re
+                                                 "New version not found")))
+      `(,old-version ,new-version))))
+
+(defun work-git--version-commit-prefix-message (old-version new-version)
+  "Return the first part of the version commit message.
+
+The prefix is based on the changes between OLD-VERSION and
+NEW-VERSION. Assuming the versions following semver and
+new-version > old-version."
+  (let* ((split-version (lambda (version)
+                          (s-split (rx ".")
+                                   (car (s-split "_" version)))))
+         (old-version-c (funcall split-version old-version))
+         (new-version-c (funcall split-version new-version)))
+    (cond
+     ((not (string-equal (nth 0 old-version-c) (nth 0 new-version-c)))
+      "Bump up major")
+     ((and (>= (length old-version-c) 1)
+           (>= (length new-version-c) 1)
+           (not (string-equal (nth 1 old-version-c) (nth 1 new-version-c))))
+      "Bump up minor")
+     ((and (>= (length old-version-c) 2)
+           (>= (length new-version-c) 2)
+           (not (string-equal (nth 2 old-version-c) (nth 2 new-version-c))))
+      "Bump up patch")
+     ((and (< (length old-version-c) 3)
+           (>= (length new-version-c) 3)
+           (s-starts-with? "DD" (nth 3 new-version-c)))
+      "Bump up revision")
+     ((and (>= (length old-version-c) 3)
+           (>= (length new-version-c) 3)
+           (s-starts-with? "DD" (nth 3 old-version-c))
+           (s-starts-with? "DD" (nth 3 new-version-c))
+           (not (string-equal (nth 3 old-version-c) (nth 3 new-version-c))))
+      "Bump up revision")
+     (t "Version change"))))
+
+(defun work-git--version-commit-message ()
+  "Return the version commit message.
+In the form of \"`prefix: old -> new\""
+  (with-temp-buffer
+    (insert (shell-command-to-string "git diff manifest.yaml"))
+    (diff-mode)
+
+    (let ((check-changes
+           (lambda (change-re)
+             (goto-char (point-min))
+             (diff-beginning-of-hunk t)
+             (let ((changes 0))
+               (while (re-search-forward change-re nil t)
+                 (setf changes (+ 1 changes)))
+               (when (> changes 1)
+                 (error "Diff contains more changes than just version, aborting"))))))
+      ;; Make sure there is only one remove and add
+      (funcall check-changes (rx bol "-"))
+      (funcall check-changes (rx bol "+")))
+    (let* ((old-new-version (work-git--fetch-old-new-version))
+           (old (car old-new-version))
+           (new (cadr old-new-version)))
+      (format "%s: %s -> %s"
+              (work-git--version-commit-prefix-message old new) old new))))
+
+(defun work-git-add-version ()
+  "Add a commit with the version change.
+
+Will give an error if something other than the version has
+changed in the manifest.yaml."
+  (interactive)
+  (async-shell-command
+   (format "git add manifest.yaml && git commit -m %S"
+           (work-git--version-commit-message))))
 
 ;; --------------------------- Source BuildConfig ----------------------------
-(cl-defun work-get-version-pk-lock (name file &key (recipe 'build) flavour)
+(defun work-get-symbol (x)
+  "Return the symbol name of X.
+If variable already contains a symbol it will just return that."
+  (if (symbolp x) x (intern x)))
+
+(cl-defun work-pk-lock-get-version (name file &key (recipe 'build) flavour)
   "Gets the version from a file.
 Where NAME is the name of the package you want the version for
 and FILE the config to search in.
 
 RECIPE specifies what recipe it should fetch the VERSION from, default is build.
 
-FLAVOUR specifies what flavour it should fetch from, default is the first one.
-"
+FLAVOUR specifies what flavour it should fetch from, default is the first one."
   (let* ((pk.lock (json-read-file file))
-         (get-symbol (lambda (x) (if (symbolp x) x (intern x))))
          (version
           (-as-> (alist-get 'flavours pk.lock) x
                  (if flavour
-                     (alist-get (funcall get-symbol flavour) x)
+                     (alist-get (work-get-symbol flavour) x)
                    (cdar x))
-                 (alist-get (funcall get-symbol recipe) x)
+                 (alist-get (work-get-symbol recipe) x)
                  (alist-get 'packages x)
-                 (alist-get (funcall get-symbol name) x)
+                 (alist-get (work-get-symbol name) x)
                  (alist-get 'version x))))
     (unless version
       (error "No version found for %s" name))
@@ -185,6 +279,23 @@ and PATH is where the pk.lock file is located."
   (work-get-version-pk-lock
    name
    (concat (file-name-as-directory path) "pk.lock")))
+
+(defun work-list-distributions (&optional path)
+  "Return a list of all installed distributions at PATH.
+
+This assumes the distributions are installed as package/version
+
+PATH supports the tramp syntax.
+
+If no PATH is given use `default-directory'."
+  ;; Way faster to use `shell-command-to-string' than `directory-files' over tramp.
+  (let* ((default-directory (or path default-directory))
+         (tree (json-read-from-string (shell-command-to-string "tree -L 2 -J"))))
+    (-flatten
+     (--map (-map (lambda (version)
+                    (format "%s-%s" (alist-get 'name it) (alist-get 'name version)))
+                  (alist-get 'contents it))
+            (alist-get 'contents (elt tree 0))))))
 
 ;; ============================ Registers ====================================
 (defvar work-swdevl
