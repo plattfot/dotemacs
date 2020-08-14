@@ -10,11 +10,33 @@
 (cl-defstruct tile-window-properties class instance title)
 (cl-defstruct tile-node id name type shell app-id window-properties num output)
 (cl-defstruct tile-pretty-print-column header get)
+(cl-defstruct tile-output
+  id
+  name
+  orientation
+  active
+  dpms
+  primary
+  make
+  model
+  serial
+  scale
+  scale-filter
+  transform
+  adaptive-sync-status
+  current-workspace
+  current-mode)
+(cl-defstruct tile-current-mode width height refresh)
 
 (defun tile-sway-application-info ()
   "Show all applications and what shell they're using in sway."
   (interactive)
   (tile--application-info (tile--shell-command-to-json "swaymsg -t get_tree")))
+
+(defun tile-sway-output-info ()
+  "Show all output that sway knows about."
+  (interactive)
+  (tile--output-info (tile--shell-command-to-json "swaymsg -t get_outputs")))
 
 (defun tile--shell-command-to-json (command)
   "Run shell COMMAND and parse it as json."
@@ -45,6 +67,26 @@ Where TILE-TREE is a json object."
               :header "Name"
               :get 'tile-node-name))))))
 
+(defun tile--output-info (tile-output)
+  "Show all outputs  in TILE-OUTPUT.
+
+Where TILE-OUTPUT is a json object."
+  (with-output-to-temp-buffer "*tile info*"
+    (->> tile-output
+         (tile--collect-outputs)
+         (tile-pretty-print-node
+          `(,(make-tile-pretty-print-column
+              :header "Name"
+              :get 'tile-output-name)
+            ,(make-tile-pretty-print-column
+              :header "Make"
+              :get 'tile-output-make)
+            ,(make-tile-pretty-print-column
+              :header "Model"
+              :get 'tile-output-model)
+            ,(make-tile-pretty-print-column
+              :header "Serial"
+              :get 'tile-output-serial))))))
 (defun tile-pretty-print-node (columns tile-nodes)
   "Pretty print COLUMNS for TILE-NODES.
 
@@ -102,5 +144,32 @@ Return a nested list of `tile-node'."
                     (tile--collect-nodes node)))
             nodes))))
 
+(defun tile--collect-outputs (output-json)
+  "Extract outputs form OUTPUT-JSON.
+
+Return a list of `tile-output'."
+  (--map (make-tile-output
+          :id (alist-get 'id it)
+          :name (alist-get 'name it)
+          :orientation (alist-get 'orientation it)
+          :active (alist-get 'active it)
+          :dpms (alist-get 'dpms it)
+          :primary (alist-get 'primary it)
+          :make (alist-get 'make it)
+          :model (alist-get 'model it)
+          :serial (alist-get 'serial it)
+          :scale (alist-get 'scale it)
+          :scale-filter (alist-get 'scale-filter it)
+          :transform (alist-get 'transform it)
+          :adaptive-sync-status (alist-get 'adaptive-sync-status it)
+          :current-workspace (alist-get 'current-workspace it)
+          :current-mode (let ((current-mode (alist-get 'current-mode it)))
+                          (when current-mode
+                            (make-tile-current-mode
+                             :height (alist-get 'height current-mode)
+                             :width (alist-get 'width current-mode)
+                             :refresh (alist-get 'refresh current-mode)
+                             ))))
+         output-json))
 (provide 'tile)
 ;;; tile.el ends here
