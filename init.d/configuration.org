@@ -2096,6 +2096,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "<C-M-prior>") 'beginning-of-buffer)
 
          (define-key map (kbd "C-.") 'repeat)
+         (define-key map (kbd "<f4>") (lambda ()
+                                        (interactive)
+                                        (toggle-rot13-mode)
+                                        (redraw-display)))
          map)
        "Custom keymap for `plattfot-mode'.")
 
