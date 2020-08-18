@@ -243,60 +243,6 @@ changed in the manifest.yaml."
    (format "git add manifest.yaml && git commit -m %S"
            (work-git--version-commit-message))))
 
-;; --------------------------- Source BuildConfig ----------------------------
-(defun work-get-symbol (x)
-  "Return the symbol name of X.
-If variable already contains a symbol it will just return that."
-  (if (symbolp x) x (intern x)))
-
-(cl-defun work-pk-lock-get-version (name file &key (recipe 'build) flavour)
-  "Gets the version from a file.
-Where NAME is the name of the package you want the version for
-and FILE the config to search in.
-
-RECIPE specifies what recipe it should fetch the VERSION from, default is build.
-
-FLAVOUR specifies what flavour it should fetch from, default is the first one."
-  (let* ((pk.lock (json-read-file file))
-         (version
-          (-as-> (alist-get 'flavours pk.lock) x
-                 (if flavour
-                     (alist-get (work-get-symbol flavour) x)
-                   (cdar x))
-                 (alist-get (work-get-symbol recipe) x)
-                 (alist-get 'packages x)
-                 (alist-get (work-get-symbol name) x)
-                 (alist-get 'version x))))
-    (unless version
-      (error "No version found for %s" name))
-    version))
-
-(defun work-get-version-from-pk-lock (name path)
-  "Gets the version from the pk lock file.
-Where NAME is the name of the package you want the version for
-and PATH is where the pk.lock file is located."
-  ;; Pick the first in the list
-  (work-get-version-pk-lock
-   name
-   (concat (file-name-as-directory path) "pk.lock")))
-
-(defun work-list-distributions (&optional path)
-  "Return a list of all installed distributions at PATH.
-
-This assumes the distributions are installed as package/version
-
-PATH supports the tramp syntax.
-
-If no PATH is given use `default-directory'."
-  ;; Way faster to use `shell-command-to-string' than `directory-files' over tramp.
-  (let* ((default-directory (or path default-directory))
-         (tree (json-read-from-string (shell-command-to-string "tree -L 2 -J"))))
-    (-flatten
-     (--map (-map (lambda (version)
-                    (format "%s-%s" (alist-get 'name it) (alist-get 'name version)))
-                  (alist-get 'contents it))
-            (alist-get 'contents (elt tree 0))))))
-
 ;; ============================ Registers ====================================
 (defvar work-swdevl
   (substitute-in-file-name "$DD_SHOWS_ROOT/DEV01/user/work.$USER/swdevl")
