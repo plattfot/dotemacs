@@ -761,9 +761,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          mm-text-html-renderer 'gnus-w3m
          notmuch-show-indent-messages-width 0
          notmuch-search-oldest-first nil
-         notmuch-fcc-dirs `((,user-mail-address . "gmail/[Gmail]/Skickat"))
+         notmuch-fcc-dirs `((,user-mail-address . "posteo/Sent"))
          notmuch-show-logo nil
-         notmuch-draft-folder "gmail/[Gmail]/Utkast"
+         notmuch-draft-folder "posteo/Drafts"
          notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
                                   (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "o")
                                   (:name "oläst" :query "tag:unread" :sort-order newest-first :key "O")
