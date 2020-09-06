@@ -998,6 +998,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                        :transformer plt-strip-org-agenda-header)
                 (:name "Klart" :todo ("DONE" "CANCELLED") :order 200
                        :transformer plt-strip-org-agenda-header)
+                (:name "Årsdagar" :tag "årsdag" :order 1000
+                       :transformer plt-strip-org-agenda-header)
                 ))
         (org-super-agenda-mode)
         :pin melpa)
