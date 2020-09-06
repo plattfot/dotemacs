@@ -92,6 +92,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (dotemacs-font-setup)
     #+end_src
+
+    Inherit font for frames when creating a new frame.
+    #+begin_src emacs-lisp
+    (setq frame-inherited-parameters '(font))
+    #+end_src
 *** Column number
    Show column number in the info bar
    #+begin_src emacs-lisp
