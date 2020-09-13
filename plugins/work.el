@@ -122,7 +122,10 @@ Return a hash table."
         manifest))))
 
 (defun work-insert-sources (&optional directory regex)
-  "Go to DIRECTORY and fetch all files matching the REGEX.
+  "Visit the DIRECTORY and fetch all files matching the REGEX.
+
+Different to `work-insert-sources-recursively' is that this will
+ignore subdirectories.
 
 Will print them out as a meson source list. The files will be
 relative to the `default-directory'."
@@ -130,6 +133,20 @@ relative to the `default-directory'."
                 (read-directory-name "Source: ")
                 (read-regexp "regex: ")))
   (let ((files (directory-files (or directory default-directory) t regex)))
+    (--each files (insert (format "'%s',\n" (file-relative-name it))))))
+
+(defun work-insert-sources-recursively (&optional directory regex)
+  "Visit the DIRECTORY and its subdirs and fetch all files matching the REGEX.
+
+Different to `work-insert-sources' is that this will traverse
+into subdirectories and fetch those files as well.
+
+Will print them out as a meson source list. The files will be
+relative to the `default-directory'."
+  (interactive (list
+                (read-directory-name "Source: ")
+                (read-regexp "regex: ")))
+  (let ((files (directory-files-recursively (or directory default-directory) regex)))
     (--each files (insert (format "'%s',\n" (file-relative-name it))))))
 
 (defun work-git--fetch-version (change-re version-re error-msg)
