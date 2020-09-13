@@ -1479,13 +1479,45 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 )))
     #+end_src
 
-    Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]]. But made some
-    small changes to open up multiple videos with one mpv window.
+    Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]] and the
+    [[https://github.com/mpv-player/mpv/blob/master/TOOLS/umpv][umpv]] script in the mpv repo. I.e it will append the =urls= to mpv
+    if it is already running. Otherwise it will launch =mpv=.
+
+    **Note**: that it will only append to an mpv instance launched by
+    this function.
 
     #+begin_src emacs-lisp
-      (defun plt/elfeed-mpv (urls)
-        "Watch videos from URLS in mpv."
-        (async-shell-command (s-join " " `("mpv" ,@(--map (format "%S" it) urls)))))
+      (cl-defun plt/elfeed-mpv (urls &key (socket "/tmp/mpvsocket"))
+        "Watch videos from URLS in mpv.
+
+      SOCKET is the name of the unix socket to use when communicate
+      with mpv. Default is \"/tmp/mpvsocket\".
+
+      If mpv has already been launched append the URLS to the current
+      running process."
+        ;; TODO: figure out a way to spawn on connection failure
+        (if (file-exists-p socket)
+            (let ((proc (make-network-process
+                         :name "mpv-client"
+                         :family 'local
+                         :service socket)))
+              (progn
+                (--each urls
+                  (process-send-string
+                   proc
+                   (format "raw loadfile %s append\n" it)))
+                (message "Added %s to mpv" (s-join ", " urls))
+                (delete-process proc)))
+          ;; File does not exist - launch mpv with urls
+          (progn
+            (message "Launching: mpv" (s-join " " urls))
+            (async-shell-command (s-join " " `("mpv" ,@(--map (format "%S" it) urls)
+                                               "--input-ipc-server=/tmp/mpvsocket")))
+            ;; Clean up the socket when done
+            (set-process-sentinel (get-buffer-process "*Async Shell Command*")
+                                  (lambda (process event)
+                                    (when (eq (process-status process) 'exit)
+                                      (delete-file socket)))))))
 
       ;; Don't show the async buffer
       (add-to-list 'display-buffer-alist
