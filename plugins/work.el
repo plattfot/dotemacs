@@ -280,7 +280,7 @@ of CONFIG as the version."
 ;; ============================== GDB ========================================
 (define-prefix-command 'gdb-insert-map)
 
-(defun work-insert-sourceme (name &optional config use-config-verbatim)
+(defun work-insert-gdb-sourceme (name &optional config use-config-verbatim)
   "Insert path to NAME's sourceme file.
 
 CONFIG is where it should look for the version.  It's
@@ -295,12 +295,12 @@ Useful when debugging."
 (defun work-insert-spork-sourceme ()
   "Insert path to spork's sourceme file."
   (interactive)
-  (work-insert-sourceme "spork_for_gdb" "0.7.0" t))
+  (work-insert-gdb-sourceme "spork_for_gdb" "0.7.0" t))
 
 (defun work-insert-openmesh-sourceme ()
   "Insert path to spork's sourceme file."
   (interactive)
-  (work-insert-sourceme "openmesh_for_gdb" "1.0.0" t))
+  (work-insert-gdb-sourceme "openmesh_for_gdb" "1.0.0" t))
 
 (global-set-key (kbd "C-c i") 'gdb-insert-map)
 
