@@ -1430,7 +1430,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ("https://rss.slashdot.org/Slashdot/slashdot" news)
                 ("https://www.reddit.com/r/MechGroupBuys/.rss" keebs)
                 ("https://www.reddit.com/r/emacs/.rss" emacs)
-                ("https://www.engadget.com/rss.xml" news)
                 ("https://www.anandtech.com/rss/" news nerd)
                 ("https://www.macrumors.com/macrumors.xml" news)
                 ("https://www.sweclockers.com/feeds/news.xml" news nerd)
