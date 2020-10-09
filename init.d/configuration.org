@@ -840,6 +840,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     ("C-k" . vterm-send-C-k))
         :config
         (setf vterm-max-scrollback 10000)
+        (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
         (add-hook 'vterm-mode-hook 'dotemacs-hide-trailing-whitespace))
     #+end_src
 *** mpdel
