@@ -761,6 +761,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          sendmail-program "msmtp"
          send-mail-function 'sendmail-send-it
          mail-specify-envelope-from t
+         message-sendmail-envelope-from 'header
+         mail-envelope-from 'header
          message-kill-buffer-on-exit t
          message-send-mail-function 'message-send-mail-with-sendmail
          message-signature "s/Fred[re]+i[ck]+/Fredrik/g"
