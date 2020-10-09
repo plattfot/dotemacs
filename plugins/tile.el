@@ -8,7 +8,7 @@
 (require 'cl-lib)
 
 (cl-defstruct tile-window-properties class instance title)
-(cl-defstruct tile-node id name type shell app-id window-properties num output)
+(cl-defstruct tile-node id name type shell app-id window-properties num output marks)
 (cl-defstruct tile-pretty-print-column header get)
 (cl-defstruct tile-output
   id
@@ -65,7 +65,10 @@ Where TILE-TREE is a json object."
                       (t "Unknown"))))
             ,(make-tile-pretty-print-column
               :header "Name"
-              :get 'tile-node-name))))))
+              :get 'tile-node-name)
+            ,(make-tile-pretty-print-column
+              :header "Marks"
+              :get 'tile-node-marks))))))
 
 (defun tile--output-info (tile-output)
   "Show all outputs  in TILE-OUTPUT.
@@ -134,6 +137,7 @@ Return a nested list of `tile-node'."
                      :num (alist-get 'num node)
                      :output (alist-get 'output node)
                      :app-id (alist-get 'app_id node)
+                     :marks (alist-get 'marks node)
                      :window-properties
                      (let ((window-props (alist-get 'window_properties node)))
                        (when window-props
