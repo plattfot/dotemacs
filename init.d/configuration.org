@@ -748,7 +748,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Using notmuch to index my emails.
     #+begin_src emacs-lisp
       (use-package notmuch
-        :bind ("C-c m" . notmuch)
+        :bind (("C-c m" . notmuch)
+               ("C-c M" . home-mail-refresh))
         :config
         (define-key notmuch-search-mode-map "l"
           (lambda (&optional beg end)
