@@ -1540,6 +1540,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (elfeed-search-update-entry entry))))
         (unless (use-region-p) (forward-line)))
     #+end_src
+*** moody
+    #+begin_src emacs-lisp
+      (use-package moody
+        :config
+        (setq x-underline-at-descent-line t
+              moody-mode-line-height
+              (let ((font (face-font 'mode-line)))
+                (if font (* 1 (aref (font-info font) 2)) 30)))
+        (moody-replace-mode-line-buffer-identification)
+        (moody-replace-vc-mode))
+    #+end_src
 ** Text
   Packages for editing and viewing text.
 *** Emojify
