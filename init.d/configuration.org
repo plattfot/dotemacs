@@ -1385,6 +1385,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       Where the layout of FEEDS is '((NAME CHANNEL-ID TAGS...)...)"
         (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
           (--map `(,(s-prepend yt-prefix (cadr it)) youtube ,@(cddr it)) feeds)))
+
+      ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
+      (defun plt/elfeed-save-db-and-bury ()
+        "Wrapper to save the elfeed db to disk before burying buffer"
+        (interactive)
+        (elfeed-db-save)
+        (quit-window))
     #+end_src
 
     RSS reeder
@@ -1392,9 +1399,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package elfeed
         :bind (("C-c n" . 'elfeed)
                :map elfeed-search-mode-map
+               ;; Make sure the db is saved
+               ("Q" . plt/elfeed-save-db-and-bury)
+               ("q" . plt/elfeed-save-db-and-bury)
                ;; Use similar bindings as notmuch
-               ("l" . 'elfeed-search-untag-all-unread)
-               ("o" . 'elfeed-search-tag-all-unread)
+               ("l" . elfeed-search-untag-all-unread)
+               ("o" . elfeed-search-tag-all-unread)
                ("t" . (lambda ()
                         (interactive)
                         (-each (elfeed-search-selected)
