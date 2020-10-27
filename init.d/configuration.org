@@ -2163,6 +2163,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                         (interactive)
                                         (toggle-rot13-mode)
                                         (redraw-display)))
+         (define-key map (kbd "<f2>") 'home-setup)
+         (define-key map (kbd "<f3>") 'work-setup)
          map)
        "Custom keymap for `plattfot-mode'.")
 
