@@ -1174,6 +1174,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               emms-player-list '(emms-player-mpv)
               emms-info-functions '(emms-info-libtag)))
     #+end_src
+*** eww
+    #+begin_src emacs-lisp
+      (use-package eww
+        :ensure nil
+        :config
+        (add-hook 'eww-after-render-hook 'dotemacs-hide-trailing-whitespace))
+    #+end_src
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
 
