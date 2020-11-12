@@ -2258,8 +2258,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-c l") 'duplicate-line)
          (define-key map (kbd "C-,") 'split-at-comma)
          ;; Buffer functions
-         (define-key map (kbd "C-c r") 'revert-all-buffers)
+         (define-key map (kbd "C-c <f5>") 'revert-all-buffers)
          (define-key map (kbd "C-c R") 'rename-current-file-or-buffer)
+         (define-key map (kbd "<f5>") 'revert-buffer)
          ;; Compile from current location and to re-run
          (define-key map (kbd "<f12>") 'compile)
          (define-key map (kbd "<f11>") 'recompile)
