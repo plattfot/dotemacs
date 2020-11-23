@@ -962,6 +962,39 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin org)
     #+end_src
 
+    Commit a todo change to git using =plt/org-todo-commit-change=
+    *NOTE* Work in progress. Only support repeating todos
+
+    #+begin_src emacs-lisp
+      (defun plt/org-todo-commit-change ()
+        "Commit todo state change"
+        (interactive)
+        (let ((note-file (file-name-nondirectory org-default-notes-file)))
+          (with-temp-buffer
+            (insert (shell-command-to-string (format "git diff %S" note-file)))
+            (diff-mode)
+            (catch 'done
+              (goto-char (point-min))
+              (diff-beginning-of-hunk t)
+              (save-match-data
+                (when (and (re-search-forward
+                            (rx line-start "-" (one-or-more (in blank)) ":LAST_REPEAT:") nil t)
+                           (re-search-forward
+                            (rx line-start "+" (one-or-more (in blank)) ":LAST_REPEAT:") nil t))
+                  (when (re-search-backward
+                         (rx line-start blank (one-or-more (in "*")) (zero-or-more blank) "TODO"
+                             (zero-or-more (in blank))
+                             (group (zero-or-more (in print))))
+                         nil t)
+                    (shell-command
+                     (format "git add %S && git commit -m %S"
+                             note-file
+                             (format "done: %s" (match-string 1))))
+                    (throw 'done "done with commit"))))
+              (goto-char (point-min))
+              (diff-beginning-of-hunk t)))))
+    #+end_src
+
     Enable linking notmuch emails in org
     #+begin_src emacs-lisp
       (use-package ol-notmuch
