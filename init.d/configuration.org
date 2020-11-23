@@ -1224,19 +1224,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setf eldoc-echo-area-use-multiline-p nil))
     #+end_src
 *** emms
-    Using Arch's package manager to handle emms, as I need the
-    emms-print-metadata function for libtag.
+    Using guix to handle emms, as I need the emms-print-metadata
+    function for libtag.
     #+begin_src emacs-lisp
       (use-package emms
         :ensure nil
         :if (not dotemacs-is-work)
         :bind
         (("<f7>" . emms)
-         ("<C-f7>" . emms-browser)
-         ("<XF86AudioPrev>" . emms-previous)
-         ("<XF86AudioNext>" . emms-next)
-         ("<XF86AudioPlay>" . emms-pause)
-         ("<XF86AudioStop>" . emms-stop))
+         ("<C-f7>" . emms-browser))
         :config
         (require 'emms-setup)
         (require 'emms-info-libtag)
