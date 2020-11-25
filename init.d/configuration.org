@@ -1589,6 +1589,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ,@(plt/elfeed-group-feeds
                    :tags 'emacs
                    :feeds '("https://www.reddit.com/r/emacs/.rss"))
+                ,@(plt/elfeed-group-feeds
+                   :tags 'deals
+                   :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
                 ,@(plt/elfeed-youtube-feeds
                    '(("Avatar" "UCyaPf0E-PRRZH3UvvxNPeEw" music)
                      ("Blackbriar" "UCjR-qXRBNkysQ0Threo1Bfg" music)
