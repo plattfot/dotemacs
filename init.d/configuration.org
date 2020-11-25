@@ -1359,9 +1359,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setq tramp-default-method "ssh"
               tramp-ssh-controlmaster-options
-               (concat
-                "-o ControlPath=/tmp/ssh-tramp-ControlPath-%%r@%%h:%%p "
-                "-o ControlMaster=auto -o ControlPersist=yes"))
+              (concat
+               "-o ControlPath=/tmp/ssh-tramp-ControlPath-%%r@%%h:%%p "
+               "-o ControlMaster=auto -o ControlPersist=yes"))
         ;; Deal with work, guix and my custom scripts
         (add-to-list 'tramp-remote-path "~/bin")
         (add-to-list 'tramp-remote-path "/tools/bin")
