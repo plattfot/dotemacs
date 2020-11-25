@@ -15,25 +15,6 @@
     "Average the values in the list NS."
     (/ (apply '+ ns) (length ns)))
 
-;; From
-;; http://stackoverflow.com/questions/2289883/emacs-copy-matching-lines
-;; by Trey Jackson
-(defun copy-lines-matching-re (re)
-  "find all lines matching the regexp RE in the current buffer
-putting the matching lines in a buffer named *matching*"
-  (interactive "sRegexp to match: ")
-  (let ((result-buffer (get-buffer-create "*matching*")))
-    (with-current-buffer result-buffer
-      (erase-buffer))
-    (save-match-data
-      (save-excursion
-        (goto-char (point-min))
-        (while (re-search-forward re nil t)
-          (princ (buffer-substring-no-properties (line-beginning-position)
-                                                 (line-beginning-position 2))
-                 result-buffer))))
-    (pop-to-buffer result-buffer)))
-
 (defun dd-log-extract-info (re)
   "Extracts all lines matching the regexp RE.
 It will place them in a buffer named *matching* and strip the DD_LOG header."

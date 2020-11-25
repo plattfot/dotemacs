@@ -2010,6 +2010,29 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (insert "\n" line)
           (goto-char current)))
     #+end_src
+
+    Copy lines matching a regex to a separate buffer
+    #+begin_src emacs-lisp
+      ;; From
+      ;; http://stackoverflow.com/questions/2289883/emacs-copy-matching-lines
+      ;; by Trey Jackson
+      (defun copy-lines-matching-re (re)
+        "find all lines matching the regexp RE in the current buffer
+      putting the matching lines in a buffer named *matching*"
+        (interactive "sRegexp to match: ")
+        (let ((result-buffer (get-buffer-create "*matching*")))
+          (with-current-buffer result-buffer
+            (erase-buffer))
+          (save-match-data
+            (save-excursion
+              (goto-char (point-min))
+              (while (re-search-forward re nil t)
+                (princ (buffer-substring-no-properties (line-beginning-position)
+                                                       (line-beginning-position 2))
+                       result-buffer))))
+          (pop-to-buffer result-buffer)))
+    #+end_src
+
 **** Format
 
      Different functions to quickly format text.
