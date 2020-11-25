@@ -47,7 +47,7 @@ file use `directory-file-name' to strip that away."
 If defined it will use the `dotemacs-font-hidpi' otherwise it
 will use `dotemacs-font-lowdpi'."
   (interactive)
-  (if (getenv "GDK_SCALE")
+  (if (or (getenv "GDK_SCALE") (getenv "GDK_DPI_SCALE"))
       (dotemacs-font-hidpi)
     (dotemacs-font-lowdpi)))
 
