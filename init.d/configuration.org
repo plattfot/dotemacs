@@ -2861,6 +2861,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+begin_src test
    --text follows this line--
    #+end_src
+** Alternative commands when magit is used on a slow host/connection
+*** view commits not pushed to upstream branch of master
+
+    This is similar to what magit recent commits show.
+    #+begin_src shell
+      git log master@{u}^.. --oneline
+    #+end_src
+
+    For quick access alias it to =git ahead=
+    #+begin_src shell
+      git config --global alias.ahead 'log master@{u}^.. --oneline'
+    #+end_src
 
 * Notes
 ** Emacs
