@@ -1278,6 +1278,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (setq ibuffer-saved-filter-groups
                '(("default"
                   ("c++" (mode . c++-mode))
+                  ("scheme" (mode . scheme-mode))
                   ("make"  (or (mode . makefile-gmake-mode)
                                (mode . makefile-mode)))
                   ("cmake" (mode . cmake-mode ))
