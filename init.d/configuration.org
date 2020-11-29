@@ -3110,6 +3110,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src shell :tangle no
        find . -type d -name private -prune -or -name "*.py" -print | etags -
      #+end_src
+**** Set breakpoints when using pytest
+     Place this in the code
+     #+begin_src python :tangle no
+        import pdb;pdb.set_trace()
+     #+end_src
+     Then (if using =python-3.7+= just call
+     #+begin_src python :tangle no
+       breakpoint()
+     #+end_src
+     where you want pytest to drop into pdb
+     See [[https://docs.pytest.org/en/latest/usage.html#setting-breakpoints][setting-breakpoints]] in the docs for more info.
 
 *** Print out debug info
     #+begin_src sh :tangle no
