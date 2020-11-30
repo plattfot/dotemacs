@@ -261,7 +261,7 @@ In the form of \"`prefix: old -> new\""
 Will give an error if something other than the version has
 changed in the manifest.yaml."
   (interactive)
-  (async-shell-command
+  (shell-command
    (format "git add manifest.yaml && git commit -m %S"
            (work-git--version-commit-message))))
 
