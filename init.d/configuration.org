@@ -3122,6 +3122,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
      where you want pytest to drop into pdb
      See [[https://docs.pytest.org/en/latest/usage.html#setting-breakpoints][setting-breakpoints]] in the docs for more info.
+**** Print function name
+
+     When a debugger is hard to setup and easiest is to just use plane
+     old print statements. Printing out the function name is useful to
+     know where the print statement is located.
+     #+begin_src python
+       import inspect
+
+       print("{}: ".format(inspect.currentframe().f_code.co_name))
+     #+end_src
+
+     alternative =sys._getframe= can be used instead of =inspect.currentframe()=.
+     [[https://stackoverflow.com/a/13514318][source]]
 
 *** Print out debug info
     #+begin_src sh :tangle no
