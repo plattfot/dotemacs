@@ -1693,14 +1693,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  ,(make-arxiv "cat:cs.OS" :title "Operating Systems")
                  ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
                  ,(make-arxiv "cat:cs.SE" :title "Software Engineering"))))
-          (setf elfeed-feeds `(,elfeed-feeds
+          (setf elfeed-feeds `(,@elfeed-feeds
                                ,@(plt/elfeed-group-feeds
                                   :tags '(paper arxiv)
                                   :feeds (--map (list (arxiv-url it) (arxiv-tags it)) arxivs))))
           (defun plt/elfeed-search-update-arxiv (&rest args)
-            (--each arxivs
-              (let ((feed (elfeed-db-get-feed (arxiv-url it))))
-                (setf (elfeed-feed-title feed) (arxiv-title it)))))
+            (-each arxivs
+              (lambda (it)
+                (let ((feed (elfeed-db-get-feed (arxiv-url it))))
+                  (setf (elfeed-feed-title feed) (arxiv-title it))))))
           (advice-add 'elfeed-search-update :before #'plt/elfeed-search-update-arxiv)))
     #+end_src
 
