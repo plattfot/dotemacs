@@ -963,7 +963,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 
     Commit a todo change to git using =plt/org-todo-commit-change=
-    *NOTE* Work in progress. Only support repeating todos
+    *NOTE* Work in progress. Right now it supports single todo changes
+    (incl repeating).
 
     #+begin_src emacs-lisp
       (defun plt/org-todo-commit-change ()
