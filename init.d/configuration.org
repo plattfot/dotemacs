@@ -1478,13 +1478,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (--map `(,(s-prepend yt-prefix (cadr it)) youtube ,@(cddr it)) feeds)))
 
       (cl-defun plt/elfeed-group-feeds (&key tags feeds)
+      (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
         "Add TAGS to the FEEDS.
 
-            TAGS is a list of symbols or just one symbol.
+      TAGS is a list of symbols or just one symbol.
 
-            FEEDS is a list where each element is either an url (string) or a
-            list. If the element is a list, then the first element is the url
-            and the rest are additional tags."
+      FEEDS is a list where each element is either an url (string) or a
+      list. If the element is a list, then the first element is the url
+      and the rest are additional tags.
+
+      TRANSFORM procedure that will be called on each url, by default
+      this is `identity'."
         (unless (or (listp tags) (symbolp tags))
           (error "TAGS must be a list of symbols or a symbol"))
 
@@ -1494,8 +1498,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (let ((tags (if (listp tags) tags (list tags))))
           (->> feeds
                (--map (if (listp it)
-                          `(,(car it) ,@tags ,@(cdr it))
-                        `(,it ,@tags))))))
+                          `(,(funcall transform (car it)) ,@tags ,@(cdr it))
+                        `(,(funcall transform it) ,@tags))))))
 
       ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
       (defun plt/elfeed-save-db-and-bury ()
