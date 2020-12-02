@@ -1524,7 +1524,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (quit-window))
     #+end_src
 
-    RSS reeder
+    RSS/Atom reader
     #+begin_src emacs-lisp
       (use-package elfeed
         :bind (("C-c n" . 'elfeed)
@@ -1551,9 +1551,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                         (elfeed-search-untag-all-unread)))
                ;; Mark all as unread
                ("O" . (lambda ()
-                  (interactive)
-                  (mark-whole-buffer)
-                  (elfeed-search-tag-all-unread)))
+                        (interactive)
+                        (mark-whole-buffer)
+                        (elfeed-search-tag-all-unread)))
                ("v" . plt/elfeed-view-mpv)
                ("A" . plt/elfeed-emms-add-url)
                )
