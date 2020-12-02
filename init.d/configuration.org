@@ -1470,60 +1470,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+end_src
 *** elfeed
-    #+begin_src emacs-lisp
-      (defun plt/elfeed-youtube-feed (channel-id)
-        "Transform CHANNEL-ID to a youtube feed."
-        (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
-          (s-prepend yt-prefix channel-id)))
-
-      (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
-        "Create an arXiv atom feed from QUERY.
-      Where QUERY is a list of search terms or just one string.
-      MAX_RESULTS specify the max results in the feed. Search queries
-      can be combined with three booleans AND, OR and ANDNOT. See these
-      links for more info about the search query:
-      https://arxiv.org/help/api/user-manual#Architecture
-      https://arxiv.org/help/api/user-manual#query_details"
-        (s-join "&" `(,(format "http://export.arxiv.org/api/query?search_query=%s"
-                               (if (listp query)
-                                   (s-join "+" query)
-                                 query))
-                      "start=0"
-                      ,(format "max_results=%s" max_results)
-                      "sortBy=submittedDate"
-                      "sortOrder=descending")))
-
-      (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
-        "Add TAGS to the FEEDS.
-
-      TAGS is a list of symbols or just one symbol.
-
-      FEEDS is a list where each element is either an url (string) or a
-      list. If the element is a list, then the first element is the url
-      and the rest are additional tags.
-
-      TRANSFORM procedure that will be called on each url, by default
-      this is `identity'."
-        (unless (or (listp tags) (symbolp tags))
-          (error "TAGS must be a list of symbols or a symbol"))
-
-        (unless (or (listp feeds) (stringp feeds))
-          (error "FEEDS must be a list or a string"))
-
-        (let ((tags (if (listp tags) tags (list tags))))
-          (->> feeds
-               (--map (if (listp it)
-                          `(,(funcall transform (car it)) ,@tags ,@(cdr it))
-                        `(,(funcall transform it) ,@tags))))))
-
-      ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
-      (defun plt/elfeed-save-db-and-bury ()
-        "Wrapper to save the elfeed db to disk before burying buffer"
-        (interactive)
-        (elfeed-db-save)
-        (quit-window))
-    #+end_src
-
     RSS/Atom reader
     #+begin_src emacs-lisp
       (use-package elfeed
@@ -1559,6 +1505,58 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                )
         :config
         (require 'transient)
+        (defun plt/elfeed-youtube-feed (channel-id)
+          "Transform CHANNEL-ID to a youtube feed."
+          (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
+            (s-prepend yt-prefix channel-id)))
+
+        (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
+          "Create an arXiv atom feed from QUERY.
+      Where QUERY is a list of search terms or just one string.
+      MAX_RESULTS specify the max results in the feed. Search queries
+      can be combined with three booleans AND, OR and ANDNOT. See these
+      links for more info about the search query:
+      https://arxiv.org/help/api/user-manual#Architecture
+      https://arxiv.org/help/api/user-manual#query_details"
+          (s-join "&" `(,(format "http://export.arxiv.org/api/query?search_query=%s"
+                                 (if (listp query)
+                                     (s-join "+" query)
+                                   query))
+                        "start=0"
+                        ,(format "max_results=%s" max_results)
+                        "sortBy=submittedDate"
+                        "sortOrder=descending")))
+
+        (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
+          "Add TAGS to the FEEDS.
+
+      TAGS is a list of symbols or just one symbol.
+
+      FEEDS is a list where each element is either an url (string) or a
+      list. If the element is a list, then the first element is the url
+      and the rest are additional tags.
+
+      TRANSFORM procedure that will be called on each url, by default
+      this is `identity'."
+          (unless (or (listp tags) (symbolp tags))
+            (error "TAGS must be a list of symbols or a symbol"))
+
+          (unless (or (listp feeds) (stringp feeds))
+            (error "FEEDS must be a list or a string"))
+
+          (let ((tags (if (listp tags) tags (list tags))))
+            (->> feeds
+                 (--map (if (listp it)
+                            `(,(funcall transform (car it)) ,@tags ,@(cdr it))
+                          `(,(funcall transform it) ,@tags))))))
+
+        ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
+        (defun plt/elfeed-save-db-and-bury ()
+          "Wrapper to save the elfeed db to disk before burying buffer"
+          (interactive)
+          (elfeed-db-save)
+          (quit-window))
+
         (transient-define-prefix plt/elfeed-jump-popup ()
                                  "Jump to"
                                  [("o" "Oläst" plt/elfeed-set-filter-unread)
