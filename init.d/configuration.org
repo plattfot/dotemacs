@@ -1471,11 +1471,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** elfeed
     #+begin_src emacs-lisp
-      (defun plt/elfeed-youtube-feeds (feeds)
-        "Process FEEDS and return a list of youtube feeds.
-            Where the layout of FEEDS is '((NAME CHANNEL-ID TAGS...)...)"
+      (defun plt/elfeed-youtube-feed (channel-id)
+        "Transform CHANNEL-ID to a youtube feed."
         (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
-          (--map `(,(s-prepend yt-prefix (cadr it)) youtube ,@(cddr it)) feeds)))
+          (s-prepend yt-prefix channel-id)))
 
       (cl-defun plt/elfeed-group-feeds (&key tags feeds)
       (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
@@ -1612,37 +1611,39 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ,@(plt/elfeed-group-feeds
                    :tags 'deals
                    :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
-                ,@(plt/elfeed-youtube-feeds
-                   '(("Avatar" "UCyaPf0E-PRRZH3UvvxNPeEw" music)
-                     ("Blackbriar" "UCjR-qXRBNkysQ0Threo1Bfg" music)
-                     ("Cppcon" "UCMlGfpWw-RUdWX_JbLCukXg" talks)
-                     ("Fosdem" "UC9NuJImUbaSNKiwF2bdSfAw" talks)
-                     ("Gamers Nexus" "UChIs72whgZI9w6d6FhwGGHA" news nerd)
-                     ("Ghost" "UCAOiVaJJlH0Oduv48NN0mMA" music)
-                     ("HackersOnBoard" "UChGDEluRG9r5kCecRAQTx_Q" talks)
-                     ("Infidelamsterdam" "UCTp0MnlTlmqC3NdrPzD08EA" news vlog)
-                     ("Intermit.Tech" "UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog)
-                     ("Knyght Errant" "UC1T4KJG1L_kTrP9RcdU5Csw" history)
-                     ("Level1Linux" "UCOWcZ6Wicl-1N34H0zZe38w" nerd linux)
-                     ("Level1Techs" "UC4w1YQAJMWOz4qtxinq55LQ" nerd)
-                     ("Lindybeige" "UC9pgQfOXRsp4UKrI8q0zjXQ" history)
-                     ("Mark Furneaux" "UCRDQEDxAVuxcsyeEoOpSoRA" nerd)
-                     ("Matgeek" "UCSGHj0YjencmGUSksbMbBVQ" food)
-                     ("Orbit Culture" "UC2XMr58U7rZnL4AW0n9Ca8g" music)
-                     ("Paul's Hardware" "UCvWWf-LYjaujE50iYai8WgQ" news nerd)
-                     ("Sabaton" "UCjQhd1APsd5NQhiVZV7GYzg" music)
-                     ("Sabaton History" "UCaG4CBbZih6nLzD08bTBGfw" history)
-                     ("Skallagrim" "UC3WIohkLkH4GFoMrrWVZZFA" history)
-                     ("Sweclockers" "UCW64r1wPzfj0W1qbzzfCgFg" news nerd)
-                     ("Sweclockers Extra" "UCfK96bDQdSkKFAdqNv0YOmw" nerd fun)
-                     ("The Hu" "UCs6vRDdkZ8bP8Xt6WHbvrwA" music)
-                     ("Nuclear Blast Records" "UCoxg3Kml41wE3IPq-PC-LQw" music)
-                     ("Century Media Records" "UCnK9PxMozTYs8ELOvgMNKFA" music)
-                     ("Metal Blade Records" "UCSldglor1t-5E-Gy2eBdMrA" music)
-                     ("Linux for Everyone" "UCd4XwUn2Lure2NHHjukoCwA" linux)
-                     ("A&P Reacts" "UC0NpEEcmONWuTU3nfURmyKw" music)
-                     ("Protesilaos Stavrou" "UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs)
-                     ))
+                ,@(plt/elfeed-group-feeds
+                   :tags 'youtube
+                   :transform 'plt/elfeed-youtube-feed
+                   :feeds '(("UCyaPf0E-PRRZH3UvvxNPeEw" music) ;; Avatar
+                            ("UCjR-qXRBNkysQ0Threo1Bfg" music) ;; Blackbriar
+                            ("UCMlGfpWw-RUdWX_JbLCukXg" talks) ;; Cppcon
+                            ("UC9NuJImUbaSNKiwF2bdSfAw" talks) ;; Fosdem
+                            ("UChIs72whgZI9w6d6FhwGGHA" news nerd) ;; Gamers Nexus
+                            ("UCAOiVaJJlH0Oduv48NN0mMA" music) ;; Ghost
+                            ("UChGDEluRG9r5kCecRAQTx_Q" talks) ;; HackersOnBoard
+                            ("UCTp0MnlTlmqC3NdrPzD08EA" news vlog) ;; Infidelamsterdam
+                            ("UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog) ;; Intermit.Tech
+                            ("UC1T4KJG1L_kTrP9RcdU5Csw" history) ;; Knyght Errant
+                            ("UCOWcZ6Wicl-1N34H0zZe38w" nerd linux) ;; Level1Linux
+                            ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
+                            ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
+                            ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
+                            ("UCSGHj0YjencmGUSksbMbBVQ" food) ;; Matgeek
+                            ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
+                            ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
+                            ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
+                            ("UCaG4CBbZih6nLzD08bTBGfw" history) ;; Sabaton History
+                            ("UC3WIohkLkH4GFoMrrWVZZFA" history) ;; Skallagrim
+                            ("UCW64r1wPzfj0W1qbzzfCgFg" news nerd) ;; Sweclockers
+                            ("UCfK96bDQdSkKFAdqNv0YOmw" nerd fun) ;; Sweclockers Extra
+                            ("UCs6vRDdkZ8bP8Xt6WHbvrwA" music) ;; The Hu
+                            ("UCoxg3Kml41wE3IPq-PC-LQw" music) ;; Nuclear Blast Records
+                            ("UCnK9PxMozTYs8ELOvgMNKFA" music) ;; Century Media Records
+                            ("UCSldglor1t-5E-Gy2eBdMrA" music) ;; Metal Blade Records
+                            ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
+                            ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
+                            ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
+                            ))
                 ,@(plt/elfeed-group-feeds
                    :tags '(podcast linux)
                    :feeds '("https://conversationsincode.xyz/rss/podcast.xml"
