@@ -1803,6 +1803,70 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (elfeed-search-update-entry entry))))
         (unless (use-region-p) (forward-line)))
     #+end_src
+
+    Make it easy to download pdf's from =paper= feeds.
+    #+begin_src emacs-lisp
+      (require 'cl-lib)
+      (cl-defstruct plt/elfeed-download
+        "Struct for elements in elfeed downloads."
+        (href :type string)
+        (type :type string))
+
+      (defun plt/elfeed-meta-add-download (type xml entry)
+        "Extract download links from XML and add them to ENTRY under :download.
+      TYPE is ignored.
+
+      Download links are identified by their type prefixed with
+      'application'."
+        (when-let ((downloads
+                    (->> xml
+                         (--filter
+                          (and (listp it)
+                               (eq 'link (car it))
+                               (s-prefix? "application" (alist-get 'type (cadr it) ""))))
+                         (--map (let-alist (cadr it) (make-plt/elfeed-download :href .href :type .type)))
+                         (-non-nil))))
+          (setf (elfeed-meta entry :downloads) downloads)))
+
+      (add-hook 'elfeed-new-entry-parse-hook #'plt/elfeed-meta-add-download)
+
+      (defcustom plt/elfeed-download-pdf-dir "~/Downloads"
+        "Specify where `plt/elfeed-download-pdf' should download the pdfs to."
+        :group 'plattfot
+        :type 'directory)
+
+      (defcustom plt/elfeed-download-command "curl"
+        "Shell command to do the actual download."
+        :group 'plattfot
+        :type 'string)
+
+      (defun plt/elfeed-download-pdf ()
+        "Grab pdf from feeds and download them.
+
+      `plt/elfeed-download-pdf-dir' specifies the directory where it
+      should download the pdfs to.
+
+      `plt/elfeed-download-command' specifies the shell command to use
+      for the download. It expect the command to have the same cli as
+      wget."
+        (interactive)
+        (let* ((entries (elfeed-search-selected))
+               (pdfs
+                (->> entries
+                     (--map (elfeed-meta it :downloads))
+                     (-non-nil)
+                     (-flatten)
+                     (--filter (and (plt/elfeed-download-p it)
+                                    (s-suffix? "pdf" (plt/elfeed-download-type it))))
+                     (-map #'plt/elfeed-download-href))))
+          (unless (file-exists-p plt/elfeed-download-pdf-dir)
+            (error "plt/elfeed-download-pdf: %S does not exist, please create it."
+                   plt/elfeed-download-pdf-dir))
+          (let ((default-directory plt/elfeed-download-pdf-dir))
+            (async-shell-command (format "%s -U firefox --content-disposition %s" plt/elfeed-download-command (s-join " " pdfs))
+                                 "*elfeed download*")))
+        (unless (use-region-p) (forward-line)))
+    #+end_src
 *** moody
     #+begin_src emacs-lisp
       (use-package moody
