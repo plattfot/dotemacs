@@ -1102,6 +1102,25 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (org-super-agenda-mode)
          :pin melpa)
      #+end_src
+**** Org-roam
+     "A plain-text personal knowledge management system" - [[https://www.orgroam.com/][orgroam.com]]
+     #+begin_src emacs-lisp
+       (use-package org-roam
+             :ensure nil
+             :hook
+             (after-init . org-roam-mode)
+             :custom
+             (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
+             (org-roam-buffer-position 'bottom)
+             :bind (:map org-roam-mode-map
+                     (("C-c v r" . org-roam)
+                      ("C-c v f" . org-roam-find-file)
+                      ("C-c v g" . org-roam-graph))
+                     :map org-mode-map
+                     (("C-c v i" . org-roam-insert))
+                     (("C-c v I" . org-roam-insert-immediate))))
+     #+end_src
+     Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Prettify org
 
      Use pretty bullet points instead of asterisk
