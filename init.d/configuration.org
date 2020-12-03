@@ -1976,6 +1976,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :pin melpa-stable))
    #+end_src
 * Custom
+** Group
+   Create a group to easier keep track of custom variables.
+   #+begin_src emacs-lisp
+     (defgroup plattfot nil
+       "Gather my custom variables in one interface."
+       :prefix "plt/")
+   #+end_src
 ** Packages
 *** home
     #+begin_src emacs-lisp
