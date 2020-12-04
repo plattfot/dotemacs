@@ -1121,6 +1121,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      (("C-c v I" . org-roam-insert-immediate))))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
+**** Org-ref
+     #+begin_src emacs-lisp
+       (use-package org-ref
+         :ensure nil
+         :config
+         (setf org-ref-bibliography-notes org-roam-directory
+               org-ref-default-bibliography `(,plt/paper-bibtex)
+               org-ref-pdf-directory plt/paper-directory
+               reftex-default-bibliography org-ref-default-bibliography
+               bibtex-completion-bibliography `(,plt/paper-bibtex)
+               bibtex-completion-library-path `(,plt/paper-directory)
+               bibtex-completion-notes-path org-roam-directory))
+     #+end_src
 **** Prettify org
 
      Use pretty bullet points instead of asterisk
