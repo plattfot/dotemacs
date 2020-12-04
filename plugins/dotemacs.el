@@ -26,6 +26,10 @@ file use `directory-file-name' to strip that away."
   "Hides trailing whitespaces by setting `show-trailing-whitespace' to nil."
   (setq show-trailing-whitespace nil))
 
+(defun dotemacs-show-trailing-whitespace ()
+  "Hides trailing whitespaces by setting `show-trailing-whitespace' to nil."
+  (setq show-trailing-whitespace t))
+
 (defvar dotemacs-is-work (string= (getenv "USER") "fredriks")
   "Non-nil if I'm at work.")
 
