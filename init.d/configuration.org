@@ -1737,8 +1737,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (defun plt/elfeed-search-update-arxiv (&rest args)
             (mapc
              (lambda (it)
-                (let ((feed (elfeed-db-get-feed (arxiv-url it))))
-                  (setf (elfeed-feed-title feed) (arxiv-title it))))
+               (let ((feed (elfeed-db-get-feed (arxiv-url it))))
+                 (setf (elfeed-feed-title feed) (arxiv-title it))))
              arxivs))
           (advice-add 'elfeed-search-update :before #'plt/elfeed-search-update-arxiv)))
     #+end_src
