@@ -1735,10 +1735,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                   :tags '(paper arxiv)
                                   :feeds (--map (list (arxiv-url it) (arxiv-tags it)) arxivs))))
           (defun plt/elfeed-search-update-arxiv (&rest args)
-            (-each arxivs
-              (lambda (it)
+            (mapc
+             (lambda (it)
                 (let ((feed (elfeed-db-get-feed (arxiv-url it))))
-                  (setf (elfeed-feed-title feed) (arxiv-title it))))))
+                  (setf (elfeed-feed-title feed) (arxiv-title it))))
+             arxivs))
           (advice-add 'elfeed-search-update :before #'plt/elfeed-search-update-arxiv)))
     #+end_src
 
