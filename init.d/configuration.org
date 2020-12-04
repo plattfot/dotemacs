@@ -1598,9 +1598,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                  "Jump to"
                                  [("o" "Oläst" plt/elfeed-set-filter-unread)
                                   ("t" "Taggat" plt/elfeed-set-filter-later)
-                                  ("d" "Podcast" plt/elfeed-set-filter-podcast)
-                                  ("p" "Paper" plt/elfeed-set-filter-paper)
-                                  ("P" "All papers" plt/elfeed-set-filter-all-papers)
+                                  ("p" "Podcast" plt/elfeed-set-filter-podcast)
+                                  ("r" "Raporter" plt/elfeed-set-filter-paper)
+                                  ("R" "Alla rapporter" plt/elfeed-set-filter-all-papers)
                                   ])
 
         (defmacro plt/make-elfeed-set-filter (name filter)
