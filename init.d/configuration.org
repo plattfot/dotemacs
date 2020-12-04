@@ -2014,6 +2014,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        "Gather my custom variables in one interface."
        :prefix "plt/")
    #+end_src
+
+   #+begin_src emacs-lisp
+     (defcustom plt/paper-directory "~/Downloads"
+       "Directory where to store all technical papers."
+       :group 'plattfot
+       :type 'directory)
+   #+end_src
 ** Packages
 *** home
     #+begin_src emacs-lisp
