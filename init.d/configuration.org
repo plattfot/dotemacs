@@ -2020,6 +2020,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        "Directory where to store all technical papers."
        :group 'plattfot
        :type 'directory)
+
+     (defcustom plt/paper-bibtex "~/Downloads/reference.bib"
+       "Bibtex file associated with the technical papers."
+       :group 'plattfot
+       :type 'file)
    #+end_src
 ** Packages
 *** home
