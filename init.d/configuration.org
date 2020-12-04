@@ -1501,39 +1501,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                )
         :config
         (require 'transient)
+        (eval-when-compile (require 'elfeed))
         (defun plt/elfeed-youtube-feed (channel-id)
           "Transform CHANNEL-ID to a youtube feed."
           (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
             (s-prepend yt-prefix channel-id)))
 
-        (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
-          "Create an arXiv atom feed from QUERY.
-      Where QUERY is a list of search terms or just one string.
-      MAX_RESULTS specify the max results in the feed. Search queries
-      can be combined with three booleans AND, OR and ANDNOT. See these
-      links for more info about the search query:
-      https://arxiv.org/help/api/user-manual#Architecture
-      https://arxiv.org/help/api/user-manual#query_details"
-          (s-join "&" `(,(format "http://export.arxiv.org/api/query?search_query=%s"
-                                 (if (listp query)
-                                     (s-join "+" query)
-                                   query))
-                        "start=0"
-                        ,(format "max_results=%s" max_results)
-                        "sortBy=submittedDate"
-                        "sortOrder=descending")))
-
         (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
           "Add TAGS to the FEEDS.
 
-      TAGS is a list of symbols or just one symbol.
+            TAGS is a list of symbols or just one symbol.
 
-      FEEDS is a list where each element is either an url (string) or a
-      list. If the element is a list, then the first element is the url
-      and the rest are additional tags.
+            FEEDS is a list where each element is either an url (string) or a
+            list. If the element is a list, then the first element is the url
+            and the rest are additional tags.
 
-      TRANSFORM procedure that will be called on each url, by default
-      this is `identity'."
+            TRANSFORM procedure that will be called on each url, by default
+            this is `identity'."
           (unless (or (listp tags) (symbolp tags))
             (error "TAGS must be a list of symbols or a symbol"))
 
@@ -1568,6 +1552,56 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (format "Set elfeed filter to %s." filter)
                 (list 'interactive)
                 (list 'elfeed-search-set-filter filter)))
+
+        (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
+          "Create an arXiv atom feed from QUERY.
+                        Where QUERY is a list of search terms or just one string.
+                        MAX_RESULTS specify the max results in the feed. Search queries
+                        can be combined with three booleans AND, OR and ANDNOT. See these
+                        links for more info about the search query:
+                        https://arxiv.org/help/api/user-manual#Architecture
+                        https://arxiv.org/help/api/user-manual#query_details"
+          (s-join "&" `(,(format "http://export.arxiv.org/api/query?search_query=%s"
+                                 (if (listp query)
+                                     (s-join "+" query)
+                                   query))
+                        "start=0"
+                        ,(format "max_results=%s" max_results)
+                        "sortBy=submittedDate"
+                        "sortOrder=descending")))
+
+        (cl-defstruct (arxiv (:constructor make--arxiv))
+          "Structure containing information for an ArXiv feed."
+          (url :type string)
+          (tags :type list)
+          (title :type string))
+
+        (cl-defun make-arxiv (query &key tags title)
+          "Construct an <arxiv> struct.
+                        Transform the QUERY to an url.
+                        TAGS and TITLE are sent verbatim to the struct constructor."
+          (make--arxiv :url (plt/elfeed-arxiv-feed query)
+                       ;; E.g. "cat:cs.CG" -> 'cg
+                       :tags (or tags (intern (downcase (file-name-extension query))))
+                       :title title))
+
+        (defconst plt/arxivs `(,(make-arxiv "cat:cs.CG" :title "Computational Geometry")
+                               ,(make-arxiv "cat:cs.DS" :title "Data Structures and Algorithms")
+                               ,(make-arxiv "cat:cs.DM" :title "Discrete Mathematics")
+                               ,(make-arxiv "cat:cs.DC" :title "Distributed, Parallel, and Cluster Computing")
+                               ,(make-arxiv "cat:cs.ML" :title "Machine Learning")
+                               ,(make-arxiv "cat:cs.OS" :title "Operating Systems")
+                               ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
+                               ,(make-arxiv "cat:cs.SE" :title "Software Engineering")))
+
+        (defun plt/elfeed-search-update-arxiv (&rest args)
+          (mapc
+           (lambda (it)
+             (let ((feed (elfeed-db-get-feed (arxiv-url it))))
+               (setf (elfeed-feed-title feed) (arxiv-title it))))
+           plt/arxivs))
+
+        (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)t
 
         (let ((time "@6-months-ago"))
           (plt/make-elfeed-set-filter unread (format "%s +unread -podcast -paper" time))
@@ -1662,42 +1696,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             "https://latenightlinux.com/feed/all"
                             "https://2.5admins.com/feed/podcast"
                             "https://feeds.fireside.fm/selfhosted/rss"))
-                ))
-
-        (cl-defstruct (arxiv (:constructor make--arxiv))
-          "Structure containing information for an ArXiv feed."
-          (url :type string)
-          (tags :type list)
-          (title :type string))
-
-        (cl-defun make-arxiv (query &key tags title)
-          "Construct an <arxiv> struct.
-      Transform the QUERY to an url."
-          (make--arxiv :url (plt/elfeed-arxiv-feed query)
-                       ;; E.g. "cat:cs.CG" -> 'cg
-                       :tags (or tags (intern (downcase (file-name-extension query))))
-                       :title title))
-
-        (let ((arxivs
-               `(,(make-arxiv "cat:cs.CG" :title "Computational Geometry")
-                 ,(make-arxiv "cat:cs.DS" :title "Data Structures and Algorithms")
-                 ,(make-arxiv "cat:cs.DM" :title "Discrete Mathematics")
-                 ,(make-arxiv "cat:cs.DC" :title "Distributed, Parallel, and Cluster Computing")
-                 ,(make-arxiv "cat:cs.ML" :title "Machine Learning")
-                 ,(make-arxiv "cat:cs.OS" :title "Operating Systems")
-                 ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
-                 ,(make-arxiv "cat:cs.SE" :title "Software Engineering"))))
-          (setf elfeed-feeds `(,@elfeed-feeds
-                               ,@(plt/elfeed-group-feeds
-                                  :tags '(paper arxiv)
-                                  :feeds (--map (list (arxiv-url it) (arxiv-tags it)) arxivs))))
-          (defun plt/elfeed-search-update-arxiv (&rest args)
-            (mapc
-             (lambda (it)
-               (let ((feed (elfeed-db-get-feed (arxiv-url it))))
-                 (setf (elfeed-feed-title feed) (arxiv-title it))))
-             arxivs))
-          (advice-add 'elfeed-search-update :before #'plt/elfeed-search-update-arxiv)))
+                ,@(plt/elfeed-group-feeds
+                   :tags '(paper arxiv)
+                   :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
+                )))
     #+end_src
 
     Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]] and the
