@@ -113,7 +113,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       initial-scratch-message nil     ;; Empty scratch buffer.
       indent-tabs-mode nil            ;; Don't use tab for indenting.
       sentence-end-double-space nil   ;; Use sane defaults for sentences.
-      show-trailing-whitespace t
       display-time-24hr-format t
       scroll-step           1         ;; smooth scrolling
       scroll-conservatively 10000
@@ -134,26 +133,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+end_src
 **** Trailing Whitespaces
 
-     Show trailing whitespaces by default for writeable buffers. Turn it
-     off for read only as it is distracting and you cannot remove them
-     anyway.
-
+     Show trailing whitespaces for all modes that inherits from
+     prog-mode. Keep it off for buffers that are read only as you
+     cannot do anything about it.
      #+begin_src emacs-lisp
-       (add-hook 'find-file-hook
-                 (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
-       (add-hook 'read-only-mode-hook
-                 (lambda () (setq show-trailing-whitespace (not buffer-read-only))))
+       (add-hook 'prog-mode-hook (lambda () (setf show-trailing-whitespace (not buffer-read-only))))
      #+end_src
 
-     Show trailing whitespaces for all comint modes: shell, gdb,
-     geiser REPL etc.
-
-     #+begin_src emacs-lisp
-       (use-package comint
-         :ensure nil ; Built in
-         :config
-         (add-hook 'comint-mode-hook 'dotemacs-hide-trailing-whitespace))
-     #+end_src
+     *NOTE* Had it on for every writable buffer and then just turned
+     it off for modes that I found it useless. But it got old fast to
+     try and hunt down all modes and their hook for turning it off. As
+     there were more modes than I had excepted, for example ivy
+     buffers, comint modes, calendar etc.
 
 **** Read only
 
@@ -174,12 +165,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        "juli" "augusti" "september" "oktober" "november" "december"]
       calendar-time-display-form '(24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))
       calendar-date-style 'european)
-   #+end_src
-
-   Hide trailing whitespaces for calendar mode, as there are a bunch
-   of those showing up in the calendar.
-   #+begin_src emacs-lisp
-     (add-hook 'calendar-mode-hook 'dotemacs-hide-trailing-whitespace)
    #+end_src
 ** Backup/autosave
    One annoying thing with emacs is it that it leaves backup files all
@@ -795,7 +780,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (interactive (notmuch-search-interactive-region))
             (notmuch-search-tag (list "-unread") beg end)
             (notmuch-search-next-thread)))
-        (add-hook 'notmuch-show-hook 'dotemacs-hide-trailing-whitespace)
         (setq-default
          sendmail-program "msmtp"
          send-mail-function 'sendmail-send-it
@@ -846,8 +830,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package telega
         :if (not dotemacs-is-work)
         :config
-        (add-hook 'telega-root-mode-hook 'dotemacs-hide-trailing-whitespace)
-        (add-hook 'telega-chat-mode-hook 'dotemacs-hide-trailing-whitespace)
         :pin melpa-stable)
     #+end_src
 *** vterm
@@ -881,8 +863,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     ("C-k" . vterm-send-C-k))
         :config
         (setf vterm-max-scrollback 10000)
-        (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
-        (add-hook 'vterm-mode-hook 'dotemacs-hide-trailing-whitespace))
+        (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
     #+end_src
 *** mpdel
     #+begin_src emacs-lisp
@@ -1190,13 +1171,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil
         :hook (diff-mode . whitespace-mode))
     #+end_src
-
-    #+begin_src emacs-lisp
-      (use-package diff
-        :ensure nil
-        :config
-        (add-hook 'diff-mode-hook 'dotemacs-hide-trailing-whitespace))
-    #+end_src
 *** Ediff
     #+begin_src emacs-lisp
       (use-package ediff
@@ -1234,7 +1208,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          eshell-prefer-lisp-functions nil
          eshell-destroy-buffer-when-process-dies t
          eshell-cmpl-cycle-completions nil)
-        (add-hook 'eshell-mode-hook 'dotemacs-hide-trailing-whitespace)
         (add-hook
          'eshell-mode-hook
          (lambda ()
@@ -1293,13 +1266,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
               emms-player-list '(emms-player-mpv)
               emms-info-functions '(emms-info-libtag)))
-    #+end_src
-*** eww
-    #+begin_src emacs-lisp
-      (use-package eww
-        :ensure nil
-        :config
-        (add-hook 'eww-after-render-hook 'dotemacs-hide-trailing-whitespace))
     #+end_src
 *** ibuffer
      Use ibuffer instead of list-buffers, has some neat features.
@@ -1396,13 +1362,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (use-package wgrep
         :pin melpa-stable)
-    #+end_src
-*** info
-    #+begin_src emacs-lisp
-      (use-package info
-        :ensure nil
-        :config
-        (add-hook 'Info-mode-hook 'dotemacs-hide-trailing-whitespace))
     #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
@@ -1617,8 +1576,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
           (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
 
-        (add-hook 'elfeed-show-mode-hook 'dotemacs-hide-trailing-whitespace)
-        (add-hook 'elfeed-search-mode-hook 'dotemacs-hide-trailing-whitespace)
         (add-hook 'elfeed-new-entry-hook
                   (elfeed-make-tagger :before "1 week ago"
                                       :remove 'unread))
