@@ -907,7 +907,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :mode ("\\.org\\'" . org-mode)
         :bind (("C-c l" . org-store-link)
                ("C-c a" . org-agenda)
-               ("C-c c" . org-capture)
+               ;;("C-c c" . org-capture)
                ("C-c b" . org-iswitchb))
         :config
         (add-hook 'org-mode-hook #'dotemacs-show-trailing-whitespace)
@@ -1088,13 +1088,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      "A plain-text personal knowledge management system" - [[https://www.orgroam.com/][orgroam.com]]
      #+begin_src emacs-lisp
        (use-package org-roam
-             :ensure nil
-             :hook
-             (after-init . org-roam-mode)
-             :custom
-             (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
-             (org-roam-buffer-position 'bottom)
-             :bind (:map org-roam-mode-map
+         :ensure nil
+         :bind (("C-c c" . org-roam-capture))
+         :hook
+         (after-init . org-roam-mode)
+         :custom
+         (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
+         (org-roam-buffer-position 'bottom)
+         :bind (:map org-roam-mode-map
                      (("C-c v r" . org-roam)
                       ("C-c v f" . org-roam-find-file)
                       ("C-c v g" . org-roam-graph))
