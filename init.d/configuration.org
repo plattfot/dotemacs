@@ -1536,6 +1536,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                         (elfeed-search-tag-all-unread)))
                ("v" . plt/elfeed-view-mpv)
                ("A" . plt/elfeed-emms-add-url)
+               ("d" . plt/elfeed-arxiv-download)
                )
         :config
         (require 'transient)
