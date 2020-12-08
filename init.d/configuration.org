@@ -1381,6 +1381,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package ivy
+        :ensure t
         :config
         (setq ivy-count-format "(%d/%d) ")
         :pin melpa)
