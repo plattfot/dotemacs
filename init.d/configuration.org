@@ -1106,6 +1106,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (after-init . org-roam-mode)
          :custom
          (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
+         (org-roam-completion-system 'ivy)
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Org-ref
