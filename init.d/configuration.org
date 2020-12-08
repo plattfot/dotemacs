@@ -1121,8 +1121,37 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                reftex-default-bibliography org-ref-default-bibliography
                bibtex-completion-bibliography `(,plt/paper-bibtex)
                bibtex-completion-library-path `(,plt/paper-directory)
-               bibtex-completion-notes-path org-roam-directory))
+               bibtex-completion-notes-path org-roam-directory
+               bibtex-completion-notes-template-multiple-files (format"\
+       ,#+TITLE: ${title}
+       ,#+ROAM_KEY: cite:${=key=}
+       ,* Notes
+       :PROPERTIES:
+       :Custom_ID: ${=key=}
+       :NOTER_DOCUMENT: %s${=key=}.pdf
+       :AUTHOR: ${author-abbrev}
+       :JOURNAL: ${journaltitle}
+       :DATE: ${date}
+       :YEAR: ${year}
+       :DOI: ${doi}
+       :URL: ${url}
+       :END:
+
+       " (file-name-as-directory plt/paper-directory))))
      #+end_src
+**** Org-noter
+     #+begin_src emacs-lisp
+       (use-package org-noter
+         :ensure nil
+         :after (org-roam)
+         :config
+         (setf org-noter-notes-window-location 'other-frame
+               org-noter-always-create-frame nil
+               org-noter-kill-frame-at-session-end nil
+               org-noter-hide-other nil
+               org-noter-notes-search-path (list org-roam-directory)))
+     #+end_src
+     Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
 **** Prettify org
 
      Use pretty bullet points instead of asterisk
