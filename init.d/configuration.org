@@ -511,6 +511,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq ff-search-directories '("." "../src" "../include"))
         :pin melpa-stable)
     #+end_src
+*** Docker
+    #+begin_src emacs-lisp
+      (use-package dockerfile-mode)
+    #+end_src
 *** Python
     Package name is python but the mode is python-mode
     Set indentation to 2 white spaces.
