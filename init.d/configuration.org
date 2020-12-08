@@ -1110,6 +1110,38 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (org-roam-buffer-position 'bottom))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
+**** Org-roam-bibtex
+     #+begin_src emacs-lisp
+       (use-package org-roam-bibtex
+         :ensure nil
+         :disabled t
+         :after org-roam
+         :hook (org-roam-mode . org-roam-bibtex-mode)
+         :config
+         (setf orb-preformat-keywords
+               '("=key=" "title" "url" "file" "author-or-editor" "keywords")
+               orb-templates
+               '(("r" "ref" plain (function org-roam-capture--get-point)
+                  ""
+                  :file-name "${slug}"
+                  :head "\
+       ,#+TITLE: ${=key=}: ${title}
+       ,#+ROAM_KEY: ${ref}
+
+       - tags ::
+       - keywords :: ${keywords}
+
+       ,* ${title}
+         :PROPERTIES:
+         :Custom_ID: ${=key=}
+         :URL: ${url}
+         :AUTHOR: ${author-or-editor}
+         :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")
+         :NOTER_PAGE:
+         :END:
+
+       " :unnarrowed t))))
+     #+end_src
 **** Org-ref
      #+begin_src emacs-lisp
        (use-package org-ref
