@@ -1094,19 +1094,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package org-roam
          :ensure nil
-         :bind (("C-c c" . org-roam-capture))
+         :bind (("C-c c" . org-roam-capture)
+                :map org-roam-mode-map
+                (("C-c v r" . org-roam)
+                 ("C-c v f" . org-roam-find-file)
+                 ("C-c v g" . org-roam-graph))
+                :map org-mode-map
+                (("C-c v i" . org-roam-insert))
+                (("C-c v I" . org-roam-insert-immediate)))
          :hook
          (after-init . org-roam-mode)
          :custom
          (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
-         (org-roam-buffer-position 'bottom)
-         :bind (:map org-roam-mode-map
-                     (("C-c v r" . org-roam)
-                      ("C-c v f" . org-roam-find-file)
-                      ("C-c v g" . org-roam-graph))
-                     :map org-mode-map
-                     (("C-c v i" . org-roam-insert))
-                     (("C-c v I" . org-roam-insert-immediate))))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Org-ref
