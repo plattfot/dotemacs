@@ -922,6 +922,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-agenda-span 'day
               org-agenda-window-setup 'only-window
               org-agenda-restore-windows-after-quit t
+              org-agenda-files `(,org-directory ,(concat (file-name-as-directory org-directory) "roam"))
               org-src-fontify-natively t
               org-src-tab-acts-natively t
               org-enforce-todo-dependencies t
