@@ -808,15 +808,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 
 *** pdftools
-
-    *NOTE:* To use this, install it externally via the distribution's
-    package manager. As installing this from melpa tends to break a
-    lot due it needs to be compiled.
     #+begin_src emacs-lisp
       (use-package pdf-tools
-        :if (not dotemacs-is-work)
+        :ensure nil
         :mode ("\\.pdf\\'" . pdf-view-mode)
-        :ensure nil)
+        :custom
+        (pdf-view-midnight-colors `("#ddd" . "#111"))
+        ;; :config
+        ;; (add-hook 'pdf-view-mode-hook #'pdf-view-midnight-minor-mode)
+        )
     #+end_src
 *** man
     #+begin_src emacs-lisp
