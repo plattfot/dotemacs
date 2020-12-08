@@ -913,6 +913,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'org-mode-hook #'dotemacs-show-trailing-whitespace)
         ;; Use emacs to view pdfs (shadows the old value)
         (add-to-list 'org-file-apps (cons "\\.pdf\\'" 'emacs))
+        ;; Open links in same frame
+        (add-to-list 'org-link-frame-setup (cons 'file 'find-file))
         (setq org-ellipsis "⤵"
               org-todo-keywords
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
