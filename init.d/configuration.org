@@ -1145,6 +1145,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        " :unnarrowed t))))
      #+end_src
 **** Org-ref
+
+     Dependency of =org-ref=, would have just put the settings in the
+     =org-ref= block. But if the =:bind= is placed there it will break
+     =ivy-bibtex=.
+
      #+begin_src emacs-lisp
        (use-package ivy-bibtex
          :ensure nil
@@ -1171,6 +1176,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               " (file-name-as-directory plt/paper-directory))))
      #+end_src
 
+     Integrate bibtex handling and other useful technical writing
+     features to org-mode.
+
      #+begin_src emacs-lisp
        (use-package org-ref
          :ensure nil
@@ -1181,6 +1189,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                reftex-default-bibliography org-ref-default-bibliography))
      #+end_src
 **** Org-noter
+
+     Allow to take notes in an org buffer when reading. One annoying
+     issue with it right now is that it kills my frames everytime I
+     quit taking notes. And this is with
+     =org-noter-kill-frame-at-session-end= set to =nil=.
+
      #+begin_src emacs-lisp
        (use-package org-noter
          :ensure nil
