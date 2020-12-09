@@ -1148,6 +1148,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package ivy-bibtex
          :ensure nil
+         :bind ("C-c b" . ivy-bibtex)
          :config
          (setf bibtex-completion-bibliography `(,plt/paper-bibtex)
                bibtex-completion-library-path `(,plt/paper-directory)
