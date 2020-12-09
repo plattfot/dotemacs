@@ -1146,32 +1146,38 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 **** Org-ref
      #+begin_src emacs-lisp
+       (use-package ivy-bibtex
+         :ensure nil
+         :config
+         (setf bibtex-completion-bibliography `(,plt/paper-bibtex)
+               bibtex-completion-library-path `(,plt/paper-directory)
+               bibtex-completion-notes-path org-roam-directory
+               bibtex-completion-notes-template-multiple-files (format"\
+              ,,#+TITLE: ${title}
+              ,,#+ROAM_KEY: cite:${=key=}
+              ,,* Notes
+              :PROPERTIES:
+              :Custom_ID: ${=key=}
+              :NOTER_DOCUMENT: %s${=key=}.pdf
+              :AUTHOR: ${author-abbrev}
+              :JOURNAL: ${journaltitle}
+              :DATE: ${date}
+              :YEAR: ${year}
+              :DOI: ${doi}
+              :URL: ${url}
+              :END:
+
+              " (file-name-as-directory plt/paper-directory))))
+     #+end_src
+
+     #+begin_src emacs-lisp
        (use-package org-ref
          :ensure nil
          :config
          (setf org-ref-bibliography-notes org-roam-directory
                org-ref-default-bibliography `(,plt/paper-bibtex)
                org-ref-pdf-directory plt/paper-directory
-               reftex-default-bibliography org-ref-default-bibliography
-               bibtex-completion-bibliography `(,plt/paper-bibtex)
-               bibtex-completion-library-path `(,plt/paper-directory)
-               bibtex-completion-notes-path org-roam-directory
-               bibtex-completion-notes-template-multiple-files (format"\
-       ,#+TITLE: ${title}
-       ,#+ROAM_KEY: cite:${=key=}
-       ,* Notes
-       :PROPERTIES:
-       :Custom_ID: ${=key=}
-       :NOTER_DOCUMENT: %s${=key=}.pdf
-       :AUTHOR: ${author-abbrev}
-       :JOURNAL: ${journaltitle}
-       :DATE: ${date}
-       :YEAR: ${year}
-       :DOI: ${doi}
-       :URL: ${url}
-       :END:
-
-       " (file-name-as-directory plt/paper-directory))))
+               reftex-default-bibliography org-ref-default-bibliography))
      #+end_src
 **** Org-noter
      #+begin_src emacs-lisp
