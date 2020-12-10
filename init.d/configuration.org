@@ -1635,7 +1635,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                  "Jump to"
                                  [("o" "Oläst" plt/elfeed-set-filter-unread)
                                   ("t" "Taggat" plt/elfeed-set-filter-later)
-                                  ("p" "Podcast" plt/elfeed-set-filter-podcast)
                                   ("r" "Raporter" plt/elfeed-set-filter-paper)
                                   ("R" "Alla rapporter" plt/elfeed-set-filter-all-papers)
                                   ])
@@ -1698,8 +1697,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)t
 
         (let ((time "@6-months-ago"))
-          (plt/make-elfeed-set-filter unread (format "%s +unread -podcast -paper" time))
-          (plt/make-elfeed-set-filter podcast (format "%s +podcast" time))
+          (plt/make-elfeed-set-filter unread (format "%s +unread -paper" time))
           (plt/make-elfeed-set-filter later (format "%s +later" time))
           (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
           (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
@@ -1707,7 +1705,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-hook 'elfeed-new-entry-hook
                   (elfeed-make-tagger :before "1 week ago"
                                       :remove 'unread))
-        (setf elfeed-search-filter "@6-months-ago +unread -podcast -paper"
+        (setf elfeed-search-filter "@6-months-ago +unread -paper"
               elfeed-feeds
               `(,@(plt/elfeed-group-feeds
                    :tags 'fun
@@ -1784,12 +1782,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
                             ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
                             ))
-                ,@(plt/elfeed-group-feeds
-                   :tags '(podcast linux)
-                   :feeds '("https://conversationsincode.xyz/rss/podcast.xml"
-                            "https://latenightlinux.com/feed/all"
-                            "https://2.5admins.com/feed/podcast"
-                            "https://feeds.fireside.fm/selfhosted/rss"))
                 ,@(plt/elfeed-group-feeds
                    :tags '(paper arxiv)
                    :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
