@@ -935,7 +935,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-log-into-drawer "LOGBOOK")
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
-
         ;; Active Babel languages
         (if dotemacs-is-work
             (org-babel-do-load-languages
@@ -960,48 +959,54 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+begin_src emacs-lisp
        (require 'tig)
-       (defun plt/org-todo-commit-change ()
-         "Commit todo state change"
-         (interactive)
-         (-each (--map (oref it :path) (tig-git-status))
-           (lambda (note-file)
-             (with-temp-buffer
-               (insert (shell-command-to-string (format "git diff %S" note-file)))
-               (diff-mode)
-               (catch 'done
-                 (save-match-data
-                   (progn
-                     (goto-char (point-min))
-                     (diff-beginning-of-hunk t)
-                     (when (and (re-search-forward
-                                 (rx line-start "-" (one-or-more (in blank)) ":LAST_REPEAT:") nil t)
-                                (re-search-forward
-                                 (rx line-start "+" (one-or-more (in blank)) ":LAST_REPEAT:") nil t))
-                       (when (re-search-backward
-                              (rx line-start blank (one-or-more (in "*")) (zero-or-more blank) "TODO"
-                                  (zero-or-more (in blank))
-                                  (group (zero-or-more (in print))))
-                              nil t)
-                         (shell-command
-                          (format "git add %S && git commit -m %S"
-                                  note-file
-                                  (format "done: %s" (match-string 1))))
-                         (throw 'done "done with commit"))))
-                   (progn
-                     (goto-char (point-min))
-                     (diff-beginning-of-hunk t)
-                     (when (re-search-forward
-                            (rx line-start "+" (one-or-more "*") (zero-or-more blank)
-                                ;; TODO: dynamically add these
-                                (group (| "TODO" "WAIT" "DONE" "CANCELLED"))
+
+       (defun plt/org-todo-commit--message (diff)
+         "Parse DIFF and return commit message.
+       If no commit message could be extracted return nil."
+         (with-temp-buffer
+           (insert diff)
+           (diff-mode)
+           (let (message)
+             (catch 'done
+               (save-match-data
+                 (progn
+                   (goto-char (point-min))
+                   (diff-beginning-of-hunk t)
+                   (when (and (re-search-forward
+                               (rx line-start "-" (one-or-more (in blank)) ":LAST_REPEAT:") nil t)
+                              (re-search-forward
+                               (rx line-start "+" (one-or-more (in blank)) ":LAST_REPEAT:") nil t))
+                     (when (re-search-backward
+                            (rx line-start blank (one-or-more (in "*")) (zero-or-more blank) "TODO"
                                 (zero-or-more (in blank))
                                 (group (zero-or-more (in print))))
                             nil t)
-                       (shell-command
-                        (format "git add %S && git commit -m %S"
-                                note-file
-                                (format "%s: %s" (downcase (match-string 1)) (match-string 2))))
-                       (throw 'done "done with commit")))))))))
+                       (setf message (format "done: %s" (match-string 1)))
+                       (throw 'done "done with commit"))))
+                 (progn
+                   (goto-char (point-min))
+                   (diff-beginning-of-hunk t)
+                   (when (re-search-forward
+                          (rx line-start "+" (one-or-more "*") (zero-or-more blank)
+                              ;; TODO: dynamically add these
+                              (group (| "TODO" "WAIT" "DONE" "CANCELLED"))
+                              (zero-or-more (in blank))
+                              (group (zero-or-more (in print))))
+                          nil t)
+                     (setf message (format "%s: %s" (downcase (match-string 1)) (match-string 2)))
+                     (throw 'done "done with commit")))))
+             message)))
+
+       (defun plt/org-todo-commit-change ()
+         "Commit todo state change"
+         (interactive)
+         (when-let ((default-directory (car (project-roots (project-current nil)))))
+           (-each (--map (oref it :path) (tig-git-status))
+             (lambda (note-file)
+               (when-let ((message (plt/org-todo-commit--message
+                                    (shell-command-to-string (format "git diff %S" note-file)))))
+                 (shell-command
+                  (format "git add %S && git commit -m %S" note-file message)))))))
      #+end_src
 **** Notmuch integration
      Enable linking notmuch emails in org
