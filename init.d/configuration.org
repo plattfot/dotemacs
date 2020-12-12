@@ -948,7 +948,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
            '((calc . t)
              (python . t)
              (scheme . t)
-             (shell . t))))
+             (shell . t)
+             (C . t))))
         :pin org)
     #+end_src
 **** Automate commit todo changes in git
