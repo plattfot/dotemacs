@@ -959,48 +959,49 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (incl repeating).
 
      #+begin_src emacs-lisp
+       (require 'tig)
        (defun plt/org-todo-commit-change ()
          "Commit todo state change"
          (interactive)
-         (let ((note-file (file-name-nondirectory org-default-notes-file)))
-           (with-temp-buffer
-             (insert (shell-command-to-string (format "git diff %S" note-file)))
-             (diff-mode)
-             (catch 'done
-               (save-match-data
-                 (progn
-                   (goto-char (point-min))
-                   (diff-beginning-of-hunk t)
-                   (when (and (re-search-forward
-                               (rx line-start "-" (one-or-more (in blank)) ":LAST_REPEAT:") nil t)
-                              (re-search-forward
-                               (rx line-start "+" (one-or-more (in blank)) ":LAST_REPEAT:") nil t))
-                     (when (re-search-backward
-                            (rx line-start blank (one-or-more (in "*")) (zero-or-more blank) "TODO"
+         (-each (--map (oref it :path) (tig-git-status))
+           (lambda (note-file)
+             (with-temp-buffer
+               (insert (shell-command-to-string (format "git diff %S" note-file)))
+               (diff-mode)
+               (catch 'done
+                 (save-match-data
+                   (progn
+                     (goto-char (point-min))
+                     (diff-beginning-of-hunk t)
+                     (when (and (re-search-forward
+                                 (rx line-start "-" (one-or-more (in blank)) ":LAST_REPEAT:") nil t)
+                                (re-search-forward
+                                 (rx line-start "+" (one-or-more (in blank)) ":LAST_REPEAT:") nil t))
+                       (when (re-search-backward
+                              (rx line-start blank (one-or-more (in "*")) (zero-or-more blank) "TODO"
+                                  (zero-or-more (in blank))
+                                  (group (zero-or-more (in print))))
+                              nil t)
+                         (shell-command
+                          (format "git add %S && git commit -m %S"
+                                  note-file
+                                  (format "done: %s" (match-string 1))))
+                         (throw 'done "done with commit"))))
+                   (progn
+                     (goto-char (point-min))
+                     (diff-beginning-of-hunk t)
+                     (when (re-search-forward
+                            (rx line-start "+" (one-or-more "*") (zero-or-more blank)
+                                ;; TODO: dynamically add these
+                                (group (| "TODO" "WAIT" "DONE" "CANCELLED"))
                                 (zero-or-more (in blank))
                                 (group (zero-or-more (in print))))
                             nil t)
                        (shell-command
                         (format "git add %S && git commit -m %S"
                                 note-file
-                                (format "done: %s" (match-string 1))))
-                       (throw 'done "done with commit"))))
-                 (progn
-                   (goto-char (point-min))
-                   (diff-beginning-of-hunk t)
-                   (when (re-search-forward
-                          (rx line-start "+" (one-or-more "*") (zero-or-more blank)
-                              ;; TODO: dynamically add these
-                              (group (| "TODO" "WAIT" "DONE" "CANCELLED"))
-                              (zero-or-more (in blank))
-                              (group (zero-or-more (in print))))
-                          nil t)
-                     (shell-command
-                      (format "git add %S && git commit -m %S"
-                              note-file
-                              (format "%s: %s" (downcase (match-string 1)) (match-string 2))))
-                     (throw 'done "done with commit"))))
-               ))))
+                                (format "%s: %s" (downcase (match-string 1)) (match-string 2))))
+                       (throw 'done "done with commit")))))))))
      #+end_src
 **** Notmuch integration
      Enable linking notmuch emails in org
