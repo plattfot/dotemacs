@@ -1006,7 +1006,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (when-let ((message (plt/org-todo-commit--message
                                     (shell-command-to-string (format "git diff %S" note-file)))))
                  (shell-command
-                  (format "git add %S && git commit -m %S" note-file message)))))))
+                  (format "git add %S && git commit -m %S" note-file
+                          (replace-regexp-in-string
+                           (rx "[[" (one-or-more graph) "][" (group (one-or-more graph)) "]]")
+                           "\\1" message))))))))
      #+end_src
 **** Notmuch integration
      Enable linking notmuch emails in org
