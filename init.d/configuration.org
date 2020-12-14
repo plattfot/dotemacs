@@ -433,7 +433,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :ensure nil ; Built in
         :bind (:map scheme-mode-map
                     ("<backtab>" . hall-toggle-other-file)
-                    ("<C-iso-lefttab>" . hall-toggle-test-log))
+                    ("<C-iso-lefttab>" . hall-view-test-log))
         :config
         (defun hall-toggle-other-file ()
           "Switch between file named the same in the project.
@@ -450,20 +450,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 (find-file (car other-files))
               (error "No other %s found" filename))))
 
-        (defun hall-toggle-test-log ()
-          "Switch between test scheme file and its corresponding log."
+        (defun hall-view-test-log ()
+          "View the test log for the current buffer."
           (interactive)
           (let* ((file (buffer-file-name))
                  (ext (file-name-extension file))
                  (project (project-current nil))
-                 (filename (format "%s.%s" (file-name-base file) (if (string= ext "scm") "log" "scm")))
+                 (filename (format "%s.%s" (file-name-base file) "log"))
                  (other-files (->> (directory-files-recursively
                                     (car (project-roots project))
                                     (regexp-quote filename))
                                    (--filter (string-suffix-p "tests" (directory-file-name
                                                                        (file-name-directory it)))))))
             (if other-files
-                (find-file (car other-files))
+                (view-file (car other-files))
               (error "No %s found" filename)))))
     #+end_src
 *** C family
