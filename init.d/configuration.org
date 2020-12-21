@@ -1260,6 +1260,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                reftex-default-bibliography org-ref-default-bibliography))
      #+end_src
      Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
+**** Org-ql
+     #+begin_src emacs-lisp
+       (use-package org-ql)
+     #+end_src
 **** Prettify org
 
      Use pretty bullet points instead of asterisk
