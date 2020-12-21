@@ -1119,7 +1119,50 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :custom
          (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
          (org-roam-completion-system 'ivy)
-         (org-roam-buffer-position 'bottom))
+         (org-roam-buffer-position 'bottom)
+         (org-roam-capture-templates
+          '(
+            ("d" "default" plain #'org-roam-capture--get-point
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n"
+             :unnarrowed t)
+            ("t" "task" entry #'org-roam-capture--get-point
+             "
+       ,* TODO %?
+         SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"today\"))
+         %i
+         %a"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head ":PROPERTIES:
+       :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
+       :END:
+       ,#+title: ${title}
+       ,#+roam_tags: \"uppgift\"
+       "
+             :unnarrowed t)
+            ("n" "node" plain #'org-roam-capture--get-point
+             "
+       ,#+begin_quote
+       %? ---
+       ,#+end_quote
+       %a
+       "
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head ":PROPERTIES:
+       :URL: %(read-string \"Url: \")
+       :END:
+       ,#+title: ${title}
+       "
+             :unnarrowed t)
+            ("a" "album" plain #'org-roam-capture--get-point
+             "%? "
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}
+       ,#+roam_tags: \"album\"
+       "
+             :unnarrowed t)
+            )))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Org-roam-bibtex
