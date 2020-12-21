@@ -1487,6 +1487,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    ;;(ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+end_src
+*** Prescient
+    "prescient.el: simple but effective sorting and filtering for
+    Emacs." - [[https://github.com/raxod502/prescient.el][prescient.el]]
+    #+begin_src emacs-lisp
+      (use-package prescient
+        :init
+        (require 'prescient)
+        (prescient-persist-mode +1))
+    #+end_src
 *** ivy
     Better multi-editing than ag.el.
     See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
