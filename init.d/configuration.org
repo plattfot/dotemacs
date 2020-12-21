@@ -1555,6 +1555,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             (apply #'read-file-name-default args)))
         (setf read-file-name-function 'selectrum-read-file-name-default+))
     #+end_src
+*** Marginalia
+
+    "This package provides marginalia-mode which adds marginalia to
+    the minibuffer completions. [[https://en.wikipedia.org/wiki/Marginalia][Marginalia]] are marks or annotations
+    placed at the margin of the page of a book or in this case helpful
+    colorful annotations placed at the margin of the minibuffer for
+    your completion candidates." - [[https://github.com/minad/marginalia][github.com]]
+
+    #+begin_src emacs-lisp
+      (use-package marginalia
+        :ensure t
+        ;; :custom
+        ;; (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
+        :init
+        (marginalia-mode))
+    #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
