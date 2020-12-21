@@ -117,10 +117,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       display-time-24hr-format t
       scroll-step           1         ;; smooth scrolling
       scroll-conservatively 10000
+      completion-ignore-case t
       enable-recursive-minibuffers t) ;; Allow to use the minibuffer while using the minibuffer
      (show-paren-mode 1)                ;; Highlight matching brackets.
      (minibuffer-depth-indicate-mode 1) ;; Keep track of which minibuffer
 
+     (define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command)
    #+end_src
 
    Don't popup a new frame but reuse one that is already open. If no
@@ -712,7 +714,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                  (lambda ()
                    (setq-local company-backends '(company-capf))
                    (setq-local tab-always-indent 'complete)
-                   (setq-local completion-ignore-case t)
                    (setq-local ledger-complete-in-steps t)))
        :pin melpa)
    #+end_src
