@@ -1030,14 +1030,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package org-agenda
          :ensure nil
-         :config
-         (setq
-          org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
+         :custom
+         (org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
                                      (todo . " %-2i ")
                                      (tags . " %i ")
                                      (search . " %i ")))
-         (customize-set-value
-          'org-agenda-category-icon-alist
+         (org-agenda-category-icon-alist
           `(
             ("backup" ,(list (all-the-icons-material "backup" :height 1.2)) nil nil :ascent center)
             ("bug" ,(list (all-the-icons-octicon "bug" :height 1.2)) nil nil :ascent center)
