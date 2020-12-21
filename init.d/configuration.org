@@ -1199,24 +1199,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                org-ref-pdf-directory plt/paper-directory
                reftex-default-bibliography org-ref-default-bibliography))
      #+end_src
-**** Org-noter
-
-     Allow to take notes in an org buffer when reading. One annoying
-     issue with it right now is that it kills my frames everytime I
-     quit taking notes. And this is with
-     =org-noter-kill-frame-at-session-end= set to =nil=.
-
-     #+begin_src emacs-lisp
-       (use-package org-noter
-         :ensure nil
-         :after (org-roam)
-         :config
-         (setf org-noter-notes-window-location 'other-frame
-               org-noter-always-create-frame nil
-               org-noter-kill-frame-at-session-end nil
-               org-noter-hide-other nil
-               org-noter-notes-search-path (list org-roam-directory)))
-     #+end_src
      Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
 **** Prettify org
 
