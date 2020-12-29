@@ -1803,9 +1803,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                ,(make-arxiv "cat:cs.DM" :title "Discrete Mathematics")
                                ,(make-arxiv "cat:cs.DC" :title "Distributed, Parallel, and Cluster Computing")
                                ,(make-arxiv "cat:cs.ML" :title "Machine Learning")
-                               ,(make-arxiv "cat:cs.OS" :title "Operating Systems")
                                ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
-                               ,(make-arxiv "cat:cs.SE" :title "Software Engineering")))
+                               ,(make-arxiv "cat:cs.SE" :title "Software Engineering")
+                               ,(make-arxiv "cat:physics.flu-dyn" :title "Fluid Dynamics")
+                               ))
 
         (defun plt/elfeed-search-update-arxiv (&rest args)
           (mapc
