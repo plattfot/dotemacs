@@ -915,6 +915,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                ("C-c a" . org-agenda))
         :config
         (add-hook 'org-mode-hook #'dotemacs-show-trailing-whitespace)
+        ;; Workaround from https://orgmode.org/manual/Conflicts.html
+        (add-hook 'org-mode-hook
+                  (lambda ()
+                    (setq-local yas/trigger-key [tab])
+                    (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
         ;; Use emacs to view pdfs (shadows the old value)
         (add-to-list 'org-file-apps (cons "\\.pdf\\'" 'emacs))
         ;; Open links in same frame
