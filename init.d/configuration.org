@@ -1236,9 +1236,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                bibtex-completion-library-path `(,plt/paper-directory)
                bibtex-completion-notes-path org-roam-directory
                bibtex-completion-notes-template-multiple-files (format"\
-              #+TITLE: ${title}
-              #+ROAM_KEY: cite:${=key=}
-              * Notes
+              ,#+TITLE: ${title}
+              ,#+ROAM_KEY: cite:${=key=}
+              ,* Notes
               :PROPERTIES:
               :Custom_ID: ${=key=}
               :NOTER_DOCUMENT: %s${=key=}.pdf
