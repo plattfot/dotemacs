@@ -2081,10 +2081,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa-stable)
     #+end_src
 *** String inflections
-    Keybinding for cycle between snake case, camel case etc
     #+begin_src emacs-lisp
       (use-package string-inflection
-       	:bind ("C-;" . string-inflection-cycle)
        	:pin melpa-stable)
     #+end_src
 *** Abbrev
