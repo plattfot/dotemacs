@@ -1403,6 +1403,43 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (setf eldoc-echo-area-use-multiline-p nil))
     #+end_src
+*** Flyspell
+    #+begin_src emacs-lisp
+      (use-package flyspell
+        :bind (:map flyspell-mode-map
+                    ("<f6>" . plt/ispell-change-dictionary))
+        :hook ((org-mode . flyspell-mode)
+               (prog-mode . flyspell-prog-mode))
+        :custom
+        (ispell-program-name "aspell")
+        (aspell-dictionary "en_US-wo_accents")
+        (ispell-dictionary "en_US-wo_accents")
+        :config
+        (require 'transient)
+        (transient-define-prefix plt/ispell-change-dictionary ()
+                                 "Change dictionary to"
+                                 [("s" "Swedish" plt/ispell-svenska)
+                                  ("u" "English (US)" plt/ispell-en-us)
+                                  ("c" "English (CA)" plt/ispell-en-ca)
+                                  ])
+
+        (defmacro plt/make-ispell-change-dictionary (dictionary &optional prefix)
+          "Create function that change ispell dictionary to DICTIONARY.
+      PREFIX is an optional name used in the function name, if not set
+      it will use the DICTIONARY."
+          (list 'defun (intern (format "plt/ispell-%s" (or prefix dictionary))) ()
+                (format "Change ispell dictionary to %s." dictionary)
+                (list 'interactive)
+                (list 'ispell-change-dictionary dictionary)))
+        (plt/make-ispell-change-dictionary "svenska")
+        (plt/make-ispell-change-dictionary "en_US-wo_accents" "en-us")
+        (plt/make-ispell-change-dictionary "en_CA-wo_accents" "en-ca"))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package flyspell-correct
+        :bind ("C-;" . flyspell-correct-wrapper))
+    #+end_src
 *** emms
     Using guix to handle emms, as I need the emms-print-metadata
     function for libtag.
