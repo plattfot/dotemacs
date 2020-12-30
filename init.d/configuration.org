@@ -2011,6 +2011,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (moody-replace-mode-line-buffer-identification)
         (moody-replace-vc-mode))
     #+end_src
+*** w3m
+    #+begin_src emacs-lisp
+      (use-package w3m)
+    #+end_src
 ** Text
   Packages for editing and viewing text.
 *** Emojify
