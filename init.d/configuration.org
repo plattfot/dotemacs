@@ -2715,6 +2715,63 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (plt/vinyl-misc it))))))
 
      #+end_src
+**** KOReader
+     #+begin_src emacs-lisp
+       (cl-defstruct (plt/koreader-note (:constructor plt/make-koreader-note))
+         "Struct containing one note exported from KOReader"
+         (text :type string)
+         (sort :type string)
+         (page :type integer)
+         (time :type time)
+         (chapter :type string))
+
+       (defun plt/koreader-parse-clipping (clipping)
+         "Parse CLIPPING and return the result.
+
+       CLIPPING is a json file export from KOReader.
+
+       The result will be a list which the first element will be the
+       title followed by the notes for that title."
+         (let* ((json (json-read-file clipping))
+                (notes
+                 (->> json
+                      (--filter
+                       (->> it
+                            car
+                            symbol-name
+                            (s-matches? "[[:digit:]]+")))
+                      (--map
+                       (seq-map (lambda (note)
+                                  (when-let* ((text (assq 'text note)))
+                                    (plt/make-koreader-note
+                                     :text (cdr text)
+                                     :sort (cdr (assq 'sort note))
+                                     :page (cdr (assq 'page note))
+                                     :time (cdr (assq 'time note))
+                                     :chapter (cdr (assq 'chapter note)))))
+                                (cdr it)))
+                      (-flatten)
+                      (-non-nil)
+                      )))
+           `(,(cdr (assq `title json)) ,@notes)))
+
+       (defun plt/koreader-clipping-to-org-notes (clipping)
+         "Read CLIPPING to org notes.
+
+       Where CLIPPING is a json export from KOReader."
+         (interactive (list (read-file-name "KOReader json: ")))
+         (let* ((notes (cdr (plt/koreader-parse-clipping clipping))))
+           (with-output-to-temp-buffer "*KOReader notes*"
+             (--each (-group-by 'plt/koreader-note-chapter notes)
+               (princ (format "* %s\n" (car it)))
+               (--each (cdr it)
+                 (princ (format "** %s\n" (plt/koreader-note-text it)))
+                 (princ (format-time-string "   <%Y-%m-%d %a %H:%M:%S>\n" (plt/koreader-note-time it)))
+                 (princ (format "  :PROPERTIES:\n"))
+                 (princ (format "  :PAGE: %s\n" (plt/koreader-note-page it)))
+                 (princ (format "  :END:\n"))))))
+         )
+     #+end_src
 ** Keybindings
 *** Minor mode
    To better organize what my custom keys are and also easy see what
