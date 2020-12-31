@@ -2641,79 +2641,80 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (list hi lo msecs))) ; regurgitate the new values
     #+end_src
 *** Org
-    Extract info from my vinyl org table. The heading for each table is:
-    | Artist | Album | Färg | Signerad | Inkl CD | Skivbolag | Typ | Skivor | Övrigt |
+**** Vinyl
+     Extract info from my vinyl org table. The heading for each table is:
+     | Artist | Album | Färg | Signerad | Inkl CD | Skivbolag | Typ | Skivor | Övrigt |
 
-    #+begin_src emacs-lisp
-      (cl-defstruct plt/vinyl
-        "Struct for vinyl entries"
-        (artist :type string)
-        (album :type string)
-        (color :type string)
-        (signed :type boolean)
-        (cd :type boolean)
-        (label :type string)
-        (type :type string)
-        (discs :type integer)
-        (misc :type string))
+     #+begin_src emacs-lisp
+       (cl-defstruct plt/vinyl
+         "Struct for vinyl entries"
+         (artist :type string)
+         (album :type string)
+         (color :type string)
+         (signed :type boolean)
+         (cd :type boolean)
+         (label :type string)
+         (type :type string)
+         (discs :type integer)
+         (misc :type string))
 
-      (defun plt/vinyl-table-extraction ()
-        "Extract a list of `plt/vinyl' for each line in the table."
-        (let ((vinyls '())
-              (region-begin (if (region-active-p) (region-beginning) (point-min)))
-              (region-end (if (region-active-p) (region-end) (point-max))))
-          (save-mark-and-excursion
-            (goto-char region-begin)
-            (while (< (point) region-end)
-              (let ((vinyl (make-plt/vinyl))
-                    (read-field-and-goto-next (lambda ()
-                                                (org-table-next-field)
-                                                (string-trim (org-table-get-field)))))
-                (setf (plt/vinyl-artist vinyl) (funcall read-field-and-goto-next))
-                (setf (plt/vinyl-album vinyl) (funcall read-field-and-goto-next))
-                (setf (plt/vinyl-color vinyl) (funcall read-field-and-goto-next))
-                (setf (plt/vinyl-signed vinyl) (if (string= (downcase (funcall read-field-and-goto-next)) "ja")
-                                                   t nil))
-                (setf (plt/vinyl-cd vinyl) (if (string= (downcase (funcall read-field-and-goto-next)) "ja")
-                                               t nil))
-                (setf (plt/vinyl-label vinyl) (funcall read-field-and-goto-next))
-                (setf (plt/vinyl-type vinyl) (funcall read-field-and-goto-next))
-                (setf (plt/vinyl-discs vinyl) (string-to-number (funcall read-field-and-goto-next)))
-                (setf (plt/vinyl-misc vinyl) (funcall read-field-and-goto-next))
-                (push vinyl vinyls))))
-          vinyls))
+       (defun plt/vinyl-table-extraction ()
+         "Extract a list of `plt/vinyl' for each line in the table."
+         (let ((vinyls '())
+               (region-begin (if (region-active-p) (region-beginning) (point-min)))
+               (region-end (if (region-active-p) (region-end) (point-max))))
+           (save-mark-and-excursion
+             (goto-char region-begin)
+             (while (< (point) region-end)
+               (let ((vinyl (make-plt/vinyl))
+                     (read-field-and-goto-next (lambda ()
+                                                 (org-table-next-field)
+                                                 (string-trim (org-table-get-field)))))
+                 (setf (plt/vinyl-artist vinyl) (funcall read-field-and-goto-next))
+                 (setf (plt/vinyl-album vinyl) (funcall read-field-and-goto-next))
+                 (setf (plt/vinyl-color vinyl) (funcall read-field-and-goto-next))
+                 (setf (plt/vinyl-signed vinyl) (if (string= (downcase (funcall read-field-and-goto-next)) "ja")
+                                                    t nil))
+                 (setf (plt/vinyl-cd vinyl) (if (string= (downcase (funcall read-field-and-goto-next)) "ja")
+                                                t nil))
+                 (setf (plt/vinyl-label vinyl) (funcall read-field-and-goto-next))
+                 (setf (plt/vinyl-type vinyl) (funcall read-field-and-goto-next))
+                 (setf (plt/vinyl-discs vinyl) (string-to-number (funcall read-field-and-goto-next)))
+                 (setf (plt/vinyl-misc vinyl) (funcall read-field-and-goto-next))
+                 (push vinyl vinyls))))
+           vinyls))
 
-      (defun plt/vinyl-table-to-roam ()
-        "Prep vinyl tables to roam entries."
-        (interactive)
-        (with-output-to-temp-buffer
-          "*Vinyl albums*"
-          (--each (plt/vinyl-table-extraction)
-            (princ (format "\
-      ,#+title: %s
-      ,#+roam_tags: \"album\"
+       (defun plt/vinyl-table-to-roam ()
+         "Prep vinyl tables to roam entries."
+         (interactive)
+         (with-output-to-temp-buffer
+           "*Vinyl albums*"
+           (--each (plt/vinyl-table-extraction)
+             (princ (format "\
+       ,#+title: %s
+       ,#+roam_tags: \"album\"
 
-      ,* Vinyl
-        - Artist: %s
-        - Färg: %s
-        - Signerad: %s
-        - Inkl CD: %s
-        - Skivbolag: %s
-        - Typ: %s
-        - Skivor: %s
-        - Övrigt: %s
+       ,* Vinyl
+         - Artist: %s
+         - Färg: %s
+         - Signerad: %s
+         - Inkl CD: %s
+         - Skivbolag: %s
+         - Typ: %s
+         - Skivor: %s
+         - Övrigt: %s
 
-      " (plt/vinyl-album it)
-      (plt/vinyl-artist it)
-      (plt/vinyl-color it)
-      (if (plt/vinyl-signed it) "Ja" "Nej")
-      (if (plt/vinyl-cd it) "Ja" "Nej")
-      (plt/vinyl-label it)
-      (plt/vinyl-type it)
-      (plt/vinyl-discs it)
-      (plt/vinyl-misc it))))))
+       " (plt/vinyl-album it)
+       (plt/vinyl-artist it)
+       (plt/vinyl-color it)
+       (if (plt/vinyl-signed it) "Ja" "Nej")
+       (if (plt/vinyl-cd it) "Ja" "Nej")
+       (plt/vinyl-label it)
+       (plt/vinyl-type it)
+       (plt/vinyl-discs it)
+       (plt/vinyl-misc it))))))
 
-    #+end_src
+     #+end_src
 ** Keybindings
 *** Minor mode
    To better organize what my custom keys are and also easy see what
