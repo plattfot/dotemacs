@@ -195,7 +195,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 * Packages
 ** Code
 *** Autocomplete
-   Packages that helps speed up coding, i.e. auto complete, boiler plates etc
+    Packages that helps speed up coding, i.e. auto complete, boiler
+    plates etc
 **** Company
 
      Configure company to work similar to auto complete. Disabled most
@@ -343,7 +344,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+end_src
 *** Lint
-   Packages that helps inspecting code, report errors etc.
+    Packages that helps inspecting code, report errors etc.
 **** Flymake
 
      Moved over to using ~flymake~ instead of ~flycheck~. Mainly
