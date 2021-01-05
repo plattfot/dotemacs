@@ -2771,11 +2771,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (princ (format "* %s\n" (car it)))
                (--each (cdr it)
                  (princ (format "** %s\n" (plt/koreader-note-text it)))
-                 (princ (format-time-string "   <%Y-%m-%d %a %H:%M:%S>\n" (plt/koreader-note-time it)))
                  (princ (format "  :PROPERTIES:\n"))
                  (princ (format "  :PAGE: %s\n" (plt/koreader-note-page it)))
-                 (princ (format "  :END:\n"))))))
-         )
+                 (princ (format "  :END:\n"))
+                 (princ (format-time-string "   <%Y-%m-%d %a %H:%M:%S>\n" (plt/koreader-note-time it))))))))
      #+end_src
 ** Keybindings
 *** Minor mode
