@@ -2787,6 +2787,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Time will tell if that was a smart idea or not.
 
    #+begin_src emacs-lisp
+     (defun plt/insert-non-breaking-space ()
+       "Insert a non-breaking space:  ."
+       (interactive)
+       (insert " "))
+
      (defun plt/scroll-up-command-10 ()
        "Scroll up buffer 10 lines."
        (interactive)
@@ -2814,6 +2819,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-r") 'isearch-backward-regexp)
          (define-key map (kbd "C-S-s") 'isearch-forward-symbol-at-point)
          ;; Text edit
+         (define-key map (kbd "M-SPC") 'plt/insert-non-breaking-space)
          (define-key map (kbd "M-r") 'replace-regexp)
          (define-key map (kbd "C-c l") 'duplicate-line)
          (define-key map (kbd "C-,") 'split-at-comma)
