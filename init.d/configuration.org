@@ -1037,6 +1037,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package org-agenda
          :ensure nil
+         :after (org-roam)
          :custom
          (org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
                                      (todo . " %-2i ")
@@ -1056,7 +1057,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
             ("photo" ,(list (all-the-icons-material "camera_roll" :height 1.2)) nil nil :ascent center)
             ("project" ,(list (all-the-icons-faicon "flask" :height 1.2)) nil nil :ascent center)
             ("task" ,(list (all-the-icons-faicon "question-circle-o" :height 1.2)) nil nil :ascent center)
-            )))
+            ))
+         :config
+         (add-hook 'org-agenda-finalize-hook (lambda () (cd org-roam-directory))))
      #+end_src
 
 **** Super agenda
