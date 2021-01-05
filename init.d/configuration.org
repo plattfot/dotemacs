@@ -2787,6 +2787,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Time will tell if that was a smart idea or not.
 
    #+begin_src emacs-lisp
+     (defun plt/scroll-up-command-10 ()
+       "Scroll up buffer 10 lines."
+       (interactive)
+       (scroll-up-command 10))
+
+     (defun plt/scroll-down-command-10 ()
+       "Scroll down buffer 10 lines."
+       (interactive)
+       (scroll-down-command 10))
+
+     (defun plt/toggle-rot13 ()
+       "Toggle `toogle-rot13-mode' and redraw."
+       (interactive)
+       (toggle-rot13-mode)
+       (redraw-display))
+
      (defvar plattfot-mode-map
        (let ((map (make-sparse-keymap)))
          ;; Navigation
@@ -2814,8 +2830,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "C-<f6>") 'tool-bar-mode)
 
          ;; Scrolling
-         (define-key map (kbd "<next>") (lambda () (interactive) (scroll-up-command 10)))
-         (define-key map (kbd "<prior>") (lambda () (interactive) (scroll-down-command 10)))
+         (define-key map (kbd "<next>") 'plt/scroll-up-command-10)
+         (define-key map (kbd "<prior>") 'plt/scroll-down-command-10)
          ;; Slow scrolling
          (define-key map (kbd "<C-next>") 'scroll-up-line)
          (define-key map (kbd "<C-prior>") 'scroll-down-line)
@@ -2827,10 +2843,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "<C-M-prior>") 'beginning-of-buffer)
 
          (define-key map (kbd "C-.") 'repeat)
-         (define-key map (kbd "<f4>") (lambda ()
-                                        (interactive)
-                                        (toggle-rot13-mode)
-                                        (redraw-display)))
+         (define-key map (kbd "<f4>") 'plt/toggle-rot13)
          (define-key map (kbd "<f2>") 'home-setup)
          (define-key map (kbd "<f3>") 'work-setup)
          map)
