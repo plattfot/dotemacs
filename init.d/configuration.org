@@ -1279,7 +1279,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
 **** Org-ql
      #+begin_src emacs-lisp
-       (use-package org-ql)
+       (use-package org-ql
+         :disabled t)
      #+end_src
 **** Prettify org
 
