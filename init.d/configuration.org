@@ -1952,6 +1952,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
                             ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
                             ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
+                            ("UCAiiOTio8Yu69c3XnR7nQBQ" talks emacs) ;; System Crafters
                             ))
                 ,@(plt/elfeed-group-feeds
                    :tags '(paper arxiv)
