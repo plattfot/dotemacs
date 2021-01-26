@@ -410,13 +410,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package smartparens
          :init
-         ;;(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
-         ;;(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+         (add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'lisp-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'scheme-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'guile-mode-hook 'turn-on-smartparens-mode)
          (add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
-         ;; (add-hook 'python-mode 'turn-on-smartparens-mode)
+         (add-hook 'python-mode 'turn-on-smartparens-mode)
          (add-hook 'lisp-interaction-mode-hook 'turn-on-smartparens-mode)
          :bind (:map smartparens-mode-map
                      ("C-)" . sp-forward-slurp-sexp)
