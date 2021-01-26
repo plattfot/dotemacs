@@ -79,16 +79,13 @@ Places with ::date:: will be replaced with current year."
 
 (defun nf-insert-description (author email)
   "Insert description of the file.
-Which is name of the file, the AUTHOR and EMAIL to the
-author.  Last the date it was created (B Y),"
+Which is the AUTHOR and EMAIL to the author and the date it was
+created (B Y),"
   (interactive (list (read-string "Author: ")
                      (read-string "email: ")))
   (insert
    (mapconcat 'identity
 	      (list "/**"
-		    ( concat " * \\file   " (file-name-nondirectory
-                                             (buffer-file-name)))
-		    " *"
 		    ( concat " * \\author " author  " (" email ")")
 		    " *"
 		    ( concat " * \\date   " (format-time-string "%B %Y") )
