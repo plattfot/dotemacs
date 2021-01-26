@@ -19,7 +19,7 @@
   :type 'string
   :group 'dd-newfile)
 
-(defcustom dd-boilerplate "~/.emacs.d/boilerplates/dd.txt"
+(defcustom dd-boilerplate (concat user-emacs-directory "boilerplates/dd.txt")
   "File to use or the DD's boilerplate."
   :type 'string
   :group 'dd-newfile)
