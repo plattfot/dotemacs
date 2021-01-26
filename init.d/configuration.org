@@ -115,10 +115,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       indent-tabs-mode nil            ;; Don't use tab for indenting.
       sentence-end-double-space nil   ;; Use sane defaults for sentences.
       display-time-24hr-format t
-      scroll-step           1         ;; smooth scrolling
+      scroll-step 1                   ;; smooth scrolling
       scroll-conservatively 10000
-      completion-ignore-case t
-      enable-recursive-minibuffers t ;; Allow to use the minibuffer while using the minibuffer
+      completion-ignore-case t        ;; Ignore case when completing.
+      read-file-name-completion-ignore-case t ;; Ignore case when finding files.
+      read-buffer-completion-ignore-case t ;; Ignore case when switching buffers.
+      enable-recursive-minibuffers t  ;; Allow to use the minibuffer while using the minibuffer
       completion-styles '(basic partial-completion flex)
       )
      (show-paren-mode 1)                ;; Highlight matching brackets.
