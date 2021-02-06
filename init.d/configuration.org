@@ -3002,111 +3002,136 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      PIDs.
 
      #+begin_src emacs-lisp
-       (defun pid (regex &optional index newest)
-         "Get the pid of the first command matching REGEX.
-       If more than one is running it return the one at INDEX.  Where
-       INDEX starts from 0 and up.  If NEWEST is t it will sort the
-       commands based on elapsed time before picking one."
+       (cl-defstruct plt/ps
+         "Struct that contains the output from `ps-match'."
+         (pid :documentation "Process ID" :type 'integer)
+         (time :documentation "Time when the process was started" :type 'time)
+         (ppid :documentation "Parent Process ID" :type 'integer)
+         (user :documentation "User that started the process" :type 'string)
+         (comm :documentation "The command that launched the process" :type 'string)
+         (cmd :documentation "The command and all its args" :type string))
+     #+end_src
+
+     #+begin_src emacs-lisp
+       (defun pid (ps-list &optional index newest)
+         "Get the pid of the command in PS-LIST at the position specified by INDEX.
+
+       If INDEX is not specified it will pick the first command in PS-LIST.
+
+       If NEWEST is t, it will sort the commands based on elapsed time
+       before picking one."
          (interactive)
-         (when (not index) (setq index 0))
-         (let ((ps_list (ps-match regex)))
-           (car (nth index (if newest (sort-ps-time ps_list) ps_list)))))
+         (plt/ps-pid (nth (or index 0) (if newest (sort-ps-time ps-list) ps-list))))
      #+end_src
 
      #+begin_src emacs-lisp
        (defun ps-match (regex)
-         "Call ps and return a list of info for each the command matching the REGEX.
-       The list format is '(pid time ppid user comm), where time is the
-       elisp time value and corresponds to the time and date the process
-       was started."
-         (let ((ps_list
+         "Return a list of `plt/ps' which command matches REGEX.
+       This is simplified version of `list-system-processes' and
+       `process-attributes' but works with tramp.
+
+       Requires the commandline tools ps and awk to be available."
+         (let ((ps-list
                 (mapcar
-                 (lambda (x) (split-string x))
-                 (cl-remove-if
-                  'string-empty-p
-                  (split-string
-                   (shell-command-to-string
-                    (concat "ps axo lstart,pid,ppid,user,comm | grep -e " regex))
-                   "\n")))))
+                 'split-string
+                 (split-string
+                  (shell-command-to-string
+                   (format "ps axo lstart,pid,ppid,user,comm,cmd | awk '$9 ~ /%s/'" regex))
+                  "\n" t))))
            (mapcar
             (lambda (x)
               (let ((proc (nthcdr 5 x))
-                    (time (date-to-time (mapconcat 'identity (butlast x 4) " "))))
-                (setq x (append (list (car proc) time) (cdr proc)))))
-            ps_list)))
+                    (time (date-to-time (string-join (butlast x 4) " "))))
+                (make-plt/ps :pid (string-to-number (car proc))
+                             :time time
+                             :ppid (string-to-number (nth 1 proc))
+                             :user (nth 2 proc)
+                             :comm (nth 3 proc)
+                             :cmd (string-join (nthcdr 4 proc) " "))))
+            ps-list)))
      #+end_src
 
      #+begin_src emacs-lisp
-       (defun sort-ps-time (ps_list)
-         "Sort the PS_LIST based on the timestamp.
+       (defun sort-ps-time (ps-list)
+         "Sort the PS-LIST based on the timestamp.
        In ascending order."
-         (seq-sort (lambda (a b) (not (time-less-p (cadr a) (cadr b)))) ps_list))
+         (seq-sort (lambda (a b) (not (time-less-p (plt/ps-time a) (plt/ps-time b)))) ps-list))
      #+end_src
 
+     #+begin_src emacs-lisp
+       (defun attach-pid (ps-list &optional index newest)
+         "Prints 'attach <pid>' into the buffer.
+       Where PS-LIST is a list of `plt/ps'
+
+       INDEX is use to select which one if there are multiple instances
+       running, INDEX counts from 1. If not set it will pick the first
+       instance.
+
+       If NEWEST is set to t, it will sort the list based on start time
+       before selecting."
+         (interactive "p")
+
+         ;; The default for index is one.
+         (when (not index) (setq index 1))
+         (when (< index 1) (setq index 1))
+         (if ps-list
+             (insert (format "attach %s" (pid ps-list (- index 1) newest)))
+           (message "The process list is empty")))
+     #+end_src
 **** PID Houdini
-     Get the PID for houdini
+     Get a list of PID for houdini processes
      #+begin_src emacs-lisp
-       (defun pid-houdini (&optional index newest)
-         "Get the pid for houdini.
-
-             If more than one is running it returns the one at INDEX.  Where
-             INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-             before picking one."
-
-         (interactive)
-         (when (not index) (setq index 0))
-         (pid "houdini-bin" index newest))
+       (defun ps-houdini ()
+         "Get a list of `plt/ps' for running houdini processes."
+         (ps-match "houdini-bin"))
      #+end_src
+
+     Get a list of PID for houdini core processes
+     #+begin_src emacs-lisp
+       (defun ps-houdinicore ()
+         "Get a list of `plt/ps' for running houdini processes."
+         (ps-match "houdinicore-bin"))
+     #+end_src
+
 **** PID Maya
+     Get a list of PID for maya processes
      #+begin_src emacs-lisp
-       (defun pid-maya (&optional index newest)
-         "Get the pid for maya.
-       If more than one is running it returns the one at INDEX.  Where
-       INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-       before picking one."
-         (interactive)
-         (when (not index) (setq index 0))
-         (pid "maya\\.bin" index newest))
-     #+end_src
-**** PID smeat
-     #+begin_src emacs-lisp
-       (defun pid-smeat (&optional index newest)
-         "Get the pid for smeat.
-       If more than one is running it returns the one at INDEX.  Where
-       INDEX starts from 0 and up.  If NEWEST is t, sort on elapsed time
-       before picking one."
-         (interactive)
-         (when (not index) (setq index 0))
-         ;; the ^= is to ignore houdini/python commands e.g houdini --with smeat=...
-         (pid "smeat(:?[^=]+|$$)" index newest))
+       (defun ps-maya ()
+         "Get a list of `plt/ps' for running maya processes."
+         (ps-match "maya\\.bin"))
      #+end_src
 **** Attach Houdini
      Used with gdb, prints attach <pid of houdini> in the prompt.
      #+begin_src emacs-lisp
        (defun attach-houdini (&optional index)
          "Prints attach <pid> into the buffer.
-       INDEX is use to select which one if there are multiple instances
-       running, INDEX counts from 1."
+       INDEX is the same as in `attach-pid'."
          (interactive"p")
+         (attach-pid (ps-houdini) index))
 
-         ;; The default for index is one.
-         (when (< index 1) (setq index 1))
-         (insert (format "attach %s" (pid-houdini (- index 1)))))
+       (defun attach-houdinicore (&optional index)
+         "Prints attach <pid> into the buffer.
+       INDEX is the same as in `attach-pid'."
+         (interactive"p")
+         (attach-pid (ps-houdinicore) index))
      #+end_src
 
      #+begin_src emacs-lisp
        (defun attach-houdini-newest (&optional index)
-         "Prints 'attach <pid>' into the buffer.
+         "Prints attach <pid> into the buffer.
+       INDEX is the same as in `attach-pid'.
 
-       INDEX is use to select which one if there are multiple instances
-       running, INDEX counts from 1.  PIDs are sorted on elapsed time
-       before one is selected to return the newest houdini instance."
+       PIDs are sorted on elapsed time before one is selected."
          (interactive"p")
+         (attach-pid (ps-houdini) index t))
 
-         ;; The default for index is one.
-         (when (not index) (setq index 1))
-         (when (< index 1) (setq index 1))
-         (insert (format "attach %s" (pid-houdini (- index 1) t))))
+       (defun attach-houdinicore-newest (&optional index)
+         "Prints attach <pid> into the buffer.
+       INDEX is the same as in `attach-pid'.
+
+       PIDs are sorted on elapsed time before one is selected."
+         (interactive"p")
+         (attach-pid (ps-houdinicore) index t))
      #+end_src
 **** Attach Maya
      #+begin_src emacs-lisp
@@ -3119,18 +3144,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (when (< index 1) (setq index 1))
          (insert (concat "attach " (pid-maya index) )))
      #+end_src
-**** Attach smeat
-     #+begin_src emacs-lisp
-       (defun attach-smeat (&optional index)
-	 "Prints attach <pid> into the buffer.
-       INDEX is use to select which one if there are multiple instances
-       running, INDEX counts from 1."
-	 (interactive"p")
-
-	 ;; The default for index is one.
-	 (when (< index 1) (setq index 1))
-	 (insert (concat "attach " (pid-smeat (- index 1)) )))
-     #+end_src
 **** Kill Houdini
      #+begin_src emacs-lisp
        (defun kill-houdini ()
@@ -3138,7 +3151,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        If more than one houdini are running it will kill the
        first one in the ps list."
          (interactive)
-         (shell-command (concat "kill -9 " (pid-houdini))))
+         (shell-command (concat "kill -9 " (pid (ps-houdini)))))
      #+end_src
 **** Kill Maya
      #+begin_src emacs-lisp
@@ -3147,19 +3160,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        If more than one Maya process are running it will kill the
        first one in the ps list."
          (interactive)
-         (shell-command (concat "kill -9 " (pid-maya))))
-     #+end_src
-**** Smeat abort
-     Not quite working. But sends a signal to the smeat process to abort the sim.
-     #+begin_src emacs-lisp
-       (defun smeat-abort (&optional index )
-         "Sends USR1 signal to houdini which aborts the smeat client.
-       INDEX is used to select which houdini instance to send to if
-       multiple instances exist."
-         (interactive"p")
-         (when (< index 1) (setq index 1))
-         (let ((hou-pid (pid-houdini index)))
-           (shell-command (concat "kill -s USR1 " hou-pid))))
+         (shell-command (concat "kill -9 " (pid (ps-maya)))))
      #+end_src
 **** Preproccess
      #+begin_src emacs-lisp
