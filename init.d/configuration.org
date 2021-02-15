@@ -1836,9 +1836,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
         (cl-defstruct (arxiv (:constructor make--arxiv))
           "Structure containing information for an ArXiv feed."
-          (url :type string)
-          (tags :type list)
-          (title :type string))
+          (url nil :type string)
+          (tags nil :type list)
+          (title nil :type string))
 
         (cl-defun make-arxiv (query &key tags title)
           "Construct an <arxiv> struct.
@@ -2664,15 +2664,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (cl-defstruct plt/vinyl
          "Struct for vinyl entries"
-         (artist :type string)
-         (album :type string)
-         (color :type string)
-         (signed :type boolean)
-         (cd :type boolean)
-         (label :type string)
-         (type :type string)
-         (discs :type integer)
-         (misc :type string))
+         (artist nil :type string)
+         (album nil :type string)
+         (color nil :type string)
+         (signed nil :type boolean)
+         (cd nil :type boolean)
+         (label nil :type string)
+         (type nil :type string)
+         (discs nil :type integer)
+         (misc nil :type string))
 
        (defun plt/vinyl-table-extraction ()
          "Extract a list of `plt/vinyl' for each line in the table."
@@ -2735,11 +2735,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (cl-defstruct (plt/koreader-note (:constructor plt/make-koreader-note))
          "Struct containing one note exported from KOReader"
-         (text :type string)
-         (sort :type string)
-         (page :type integer)
-         (time :type time)
-         (chapter :type string))
+         (text nil :type string)
+         (sort nil :type string)
+         (page nil :type integer)
+         (time nil :type time)
+         (chapter nil :type string))
 
        (defun plt/koreader-parse-clipping (clipping)
          "Parse CLIPPING and return the result.
@@ -3004,12 +3004,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (cl-defstruct plt/ps
          "Struct that contains the output from `ps-match'."
-         (pid :documentation "Process ID" :type 'integer)
-         (time :documentation "Time when the process was started" :type 'time)
-         (ppid :documentation "Parent Process ID" :type 'integer)
-         (user :documentation "User that started the process" :type 'string)
-         (comm :documentation "The command that launched the process" :type 'string)
-         (cmd :documentation "The command and all its args" :type string))
+         (pid nil :documentation "Process ID" :type 'integer)
+         (time nil :documentation "Time when the process was started" :type 'time)
+         (ppid nil :documentation "Parent Process ID" :type 'integer)
+         (user nil :documentation "User that started the process" :type 'string)
+         (comm nil :documentation "The command that launched the process" :type 'string)
+         (cmd nil :documentation "The command and all its args" :type string))
      #+end_src
 
      #+begin_src emacs-lisp
