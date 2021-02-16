@@ -926,6 +926,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :bind (("C-c l" . org-store-link)
                ("C-c a" . org-agenda))
         :config
+        (defun plt/org-fetch-agenda-files ()
+          "Return a list of all files that should be in the agenda."
+          (->>
+           (file-name-as-directory org-directory)
+           (s-append "roam")
+           (format "rg -l -e TODO -e WAIT -e CANCELLED -e '%%\\(org' %s" )
+           (shell-command-to-string)
+           (s-trim-right)
+           (s-split "\n")))
+        (defun plt/org-agenda-refresh-files ()
+          "Update `org-agenda-files'."
+          (interactive)
+          (setf org-agenda-files (plt/org-fetch-agenda-files)))
+        ;; Make sure the agenda files are up to date when rebuilding
+        (advice-add 'org-agenda-redo-all :before 'plt/org-agenda-refresh-files)
         (add-hook 'org-mode-hook #'dotemacs-show-trailing-whitespace)
         ;; Workaround from https://orgmode.org/manual/Conflicts.html
         (add-hook 'org-mode-hook
@@ -943,7 +958,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-agenda-span 'day
               org-agenda-window-setup 'only-window
               org-agenda-restore-windows-after-quit t
-              org-agenda-files `(,org-directory ,(concat (file-name-as-directory org-directory) "roam"))
+              org-agenda-files (plt/org-fetch-agenda-files)
               org-src-fontify-natively t
               org-src-tab-acts-natively t
               org-enforce-todo-dependencies t
