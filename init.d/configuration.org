@@ -1870,7 +1870,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (setf (elfeed-feed-title feed) (arxiv-title it))))
            plt/arxivs))
 
-        (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)t
+        (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)
 
         (let ((time "@6-months-ago"))
           (plt/make-elfeed-set-filter unread (format "%s +unread -paper" time))
