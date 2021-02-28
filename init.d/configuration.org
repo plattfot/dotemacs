@@ -1057,6 +1057,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :after org
          :ensure nil)
      #+end_src
+**** Man integration
+     Enable linking manpages in org
+     #+begin_src emacs-lisp
+       (use-package ol-man
+         :after org
+         :ensure nil)
+     #+end_src
+
 **** Custom org templates
      #+begin_src emacs-lisp
        (use-package org-tempo
