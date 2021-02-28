@@ -1041,9 +1041,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                     (shell-command-to-string (format "git diff %S" note-file)))))
                  (shell-command
                   (format "git add %S && git commit -m %S" note-file
-                          (replace-regexp-in-string
-                           (rx "[[" (one-or-more graph) "][" (group (one-or-more graph)) "]]")
-                           "\\1" message))))))))
+                          (thread-last message
+                            ;; Remove links
+                            (replace-regexp-in-string
+                             (rx "[[" (one-or-more graph) "]["
+                                 (group (one-or-more (any graph blank))) "]]") "\\1")))))))))
      #+end_src
 **** Notmuch integration
      Enable linking notmuch emails in org
