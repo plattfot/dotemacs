@@ -1045,7 +1045,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             ;; Remove links
                             (replace-regexp-in-string
                              (rx "[[" (one-or-more graph) "]["
-                                 (group (one-or-more (any graph blank))) "]]") "\\1")))))))))
+                                 (group (one-or-more (any graph blank))) "]]") "\\1")
+                            ;; Remove trailing tags
+                            (replace-regexp-in-string
+                             (rx (one-or-more blank) ":" (one-or-more graph) ":" eol) "")))))))))
      #+end_src
 **** Notmuch integration
      Enable linking notmuch emails in org
