@@ -44,7 +44,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (async       . "melpa")
                (bind-key    . "melpa-stable")
                (dash        . "melpa")
-               (diminish    . "melpa-stable")
+               (delight     . "gnu")
                (epl         . "melpa-stable")
                (git-commit  . "melpa")
                (magit-popup . "melpa")
@@ -55,16 +55,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
        (unless (package-installed-p 'use-package)
          (package-install 'use-package))
-       (unless (package-installed-p 'diminish)
-         (package-install 'diminish)))
+       (unless (package-installed-p 'delight)
+         (package-install 'delight)))
    #+end_src
 
    Let use-package handle all the packages I use
    #+begin_src emacs-lisp
      (eval-when-compile
        (require 'use-package))
-     (require 'diminish)                ;; if you use :diminish
-     (require 'bind-key)                ;; if you use any :bind variant
+     (require 'delight)        ;; if you use :delight
+     (require 'bind-key)       ;; if you use any :bind variant
    #+end_src
 
    Install missing packages.
@@ -218,6 +218,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          :init
          ;; List what modes to use company in.
          (add-hook 'after-init-hook 'global-company-mode)
+         :delight
+         (company-mode "ᛍ")
          :config
          (setq company-global-modes '(not shell-mode gud-mode eshell-mode)
                company-idle-delay 0.1
@@ -227,7 +229,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                company-dabbrev-ignore-case nil
                company-dabbrev-other-buffers t
                company-dabbrev-code-other-buffers t
-               company-lighter-base "c")
+               ;; company-lighter-base "c"
+               )
 
          (add-hook 'org-mode-hook
                    (lambda ()
@@ -270,10 +273,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      Enable yasnippet
      #+begin_src emacs-lisp
        (use-package yasnippet
-       	 :config
-       	 (yas-global-mode 1)
-       	 (setq yas-indent-line nil)
-       	 :pin melpa-stable)
+         :delight
+         yas-minor-mode
+         :config
+         (yas-global-mode 1)
+         (setq yas-indent-line nil)
+         :pin melpa-stable)
      #+end_src
 **** eglot
      Client for Language Server Protocol (lsp) servers.
@@ -1165,6 +1170,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 :map org-mode-map
                 (("C-c v i" . org-roam-insert))
                 (("C-c v I" . org-roam-insert-immediate)))
+         :delight org-roam-mode
          :hook
          (after-init . org-roam-mode)
          :custom
@@ -1445,7 +1451,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (use-package eldoc
         :ensure nil
-        :diminish t
+        :delight eldoc-mode
         :config
         (setf eldoc-echo-area-use-multiline-p nil))
     #+end_src
@@ -1456,6 +1462,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                     ("<f6>" . plt/ispell-change-dictionary))
         :hook ((org-mode . flyspell-mode)
                (prog-mode . flyspell-prog-mode))
+        :delight
+        (flyspell-mode " ✏")
         :custom
         (ispell-program-name "aspell")
         (aspell-dictionary "en_US-wo_accents")
@@ -2172,7 +2180,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Abbrev
     #+begin_src emacs-lisp
-      (diminish 'abbrev-mode)
+      (use-package abbrev
+        :delight abbrev-mode)
     #+end_src
 
 *** isearch
