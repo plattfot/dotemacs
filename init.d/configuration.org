@@ -2096,6 +2096,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** mood-line
     #+begin_src emacs-lisp
       (use-package mood-line
+        :custom
+        (mood-line-show-encoding-information t)
         :config
         (mood-line-mode))
     #+end_src
