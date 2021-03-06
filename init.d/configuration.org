@@ -2099,7 +2099,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :custom
         (mood-line-show-encoding-information t)
         :config
-        (mood-line-mode))
+        (mood-line-mode)
+        (defun plt/mood-line-unimportant-encoding (mood-line-fun)
+          "Set what MOOD-LINE-FUN return as unimportant"
+          (propertize (funcall mood-line-fun) 'face 'mood-line-unimportant))
+        ;; Set the encoding as unimportant
+        (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding))
     #+end_src
 *** w3m
     #+begin_src emacs-lisp
