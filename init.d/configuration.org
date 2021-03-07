@@ -2197,7 +2197,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (defun isearch-yank-selection ()
         "Put selection from buffer into search string."
         (interactive)
-        (when (region-active-p)
+        (when (use-region-p)
           (deactivate-mark))  ;;fully optional, but I don't like unnecesary highlighting
         (isearch-yank-internal (lambda () (mark))))
         :bind (:map isearch-mode-map ("C-o" . isearch-yank-selection)))
@@ -2459,7 +2459,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        point to the end of the buffer. If a region is active it will
        pick that instead."
 
-         (interactive (if (region-active-p)
+         (interactive (if (use-region-p)
                           (list (region-beginning) (region-end))
                         (list (point) (point-max))))
          (let ((regexp
@@ -2480,7 +2480,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        When using this interactive it will pick the region from current
        point to the end of the buffer. If a region is active it will
        pick that instead."
-         (interactive (if (region-active-p)
+         (interactive (if (use-region-p)
                    (list (region-beginning) (region-end))
                  (list (point) (point-max))))
          (let ((regex "\\(?:\\(?1:(\\)[ ]+\\(?2:[^ ]\\)\\|\\(?1:[^ ]\\)[ ]+\\(?2:)\\)\\)"))
@@ -2496,7 +2496,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        When using this interactive it will pick the region from current
        point to the end of the buffer. If a region is active it will
        pick that instead."
-         (interactive (if (region-active-p)
+         (interactive (if (use-region-p)
                    (list (region-beginning) (region-end))
                  (list (point) (point-max))))
          (my-replace-regexp "\\(?:\\(?1:,\\)[ ]*\\(?2:[^ \n]\\)\\)" "\\1 \\2" start end))
