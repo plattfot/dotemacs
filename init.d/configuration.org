@@ -700,7 +700,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      (use-package ledger-mode
        :ensure t
        :bind (:map ledger-mode-map
-                   ("C-c C" . ledger-mode-clean-buffer))
+                   ("C-c C" . ledger-mode-clean-buffer)
+                   ("C-c C-C" . plt/ledger-clear-all))
        :mode "\\.dat\\'"
        :config
        (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
@@ -732,6 +733,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    (setq-local company-backends '(company-capf))
                    (setq-local tab-always-indent 'complete)
                    (setq-local ledger-complete-in-steps t)))
+       (defun plt/ledger-clear-all ()
+         "Mark all xacts as cleared from point to end of buffer.
+     If region is active it will only clear those that are inside."
+         (interactive)
+         (save-mark-and-excursion
+           (let ((bounds (if (use-region-p) (cons (region-beginning) (region-end))
+                           (cons (point) (point-max)))))
+             (goto-char (car bounds))
+             (ledger-navigate-beginning-of-xact)
+             (when (and (>= (point) (car bounds)) (not (ledger-transaction-state)))
+               (ledger-toggle-current))
+             (while (and (ledger-navigate-next-uncleared) (< (point) (cdr bounds)))
+               (ledger-toggle-current)))))
        :pin melpa)
    #+end_src
 *** direnv
