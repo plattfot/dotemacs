@@ -696,7 +696,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
    #+begin_src emacs-lisp
      (use-package ledger-mode
-       :ensure t
        :bind (:map ledger-mode-map
                    ("C-c C" . ledger-mode-clean-buffer)
                    ("C-c C-C" . plt/ledger-clear-all))
