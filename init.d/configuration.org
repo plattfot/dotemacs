@@ -916,6 +916,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package nginx-mode
        	:pin melpa-stable)
     #+end_src
+*** elpher
+    #+begin_src emacs-lisp
+      (use-package elpher)
+    #+end_src
 ** Emacs
   Packages that augments emacs.
 *** All the Icons
