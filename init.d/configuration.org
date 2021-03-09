@@ -1679,7 +1679,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package marginalia
-        :ensure t
         ;; :custom
         ;; (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
         :init
