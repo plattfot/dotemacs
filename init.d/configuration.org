@@ -1707,7 +1707,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Sudo edit the current file
     #+begin_src emacs-lisp
       (use-package sudo-edit
-        :ensure t
         :bind ("C-c C-r" . sudo-edit)
         :pin melpa)
     #+end_src
