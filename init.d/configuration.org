@@ -685,7 +685,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** lua
     #+begin_src emacs-lisp
       (use-package lua-mode
-        :ensure t
         :pin melpa)
     #+end_src
 ** Programs
