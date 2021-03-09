@@ -309,7 +309,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      #+begin_src emacs-lisp
        (use-package eglot
-         :ensure t
          :pin gnu
          :config
          ;; Only run eglot on local buffers, too slow on bad connections.
