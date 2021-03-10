@@ -2118,8 +2118,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (defun plt/mood-line-unimportant-encoding (mood-line-fun)
           "Set what MOOD-LINE-FUN return as unimportant"
           (propertize (funcall mood-line-fun) 'face 'mood-line-unimportant))
-        ;; Set the encoding as unimportant
-        (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding))
+        (defun plt/mood-line-shell-modified (mood-line-fun)
+          "Don't show modification on comint derived and vterm buffers."
+          (if (not (derived-mode-p 'comint-mode 'vterm-mode))
+              (funcall mood-line-fun)
+            "  "))
+
+        (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding)
+        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified))
     #+end_src
 *** w3m
     #+begin_src emacs-lisp
