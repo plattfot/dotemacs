@@ -2123,9 +2123,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (if (not (derived-mode-p 'comint-mode 'vterm-mode))
               (funcall mood-line-fun)
             "  "))
+        (defun plt/mood-line-remote-status (mood-line-fun)
+          "Show an @ before the modified indicator if the buffer is remote."
+          (concat
+           (if (file-remote-p default-directory)
+               (propertize "@" 'face 'mood-line-unimportant)
+             " ")
+           (funcall mood-line-fun)))
 
         (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding)
-        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified))
+        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified)
+        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-remote-status))
     #+end_src
 *** w3m
     #+begin_src emacs-lisp
