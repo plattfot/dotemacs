@@ -3174,6 +3174,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (ps-match "houdinicore-bin"))
      #+end_src
 
+     Get a list of PID for houdini fx processes
+     #+begin_src emacs-lisp
+       (defun ps-houdinifx ()
+         "Get a list of `plt/ps' for running houdini processes."
+         (ps-match "houdinifx-bin"))
+     #+end_src
+
 **** PID Maya
      Get a list of PID for maya processes
      #+begin_src emacs-lisp
@@ -3195,6 +3202,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        INDEX is the same as in `attach-pid'."
          (interactive"p")
          (attach-pid (ps-houdinicore) index))
+
+       (defun attach-houdinifx (&optional index)
+         "Prints attach <pid> into the buffer.
+       INDEX is the same as in `attach-pid'."
+         (interactive"p")
+         (attach-pid (ps-houdinifx) index))
      #+end_src
 
      #+begin_src emacs-lisp
