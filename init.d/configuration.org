@@ -2135,7 +2135,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (defun plt/mood-line-remote-status (mood-line-fun)
           "Show an @ before the modified indicator if the buffer is remote."
           (concat
-           (if (file-remote-p default-directory)
+           (if (and default-directory (file-remote-p default-directory))
                (propertize "@" 'face 'mood-line-unimportant)
              " ")
            (funcall mood-line-fun)))
