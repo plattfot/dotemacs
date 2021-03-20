@@ -948,7 +948,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (->>
            (file-name-as-directory org-directory)
            (s-append "roam")
-           (format "rg -l -e TODO -e WAIT -e CANCELLED -e '%%\\(org' %s" )
+           (format (string-join
+                    '("rg -l"
+                      "-e TODO"
+                      "-e WAIT"
+                      "-e CANCELLED"
+                      "-e '%%\\(org'"
+                      "-e '^[[:blank:]]+<[[:digit:]]{4}'"
+                      "--"
+                      "%s")
+                    " "))
            (shell-command-to-string)
            (s-trim-right)
            (s-split "\n")))
