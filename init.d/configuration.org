@@ -932,9 +932,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     (=...=) when folded.
 
     Use syntax highlighting in source blocks while editing
-    'org-src-fontify-natively'.
+    =org-src-fontify-natively=.
 
-    The variable 'org-directory' is set in '.custom.el', as it changes
+    The variable =org-directory= is set in =.custom.el=, as it changes
     from compute to computer at the moment.
 
     #+begin_src emacs-lisp
