@@ -31,3 +31,4 @@ autosave*
 transient
 .cask
 org-roam.db
+.org-id-locations
