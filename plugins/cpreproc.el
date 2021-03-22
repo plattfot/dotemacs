@@ -16,7 +16,7 @@
 
 (defun cpreproc-insert-if (variable comp version &optional version-str no-else)
   "Insert an #if clause.
-In the format of #if( VARIABLE COMP VERSION ) // VERSION[-STR].
+In the format of #if (VARIABLE COMP VERSION) // VERSION[-STR].
 
 Where the VARIABLE specify the variable to compare against the
 VERSION.
@@ -42,14 +42,14 @@ both the ifdef and else clause.  Example:
 `(cpreproc-insert-if \"__cplusplus\" \"201103L\" \"==\" nil \"c++11\")'
 will insert
 
-#if( __cplusplus == 201103L ) // c++11
+#if (__cplusplus == 201103L) // c++11
 <Cursor>
 #else
 #endif
 
 `(cpreproc-insert-if \"__cplusplus\" \"201103L\" \">=\")' will
 insert
-#if( __cplusplus >= 201103L t) // 201103L or later
+#if (__cplusplus >= 201103L t) // 201103L or later
 <Cursor>
 #endif"
 (let ((str nil))
@@ -62,7 +62,7 @@ insert
     (unless format_assoc
       (error (format "%s is not in cpreproc-comp-format." comp)))
 
-    (insert (format "#if( %s %s %s ) // %s\n"
+    (insert (format "#if (%s %s %s) // %s\n"
                     variable comp version (format (cdr format_assoc) version-str)))
 
     (let ((done (point)))
