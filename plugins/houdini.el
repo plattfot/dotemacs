@@ -64,32 +64,32 @@ in both the if and else clause.  Example:
 ;; ge -> >=
 
 (defun hou-insert-if-eq (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and ==."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and ==."
   (interactive "sHoudini version: ")
   (hou-insert-if version "=="))
 
 (defun hou-insert-if-ne (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and !=."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and !=."
   (interactive "sHoudini version: ")
   (hou-insert-if version "!="))
 
 (defun hou-insert-if-lt (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and <."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and <."
   (interactive "sHoudini version: ")
   (hou-insert-if version "<"))
 
 (defun hou-insert-if-le (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and <=."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and <=."
   (interactive "sHoudini version: ")
   (hou-insert-if version "<="))
 
 (defun hou-insert-if-gt (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and >."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and >."
   (interactive "sHoudini version: ")
   (hou-insert-if version ">"))
 
 (defun hou-insert-if-ge (version)
-  "Wrapper for calling hou-insert-if with arguments VERSION and >=."
+  "Wrapper for calling `hou-insert-if' with arguments VERSION and >=."
   (interactive "sHoudini version: ")
   (hou-insert-if version ">="))
 
