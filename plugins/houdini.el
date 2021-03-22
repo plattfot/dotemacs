@@ -27,7 +27,7 @@ Instead of looking up in a table better just to compute it."
 (defun hou-insert-version-id (version)
   "Insert the houdini version id for VERSION."
   (interactive "sHoudini version: ")
-  (let ((version_hex (hou-version-to-hex version))) (insert version_hex)))
+  (let ((version_hex (cpreproc-semver-to-hex version))) (insert version_hex)))
 
 (defun hou-insert-if (version comp)
   "Insert an #if-else clause.
@@ -52,7 +52,7 @@ in both the ifdef and else clause.  Example:
 #else
 #endif"
 (interactive "sHoudini version: \nsCompare operator: ")
-(let ((version_hex (hou-version-to-hex version)))
+(let ((version_hex (cpreproc-semver-to-hex version)))
   (cpreproc-insert-if "UT_VERSION_INT" comp version_hex version current-prefix-arg)))
 
 ;; Following the same naming convention as gtest
