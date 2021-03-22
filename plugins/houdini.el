@@ -33,21 +33,21 @@ Instead of looking up in a table better just to compute it."
   "Insert an #if-else clause.
 The specified VERSION in int format with the COMP being either
 ==, <=, >=, !=, < or >.  If a region is active it will place that
-in both the ifdef and else clause.  Example:
-`(hou-insert-ifdef \"14.0.173\" \"==\")' will insert this
-#if( UT_VERSION_INT == 0x0e0000ad ) // 14.0.173
+in both the if and else clause.  Example:
+`(hou-insert-if \"14.0.173\" \"==\")' will insert this
+#if (UT_VERSION_INT == 0x0e0000ad) // 14.0.173
 <Cursor>
 #else
 #endif
 
-(hou-insert-ifdef \"14.0.173\" \">=\") will insert this
-#if( UT_VERSION_INT >= 0x0e0000ad ) // 14.0.173 or later
+(hou-insert-if \"14.0.173\" \">=\") will insert this
+#if (UT_VERSION_INT >= 0x0e0000ad) // 14.0.173 or later
 <Cursor>
 #else
 #endif
 
-(hou-insert-ifdef \"14.0.173\" \"<=\") will insert this
-#if( UT_VERSION_INT <= 0x0e0000ad ) // 14.0.173 or earlier
+(hou-insert-if \"14.0.173\" \"<=\") will insert this
+#if (UT_VERSION_INT <= 0x0e0000ad) // 14.0.173 or earlier
 <Cursor>
 #else
 #endif"
