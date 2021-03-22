@@ -6,6 +6,20 @@
 
 ;;; Code:
 (require 'subr-x)
+(require 'seq)
+
+(defun cpreproc-semver-to-hex (version-string)
+  "Convert VERSION-STRING to hex.
+Using what seems to be standard format 0x%02x%02x%04x."
+  ;; Split the string into parts, filtering out the pre
+  (let ((vers_parts (split-string version-string "[.]\\|pre[0-9]+" t)))
+    (when (seq-empty-p vers_parts)
+      (error "Failed to parse %s as an openvdb version" version-string))
+
+    ;; Convert the parts to integers and then print them out in the
+    ;; somewhat standard format.
+    (seq-let (major minor patch) (seq-map (lambda (x) (string-to-number x)) vers_parts)
+      (format "0x%02x%02x%04x" major (or minor 0) (or patch 0)))))
 
 (defvar cpreproc-comp-format '(("==" . "%s")
                                ("!=" . "all but %s")
