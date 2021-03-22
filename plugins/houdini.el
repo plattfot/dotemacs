@@ -4,21 +4,6 @@
 ;;; Code:
 (require 'cpreproc)
 
-(defun hou-version-to-hex (version-string)
-  "Convert VERSION-STRING to hex.
-Instead of looking up in a table better just to compute it."
-  ;; Split the string into parts, filtering out the pre
-  (let ((vers_parts (delete "" (split-string version-string "[.]\\|pre[0-9]+"))))
-    ;; If it's not three parts, i.e major, minor and build version throw error
-    (when (not (eq (length vers_parts) 3))
-      (throw 'hou-tag (format "%s is not a valid version string" version-string)))
-
-    ;; Convert the parts to integers and then print them out in the
-    ;; format houdini is using.
-    (let ((vers_int (mapcar #'(lambda (x) (string-to-number x)) vers_parts)))
-      (format "0x%02x%02x%04x" (nth 0 vers_int) (nth 1 vers_int) (nth 2 vers_int))
-      )))
-
 (defun hou-insert-latest-version (version-re)
   "Insert the latest version matching VERSION-RE at point."
   (interactive "sHoudini version regex: ")
