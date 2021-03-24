@@ -121,7 +121,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       read-file-name-completion-ignore-case t ;; Ignore case when finding files.
       read-buffer-completion-ignore-case t ;; Ignore case when switching buffers.
       enable-recursive-minibuffers t  ;; Allow to use the minibuffer while using the minibuffer
-      completion-styles '(basic partial-completion flex)
       )
      (show-paren-mode 1)                ;; Highlight matching brackets.
      (minibuffer-depth-indicate-mode 1) ;; Keep track of which minibuffer
@@ -1646,6 +1645,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (use-package wgrep
         :pin melpa-stable)
+    #+end_src
+*** Orderless
+    More powerful completion style than the built in.
+    #+begin_src emacs-lisp
+      (use-package orderless
+        :custom (completion-styles '(orderless)))
     #+end_src
 *** Selectrum
 
