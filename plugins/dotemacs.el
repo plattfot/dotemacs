@@ -33,7 +33,7 @@ writability of the current buffer."
   (setq show-trailing-whitespace nil))
 
 (defun dotemacs-show-trailing-whitespace ()
-  "Hides trailing whitespaces by setting `show-trailing-whitespace' to nil."
+  "Show trailing whitespaces by setting `show-trailing-whitespace' to t."
   (setq show-trailing-whitespace t))
 
 (defvar dotemacs-is-work (string= (getenv "USER") "fredriks")
