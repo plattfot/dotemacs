@@ -1657,32 +1657,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     "Selectrum is a better solution for incremental narrowing in
     Emacs, replacing Helm, Ivy, and Ido." - [[https://github.com/raxod502/selectrum][github.com]]
 
-    *NOTE* Much slower when it comes to file completion so using a
-    workaround to disable it. See github issue [[https://github.com/raxod502/selectrum/issues/210][210]] for more info.
-
     #+begin_src emacs-lisp
       (use-package selectrum
         :after prescient
-        :disabled t
-        :ensure t
         :custom
         (selectrum-fix-minibuffer-height t)
         (selectrum-extend-current-candidate-highlight t)
         :init
         (selectrum-mode +1)
-        (selectrum-prescient-mode +1)
-        (defun selectrum-read-file-name-default+ (&rest args)
-          (let* ((completion-in-region-function
-                  (lambda (&rest args)
-                    (apply #'completion--in-region
-                           args)))
-                 (completing-read-function (lambda (&rest args)
-                                             (setq-local minibuffer-completing-file-name
-                                                         minibuffer-completing-file-name)
-                                             (setq completing-read-function #'completing-read-default)
-                                             (apply #'completing-read-default args))))
-            (apply #'read-file-name-default args)))
-        (setf read-file-name-function 'selectrum-read-file-name-default+))
+        (selectrum-prescient-mode +1))
     #+end_src
 *** Marginalia
 
