@@ -149,8 +149,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      *NOTE* Had it on for every writable buffer and then just turned
      it off for modes that I found it useless. But it got old fast to
      try and hunt down all modes and their hook for turning it off. As
-     there were more modes than I had excepted, for example ivy
-     buffers, comint modes, calendar etc.
+     there were more modes than I had excepted that I needed to turn
+     this off for, e.g. =ivy= buffers, =comint= modes, =calendar= etc.
 
 **** Read only
 
@@ -647,17 +647,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Yaml
     #+begin_src emacs-lisp
       (use-package yaml-mode
-       	:pin melpa-stable)
+        :config
+        (add-hook 'yaml-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
+        :pin melpa-stable)
     #+end_src
 *** json
     #+begin_src emacs-lisp
       (use-package json-mode
+        :config
+        (add-hook 'json-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
         :pin melpa-stable)
     #+end_src
 *** Markdown
     #+begin_src emacs-lisp
       (use-package markdown-mode
-       	:pin melpa-stable)
+       	:config
+        (add-hook 'json-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
+        :pin melpa-stable)
     #+end_src
 *** Meson
    #+begin_src emacs-lisp
