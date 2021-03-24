@@ -22,6 +22,12 @@ file use `directory-file-name' to strip that away."
 (interactive "f")
   (load-file (dotemacs-build-path user-emacs-directory "init.d")))
 
+(defun dotemacs-show-trailing-whitespace-if-writable ()
+  "Show trailing whitespaces if buffer is not read only.
+This by setting `show-trailing-whitespace' to the state of
+writability of the current buffer."
+  (setf show-trailing-whitespace (not buffer-read-only)))
+
 (defun dotemacs-hide-trailing-whitespace ()
   "Hides trailing whitespaces by setting `show-trailing-whitespace' to nil."
   (setq show-trailing-whitespace nil))
