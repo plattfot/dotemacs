@@ -1631,19 +1631,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :pin melpa)
     #+end_src
 
-    Use counsel-imenu instead of imenu. To avoid hunting down all
-    keymaps that defines imenu, easier to just alias the function.
-    #+begin_src emacs-lisp
-      (use-package counsel
-        :ensure t
-        :bind (("C-M-g" . counsel-ag))
-        :init
-        (defalias 'imenu 'counsel-imenu)
-        :pin melpa)
-    #+end_src
-
-    #+begin_src emacs-lisp
-    #+end_src
 **** wgrep
      Power editing with =occur= buffer.
      #+begin_src emacs-lisp
@@ -1685,6 +1672,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         ;; (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
         :init
         (marginalia-mode))
+    #+end_src
+*** Consult
+
+    Use =consult-imenu= instead of imenu. To avoid hunting down all
+    keymaps that defines imenu, easier to just alias the function.
+
+    #+begin_src emacs-lisp
+      (use-package consult
+        :bind (("C-M-g" . consult-ripgrep))
+        :init
+        (defalias 'imenu 'consult-imenu))
     #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
@@ -2944,7 +2942,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (let ((map (copy-keymap plattfot-mode-map)))
          ;; Avoid overloading M-r in comint mode as that is used for
          ;; fetching history.
-         (define-key map (kbd "M-r") 'counsel-shell-history)
+         (define-key map (kbd "M-r") 'consult-history)
          map)
        "Custom keymap for `plattfot-comint-mode'.")
 
