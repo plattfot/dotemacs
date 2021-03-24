@@ -1206,7 +1206,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (after-init . org-roam-mode)
          :custom
          (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
-         (org-roam-completion-system 'ivy)
+         (org-roam-completion-system 'default)
          (org-roam-buffer-position 'bottom)
          (org-roam-capture-templates
           '(
