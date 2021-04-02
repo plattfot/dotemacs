@@ -1710,6 +1710,81 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :init
         (defalias 'imenu 'consult-imenu))
     #+end_src
+*** Embark
+
+    Extension to [[https://github.com/oantolin/embark][embark]] to be able to quickly copy the file name
+    associated with a buffer. My old workflow involved =find-file=,
+    auto complete the file in question then copy the line. This should
+    be a bit faster to use.
+
+    #+begin_src emacs-lisp
+      (defun plt/embark--copy-buffer-file-name (buffer file-transform)
+        "Add the transformed file name of BUFFER to the `kill-ring'.
+
+      If the buffer has a file name associated to it, otherwise this
+      does nothing.
+
+      By transformed file name, means that it will apply FILE-TRANSFORM
+      on the file name and add the result to `kill-ring'."
+        (let ((file (buffer-file-name (if (bufferp buffer)
+                                          buffer
+                                        (get-buffer buffer)))))
+          (if file
+              (kill-new (funcall file-transform file))
+            (message "No filename copied, %s is not associated with a file."
+                     buffer))))
+
+      (defun plt/embark-copy-buffer-file-name (buffer)
+        "Copy the file name of BUFFER to the `kill-ring'.
+
+      If the buffer has a file name associated to it, otherwise this
+      does nothing.
+
+      This will include the remote prefix if BUFFER points to a remote
+      file. See `plt/embark-copy-buffer-file-local-name' if you only
+      want to copy the filename without the prefix."
+        (interactive "bBuffer: ")
+        (plt/embark--copy-buffer-file-name buffer 'identity))
+
+      (defun plt/embark-copy-buffer-file-local-name (buffer)
+        "Copy only the local part of the filename of BUFFER to the `kill-ring'.
+
+      If the buffer has a filename associated to it, otherwise this
+      does nothing.
+
+      See `plt/embark-copy-buffer-file-name' if you want to copy the
+      full file name."
+        (interactive "bBuffer: ")
+        (plt/embark--copy-buffer-file-name buffer 'file-local-name))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package embark
+        :bind
+        (("<f9>" . embark-act)
+         :map embark-buffer-map
+         ("c" . plt/embark-copy-buffer-file-name)
+         ("C" . plt/embark-copy-buffer-file-local-name))
+        :custom
+        (prefix-help-command #'embark-prefix-help-command)
+        :config
+        ;; Hide the mode line of the Embark live/completions buffers
+        (add-to-list 'display-buffer-alist
+                     '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                       nil
+                       (window-parameters (mode-line-format . none)))))
+
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package embark-consult
+        :after (embark consult)
+        :demand t ; only necessary if you have the hook below
+        ;; if you want to have consult previews as you move around an
+        ;; auto-updating embark collect buffer
+        :hook
+        (embark-collect-mode . embark-consult-preview-minor-mode))
+    #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
