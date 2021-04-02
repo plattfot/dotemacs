@@ -1251,6 +1251,18 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ,#+roam_tags: \"album\"
        "
              :unnarrowed t)
+            ("D" "datordel" plain #'org-roam-capture--get-point
+             "
+       ,* Senast observerade plats
+       %? "
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head ":PROPERTIES:
+       :URL: %(read-string \"Url: \")
+       :END:
+       ,#+title: ${title}
+       ,#+roam_tags: \"datordel\"
+       "
+             :unnarrowed t)
             )))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
