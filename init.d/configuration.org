@@ -1260,6 +1260,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ,#+title: ${title}
        "
              :unnarrowed t)
+            ("b" "band" plain #'org-roam-capture--get-point
+             "
+       ,#+begin_quote
+       %? ---
+       ,#+end_quote
+       %a
+       "
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head ":PROPERTIES:
+       :URL: %(read-string \"Url: \")
+       :END:
+       ,#+title: ${title}
+       ,#+roam_tags: band
+       "
+             :unnarrowed t)
             ("a" "album" plain #'org-roam-capture--get-point
              "%? "
              :file-name "%<%Y%m%d%H%M%S>-${slug}"
