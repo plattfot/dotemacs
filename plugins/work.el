@@ -179,7 +179,7 @@ message."
 
     (let* ((regex-fmt (rx bol "%sversion:" (* blank)
                           (zero-or-one (or "\"" "'"))
-                          (group (+ (any alnum "_.")))
+                          (group (+ (any alnum "_.-")))
                           (zero-or-one (or "\"" "'"))))
            (old-version-re (format regex-fmt (rx "-")))
            (new-version-re (format regex-fmt (rx "+")))
