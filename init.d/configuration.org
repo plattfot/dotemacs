@@ -1014,6 +1014,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               org-src-window-setup 'split-window-below
               org-link-search-must-match-exact-headline nil
               org-log-into-drawer "LOGBOOK"
+              org-display-remote-inline-images 'cache
               org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
