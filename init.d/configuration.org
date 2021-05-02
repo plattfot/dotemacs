@@ -2105,7 +2105,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                 ,@(plt/elfeed-group-feeds
                    :tags 'emacs
                    :feeds '("https://www.reddit.com/r/emacs/.rss"
-                            "https://karthinks.com/index.xml"))
+                            "https://karthinks.com/index.xml"
+                            "https://blog.tecosaur.com/tmio/rss.xml"))
                 ,@(plt/elfeed-group-feeds
                    :tags 'deals
                    :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
