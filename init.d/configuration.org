@@ -3064,7 +3064,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "<C-M-next>") 'end-of-buffer)
          (define-key map (kbd "<C-M-prior>") 'beginning-of-buffer)
 
-         (define-key map (kbd "C-.") 'repeat)
          (define-key map (kbd "<f4>") 'plt/toggle-rot13)
          (define-key map (kbd "<f2>") 'home-setup)
          (define-key map (kbd "<f3>") 'work-setup)
