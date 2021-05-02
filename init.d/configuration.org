@@ -2057,7 +2057,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
         (let ((time "@6-months-ago"))
           (plt/make-elfeed-set-filter unread (format "%s +unread -paper" time))
-          (plt/make-elfeed-set-filter later (format "%s +later" time))
+          (plt/make-elfeed-set-filter later (format "+later"))
           (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
           (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
 
