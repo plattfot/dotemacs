@@ -117,6 +117,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       display-time-24hr-format t
       scroll-step 1                   ;; smooth scrolling
       scroll-conservatively 10000
+      tab-always-indent 'complete
       completion-ignore-case t        ;; Ignore case when completing.
       read-file-name-completion-ignore-case t ;; Ignore case when finding files.
       read-buffer-completion-ignore-case t ;; Ignore case when switching buffers.
@@ -200,74 +201,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Autocomplete
     Packages that helps speed up coding, i.e. auto complete, boiler
     plates etc
-**** Company
-
-     Configure company to work similar to auto complete. Disabled most
-     backends for c++ when at work as they were either slow, failed to
-     find a completion half the time or flat out crashed clang when
-     trying to complete stuff. The company-dabbrev-code works similar
-     to what I had before with ac.
-
+**** Corfu
      #+begin_src emacs-lisp
-       (use-package company
-         :bind ( ("C-<tab>" . company-complete-common)
-                 :map company-active-map
-                 ("C-n" . company-select-next)
-                 ("C-p" . company-select-previous))
-         :init
-         ;; List what modes to use company in.
-         (add-hook 'after-init-hook 'global-company-mode)
-         :delight
-         (company-mode "ᛍ")
+       (use-package corfu
          :config
-         (setq company-global-modes '(not shell-mode gud-mode eshell-mode)
-               company-idle-delay 0.1
-               company-minimum-prefix-length 3
-               company-clang-insert-arguments nil
-               company-dabbrev-downcase nil
-               company-dabbrev-ignore-case nil
-               company-dabbrev-other-buffers t
-               company-dabbrev-code-other-buffers t
-               ;; company-lighter-base "c"
-               )
-
-         (add-hook 'org-mode-hook
-                   (lambda ()
-                     ;; Remove dabbrev from org-mode as it's driving me crazy!
-                     (set (make-local-variable 'company-backends)
-                          (setq-local company-backends
-                                      (delete 'company-dabbrev company-backends)))
-                     ;; Fixing capf to work with org-mode
-                     ;; https://emacs.stackexchange.com/a/21173
-                     (add-hook 'completion-at-point-functions
-                               'pcomplete-completions-at-point nil t)))
-         (add-hook 'emacs-lisp-mode-hook
-                   (lambda ()
-                     (set (make-local-variable 'company-backends)
-                          '((company-capf
-                             company-dabbrev-code
-                             :separate)))))
-         (add-hook 'c-mode-common-hook
-                     (lambda ()
-                       (when (and (buffer-file-name) (file-remote-p (buffer-file-name)))
-                         (set (make-local-variable 'company-backends)
-                            '(company-dabbrev-code)))))
-         ;; Only reliable backend at work
-         (when dotemacs-is-work
-           (add-hook 'c-mode-common-hook
-                     (lambda ()
-                       (set (make-local-variable 'company-backends)
-                            '(company-dabbrev-code)))))
-         :pin melpa-stable)
+         (corfu-global-mode))
      #+end_src
 
-     Tell emacs it's safe to change these company variables in a
-     .dir-locals.el file.
+     Recommended settings by corfu.
      #+begin_src emacs-lisp
-       (put 'company-clang-executable 'safe-local-variable #'stringp)
-       (put 'company-clang-arguments 'safe-local-variable #'listp)
+       (use-package dabbrev
+         ;; Swap M-/ and C-M-/
+         :bind (("M-/" . dabbrev-completion)
+                ("C-M-/" . dabbrev-expand)))
      #+end_src
-
 **** Yasnippet
      Enable yasnippet
      #+begin_src emacs-lisp
@@ -316,9 +263,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      (when (and (buffer-file-name) (not (file-remote-p (buffer-file-name))))
                        (eglot-ensure))))
          (setq gc-cons-threshold 100000000
-               read-process-output-max (* 1024 1024) ;; 1mb
-               company-minimum-prefix-length 1
-               company-idle-delay 0.0)
+               read-process-output-max (* 1024 1024)) ;; 1mb
          (add-to-list 'eglot-server-programs
                       '(c++-mode . ("clangd"
                                     "--background-index"
@@ -688,6 +633,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 5
              ledger-schedule-look-forward 30
+             ledger-complete-in-steps t
              ledger-amount-regex
              (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
                      "(?"
@@ -707,11 +653,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      ")?"
                      "\\([ \t]*[@={]@?[^\n;]+?\\)?"
                      "\\([ \t]+;.+?\\|[ \t]*\\)?$"))
-       (add-hook 'ledger-mode-hook
-                 (lambda ()
-                   (setq-local company-backends '(company-capf))
-                   (setq-local tab-always-indent 'complete)
-                   (setq-local ledger-complete-in-steps t)))
        (defun plt/ledger-clear-all ()
          "Mark all xacts as cleared from point to end of buffer.
      If region is active it will only clear those that are inside."
