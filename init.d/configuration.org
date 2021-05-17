@@ -780,18 +780,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :bind ("C-x g" . magit-status)
         :pin melpa)
     #+end_src
-*** Magithub (disabled)
-
-    Has a bug, see [[https://github.com/magit/ghub/issues/81][#81]]. Disabling it until a work around is found. As I
-    haven't started using this just yet.
-    #+begin_src emacs-lisp
-      (use-package magithub
-        :after magit
-        :disabled t
-        :ensure t
-        :config (magithub-feature-autoinject t)
-        :pin melpa-stable)
-    #+end_src
 *** The Silver Searcher
     #+begin_src emacs-lisp
       (use-package ag
