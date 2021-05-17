@@ -885,13 +885,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setf vterm-max-scrollback 10000)
         (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
     #+end_src
-*** mpdel
-    #+begin_src emacs-lisp
-      (use-package libmpdel
-        :config)
-      (use-package mpdel
-        :requires libmpdel)
-    #+end_src
 ** Web
   Packages for webbased content.
 *** nginx
