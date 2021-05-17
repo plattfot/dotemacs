@@ -326,32 +326,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                     "--pch-storage=memory"
                                     "-j=6"))))
      #+end_src
-**** lsp
-     #+begin_src emacs-lisp
-       (use-package lsp-mode
-         :ensure t
-         :disabled t
-         :config
-         (setq gc-cons-threshold 100000000
-               read-process-output-max (* 1024 1024) ;; 1mb
-               company-minimum-prefix-length 1
-               company-idle-delay 0.0
-               lsp-prefer-capf t)
-         (add-hook 'prog-mode-hook #'lsp)
-         (add-hook 'hack-local-variables-hook
-                   (lambda () (when (derived-mode-p 'prog-mode) (lsp))))
-         (setq lsp-clients-clangd-args '("--compile-commands-dir=./build"
-                                         "--background-index"
-                                         "-j=6"
-                                         "--header-insertion=iwyu"))
-         (add-hook 'prog-mode-hook
-                   (lambda ()
-                     (setq company-backends
-                           `(company-capf ,@(--filter (not (equal 'company-capf it))
-                                                      company-backends))))))
-       (put 'lsp-clients-clangd-args 'safe-local-variable #'listp)
-
-     #+end_src
 *** Lint
     Packages that helps inspecting code, report errors etc.
 **** Flymake
