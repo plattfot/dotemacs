@@ -698,6 +698,41 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :config
        (direnv-mode))
     #+end_src
+*** dtache
+    Allow to detach running commands from the shell. Using recommended
+    settings from the [[https://gitlab.com/niklaseklund/dtache/-/tree/remote][readme]].
+
+    #+begin_src emacs-lisp
+      (use-package dtache
+        :hook (after-init . dtache-setup)
+        :config
+        ;; Configure directories for the database as well as sessions
+        (setq dtache-db-directory (expand-file-name "dtache" user-emacs-directory)
+              dtache-session-directory (expand-file-name "dtache" temporary-file-directory)
+              dtache-shell-history-file "~/.bash_history"))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package dtache-shell
+        :hook (shell-mode . dtache-shell-mode)
+        :bind (:map shell-mode-map
+                    ("<return>" . dtache-shell-send-input)
+                    ("<S-return>" . dtache-shell-create)
+                    ("<C-return>" . dtache-shell-attach)
+                    ("C-c C-q" . dtache-shell-detach)))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package marginalia-dtache
+        :after (dtache marginalia)
+        :config
+        (add-to-list 'marginalia-annotators-light '(dtache . marginalia-dtache-annotate)))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package embark-dtache
+        :after (dtache embark))
+    #+end_src
 *** Arduino
     Function for setting up a arduino template sketch
     #+begin_src emacs-lisp
