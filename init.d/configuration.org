@@ -708,6 +708,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :mode "\\.dat\\'"
        :config
        (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+       ;; Workaround for issue described in https://github.com/oantolin/orderless/issues/52
+       (add-hook 'ledger-mode-hook (lambda () (setq-local orderless-smart-case nil)))
        (setq ledger-clear-whole-transactions 1
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 5
