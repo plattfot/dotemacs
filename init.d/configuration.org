@@ -1624,15 +1624,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                    ;;(ibuffer-auto-mode 1) ;; Keep the ibuffer in sync
                    (ibuffer-switch-to-saved-filter-groups "default"))))
      #+end_src
-*** Prescient
-    "prescient.el: simple but effective sorting and filtering for
-    Emacs." - [[https://github.com/raxod502/prescient.el][prescient.el]]
-    #+begin_src emacs-lisp
-      (use-package prescient
-        :init
-        (require 'prescient)
-        (prescient-persist-mode +1))
-    #+end_src
 *** ivy
     Better multi-editing than ag.el.
     See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
@@ -1657,22 +1648,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package orderless
         :custom (completion-styles '(orderless)))
     #+end_src
-*** Selectrum
-
-    "Selectrum is a better solution for incremental narrowing in
-    Emacs, replacing Helm, Ivy, and Ido." - [[https://github.com/raxod502/selectrum][github.com]]
+*** Vertico
+    #+begin_src emacs-lisp
+      (use-package vertico
+        :init
+        (vertico-mode))
+    #+end_src
+*** Savehist
+    #+begin_quote
+    Persist history over Emacs restarts. Vertico sorts by history
+    position. --- [[https://github.com/minad/vertico][github.com/minad/vertico]]
+    #+end_quote
 
     #+begin_src emacs-lisp
-      (use-package selectrum
-        :after prescient
-        :custom
-        (selectrum-fix-minibuffer-height t)
-        (selectrum-extend-current-candidate-highlight t)
-        (orderless-skip-highlighting (lambda () selectrum-is-active))
-        (selectrum-highlight-candidates-function #'orderless-highlight-matches)
+      (use-package savehist
         :init
-        (selectrum-mode +1)
-        (selectrum-prescient-mode +1))
+        (savehist-mode))
     #+end_src
 *** Marginalia
 
