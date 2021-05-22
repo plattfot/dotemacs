@@ -1786,12 +1786,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
               (concat
                "-o ControlPath=/tmp/ssh-tramp-ControlPath-%%r@%%h:%%p "
                "-o ControlMaster=auto -o ControlPersist=yes"))
-        ;; Deal with guix and my custom scripts
-        (add-to-list 'tramp-remote-path "~/bin")
-        (add-to-list 'tramp-remote-path "~/.guix-profile/bin")
-        (add-to-list 'tramp-remote-path "~/.guix-profile/sbin")
-        (add-to-list 'tramp-remote-path "/run/current-system/profile/bin")
-        (add-to-list 'tramp-remote-path "/run/current-system/profile/sbin")
         :pin gnu)
     #+end_src
 *** Sudo edit
