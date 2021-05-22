@@ -3487,11 +3487,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 
 ** Behaviour
-   Use bash at work.
-   #+begin_src emacs-lisp
-     (when dotemacs-is-work (setq explicit-shell-file-name "/bin/bash"))
-   #+end_src
-
    Store work related settings.
    #+begin_src emacs-lisp
      (let ((.work (concat user-emacs-directory ".work.el")))
