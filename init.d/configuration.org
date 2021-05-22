@@ -2999,10 +2999,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          ;; Compile from current location and to re-run
          (define-key map (kbd "<f12>") 'compile)
          (define-key map (kbd "<f11>") 'recompile)
-         ;; UI
-         ;; Key bindings if I really need to see the menu and tool bar.
-         (define-key map (kbd "C-<f5>") 'menu-bar-mode)
-         (define-key map (kbd "C-<f6>") 'tool-bar-mode)
 
          ;; Scrolling
          (define-key map (kbd "<next>") 'plt/scroll-up-command-10)
