@@ -1652,18 +1652,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (defun plt/embark--copy-buffer-file-name (buffer file-transform)
         "Add the transformed file name of BUFFER to the `kill-ring'.
 
-      If the buffer has a file name associated to it, otherwise this
-      does nothing.
+      If the buffer has a file name associated to it, otherwise it will
+      use the `default-directory' associated with BUFFER.
 
       By transformed file name, means that it will apply FILE-TRANSFORM
       on the file name and add the result to `kill-ring'."
-        (let ((file (buffer-file-name (if (bufferp buffer)
-                                          buffer
-                                        (get-buffer buffer)))))
-          (if file
-              (kill-new (funcall file-transform file))
-            (message "No filename copied, %s is not associated with a file."
-                     buffer))))
+        (with-current-buffer buffer
+          (let* ((file (buffer-file-name)))
+            (kill-new (funcall file-transform (if file file default-directory))))))
 
       (defun plt/embark-copy-buffer-file-name (buffer)
         "Copy the file name of BUFFER to the `kill-ring'.
