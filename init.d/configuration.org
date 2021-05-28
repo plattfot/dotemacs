@@ -1700,7 +1700,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                      '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                        nil
                        (window-parameters (mode-line-format . none)))))
-
     #+end_src
 
     #+begin_src emacs-lisp
