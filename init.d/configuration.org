@@ -167,6 +167,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       calendar-week-start-day 1       ;; Week starts on Monday.
       calendar-day-name-array
       ["söndag" "måndag" "tisdag" "onsdag" "torsdag" "fredag" "lördag"]
+      calendar-day-abbrev-array ["sö" "må" "ti" "on" "to" "fr" "lö"]
+      calendar-day-header-array ["sö" "må" "ti" "on" "to" "fr" "lö"]
       calendar-month-name-array
       ["januari" "februari" "mars" "april" "maj" "juni"
        "juli" "augusti" "september" "oktober" "november" "december"]
