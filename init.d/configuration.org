@@ -1599,7 +1599,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     More powerful completion style than the built in.
     #+begin_src emacs-lisp
       (use-package orderless
-        :custom (completion-styles '(orderless)))
+        :custom (completion-styles '(orderless))
+                (completion-category-defaults nil)
+                (completion-category-overrides '((file (styles . (partial-completion))))))
     #+end_src
 *** Selectrum
 
