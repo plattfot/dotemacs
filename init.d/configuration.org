@@ -720,7 +720,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package magit
         :after (transient)
         :bind ("C-x g" . magit-status)
-        :pin melpa)
+        :pin melpa
+        :config
+        (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
     #+end_src
 *** The Silver Searcher
     #+begin_src emacs-lisp
