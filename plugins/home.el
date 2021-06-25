@@ -20,7 +20,7 @@
   "Run mbsync+notmuch to refresh mail."
   (interactive)
   (let ((buffer (get-buffer-create "*Mail Refresh*")))
-    (message "Refreshing mail..." )
+    (message "Refreshing mail…" )
     (with-current-buffer buffer
       (delete-region (point-min) (point-max)))
     ;; TODO: filter the output for  to deal with long lines
