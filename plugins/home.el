@@ -5,7 +5,7 @@
 ;;; Code:
 
 (require 'dotemacs)
-(require 'f)
+(require 'seq)
 
 (defun home-setup ()
   "Splits the session into three frames."
@@ -28,7 +28,9 @@
      :name "mail-refresh"
      :buffer buffer
      :command `("mbsync" "-a"
-                "-c" ,(f-join (getenv "XDG_HOME_CONFIG") "isync" "config"))
+                "-c" ,(seq-reduce (lambda (path dir)
+                                    (expand-file-name dir path))
+                                  '("isync" "config") (getenv "XDG_HOME_CONFIG")))
      :sentinel
      (lambda (process event)
        (when (eq (process-status process) 'exit)
