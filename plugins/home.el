@@ -44,7 +44,7 @@
               (with-current-buffer buffer
                 (save-excursion
                   (goto-char (point-max))
-                  (next-line -3)
+                  (forward-line -3)
                   (message "Mail synced: %s" (buffer-substring
                                               (point-at-bol)
                                               (point-at-eol)))))))))))))
