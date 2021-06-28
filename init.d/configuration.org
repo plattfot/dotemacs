@@ -2157,7 +2157,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                (propertize "@" 'face 'mood-line-unimportant)
              " ")
            (funcall mood-line-fun)))
-
+        ;; Workaround to fix errors when using emacs@28.1 and emacs-mood-line@1.2.4
+        (setf flymake--mode-line-format flymake-mode-line-format)
         (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding)
         (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified)
         (advice-add 'mood-line-segment-modified :around 'plt/mood-line-remote-status))
