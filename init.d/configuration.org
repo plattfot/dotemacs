@@ -1671,8 +1671,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       By transformed file name, means that it will apply FILE-TRANSFORM
       on the file name and add the result to `kill-ring'."
         (with-current-buffer buffer
-          (let* ((file (buffer-file-name)))
-            (kill-new (funcall file-transform (if file file default-directory))))))
+          (kill-new (funcall file-transform (or (buffer-file-name) default-directory)))))
 
       (defun plt/embark-copy-buffer-file-name (buffer)
         "Copy the file name of BUFFER to the `kill-ring'.
