@@ -209,12 +209,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (corfu-global-mode))
      #+end_src
 
-     Recommended settings by corfu.
+     Recommended keybindings by [[https://github.com/minad/corfu#configuration][corfu]]. Setting
+     =dabbrev-upcase-means-case-search= and =dabbrev-case-replace=
+     directly instead of relying on =case-fold-search= and
+     =case-replace= otherwise the suggestions for =dabbrev= looses
+     their case, which makes it unusable when programming.
+
      #+begin_src emacs-lisp
        (use-package dabbrev
          ;; Swap M-/ and C-M-/
          :bind (("M-/" . dabbrev-completion)
-                ("C-M-/" . dabbrev-expand)))
+                ("C-M-/" . dabbrev-expand))
+         :config
+         (setf dabbrev-upcase-means-case-search t
+               dabbrev-case-replace nil))
      #+end_src
 **** Yasnippet
      Enable yasnippet
