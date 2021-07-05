@@ -171,6 +171,22 @@ message."
             (error error-msg)))
       (error "No changes found"))))
 
+(cl-defstruct (work-git--semver (:constructor work-git--construct-semver))
+  "Structure contain a semver version"
+  (components nil)
+  (pre-release nil))
+
+(defun work-git--make-semver (version)
+  "Create a `work-git--semver' from VERSION."
+  (let* ((version-split (split-string (car (split-string version "_")) "-"))
+         (version-parts (seq-map (lambda (v) (split-string v (rx "."))) version-split)))
+    (work-git--construct-semver :components (apply 'vector (car version-parts))
+                                :pre-release (apply 'vector (cadr version-parts)))))
+(defun work-git--semver-length (semver)
+  "Return the length of the components for SEMVER.
+Where SEMVER is a `work-git--semver'."
+  (length (work-git--semver-components semver)))
+
 (defun work-git--fetch-old-new-version ()
   "Return the old and new version using git diff."
   (with-temp-buffer
@@ -198,37 +214,44 @@ The prefix is based on the changes between OLD-VERSION and
 NEW-VERSION. Assuming the versions following semver and
 new-version > old-version."
   (let* ((check-if-revision (lambda (message old-version-part new-version-part)
-                              (if (and (s-starts-with? "DD" old-version-part)
-                                       (s-starts-with? "DD" new-version-part)
+                              (if (and (string-prefix-p "DD" old-version-part)
+                                       (string-prefix-p "DD" new-version-part)
                                        (not (string-equal old-version-part new-version-part)))
                                   "Bump up revision"
                                 message)))
-         (split-version (lambda (version)
-                          (s-split (rx ".")
-                                   (car (s-split "_" version)))))
-         (old-version-c (funcall split-version old-version))
-         (old-version-l (length old-version-c))
-         (new-version-c (funcall split-version new-version))
-         (new-version-l (length new-version-c)))
+         (old-version-c (work-git--make-semver old-version))
+         (old-version-l (work-git--semver-length old-version-c))
+         (new-version-c (work-git--make-semver new-version))
+         (new-version-l (work-git--semver-length new-version-c)))
     (cond
+     ((not (seq-empty-p (work-git--semver-pre-release new-version-c)))
+      (format "Bump up %s" (elt (work-git--semver-pre-release new-version-c) 0)))
      ((and (> new-version-l old-version-l)
-           (s-starts-with? "DD" (-last-item new-version-c)))
+           (string-prefix-p "DD" (-last-item (work-git--semver-components new-version-c))))
       "Bump up revision")
-     ((not (string-equal (nth 0 old-version-c) (nth 0 new-version-c)))
+     ((not (string-equal (elt (work-git--semver-components old-version-c) 0)
+                         (elt (work-git--semver-components new-version-c) 0)))
       "Bump up major")
-     ((and (>= old-version-l 1)
-           (>= new-version-l 1)
-           (not (string-equal (nth 1 old-version-c) (nth 1 new-version-c))))
-      (funcall check-if-revision "Bump up minor" (nth 1 old-version-c) (nth 1 new-version-c)))
-     ((and (>= old-version-l 2)
-           (>= new-version-l 2)
-           (not (string-equal (nth 2 old-version-c) (nth 2 new-version-c))))
-      (funcall check-if-revision "Bump up patch" (nth 2 old-version-c) (nth 2 new-version-c)))
-     ((and (>= old-version-l 3)
-           (>= new-version-l 3))
-      (funcall check-if-revision "Version change" (nth 3 old-version-c) (nth 3 new-version-c))
-      "Bump up revision")
-     (t "Version change"))))
+     ((and (> old-version-l 1)
+           (> new-version-l 1)
+           (not (string-equal (elt (work-git--semver-components old-version-c) 1)
+                              (elt (work-git--semver-components new-version-c) 1))))
+      (funcall check-if-revision "Bump up minor"
+               (elt (work-git--semver-components old-version-c) 1)
+               (elt (work-git--semver-components new-version-c) 1)))
+     ((and (> old-version-l 2)
+           (> new-version-l 2)
+           (not (string-equal (elt (work-git--semver-components old-version-c) 2)
+                              (elt (work-git--semver-components new-version-c) 2))))
+      (funcall check-if-revision "Bump up patch"
+               (elt (work-git--semver-components old-version-c) 2)
+               (elt (work-git--semver-components new-version-c) 2)))
+     ((and (> old-version-l 3)
+           (> new-version-l 3))
+      (funcall check-if-revision "Version change"
+               (elt (work-git--semver-components old-version-c) 3)
+               (elt (work-git--semver-components new-version-c) 3)))
+     (t (error "Cannot generate a prefix message for %s -> %s" old-version new-version)))))
 
 (defun work-git--version-commit-message ()
   "Return the version commit message.
