@@ -225,7 +225,12 @@ new-version > old-version."
          (new-version-l (work-git--semver-length new-version-c)))
     (cond
      ((not (seq-empty-p (work-git--semver-pre-release new-version-c)))
-      (format "Bump up %s" (elt (work-git--semver-pre-release new-version-c) 0)))
+      (format "Bump %s %s"
+              (if (or (seq-empty-p (work-git--semver-pre-release old-version-c))
+                      (not (string-equal (elt (work-git--semver-pre-release old-version-c) 0)
+                                         (elt (work-git--semver-pre-release new-version-c) 0))))
+                  "to" "up")
+              (elt (work-git--semver-pre-release new-version-c) 0)))
      ((and (> new-version-l old-version-l)
            (string-prefix-p "DD" (-last-item (work-git--semver-components new-version-c))))
       "Bump up revision")
