@@ -1156,91 +1156,105 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package org-roam
          :ensure nil
-         :bind (("C-c c" . org-roam-capture)
-                :map org-roam-mode-map
-                (("C-c v r" . org-roam)
-                 ("C-c v f" . org-roam-find-file)
-                 ("C-c v g" . org-roam-graph))
+         :bind (("C-c v r" . org-roam-buffer-toggle)
+                ("C-c v f" . org-roam-node-find)
+                ("C-c v i" . org-roam-node-insert)
                 :map org-mode-map
-                (("C-c v i" . org-roam-insert))
-                (("C-c v I" . org-roam-insert-immediate)))
-         :delight org-roam-mode
-         :hook
-         (after-init . org-roam-mode)
+                ("C-M-i"    . completion-at-point))
          :custom
          (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
-         (org-roam-completion-system 'default)
-         (org-roam-buffer-position 'bottom)
          (org-roam-capture-templates
           '(
-            ("d" "default" plain #'org-roam-capture--get-point
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head "#+title: ${title}\n"
+            ("d" "default" plain "%?"
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
+       ")
              :unnarrowed t)
-            ("t" "task" entry #'org-roam-capture--get-point
-             "
-       ,* TODO %?
-         SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"today\"))
-         %i
+            ("t" "task" plain "* TODO ${title}
+         :PROPERTIES:
+         :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
+         :END:
+         SCHEDULED: %t
+         %?
          %a"
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head ":PROPERTIES:
-       :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
-       :END:
-       ,#+title: ${title}
-       ,#+roam_tags: \"uppgift\"
-       "
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
+       ,#+filetags: :uppgift:
+       ")
+             :empty-lines-before 2
              :unnarrowed t)
-            ("n" "node" plain #'org-roam-capture--get-point
-             "
+            ("n" "node" plain "
+       ,#+begin_quote
+       %? ---
+       ,#+end_quote
+       "
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:
+       :URL:      %(read-string \"Url: \")
+       :END:
+       ,#+title: ${title}")
+             :empty-lines-before 2
+             :unnarrowed t)
+            ("b" "band" plain "
        ,#+begin_quote
        %? ---
        ,#+end_quote
        %a
        "
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head ":PROPERTIES:
-       :URL: %(read-string \"Url: \")
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:
+       :URL:      %(read-string \"Url: \")
        :END:
        ,#+title: ${title}
-       "
+       ,#+filetags: :band:")
+             :empty-lines-before 2
              :unnarrowed t)
-            ("b" "band" plain #'org-roam-capture--get-point
-             "
+            ("a" "album" plain "
+       ,* [[id:2580937e-3dc4-4bc9-ba61-d718655b12ae][Vinyl]]
+         - Artist: %?
+         - Färg: 
+         - Signerad: %^{Signerad: |Nej|Ja}
+         - Inkl CD: %^{Inkl CD: |Nej|Ja}
+         - Skivbolag: 
+         - Typ: %^{Omslagstyp: |Gatefold|Sleeve}
+         - Skivor: 2
+         - Övrigt:
+       "
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:
+       :URL:      %(read-string \"Url: \")
+       :END:
+       ,#+title: ${title}
+       ,#+filetags: :album:")
+             :empty-lines-before 2
+             :unnarrowed t)
+            ("D" "datordel" plain "* Senast observerade plats
+       %?
+       "
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:
+       :URL:      %(read-string \"Url: \")
+       :END:#+title: ${title}
+       ,#+filetags: :datordel:")
+             :empty-lines-before 2
+             :unnarrowed t)
+            ("ö" "öl" plain "
        ,#+begin_quote
        %? ---
        ,#+end_quote
-       %a
+       
+       ,* Omdöme
        "
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head ":PROPERTIES:
-       :URL: %(read-string \"Url: \")
-       :END:
-       ,#+title: ${title}
-       ,#+roam_tags: band
-       "
-             :unnarrowed t)
-            ("a" "album" plain #'org-roam-capture--get-point
-             "%? "
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head "#+title: ${title}
-       ,#+roam_tags: \"album\"
-       "
-             :unnarrowed t)
-            ("D" "datordel" plain #'org-roam-capture--get-point
-             "
-       ,* Senast observerade plats
-       %? "
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head ":PROPERTIES:
-       :URL: %(read-string \"Url: \")
-       :END:
-       ,#+title: ${title}
-       ,#+roam_tags: \"datordel\"
-       "
-             :unnarrowed t)
-            )))
+             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                ":PROPERTIES:
+       :URL:      %(read-string \"Url: \")
+       :ABV:      %(read-string \"Abv: \")
+       :END:#+title: ${title}
+       ,#+filetags: :öl:")
+             :empty-lines-before 2
+             :unnarrowed t)))
+         :init
+         (setf org-roam-v2-ack t)
+         :config
+         (org-roam-setup))
      #+end_src
      Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Org-roam-bibtex
