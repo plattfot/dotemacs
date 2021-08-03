@@ -1219,10 +1219,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          - Övrigt:
        "
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                ":PROPERTIES:
-       :URL:      %(read-string \"Url: \")
-       :END:
-       ,#+title: ${title}
+                                "#+title: ${title}
        ,#+filetags: :album:")
              :empty-lines-before 2
              :unnarrowed t)
