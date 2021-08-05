@@ -2333,7 +2333,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Epub reader mode.
    #+begin_src emacs-lisp
      (use-package nov
-       :disabled t
        :mode (("\\.epub\\'" . nov-mode))
        :pin melpa-stable)
    #+end_src
