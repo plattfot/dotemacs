@@ -232,7 +232,7 @@ new-version > old-version."
                   "to" "up")
               (elt (work-git--semver-pre-release new-version-c) 0)))
      ((and (> new-version-l old-version-l)
-           (string-prefix-p "DD" (-last-item (work-git--semver-components new-version-c))))
+           (string-prefix-p "DD" (elt (reverse (work-git--semver-components new-version-c)) 0)))
       "Bump up revision")
      ((not (string-equal (elt (work-git--semver-components old-version-c) 0)
                          (elt (work-git--semver-components new-version-c) 0)))
