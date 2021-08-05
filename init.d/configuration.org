@@ -1182,10 +1182,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        ")
              :unnarrowed t)
             ("t" "task" plain "* TODO ${title}
+         SCHEDULED: %t
          :PROPERTIES:
          :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
          :END:
-         SCHEDULED: %t
          %?
          %a"
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
