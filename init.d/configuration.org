@@ -924,22 +924,21 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         :config
         (defun plt/org-fetch-agenda-files ()
           "Return a list of all files that should be in the agenda."
-          (->>
-           (file-name-as-directory org-directory)
-           (s-append "roam")
-           (format (string-join
-                    '("rg -l"
-                      "-e TODO"
-                      "-e WAIT"
-                      "-e CANCELLED"
-                      "-e '%%\\(org'"
-                      "-e '^[[:blank:]]+<[[:digit:]]{4}'"
-                      "--"
-                      "%s")
-                    " "))
-           (shell-command-to-string)
-           (s-trim-right)
-           (s-split "\n")))
+          (split-string
+           (thread-last (expand-file-name "roam" org-directory)
+             (format (string-join
+                      '("rg -l"
+                        "-e TODO"
+                        "-e WAIT"
+                        "-e CANCELLED"
+                        "-e '%%\\(org'"
+                        "-e '^[[:blank:]]+<[[:digit:]]{4}'"
+                        "--"
+                        "%s")
+                      " "))
+             (shell-command-to-string)
+             (string-trim-right))
+           "\n"))
         (defun plt/org-agenda-refresh-files ()
           "Update `org-agenda-files'."
           (interactive)
