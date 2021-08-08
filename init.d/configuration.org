@@ -958,7 +958,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (setq org-ellipsis "⤵"
               org-todo-keywords
               '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
-              org-default-notes-file (concat org-directory "/Anteckningar.org")
+              org-default-notes-file (expand-file-name "Anteckningar.org" org-directory)
               org-agenda-span 'day
               org-agenda-window-setup 'only-window
               org-agenda-restore-windows-after-quit t
