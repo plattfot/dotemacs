@@ -1086,7 +1086,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package org-agenda
          :ensure nil
-         :after (org-roam)
          :custom
          (org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
                                      (todo . " %-2i ")
@@ -1138,7 +1137,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                              (s-join " " )
                              (s-trim-right ))))
              (s-concat prefix rest)))
-
          (setq org-super-agenda-groups
                '((:name "Idag"
                         :time-grid t)
