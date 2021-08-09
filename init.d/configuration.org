@@ -1188,7 +1188,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
        ,#+filetags: :uppgift:
        ")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)
             ("n" "node" plain "
        ,#+begin_quote
@@ -1200,7 +1200,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :URL:      %(read-string \"Url: \")
        :END:
        ,#+title: ${title}")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)
             ("b" "band" plain "
        ,#+begin_quote
@@ -1214,7 +1214,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :END:
        ,#+title: ${title}
        ,#+filetags: :band:")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)
             ("a" "album" plain "
        ,* [[id:2580937e-3dc4-4bc9-ba61-d718655b12ae][Vinyl]]
@@ -1230,7 +1230,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                                 "#+title: ${title}
        ,#+filetags: :album:")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)
             ("D" "datordel" plain "* Senast observerade plats
        %?
@@ -1240,13 +1240,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :URL:      %(read-string \"Url: \")
        :END:#+title: ${title}
        ,#+filetags: :datordel:")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)
             ("ö" "öl" plain "
        ,#+begin_quote
        %? ---
        ,#+end_quote
-       
+
        ,* Omdöme
        "
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -1255,7 +1255,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        :ABV:      %(read-string \"Abv: \")
        :END:#+title: ${title}
        ,#+filetags: :öl:")
-             :empty-lines-before 2
+             :empty-lines-before 1
              :unnarrowed t)))
          :init
          (setf org-roam-v2-ack t)
