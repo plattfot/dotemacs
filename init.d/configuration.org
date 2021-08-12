@@ -1253,7 +1253,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                                 ":PROPERTIES:
        :URL:      %(read-string \"Url: \")
        :ABV:      %(read-string \"Abv: \")
-       :END:#+title: ${title}
+       :END:
+       ,#+title: ${title}
        ,#+filetags: :öl:")
              :empty-lines-before 1
              :unnarrowed t)))
