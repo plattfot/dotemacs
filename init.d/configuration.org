@@ -308,6 +308,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+begin_src emacs-lisp
        (use-package debbugs)
      #+end_src
+*** Docs
+**** devdocs
+     #+begin_src emacs-lisp
+       (use-package devdocs
+         :bind (("C-c d i" . devdocs-install)
+                ("C-c d l" . devdocs-lookup)))
+     #+end_src
 ** Programming languages
   Modes for highlighting different programing languages.
 *** Haskell
