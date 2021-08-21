@@ -962,23 +962,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-to-list 'org-file-apps (cons "\\.pdf\\'" 'emacs))
         ;; Open links in same frame
         (add-to-list 'org-link-frame-setup (cons 'file 'find-file))
-        (setq org-ellipsis "⤵"
-              org-todo-keywords
-              '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)"))
-              org-default-notes-file (expand-file-name "Anteckningar.org" org-directory)
-              org-agenda-span 'day
-              org-agenda-window-setup 'only-window
-              org-agenda-restore-windows-after-quit t
-              org-agenda-files (plt/org-fetch-agenda-files)
-              org-src-fontify-natively t
-              org-src-tab-acts-natively t
-              org-enforce-todo-dependencies t
-              org-confirm-babel-evaluate nil
-              org-src-window-setup 'split-window-below
-              org-link-search-must-match-exact-headline nil
-              org-log-into-drawer "LOGBOOK"
-              org-display-remote-inline-images 'cache
-              org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+        (setq
+         org-agenda-files (plt/org-fetch-agenda-files)
+         org-agenda-restore-windows-after-quit t
+         org-agenda-span 'day
+         org-agenda-window-setup 'only-window
+         org-confirm-babel-evaluate nil
+         org-default-notes-file (expand-file-name "Anteckningar.org" org-directory)
+         org-display-remote-inline-images 'cache
+         org-ellipsis "⤵"
+         org-enforce-todo-dependencies t
+         org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+         org-link-search-must-match-exact-headline nil
+         org-log-into-drawer "LOGBOOK"
+         org-src-fontify-natively t
+         org-src-tab-acts-natively t
+         org-src-window-setup 'split-window-below
+         org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
         (when (not dotemacs-is-work)
           (add-to-list 'org-agenda-files org-directory))
         ;; Active Babel languages
