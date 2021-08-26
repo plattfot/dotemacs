@@ -982,8 +982,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          org-ellipsis "⤵"
          org-enforce-todo-dependencies t
          org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+         org-hide-emphasis-markers t
          org-link-search-must-match-exact-headline nil
          org-log-into-drawer "LOGBOOK"
+         org-pretty-entities t
+         org-pretty-entities-include-sub-superscripts t
+         org-use-sub-superscripts '{}
          org-src-fontify-natively t
          org-src-tab-acts-natively t
          org-src-window-setup 'split-window-below
