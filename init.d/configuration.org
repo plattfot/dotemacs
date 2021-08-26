@@ -2235,7 +2235,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
           (propertize (funcall mood-line-fun) 'face 'mood-line-unimportant))
         (defun plt/mood-line-shell-modified (mood-line-fun)
           "Don't show modification on comint derived and vterm buffers."
-          (if (not (derived-mode-p 'comint-mode 'vterm-mode))
+          (if (not (derived-mode-p 'comint-mode 'vterm-mode 'erc-mode))
               (funcall mood-line-fun)
             "  "))
         (defun plt/mood-line-remote-status (mood-line-fun)
