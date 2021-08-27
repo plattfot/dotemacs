@@ -2110,7 +2110,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                             ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
                             ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
                             ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
-                            ("UCSGHj0YjencmGUSksbMbBVQ" food) ;; Matgeek
                             ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
                             ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
                             ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
