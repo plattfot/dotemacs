@@ -1735,7 +1735,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     #+begin_src emacs-lisp
       (use-package consult
-        :bind (("C-M-g" . consult-ripgrep))
+        :bind (("C-M-g" . consult-ripgrep)
+               ("C-c ;" . consult-flymake))
         :init
         (defalias 'imenu 'consult-imenu))
     #+end_src
