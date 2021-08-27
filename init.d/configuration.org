@@ -3001,12 +3001,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
        (interactive)
        (scroll-down-command 10))
 
-     (defun plt/toggle-rot13 ()
-       "Toggle `toogle-rot13-mode' and redraw."
-       (interactive)
-       (toggle-rot13-mode)
-       (redraw-display))
-
      (defvar plattfot-mode-map
        (let ((map (make-sparse-keymap)))
          ;; Navigation
@@ -3043,7 +3037,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          (define-key map (kbd "<C-M-next>") 'end-of-buffer)
          (define-key map (kbd "<C-M-prior>") 'beginning-of-buffer)
 
-         (define-key map (kbd "<f4>") 'plt/toggle-rot13)
          (define-key map (kbd "<f2>") 'home-setup)
          (define-key map (kbd "<f3>") 'work-setup)
          map)
