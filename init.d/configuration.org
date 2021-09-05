@@ -1691,7 +1691,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          '(basic-remote basic-remote-try-completion basic-remote-all-completions nil))
 
         (setq completion-styles '(orderless)
-                  completion-category-overrides '((file (styles basic-remote partial-completion)))))
+              completion-category-overrides '((file (styles basic-remote partial-completion)))))
     #+end_src
 *** Vertico
 
