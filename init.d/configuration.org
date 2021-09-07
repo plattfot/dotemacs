@@ -2811,17 +2811,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       will split each one. DELIM will default to \",\" if no delim is
       given."
       (interactive "sSpecify delimiter: ")
-      (when (or (string= delim "") (not delim)) (setq delim ","))
-      (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
-            (end (if (use-region-p) (region-end) (point-at-eol)))
-            (regex delim))
-        (goto-char start)
-
-        (while (search-forward-regexp regex end t)
-          (insert "\n")
-          (setq end (1+ end)))
-        (indent-region start end)
-        (goto-char start)))
+      (save-mark-and-excursion
+        (when (or (string= delim "") (not delim)) (setq delim ","))
+        (let ((start (if (use-region-p) (region-beginning) (point-at-bol)))
+              (end (if (use-region-p) (region-end) (point-at-eol)))
+              (regex delim))
+          (goto-char start)
+          (while (search-forward-regexp regex end t)
+            (insert "\n")
+            (setq end (1+ end)))
+          (indent-region start end)
+          (goto-char start))))
 
       (defun split-at-comma ()
       "wrapper for split-at for use with key command"
