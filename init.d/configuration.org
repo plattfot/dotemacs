@@ -741,6 +741,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (use-package embark-dtache
         :after (dtache embark))
     #+end_src
+*** Emprise
+    #+begin_src emacs-lisp
+      (use-package emprise)
+    #+end_src
 *** Arduino
     Function for setting up a arduino template sketch
     #+begin_src emacs-lisp
