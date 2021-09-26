@@ -249,12 +249,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      tweaked my theme so it is not so bad. Still annoying though.
 
      *NOTE:* clangd also accepts arguments from the environment
-      variable ~CLANGD_FLAGS~. I'm using that combined with ~direnv~
-      to specify where the ~compile_commands.json~ is located. As that
-      can change from project to project.
+     variable ~CLANGD_FLAGS~. I'm using that combined with ~direnv~
+     to specify where the ~compile_commands.json~ is located. As that
+     can change from project to project.
 
-      For example set that ~compile_commands.json~ is in the
-      subdirectory ~build~ in the root of the project.
+     For example set that ~compile_commands.json~ is in the
+     subdirectory ~build~ in the root of the project.
 
      #+begin_src sh :tangle no
        # .envrc
@@ -262,22 +262,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 
      #+begin_src emacs-lisp
-       (use-package eglot
-         :pin gnu
-         :config
+       (setup (:require eglot)
          ;; Only run eglot on local buffers, too slow on bad connections.
          (add-hook 'c++-mode-hook
                    (lambda ()
                      (when (and (buffer-file-name) (not (file-remote-p (buffer-file-name))))
                        (eglot-ensure))))
-         (setq gc-cons-threshold 100000000
-               read-process-output-max (* 1024 1024)) ;; 1mb
-         (add-to-list 'eglot-server-programs
-                      '(c++-mode . ("clangd"
-                                    "--background-index"
-                                    "--header-insertion=iwyu"
-                                    "--pch-storage=memory"
-                                    "-j=6"))))
+         (add-hook 'eglot-connect-hook
+                   (lambda ()
+                     (setf gc-cons-threshold 100000000
+                           read-process-output-max (* 1024 1024) ;; 1mb
+                           )))
+         (:option (append eglot-server-programs)
+                  '(c++-mode . ("clangd"
+                                "--background-index"
+                                "--header-insertion=iwyu"
+                                "--pch-storage=memory"
+                                "-j=6"))))
      #+end_src
 *** Lint
     Packages that helps inspecting code, report errors etc.
