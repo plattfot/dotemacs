@@ -15,9 +15,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
    #+begin_src emacs-lisp
-     (setq custom-file (expand-file-name ".custom.el" user-emacs-directory))
-     (when (file-exists-p custom-file)
-         (load custom-file))
+     (setup custom
+       (:option custom-file (expand-file-name ".custom.el" user-emacs-directory))
+       (when (file-exists-p custom-file)
+         (load custom-file)))
    #+end_src
 ** Package management
 
