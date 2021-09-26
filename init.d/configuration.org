@@ -209,8 +209,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     plates etc
 **** Corfu
      #+begin_src emacs-lisp
-       (use-package corfu
-         :config
+       (setup (:require corfu)
          (corfu-global-mode))
      #+end_src
 
