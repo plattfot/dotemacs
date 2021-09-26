@@ -359,43 +359,50 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 *** Scheme
     #+begin_src emacs-lisp
-      (use-package scheme
-        :ensure nil ; Built in
-        :bind (:map scheme-mode-map
-                    ("<backtab>" . hall-toggle-other-file)
-                    ("<C-iso-lefttab>" . hall-view-test-log))
-        :config
-        (defun hall-toggle-other-file ()
-          "Switch between file named the same in the project.
-      Useful for switching between test and code."
-          (interactive)
-          (let* ((file (buffer-file-name))
-                 (filename (file-name-nondirectory file))
-                 (other-files
-                  (->> (project-files (project-current nil))
-                       (--filter (string-suffix-p filename it))
-                       (--filter (not (string= file it)))
-                       )))
-            (if other-files
-                (find-file (car other-files))
-              (error "No other %s found" filename))))
-
-        (defun hall-view-test-log ()
-          "View the test log for the current buffer."
-          (interactive)
-          (let* ((file (buffer-file-name))
-                 (ext (file-name-extension file))
-                 (project (project-current nil))
-                 (filename (format "%s.%s" (file-name-base file) "log"))
-                 (other-files (->> (directory-files-recursively
-                                    (car (project-roots project))
-                                    (regexp-quote filename))
-                                   (--filter (string-suffix-p "tests" (directory-file-name
-                                                                       (file-name-directory it)))))))
-            (if other-files
-                (view-file (car other-files))
-              (error "No %s found" filename)))))
+      (setup scheme
+        (:bind "<backtab>" hall-toggle-other-file
+               "<C-iso-lefttab>" hall-view-test-log))
     #+end_src
+**** Guile-Hall helper functions
+     Helper function for [[https://gitlab.com/a-sassmannshausen/guile-hall][guile-hall]], or technically any scheme project
+     that have their tests in a =tests= directory and generates a =.log=
+     file.
+
+     #+begin_src emacs-lisp
+       (defun hall-toggle-other-file ()
+         "Switch between file named the same in the project.
+       Useful for switching between test and code."
+         (interactive)
+         (let* ((file (buffer-file-name))
+                (filename (file-name-nondirectory file))
+                (other-files
+                 (->> (project-files (project-current nil))
+                      (--filter (string-suffix-p filename it))
+                      (--filter (not (string= file it)))
+                      )))
+           (if other-files
+               (find-file (car other-files))
+             (error "No other %s found" filename))))
+     #+end_src
+
+     #+begin_src emacs-lisp
+       (defun hall-view-test-log ()
+         "View the test log for the current buffer."
+         (interactive)
+         (let* ((file (buffer-file-name))
+                (ext (file-name-extension file))
+                (project (project-current nil))
+                (filename (format "%s.%s" (file-name-base file) "log"))
+                (other-files (->> (directory-files-recursively
+                                   (car (project-roots project))
+                                   (regexp-quote filename))
+                                  (--filter (string-suffix-p "tests" (directory-file-name
+                                                                      (file-name-directory it)))))))
+           (if other-files
+               (view-file (car other-files))
+             (error "No %s found" filename))))
+     #+end_src
+
 *** C family
     Specific for C, C++ and other in the c family
     - Set indentation to be two spaces.
