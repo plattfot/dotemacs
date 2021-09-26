@@ -149,7 +149,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      prog-mode. Keep it off for buffers that are read only as you
      cannot do anything about it.
      #+begin_src emacs-lisp
-       (add-hook 'prog-mode-hook (lambda () (setf show-trailing-whitespace (not buffer-read-only))))
+       (setup prog
+         (:hook (lambda () (setf show-trailing-whitespace (not buffer-read-only)))))
      #+end_src
 
      *NOTE* Had it on for every writable buffer and then just turned
