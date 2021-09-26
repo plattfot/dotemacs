@@ -454,16 +454,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Set the default for pb2 files (=PROJECT=) to use python.
     #+begin_src emacs-lisp
-      (use-package python
-        :mode (("\\.py\\'" . python-mode)
-               ("PROJECT$" . python-mode))
-        :interpreter ("python" . python-mode)
-        :config
-        (add-hook 'python-mode-hook
-                  (lambda ()
-                    (setq indent-tabs-mode nil
-                          python-indent-offset 4)))
-        :pin melpa-stable)
+      (setup python
+        (:file-match "\\.py\\'" "PROJECT$")
+        (:hook (lambda ()
+                 (setq indent-tabs-mode nil
+                       python-indent-offset 4))))
     #+end_src
 
     #+begin_src emacs-lisp
