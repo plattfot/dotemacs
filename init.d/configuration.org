@@ -307,9 +307,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Docs
 **** devdocs
      #+begin_src emacs-lisp
-       (use-package devdocs
-         :bind (("C-c d I" . devdocs-install)
-                ("C-c d i" . devdocs-lookup)))
+       (setup devdocs
+         (:global "C-c d I" devdocs-install
+                  "C-c d i" devdocs-lookup))
      #+end_src
 ** Programming languages
   Modes for highlighting different programing languages.
