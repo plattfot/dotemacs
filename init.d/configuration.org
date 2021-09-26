@@ -80,9 +80,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Dotemacs
     Export a variable if I'm at work or not.
     #+begin_src emacs-lisp
-      (use-package dotemacs
-        :ensure nil
-        :load-path "plugins")
+      (setup dotemacs
+        (:load-from (expand-file-name "plugins" user-emacs-directory))
+        (:require dotemacs))
     #+end_src
 ** UI
 *** Maximize work area
