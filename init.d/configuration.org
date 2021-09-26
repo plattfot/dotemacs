@@ -185,9 +185,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    over the place.  Fixing that by dumping all backup/autosave files
    in to one directory.
    #+begin_src emacs-lisp
-     (let ((backup-dir (file-name-as-directory (concat user-emacs-directory "backup")))
-           (autosave-dir
-            (file-name-as-directory (concat user-emacs-directory "autosave"))))
+     (let ((backup-dir (expand-file-name "backup" user-emacs-directory))
+           (autosave-dir (expand-file-name "autosave" user-emacs-directory)))
        (setq backup-directory-alist (list (cons ".*" backup-dir))
              auto-save-list-file-prefix autosave-dir
              auto-save-file-name-transforms `((".*" ,autosave-dir t))))
