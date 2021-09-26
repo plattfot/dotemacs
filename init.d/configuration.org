@@ -300,7 +300,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Bugtracker
 **** debbugs
      #+begin_src emacs-lisp
-       (setup (:require debbugs))
+       (setup debbugs)
      #+end_src
 *** Docs
 **** devdocs
