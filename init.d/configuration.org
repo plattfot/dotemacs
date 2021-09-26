@@ -321,21 +321,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                turn-on-haskell-indent))
     #+end_src
 *** Lisp
-    Color haxvalues with their respective color.
-    #+begin_src emacs-lisp
-      (use-package lisp-mode
-        :ensure nil ; Built in
-        :config
-        (defvar hexcolour-keywords
-          '(("#[[:xdigit:]]\\{6\\}"
-             (0 (put-text-property (match-beginning 0)
-                                   (match-end 0)
-                                   'face (list :background
-                                               (match-string-no-properties 0)))))))
-        (add-hook 'lisp-mode-hook
-                  (lambda ()
-                    (font-lock-add-keywords nil hexcolour-keywords))))
-    #+end_src
 **** Smartparens
 
      Having issues with turning off auto balancing, i.e
