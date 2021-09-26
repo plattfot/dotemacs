@@ -7,6 +7,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+begin_src emacs-lisp
    ;; -*- lexical-binding: t -*-
    #+end_src
+** Load setup
+   #+begin_src emacs-lisp
+     (require 'setup)
+   #+end_src
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
