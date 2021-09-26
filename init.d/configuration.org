@@ -468,8 +468,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Packages for setting up a rust environment
     #+begin_src emacs-lisp
-      (use-package rust-mode
-        :pin melpa-stable)
+      (setup rust-mode)
     #+end_src
 
     Mode for editing Cargo files.
