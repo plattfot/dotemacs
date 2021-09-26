@@ -448,7 +448,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Docker
     #+begin_src emacs-lisp
-      (use-package dockerfile-mode)
+      (setup (:require dockerfile-mode))
     #+end_src
 *** Python
     Package name is python but the mode is python-mode
