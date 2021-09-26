@@ -473,8 +473,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Mode for editing Cargo files.
     #+begin_src emacs-lisp
-      (use-package toml-mode
-        :pin melpa)
+      (setup toml-mode)
     #+end_src
 
 *** Golang
