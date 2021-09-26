@@ -462,8 +462,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package jinja2-mode
-        :pin melpa-stable)
+      (setup jinja2)
     #+end_src
 *** Rust
 
