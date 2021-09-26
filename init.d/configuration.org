@@ -431,23 +431,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
                       (brace-list-intro . +))))
     #+end_src
     #+begin_src emacs-lisp
-      (use-package cc-mode
-        :mode ("\\.h\\'" . c++-mode)
-        :ensure nil ;; built in
-        :config
+      (setup cc-mode
+        (:with-mode c++-mode
+          (:file-match "\\.h\\'"))
         ;; Call everytime an c-mode-common file is opened
-        (add-hook 'c-mode-common-hook
-                  (lambda ()
-                    ;; Set keybinding for all cc-modes
-                    (local-set-key  (kbd "<backtab>") 'ff-find-other-file)
-                    (local-set-key  (kbd "<C-iso-lefttab>") 'ff-extension-other-impl)
-
-                    (setq indent-tabs-mode nil)
-                    (c-set-style "dd")
-                    ;; enable camelCase
-                    (subword-mode 1)))
-        (setq ff-search-directories '("." "../src" "../include"))
-        :pin melpa-stable)
+        (:with-mode c-mode-common
+          (:hook (lambda ()
+                   ;; Set keybinding for all cc-modes
+                   (local-set-key  (kbd "<backtab>") 'ff-find-other-file)
+                   (local-set-key  (kbd "<C-iso-lefttab>") 'ff-extension-other-impl)
+                   (setq indent-tabs-mode nil)
+                   (c-set-style "dd")
+                   ;; enable camelCase
+                   (subword-mode 1))))
+        (:option ff-search-directories '("." "../src" "../include")))
     #+end_src
 *** Docker
     #+begin_src emacs-lisp
