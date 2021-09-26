@@ -302,7 +302,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** Bugtracker
 **** debbugs
      #+begin_src emacs-lisp
-       (use-package debbugs)
+       (setup (:require debbugs))
      #+end_src
 *** Docs
 **** devdocs
