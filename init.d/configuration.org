@@ -289,10 +289,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      consitent between modes.
 
      #+begin_src emacs-lisp
-       (use-package flymake
-         :ensure nil ; built-in
-         :config
-         (add-hook 'prog-mode-hook 'flymake-mode))
+       (setup flymake
+         (:hook-into prog-mode))
      #+end_src
 
      Flymake lacks linting for shell scripts. Testing out shellcheck.
