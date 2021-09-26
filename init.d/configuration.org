@@ -295,10 +295,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      Flymake lacks linting for shell scripts. Testing out shellcheck.
      #+begin_src emacs-lisp
-       (use-package flymake-shellcheck
-         :ensure t
-         :commands flymake-shellcheck-load
-         :init
+       (setup flymake-shellcheck
+         (:needs "shellcheck")
          (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
      #+end_src
 *** Bugtracker
