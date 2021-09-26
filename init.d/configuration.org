@@ -745,6 +745,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+begin_src emacs-lisp
       (use-package emprise)
     #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package marginalia-emprise
+        :after (emprise marginalia)
+        :config
+        (add-to-list 'marginalia-annotator-registry '(emprise marginalia-emprise-annotate)))
+    #+end_src
+
 *** Arduino
     Function for setting up a arduino template sketch
     #+begin_src emacs-lisp
