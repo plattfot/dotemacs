@@ -220,13 +220,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      their case, which makes it unusable when programming.
 
      #+begin_src emacs-lisp
-       (use-package dabbrev
+       (setup dabbrev
          ;; Swap M-/ and C-M-/
-         :bind (("M-/" . dabbrev-completion)
-                ("C-M-/" . dabbrev-expand))
-         :config
-         (setf dabbrev-upcase-means-case-search t
-               dabbrev-case-replace nil))
+         (:global "M-/" dabbrev-completion
+                  "C-M-/" dabbrev-expand)
+         (:option dabbrev-upcase-means-case-search t
+                  dabbrev-case-replace nil))
      #+end_src
 **** Yasnippet
      Enable yasnippet
