@@ -781,13 +781,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+END_SRC
 
     #+begin_src emacs-lisp
-      (use-package vterm
-        :bind (:map vterm-mode-map
-                    ("<f8>" . vterm-clear)
-                    ("C-k" . vterm-send-C-k))
-        :config
-        (setf vterm-max-scrollback 10000)
-        (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path)))))
+      (setup vterm
+        (:bind "<f8>" vterm-clear
+               "C-k" vterm-send-C-k)
+        (:local-set
+         vterm-max-scrollback 10000
+         (append vterm-eval-cmds) '("update-pwd" (lambda (path) (setq default-directory path)))))
     #+end_src
 *** IRC
     #+begin_src emacs-lisp
