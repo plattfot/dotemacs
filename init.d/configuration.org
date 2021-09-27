@@ -567,8 +567,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** lua
     #+begin_src emacs-lisp
-      (use-package lua-mode
-        :pin melpa)
+      (setup lua-mode)
     #+end_src
 ** Programs
   Packages that communicates with external processes.
