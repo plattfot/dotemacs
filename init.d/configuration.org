@@ -520,17 +520,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** REPL
 **** Geiser
      #+begin_src emacs-lisp
-       (use-package geiser
-         :hook (scheme-mode-hook)
-         :config
-         (setq geiser-default-implementation 'guile
-               geiser-repl-use-other-window nil)
-         :pin melpa-stable)
-     #+end_src
-     Auto complete backend for geiser
-     #+begin_src emacs-lips
-	 (use-package ac-geiser
-	   :pin melpa-stable)
+       (setup geiser
+         (:hook-into scheme-mode)
+         (:option geiser-default-implementation 'guile
+                  geiser-repl-use-other-window nil))
      #+end_src
 **** Sh
      Indent using 2 spaces for shell scripts.
