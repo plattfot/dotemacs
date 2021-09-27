@@ -554,8 +554,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    #+end_src
 *** Julia
     #+begin_src emacs-lisp
-      (use-package julia-mode
-        :pin melpa)
+      (setup julia-mode)
     #+end_src
 *** Systemd
     #+begin_src emacs-lisp
