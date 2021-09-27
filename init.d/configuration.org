@@ -668,19 +668,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Key =C-x g= to run magit on current buffer.
 
     #+begin_src emacs-lisp
-      (use-package transient
-        :pin melpa)
+      (setup transient)
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package magit
-        :after (transient)
-        :bind ("C-x g" . magit-status)
-        :pin melpa
-        :config
-        (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
+      (setup magit
+        (:global "C-x g" magit-status)
+        (:with-mode git-commit-setup
+          (:hook git-commit-turn-on-flyspell))
         ;; From https://takeonrules.com/2021/08/03/using-magit-built-in-functions-for-workflow/
-        (setf magit-repolist-columns
+        (:option magit-repolist-columns
               '(("Name"    25 magit-repolist-column-ident ())
                 ("Version" 25 magit-repolist-column-version ())
                 ("D"        1 magit-repolist-column-dirty ())
