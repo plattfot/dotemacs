@@ -578,69 +578,72 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
    Clean the buffer with C-c C.
 
    #+begin_src emacs-lisp
-     (use-package ledger-mode
-       :bind (:map ledger-mode-map
-                   ("C-c C" . ledger-mode-clean-buffer)
-                   ("C-c C-C" . plt/ledger-clear-all)
-                   ("C-c y" . plt/ledger-yank-previous-payee))
-       :mode "\\.dat\\'"
-       :config
-       (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+     (setup ledger-mode
+       (:bind "C-c C" ledger-mode-clean-buffer
+              "C-c C-C" plt/ledger-clear-all
+              "C-c y" plt/ledger-yank-previous-payee)
+       (:file-match "\\.dat\\'")
+       (:hook ledger-flymake-enable)
        ;; Workaround for issue described in https://github.com/oantolin/orderless/issues/52
-       (add-hook 'ledger-mode-hook (lambda () (setq-local orderless-smart-case nil)))
-       (setq ledger-clear-whole-transactions 1
-             ledger-schedule-file "~/projects/bokforing/schedule.ledger"
-             ledger-schedule-look-backward 5
-             ledger-schedule-look-forward 30
-             ledger-complete-in-steps t
-             ledger-amount-regex
-             (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
-                     "(?"
-                     "\\(?:"
-                     "\\([A-Z$€£₹_(]+ *\\)?"
-                     ;; We either match just a number after the commodity with no
-                     ;; decimal or thousand separators or a number with thousand
-                     ;; separators.  If we have a decimal part starting with `,'
-                     ;; or `.', because the match is non-greedy, it must leave at
-                     ;; least one of those symbols for the following capture
-                     ;; group, which then finishes the decimal part.
-                     "\\(-?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
-                     "\\([,.][0-9)]+\\)?"
-                     "\\( *[[:word:]€£₹_\"]+\\)?"
-                     "\\(?:[ \t]*[+*/-][ \t]*\\)?"
-                     "\\)+"
-                     ")?"
-                     "\\([ \t]*[@={]@?[^\n;]+?\\)?"
-                     "\\([ \t]+;.+?\\|[ \t]*\\)?$"))
-       (defun plt/ledger-clear-all ()
-         "Mark all xacts as cleared from point to end of buffer.
+       (:hook (lambda () (setq-local orderless-smart-case nil)))
+       (:option ledger-clear-whole-transactions 1
+                ledger-schedule-file "~/projects/bokforing/schedule.ledger"
+                ledger-schedule-look-backward 5
+                ledger-schedule-look-forward 30
+                ledger-complete-in-steps t
+                ledger-amount-regex
+                (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
+                        "(?"
+                        "\\(?:"
+                        "\\([A-Z$€£₹_(]+ *\\)?"
+                        ;; We either match just a number after the commodity with no
+                        ;; decimal or thousand separators or a number with thousand
+                        ;; separators.  If we have a decimal part starting with `,'
+                        ;; or `.', because the match is non-greedy, it must leave at
+                        ;; least one of those symbols for the following capture
+                        ;; group, which then finishes the decimal part.
+                        "\\(-?\\(?:[0-9]+\\|[0-9,.]+?\\)\\)"
+                        "\\([,.][0-9)]+\\)?"
+                        "\\( *[[:word:]€£₹_\"]+\\)?"
+                        "\\(?:[ \t]*[+*/-][ \t]*\\)?"
+                        "\\)+"
+                        ")?"
+                        "\\([ \t]*[@={]@?[^\n;]+?\\)?"
+                        "\\([ \t]+;.+?\\|[ \t]*\\)?$")))
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (defun plt/ledger-clear-all ()
+       "Mark all xacts as cleared from point to end of buffer.
      If region is active it will only clear those that are inside."
-         (interactive)
-         (save-mark-and-excursion
-           (let ((bounds (if (use-region-p) (cons (region-beginning) (region-end))
-                           (cons (point) (point-max)))))
-             (goto-char (car bounds))
-             (ledger-navigate-beginning-of-xact)
-             (when (and (>= (point) (car bounds)) (not (ledger-transaction-state)))
-               (ledger-toggle-current))
-             (while (and (ledger-navigate-next-uncleared) (< (point) (cdr bounds)))
-               (ledger-toggle-current)))))
-       (defun plt/ledger-yank-previous-payee ()
-         "Insert the payee of the previous xact."
-         (interactive)
-         (insert
-          (save-mark-and-excursion
-            (let ((payee-regex (rx bol
-                                   ;; date
-                                   (= 4 digit) (= 2 (: (or "/" "-") (= 2 digit)))
-                                   ;; clearing status
-                                   (+ blank) (: (* (or "+" "-" "*"))) (+ blank)
-                                   ;; payee
-                                   (group (* not-newline)))))
-              (ledger-navigate-prev-xact-or-directive)
-              (search-forward-regexp payee-regex nil t)
-              (match-string 1)))))
-       :pin melpa)
+       (interactive)
+       (save-mark-and-excursion
+         (let ((bounds (if (use-region-p) (cons (region-beginning) (region-end))
+                         (cons (point) (point-max)))))
+           (goto-char (car bounds))
+           (ledger-navigate-beginning-of-xact)
+           (when (and (>= (point) (car bounds)) (not (ledger-transaction-state)))
+             (ledger-toggle-current))
+           (while (and (ledger-navigate-next-uncleared) (< (point) (cdr bounds)))
+             (ledger-toggle-current)))))
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (defun plt/ledger-yank-previous-payee ()
+       "Insert the payee of the previous xact."
+       (interactive)
+       (insert
+        (save-mark-and-excursion
+          (let ((payee-regex (rx bol
+                                 ;; date
+                                 (= 4 digit) (= 2 (: (or "/" "-") (= 2 digit)))
+                                 ;; clearing status
+                                 (+ blank) (: (* (or "+" "-" "*"))) (+ blank)
+                                 ;; payee
+                                 (group (* not-newline)))))
+            (ledger-navigate-prev-xact-or-directive)
+            (search-forward-regexp payee-regex nil t)
+            (match-string 1)))))
    #+end_src
 *** direnv
     #+begin_src emacs-lisp
