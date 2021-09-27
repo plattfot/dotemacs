@@ -738,14 +738,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
 *** pdftools
     #+begin_src emacs-lisp
-      (use-package pdf-tools
-        :ensure nil
-        :mode ("\\.pdf\\'" . pdf-view-mode)
-        :custom
-        (pdf-view-midnight-colors `("#ddd" . "#111"))
-        ;; :config
-        ;; (add-hook 'pdf-view-mode-hook #'pdf-view-midnight-minor-mode)
-        )
+      (setup (:require pdf-tools)
+        (:with-mode pdf-view-mode
+          (:file-match "\\.pdf\\'")
+          ;; (:hook pdf-view-midnight-minor-mode)
+          )
+        (:option pdf-view-midnight-colors `("#ddd" . "#111")))
     #+end_src
 *** man
     #+begin_src emacs-lisp
