@@ -528,12 +528,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** Sh
      Indent using 2 spaces for shell scripts.
      #+begin_src emacs-lisp
-       (use-package sh-script
-         :config
-         (add-hook 'sh-mode-hook
-               (lambda ()
-                 (setq indent-tabs-mode nil
-                       c-basic-offset 2))))
+       (setup sh
+         (:local-set indent-tabs-mode nil
+                     c-basic-offset 2))
      #+end_src
 *** Yaml
     #+begin_src emacs-lisp
