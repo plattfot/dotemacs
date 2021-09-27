@@ -806,7 +806,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** elpher
     #+begin_src emacs-lisp
-      (use-package elpher)
+      (setup elpher)
     #+end_src
 ** Emacs
   Packages that augments emacs.
