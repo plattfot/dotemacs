@@ -747,10 +747,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** man
     #+begin_src emacs-lisp
-      (use-package man
-        :config
+      (setup man
         (when dotemacs-is-work
-          (setf manual-program "pk man")))
+          (:option manual-program "pk man")))
     #+end_src
 *** telegram
     #+begin_src emacs-lisp
