@@ -562,9 +562,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** GDB script
     #+begin_src emacs-lisp
-      (use-package gud
-        :mode (("\\.gdbinit$" . gdb-script-mode))
-        :ensure nil)
+      (setup gud-script
+        (:file-match "\\.gdbinit$"))
     #+end_src
 *** lua
     #+begin_src emacs-lisp
