@@ -753,10 +753,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** telegram
     #+begin_src emacs-lisp
-      (use-package telega
-        :if (not dotemacs-is-work)
-        :config
-        :pin melpa-stable)
+      (unless dotemacs-is-work
+        (setup telega))
     #+end_src
 *** vterm
 
