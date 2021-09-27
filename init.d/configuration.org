@@ -698,17 +698,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
     Using notmuch to index my emails.
     #+begin_src emacs-lisp
-      (use-package notmuch
-        :bind (("C-c m" . notmuch)
-               ("C-c M" . home-mail-refresh))
-        :config
-        (define-key notmuch-search-mode-map "l"
-          (lambda (&optional beg end)
-            "mark thread as read"
-            (interactive (notmuch-search-interactive-region))
-            (notmuch-search-tag (list "-unread") beg end)
-            (notmuch-search-next-thread)))
-        (setq-default
+      (setup notmuch
+        (:needs "notmuch" "msmtp")
+        (:global "C-c m" notmuch
+                 "C-c M" home-mail-refresh)
+        (:with-mode notmuch-search-mode
+          (:bind "l" (lambda (&optional beg end)
+                       "mark thread as read"
+                       (interactive (notmuch-search-interactive-region))
+                       (notmuch-search-tag (list "-unread") beg end)
+                       (notmuch-search-next-thread))))
+        (:option
          sendmail-program "msmtp"
          send-mail-function 'sendmail-send-it
          mail-specify-envelope-from t
@@ -724,16 +724,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
          notmuch-fcc-dirs `((,user-mail-address . "posteo/Sent"))
          notmuch-show-logo nil
          notmuch-draft-folder "posteo/Drafts"
-         notmuch-saved-searches '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
-                                  (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "O")
-                                  (:name "oläst" :query "tag:unread" :sort-order newest-first :key "o")
-                                  (:name "reklam" :query "tag:reklam and tag:unread" :key "r")
-                                  (:name "stjärnmärkt" :query "tag:flagged" :key "f")
-                                  (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
-                                  (:name "utkast" :query "tag:draft" :key "u")
-                                  (:name "order" :query "tag:order" :key "b")
-                                  (:name "allt" :query "*" :key "a")))
-        :ensure nil)
+         notmuch-saved-searches
+         '((:name "inkorgen" :query "tag:inbox" :sort-order newest-first :key "i")
+           (:name "inkorgen (oläst)" :query "tag:unread and tag:inbox" :sort-order newest-first :key "O")
+           (:name "oläst" :query "tag:unread" :sort-order newest-first :key "o")
+           (:name "reklam" :query "tag:reklam and tag:unread" :key "r")
+           (:name "stjärnmärkt" :query "tag:flagged" :key "f")
+           (:name "skickat" :query "tag:sent" :sort-order newest-first :key "s")
+           (:name "utkast" :query "tag:draft" :key "u")
+           (:name "order" :query "tag:order" :key "b")
+           (:name "allt" :query "*" :key "a"))))
     #+end_src
 
 *** pdftools
