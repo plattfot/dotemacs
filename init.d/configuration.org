@@ -534,10 +534,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
      #+end_src
 *** Yaml
     #+begin_src emacs-lisp
-      (use-package yaml-mode
-        :config
-        (add-hook 'yaml-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
-        :pin melpa-stable)
+      (setup yaml-mode
+        (:hook dotemacs-show-trailing-whitespace-if-writable))
     #+end_src
 *** json
     #+begin_src emacs-lisp
