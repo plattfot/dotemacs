@@ -480,14 +480,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     Setting up go to use 2 spaces as indentation and enable
     autocomplete for go.
     #+begin_src emacs-lisp
-      (use-package go-mode
-        :config
-        (add-hook 'go-mode-hook
-                  (lambda ()
-                    (setq tab-width 2
-                          standard-indent 2
-                          indent-tabs-mode nil)))
-        :pin melpa-stable)
+      (setup go
+        (:local-set tab-width 2
+                    standard-indent 2
+                    indent-tabs-mode nil))
     #+end_src
 *** Shaders
 **** GLSL
