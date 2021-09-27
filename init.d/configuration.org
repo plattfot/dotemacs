@@ -793,7 +793,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
       (setq erc-server "irc.libera.chat"
             erc-nick "plattfot"
             erc-track-shorten-start 8
-            erc-autojoin-channels-alist '(("irc.libera.chat" "#guix" "#emacs" "#mnt-reform"))
+            erc-autojoin-channels-alist '(("irc.libera.chat" "#guix" "#emacs"))
             erc-kill-buffer-on-part t
             erc-auto-query 'bury)
     #+end_src
