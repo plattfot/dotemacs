@@ -802,8 +802,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 *** nginx
     Major mode for editing nginx.
     #+begin_src emacs-lisp
-      (use-package nginx-mode
-       	:pin melpa-stable)
+      (setup nginx-mode)
     #+end_src
 *** elpher
     #+begin_src emacs-lisp
