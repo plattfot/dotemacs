@@ -558,8 +558,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Systemd
     #+begin_src emacs-lisp
-      (use-package systemd
-        :pin melpa-stable)
+      (setup systemd)
     #+end_src
 *** GDB script
     #+begin_src emacs-lisp
