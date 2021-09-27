@@ -504,16 +504,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 
      Show trailing whitespace as those can mess up make pretty bad.
      #+begin_src emacs-lisp
-       (use-package make-mode
-         :mode (("Makefile.*" . makefile-gmake-mode)
-                ("\\.mk$" . makefile-gmake-mode))
-         :config
-         (add-hook 'makefile-mode-hook
-                   (lambda ()
-                     ;; Always show trailing whitespace for Makefiles
-                     ;; Don't break words
-                     (setq show-trailing-whitespace t
-                           word-wrap t))))
+       (setup make-mode
+         (:with-mode makefile-gmake-mode
+           (:file-match "Makefile.*" "\\.mk$"))
+         (:with-mode makefile-mode
+           ;; Always show trailing whitespace for Makefiles
+           ;; Don't break words
+           (:local-set show-trailing-whitespace t
+                       word-wrap t)))
      #+end_src
 **** CMake
      #+begin_src emacs-lisp
