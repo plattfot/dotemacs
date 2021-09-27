@@ -550,8 +550,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Meson
    #+begin_src emacs-lisp
-     (use-package meson-mode
-       :pin melpa)
+     (setup meson-mode)
    #+end_src
 *** Julia
     #+begin_src emacs-lisp
