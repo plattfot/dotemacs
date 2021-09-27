@@ -828,12 +828,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     from compute to computer at the moment.
 
     #+begin_src emacs-lisp
-      (use-package org
-        :mode ("\\.org\\'" . org-mode)
-        :bind (("C-c l" . org-store-link)
-               ("C-c a" . org-agenda))
-        :config
-        (defun plt/org-fetch-agenda-files ()
+      (defun plt/org-fetch-agenda-files ()
           "Return a list of all files that should be in the agenda."
           (split-string
            (thread-last (expand-file-name "roam" org-directory)
@@ -850,23 +845,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (shell-command-to-string)
              (string-trim-right))
            "\n"))
-        (defun plt/org-agenda-refresh-files ()
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (defun plt/org-agenda-refresh-files ()
           "Update `org-agenda-files'."
           (interactive)
           (setf org-agenda-files (plt/org-fetch-agenda-files)))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (setup org
+        (:file-match "\\.org\\'")
+        (:global "C-c l" org-store-link
+                 "C-c a" org-agenda)
+        :config
         ;; Make sure the agenda files are up to date when rebuilding
         (advice-add 'org-agenda-redo-all :before 'plt/org-agenda-refresh-files)
-        (add-hook 'org-mode-hook #'dotemacs-show-trailing-whitespace)
+        (:hook dotemacs-show-trailing-whitespace)
         ;; Workaround from https://orgmode.org/manual/Conflicts.html
-        (add-hook 'org-mode-hook
-                  (lambda ()
-                    (setq-local yas/trigger-key [tab])
-                    (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
+        (:hook
+         (lambda ()
+           (setq-local yas/trigger-key [tab])
+           (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
         ;; Use emacs to view pdfs (shadows the old value)
         (add-to-list 'org-file-apps (cons "\\.pdf\\'" 'emacs))
         ;; Open links in same frame
         (add-to-list 'org-link-frame-setup (cons 'file 'find-file))
-        (setq
+        (:option
          org-agenda-files (plt/org-fetch-agenda-files)
          org-agenda-restore-windows-after-quit t
          org-agenda-span 'day
@@ -902,8 +908,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
              (python . t)
              (scheme . t)
              (shell . t)
-             (C . t))))
-        :pin org)
+             (C . t)))))
     #+end_src
 **** Automate commit todo changes in git
 
