@@ -489,15 +489,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
 **** GLSL
      Set files associated with glsl to use glsl mode
      #+begin_src emacs-lisp
-       (use-package glsl-mode
-         :mode (("\\.vert\\'" . glsl-mode)
-                ("\\.frag\\'" . glsl-mode)
-                ("\\.geom\\'" . glsl-mode)
-                ("\\.prog\\'" . glsl-mode)
-                ("\\.glsl\\'" . glsl-mode))
-         :pin melpa)
+       (setup glsl
+         (:file-match "\\.vert\\'"
+                      "\\.frag\\'"
+                      "\\.geom\\'"
+                      "\\.prog\\'"
+                      "\\.glsl\\'"))
      #+end_src
-
 *** Build
 **** Makefile
      Set following files to use makefile-gmake-mode as the default.
