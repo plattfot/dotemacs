@@ -539,11 +539,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** json
     #+begin_src emacs-lisp
-      (use-package json-mode
-        :config
-        (add-hook 'json-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
-        (setf js-indent-level 2)
-        :pin melpa-stable)
+      (setup json-mode
+        (:hook dotemacs-show-trailing-whitespace-if-writable)
+        (:local-set js-indent-level 2))
     #+end_src
 *** Markdown
     #+begin_src emacs-lisp
