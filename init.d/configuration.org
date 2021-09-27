@@ -663,23 +663,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
         (add-to-list 'marginalia-annotator-registry '(emprise marginalia-emprise-annotate)))
     #+end_src
 
-*** Arduino
-    Function for setting up a arduino template sketch
-    #+begin_src emacs-lisp
-      (defun init-arduino ()
-      "Template arduino sketch"
-      (interactive)
-      (insert "void setup() {
-       	// put your setup code here, to run once:
-
-      }
-
-      void loop() {
-       	// put your main code here, to run repeatedly:
-
-      }")
-      )
-    #+end_src
 *** Magit
     A Git porcelain inside Emacs
     Key =C-x g= to run magit on current buffer.
