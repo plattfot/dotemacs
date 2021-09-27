@@ -691,8 +691,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** The Silver Searcher
     #+begin_src emacs-lisp
-      (use-package ag
-	:pin melpa-stable)
+      (setup ag
+        (:needs "ag"))
     #+end_src
 *** notmuch
 
