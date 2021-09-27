@@ -545,10 +545,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] and [[h
     #+end_src
 *** Markdown
     #+begin_src emacs-lisp
-      (use-package markdown-mode
-       	:config
-        (add-hook 'json-mode-hook #'dotemacs-show-trailing-whitespace-if-writable)
-        :pin melpa-stable)
+      (setup markdown-mode
+        (:hook dotemacs-show-trailing-whitespace-if-writable))
     #+end_src
 *** Meson
    #+begin_src emacs-lisp
