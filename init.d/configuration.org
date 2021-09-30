@@ -997,30 +997,29 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
      #+end_src
 **** Agenda
      #+begin_src emacs-lisp
-       (use-package org-agenda
-         :ensure nil
-         :custom
-         (org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
+       (setup org-agenda
+         (:with-mode org-agenda-finalize
+           (:hook (lambda () (cd org-roam-directory))))
+         (:option
+          org-agenda-prefix-format '((agenda . " %-2i %?-12t% s")
                                      (todo . " %-2i ")
                                      (tags . " %i ")
-                                     (search . " %i ")))
-         (org-agenda-category-icon-alist
-          `(
-            ("backup" ,(list (all-the-icons-material "backup" :height 1.2)) nil nil :ascent center)
-            ("bug" ,(list (all-the-icons-octicon "bug" :height 1.2)) nil nil :ascent center)
-            ("computer" ,(list (all-the-icons-faicon "server" :height 1.2)) nil nil :ascent center)
-            ("economy" ,(list (all-the-icons-material "euro_symbol" :height 1.2)) nil nil :ascent center)
-            ("emacs" ,(list (all-the-icons-fileicon "emacs" :height 1.2)) nil nil :ascent center)
-            ("exercise" ,(list (all-the-icons-material "fitness_center" :height 1.2)) nil nil :ascent center)
-            ("home" ,(list (all-the-icons-faicon "home" :height 1.2)) nil nil :ascent center)
-            ("keyboard" ,(list (all-the-icons-material "keyboard" :height 1.2)) nil nil :ascent center)
-            ("misc" ,(list (all-the-icons-octicon "inbox" :height 1.2)) nil nil :ascent center)
-            ("photo" ,(list (all-the-icons-material "camera_roll" :height 1.2)) nil nil :ascent center)
-            ("project" ,(list (all-the-icons-faicon "flask" :height 1.2)) nil nil :ascent center)
-            ("task" ,(list (all-the-icons-faicon "question-circle-o" :height 1.2)) nil nil :ascent center)
-            ))
-         :config
-         (add-hook 'org-agenda-finalize-hook (lambda () (cd org-roam-directory))))
+                                     (search . " %i "))
+          org-agenda-category-icon-alist
+           `(
+             ("backup" ,(list (all-the-icons-material "backup" :height 1.2)) nil nil :ascent center)
+             ("bug" ,(list (all-the-icons-octicon "bug" :height 1.2)) nil nil :ascent center)
+             ("computer" ,(list (all-the-icons-faicon "server" :height 1.2)) nil nil :ascent center)
+             ("economy" ,(list (all-the-icons-material "euro_symbol" :height 1.2)) nil nil :ascent center)
+             ("emacs" ,(list (all-the-icons-fileicon "emacs" :height 1.2)) nil nil :ascent center)
+             ("exercise" ,(list (all-the-icons-material "fitness_center" :height 1.2)) nil nil :ascent center)
+             ("home" ,(list (all-the-icons-faicon "home" :height 1.2)) nil nil :ascent center)
+             ("keyboard" ,(list (all-the-icons-material "keyboard" :height 1.2)) nil nil :ascent center)
+             ("misc" ,(list (all-the-icons-octicon "inbox" :height 1.2)) nil nil :ascent center)
+             ("photo" ,(list (all-the-icons-material "camera_roll" :height 1.2)) nil nil :ascent center)
+             ("project" ,(list (all-the-icons-faicon "flask" :height 1.2)) nil nil :ascent center)
+             ("task" ,(list (all-the-icons-faicon "question-circle-o" :height 1.2)) nil nil :ascent center)
+             )))
      #+end_src
 
 **** Super agenda
