@@ -658,10 +658,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package marginalia-emprise
-        :after (emprise marginalia)
-        :config
-        (add-to-list 'marginalia-annotator-registry '(emprise marginalia-emprise-annotate)))
+      (setup marginalia-emprise
+        (eval-after-load 'emprise
+          '(eval-after-load 'marginalia
+             '(add-to-list 'marginalia-annotator-registry '(emprise marginalia-emprise-annotate)))))
     #+end_src
 
 *** Magit
