@@ -654,7 +654,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Emprise
     #+begin_src emacs-lisp
-      (use-package emprise)
+      (setup emprise)
     #+end_src
 
     #+begin_src emacs-lisp
