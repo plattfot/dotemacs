@@ -977,9 +977,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** Notmuch integration
      Enable linking notmuch emails in org
      #+begin_src emacs-lisp
-       (use-package ol-notmuch
-         :after org
-         :ensure nil)
+       (setup (:require ol-notmuch))
      #+end_src
 **** Man integration
      Enable linking manpages in org
