@@ -1,4 +1,6 @@
 #+TITLE: Emacs configuration
+#+PROPERTY: header-args:emacs-lisp :lexical t
+
 Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f56513ea4df4d][hrs]] and [[https://github.com/pierre-lecocq/emacs.d/tree/literal][pierre-lecocq]] org configs
 
 * General
