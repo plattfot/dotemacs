@@ -824,7 +824,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     =org-src-fontify-natively=.
 
     The variable =org-directory= is set in =.custom.el=, as it changes
-    from compute to computer at the moment.
+    from computer to computer at the moment.
 
     #+begin_src emacs-lisp
       (defun plt/org-fetch-agenda-files ()
