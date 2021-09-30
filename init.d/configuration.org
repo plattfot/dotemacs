@@ -817,8 +817,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Org
 
-    Mostly from [[https://github.com/hrs/dotfiles/tree/master/emacs.d][hrs]] config file but converted to use-package.
-
     Use a little downward-pointing arrow instead of the usual ellipsis
     (=...=) when folded.
 
