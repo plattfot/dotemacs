@@ -982,9 +982,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** Man integration
      Enable linking manpages in org
      #+begin_src emacs-lisp
-       (use-package ol-man
-         :after org
-         :ensure nil)
+       (setup (:require ol-man))
      #+end_src
 
 **** Custom org templates
