@@ -1176,14 +1176,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
      =ivy-bibtex=.
 
      #+begin_src emacs-lisp
-       (use-package ivy-bibtex
-         :ensure nil
-         :bind ("C-c b" . ivy-bibtex)
-         :config
-         (setf bibtex-completion-bibliography `(,plt/paper-bibtex)
-               bibtex-completion-library-path `(,plt/paper-directory)
-               bibtex-completion-notes-path org-roam-directory
-               bibtex-completion-notes-template-multiple-files (format"\
+       (setup ivy-bibtex
+         (:global "C-c b" ivy-bibtex)
+         (:option bibtex-completion-bibliography `(,plt/paper-bibtex)
+                  bibtex-completion-library-path `(,plt/paper-directory)
+                  bibtex-completion-notes-path org-roam-directory
+                  bibtex-completion-notes-template-multiple-files (format"\
               ,#+TITLE: ${title}
               ,#+ROAM_KEY: cite:${=key=}
               ,* Notes
