@@ -1028,49 +1028,48 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
      everything is in the same file.
 
      #+begin_src emacs-lisp
-       (use-package org-super-agenda
-         :after (org)
-         :config
-         (defun plt-strip-org-agenda-header (header)
-           "Remove todo, priority and tags from HEADER."
-           ;; Hardcode the todo keywords as I cannot figure out how to use
-           ;; them from `org-todo-keywords'. But something causing it to
-           ;; expand to empty when passing it via the :transformer.
-           (let* ((remove-re (rx (or "TODO" "WAIT" "CANCELLED" "DONE" ;; todo
-                                     (seq"[#"(any "A" "B" "C")"]") ;; priority
-                                     (seq ":" (+ (any ":" alnum)) (+":")) ;; tags
-                                     )))
-                  ;; Need to split it in two, otherwise the filter will
-                  ;; remove the icons in the prefix.
-                  (prefix (substring header 0 14))
-                  (rest (->> (substring header 14)
-                             (s-split " ")
-                             (--filter (not (s-matches? remove-re it)))
-                             (s-join " " )
-                             (s-trim-right ))))
-             (s-concat prefix rest)))
-         (setq org-super-agenda-groups
-               '((:name "Idag"
-                        :time-grid t)
-                 (:name "Klart" :todo ("DONE" "CANCELLED") :order 200
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Avakta" :todo "WAIT" :order 100
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Låg prio" :priority "B" :order 50
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Tid över" :priority "C" :order 40
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Hög prio" :priority "A" :order 10
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Projekt" :tag "projekt" :order 6
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Att göra" :todo "TODO" :order 5
-                        :transformer plt-strip-org-agenda-header)
-                 (:name "Årsdagar" :tag "årsdag" :order 1
-                        :transformer plt-strip-org-agenda-header)
-                 ))
-         (org-super-agenda-mode)
-         :pin melpa)
+       (setup org-super-agenda
+         (with-eval-after-load 'org
+           (progn
+             (defun plt-strip-org-agenda-header (header)
+               "Remove todo, priority and tags from HEADER."
+               ;; Hardcode the todo keywords as I cannot figure out how to use
+               ;; them from `org-todo-keywords'. But something causing it to
+               ;; expand to empty when passing it via the :transformer.
+               (let* ((remove-re (rx (or "TODO" "WAIT" "CANCELLED" "DONE" ;; todo
+                                         (seq"[#"(any "A" "B" "C")"]") ;; priority
+                                         (seq ":" (+ (any ":" alnum)) (+":")) ;; tags
+                                         )))
+                      ;; Need to split it in two, otherwise the filter will
+                      ;; remove the icons in the prefix.
+                      (prefix (substring header 0 14))
+                      (rest (->> (substring header 14)
+                                 (s-split " ")
+                                 (--filter (not (s-matches? remove-re it)))
+                                 (s-join " " )
+                                 (s-trim-right ))))
+                 (s-concat prefix rest)))
+             (:option org-super-agenda-groups
+                      '((:name "Idag"
+                               :time-grid t)
+                        (:name "Klart" :todo ("DONE" "CANCELLED") :order 200
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Avakta" :todo "WAIT" :order 100
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Låg prio" :priority "B" :order 50
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Tid över" :priority "C" :order 40
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Hög prio" :priority "A" :order 10
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Projekt" :tag "projekt" :order 6
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Att göra" :todo "TODO" :order 5
+                               :transformer plt-strip-org-agenda-header)
+                        (:name "Årsdagar" :tag "årsdag" :order 1
+                               :transformer plt-strip-org-agenda-header)
+                        ))
+             (org-super-agenda-mode))))
      #+end_src
 **** Org-roam
      "A plain-text personal knowledge management system" - [[https://www.orgroam.com/][orgroam.com]]
