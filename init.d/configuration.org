@@ -1545,10 +1545,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     your completion candidates." - [[https://github.com/minad/marginalia][github.com]]
 
     #+begin_src emacs-lisp
-      (use-package marginalia
-        ;; :custom
-        ;; (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light))
-        :init
+      (setup marginalia
         (marginalia-mode))
     #+end_src
 *** Consult
