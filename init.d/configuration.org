@@ -858,7 +858,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
         (:file-match "\\.org\\'")
         (:global "C-c l" org-store-link
                  "C-c a" org-agenda)
-        :config
+        (:bind "C-M-i" completion-at-point)
         ;; Make sure the agenda files are up to date when rebuilding
         (advice-add 'org-agenda-redo-all :before 'plt/org-agenda-refresh-files)
         (:hook dotemacs-show-trailing-whitespace)
@@ -1074,16 +1074,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** Org-roam
      "A plain-text personal knowledge management system" - [[https://www.orgroam.com/][orgroam.com]]
      #+begin_src emacs-lisp
-       (use-package org-roam
-         :ensure nil
-         :bind (("C-c v r" . org-roam-buffer-toggle)
-                ("C-c v f" . org-roam-node-find)
-                ("C-c v i" . org-roam-node-insert)
-                :map org-mode-map
-                ("C-M-i"    . completion-at-point))
-         :custom
-         (org-roam-directory (concat (file-name-as-directory org-directory) "roam"))
-         (org-roam-capture-templates
+       (setup org-roam
+         (:global "C-c v r" org-roam-buffer-toggle
+                  "C-c v f" org-roam-node-find
+                  "C-c v i" org-roam-node-insert)
+         (:option
+          org-roam-v2-ack t
+          org-roam-directory (concat (file-name-as-directory org-directory) "roam")
+          org-roam-capture-templates
           '(
             ("d" "default" plain "%?"
              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
@@ -1169,12 +1167,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
        ,#+filetags: :öl:")
              :empty-lines-before 1
              :unnarrowed t)))
-         :init
-         (setf org-roam-v2-ack t)
-         :config
-         (org-roam-setup))
+         (org-roam-db-autosync-mode))
      #+end_src
-     Config initially based on the example config in their README.md on [[https://github.com/org-roam/org-roam][github]].
 **** Org-roam-bibtex
      #+begin_src emacs-lisp
        (use-package org-roam-bibtex
