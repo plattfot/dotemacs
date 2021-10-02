@@ -1207,14 +1207,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
      Is workaround for some bug in the code when it downloads papers.
 
      #+begin_src emacs-lisp
-       (use-package org-ref
-         :ensure nil
-         :config
-         (setf wt/orcb-%-replacement-string orcb-%-replacement-string
-               org-ref-bibliography-notes org-roam-directory
-               org-ref-default-bibliography `(,plt/paper-bibtex)
-               org-ref-pdf-directory plt/paper-directory
-               reftex-default-bibliography org-ref-default-bibliography))
+       (setup org-ref
+         (:option org-ref-bibliography-notes org-roam-directory
+                  org-ref-default-bibliography `(,plt/paper-bibtex)
+                  org-ref-pdf-directory plt/paper-directory
+                  reftex-default-bibliography org-ref-default-bibliography))
      #+end_src
      Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
 **** Org-ql
