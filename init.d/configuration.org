@@ -1169,38 +1169,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
              :unnarrowed t)))
          (org-roam-db-autosync-mode))
      #+end_src
-**** Org-roam-bibtex
-     #+begin_src emacs-lisp
-       (use-package org-roam-bibtex
-         :ensure nil
-         :disabled t
-         :after org-roam
-         :hook (org-roam-mode . org-roam-bibtex-mode)
-         :config
-         (setf orb-preformat-keywords
-               '("=key=" "title" "url" "file" "author-or-editor" "keywords")
-               orb-templates
-               '(("r" "ref" plain (function org-roam-capture--get-point)
-                  ""
-                  :file-name "${slug}"
-                  :head "\
-       #+TITLE: ${=key=}: ${title}
-       #+ROAM_KEY: ${ref}
-
-       - tags ::
-       - keywords :: ${keywords}
-
-       * ${title}
-         :PROPERTIES:
-         :Custom_ID: ${=key=}
-         :URL: ${url}
-         :AUTHOR: ${author-or-editor}
-         :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")
-         :NOTER_PAGE:
-         :END:
-
-       " :unnarrowed t))))
-     #+end_src
 **** Org-ref
 
      Dependency of =org-ref=, would have just put the settings in the
