@@ -1332,37 +1332,36 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Flyspell
     #+begin_src emacs-lisp
-      (use-package flyspell
-        :bind (:map flyspell-mode-map
-                    ("<f6>" . plt/ispell-change-dictionary))
-        :hook ((org-mode . flyspell-mode)
-               (prog-mode . flyspell-prog-mode))
-        :delight
-        (flyspell-mode " ✏")
-        :custom
-        (ispell-program-name "aspell")
-        (aspell-dictionary "en_US-wo_accents")
-        (ispell-dictionary "en_US-wo_accents")
-        :config
-        (require 'transient)
-        (transient-define-prefix plt/ispell-change-dictionary ()
-                                 "Change dictionary to"
-                                 [("s" "Swedish" plt/ispell-svenska)
-                                  ("u" "English (US)" plt/ispell-en-us)
-                                  ("c" "English (CA)" plt/ispell-en-ca)
-                                  ])
-
-        (defmacro plt/make-ispell-change-dictionary (dictionary &optional prefix)
-          "Create function that change ispell dictionary to DICTIONARY.
+      (setup flyspell
+        (:bind "<f6>" plt/ispell-change-dictionary)
+        (:with-mode org-mode
+          (:hook flyspell-mode))
+        (:with-mode prog-mode
+          (:hook flyspell-prog-mode))
+        (:option
+         ispell-program-name "aspell"
+         aspell-dictionary "en_US-wo_accents"
+         ispell-dictionary "en_US-wo_accents")
+        (with-eval-after-load 'flyspell
+          (progn
+            (require 'transient)
+            (transient-define-prefix plt/ispell-change-dictionary ()
+              "Change dictionary to"
+              [("s" "Swedish" plt/ispell-svenska)
+               ("u" "English (US)" plt/ispell-en-us)
+               ("c" "English (CA)" plt/ispell-en-ca)
+               ])
+            (defmacro plt/make-ispell-change-dictionary (dictionary &optional prefix)
+              "Create function that change ispell dictionary to DICTIONARY.
       PREFIX is an optional name used in the function name, if not set
       it will use the DICTIONARY."
-          (list 'defun (intern (format "plt/ispell-%s" (or prefix dictionary))) ()
-                (format "Change ispell dictionary to %s." dictionary)
-                (list 'interactive)
-                (list 'ispell-change-dictionary dictionary)))
-        (plt/make-ispell-change-dictionary "svenska")
-        (plt/make-ispell-change-dictionary "en_US-wo_accents" "en-us")
-        (plt/make-ispell-change-dictionary "en_CA-wo_accents" "en-ca"))
+              (list 'defun (intern (format "plt/ispell-%s" (or prefix dictionary))) ()
+                    (format "Change ispell dictionary to %s." dictionary)
+                    (list 'interactive)
+                    (list 'ispell-change-dictionary dictionary)))
+            (plt/make-ispell-change-dictionary "svenska")
+            (plt/make-ispell-change-dictionary "en_US-wo_accents" "en-us")
+            (plt/make-ispell-change-dictionary "en_CA-wo_accents" "en-ca"))))
     #+end_src
 
     #+begin_src emacs-lisp
