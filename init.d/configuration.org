@@ -968,8 +968,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                           (thread-last message
                             ;; Remove links
                             (replace-regexp-in-string
-                             (rx "[[" (one-or-more graph) "]["
-                                 (group (one-or-more (any graph blank))) "]]") "\\1")
+                             (rx "[[" (+? graph) "]["
+                                 (group (+? (any graph blank))) "]]") "\\1")
                             ;; Remove trailing tags
                             (replace-regexp-in-string
                              (rx (one-or-more blank) ":" (one-or-more graph) ":" eol) "")))))))))
