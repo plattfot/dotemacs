@@ -1219,13 +1219,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
      Use pretty bullet points instead of asterisk
      #+begin_src emacs-lisp
-       (use-package org-bullets
-         :after (org)
-         :init
-         (add-hook 'org-mode-hook
-                   (lambda ()
-                     (org-bullets-mode t)))
-         :pin melpa-stable)
+       (setup org-bullets
+         (:with-mode org-mode
+           (:hook (lambda () (org-bullets-mode t)))))
      #+end_src
 
      *NOTE:*
