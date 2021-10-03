@@ -1521,10 +1521,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     keymaps that defines imenu, easier to just alias the function.
 
     #+begin_src emacs-lisp
-      (use-package consult
-        :bind (("C-M-g" . consult-ripgrep)
-               ("C-c ;" . consult-flymake))
-        :init
+      (setup consult
+        (:global "C-M-g" consult-ripgrep
+                 "C-c ;" consult-flymake)
         (defalias 'imenu 'consult-imenu))
     #+end_src
 *** Embark
