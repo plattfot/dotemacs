@@ -1258,9 +1258,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Enable whitespace mode for diff-mode to see trailing whitespace in
     diffs.
     #+begin_src emacs-lisp
-      (use-package whitespace
-        :ensure nil
-        :hook (diff-mode . whitespace-mode))
+      (setup diff
+        (:hook whitespace-mode))
     #+end_src
 *** Ediff
     #+begin_src emacs-lisp
