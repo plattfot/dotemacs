@@ -1630,8 +1630,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     errors as others might not share the same idea about warnings.
 
     #+begin_src emacs-lisp
-      (use-package compile
-        :init
+      (setup compile
+        (:also-load ansi-color)
+        (:option compilation-scroll-output t)
         ;; Reuse the *compilaiton* window if open if not pick another window
         ;; in another frame.
         (add-to-list 'display-buffer-alist
@@ -1639,16 +1640,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                        (display-buffer-reuse-window display-buffer-use-some-frame)
                        (reusable-frames      . visible)
                        (inhibit-switch-frame . t)
-                       (inhibit-same-window  . t)
-                       ))
-        :config
-        (use-package ansi-color)
-        (setf compilation-scroll-output t)
-        (add-hook 'compilation-filter-hook
-                  (lambda ()
-                    (toggle-read-only)
-                    (ansi-color-apply-on-region compilation-filter-start (point))
-                    (toggle-read-only))))
+                       (inhibit-same-window  . t)))
+        (:with-mode 'compilation-filter
+          (:hook
+           (lambda ()
+             (toggle-read-only)
+             (ansi-color-apply-on-region compilation-filter-start (point))
+             (toggle-read-only)))))
     #+end_src
 *** Version Control
     Don't ask when following a symlink to a vc directory.
