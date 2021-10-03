@@ -1270,10 +1270,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
 
     #+begin_src emacs-lisp
-      (use-package eshell
-        :config
-        (setq-default
-         eshell-prompt-function
+      (setup eshell
+        (:option eshell-prompt-function
          (lambda ()
            (let* ((pwd (eshell/pwd))
                   (remote (file-remote-p pwd))
@@ -1296,8 +1294,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          eshell-prefer-lisp-functions nil
          eshell-destroy-buffer-when-process-dies t
          eshell-cmpl-cycle-completions nil)
-        (add-hook
-         'eshell-mode-hook
+        (:hook
          (lambda ()
            (eshell/alias "ff" "find-file $1")
            (eshell/alias "ffw" "find-file-other-window $1")
@@ -1305,13 +1302,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
         ;; Cannot use :bind to set keys for some reason
         ;; Make up and down navigate the buffer, similar to shell.
         ;; And jump betwen prompts with C-M-{p,n}
-        (add-hook 'eshell-mode-hook
-                  (lambda ()
-                    (mapc (lambda (key)
-                            (define-key eshell-mode-map key nil))
-                          '([up] [C-up] [down] [C-down]))
-                    (define-key eshell-mode-map (kbd "C-M-p") 'eshell-previous-prompt)
-                    (define-key eshell-mode-map (kbd "C-M-n") 'eshell-next-prompt))))
+        (:hook
+         (lambda ()
+           (mapc (lambda (key)
+                   (define-key eshell-mode-map key nil))
+                 '([up] [C-up] [down] [C-down]))
+           (define-key eshell-mode-map (kbd "C-M-p") 'eshell-previous-prompt)
+           (define-key eshell-mode-map (kbd "C-M-n") 'eshell-next-prompt))))
     #+end_src
 
     #+begin_src emacs-lisp
