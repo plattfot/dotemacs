@@ -1244,18 +1244,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Settings for dired.
     Source for the afs-dired-find-file function: [[https://stackoverflow.com/questions/1110118/in-emacs-dired-how-to-find-visit-multiple-files][Source]]
     #+begin_src emacs-lisp
-      (use-package dired
-       	:ensure nil
-       	;; Map afs-dired-find-file to F
-       	:bind (:map dired-mode-map
-               ("F" . afs-dired-find-file))
-       	:config
-       	(defun afs-dired-find-file (&optional arg)
+      (setup dired
+        ;; Map plt/dired-find-file to F
+        (:bind "F" plt/dired-find-file)
+        (defun plt/dired-find-file (&optional arg)
              "Open each of the marked files, or the file under the
            point, or when prefix arg, the next N files "
              (interactive "P")
-             (let ((fn-list (dired-get-marked-files nil arg)))
-               (mapc 'find-file fn-list))))
+             (seq-each 'find-file (dired-get-marked-files nil arg))))
     #+end_src
 *** Diff
 
