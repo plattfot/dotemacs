@@ -1263,10 +1263,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Ediff
     #+begin_src emacs-lisp
-      (use-package ediff
-        :ensure nil
-        :config
-        (setf ediff-window-setup-function 'ediff-setup-windows-plain))
+      (setup ediff
+        (:option ediff-window-setup-function 'ediff-setup-windows-plain))
     #+end_src
 *** Eshell
     Using some eshell settings from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
