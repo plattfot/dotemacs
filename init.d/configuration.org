@@ -1660,9 +1660,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     builder.
 
     #+begin_src emacs-lisp
-      (use-package re-builder
-        :config
-        (setq-default reb-re-syntax 'string))
+      (setup re-builder
+        (:option reb-re-syntax 'string))
     #+end_src
 *** evil
     Vim bindings are a lot easier to use on the phone than normal
