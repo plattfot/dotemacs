@@ -1607,15 +1607,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Jump between windows using the arrow keys instead of cycling with
     "C-x o". Note that this Doesn't work in org mode.
 
-    *TIP:* If using i3wm. Use frames instead of windows then use i3's
-     navigation instead.
+    *TIP:* If using i3wm/sway. Use frames instead of windows and use
+    i3/sway's navigation instead.
     #+begin_src emacs-lisp
-      (use-package windmove
-        :bind (([M-left]  . windmove-left)  ; move to left window
-               ([M-right] . windmove-right) ; move to right window
-               ([M-up]    . windmove-up)    ; move to upper window
-               ([M-down]  . windmove-down)) ; move to downer window
-        :pin melpa-stable)
+      (setup windmove
+        (:global "<M-left>"  windmove-left   ; move to left window
+                 "<M-right>" windmove-right  ; move to right window
+                 "<M-up>"    windmove-up     ; move to upper window
+                 "<M-down>"  windmove-down)) ; move to downer window
     #+end_src
 *** Compilation
     Ansi colors in compilation window see [[https://stackoverflow.com/questions/13397737/ansi-coloring-in-compilation-mode][link]]
