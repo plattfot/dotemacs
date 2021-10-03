@@ -376,10 +376,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          (let* ((file (buffer-file-name))
                 (filename (file-name-nondirectory file))
                 (other-files
-                 (->> (project-files (project-current nil))
-                      (--filter (string-suffix-p filename it))
-                      (--filter (not (string= file it)))
-                      )))
+                 (seq-filter (lambda (it) (and (string-suffix-p filename it) (not (string= file it))))
+                             (project-files (project-current nil)))))
            (if other-files
                (find-file (car other-files))
              (error "No other %s found" filename))))
