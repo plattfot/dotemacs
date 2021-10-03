@@ -1651,7 +1651,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Version Control
     Don't ask when following a symlink to a vc directory.
     #+begin_src emacs-lisp
-      (setq vc-follow-symlinks t)
+      (setup vcs
+        (:option vc-follow-symlinks t))
     #+end_src
 *** Regexp builder
     Avoid escape-hell with regex builder, can toggle between styles
