@@ -1471,24 +1471,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Orderless
     More powerful completion style than the built in.
     #+begin_src emacs-lisp
-      (use-package orderless
-        :after vertico
-        :config
+      (setup orderless
         ;; https://github.com/minad/vertico/issues/68#issuecomment-873393677
         (defun basic-remote-try-completion (string table pred point)
           (and (vertico--remote-p string)
                (completion-basic-try-completion string table pred point)))
-
         (defun basic-remote-all-completions (string table pred point)
           (and (vertico--remote-p string)
                (completion-basic-all-completions string table pred point)))
-
         (add-to-list
          'completion-styles-alist
          '(basic-remote basic-remote-try-completion basic-remote-all-completions nil))
-
-        (setq completion-styles '(orderless)
-              completion-category-overrides '((file (styles basic-remote partial-completion)))))
+        (:option completion-styles '(orderless)
+                 completion-category-overrides '((file (styles basic-remote partial-completion)))))
     #+end_src
 *** Vertico
 
