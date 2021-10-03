@@ -1594,10 +1594,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Set the ssh to be the default method for tramp.
     If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
     #+begin_src emacs-lisp
-      (use-package tramp
-        :config
-        (setq tramp-default-method "ssh")
-        :pin gnu)
+      (setup tramp
+        (:option tramp-default-method "ssh"))
     #+end_src
 *** Sudo edit
     Sudo edit the current file
