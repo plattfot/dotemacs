@@ -1466,8 +1466,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** wgrep
      Power editing with =occur= buffer.
      #+begin_src emacs-lisp
-       (use-package wgrep
-         :pin melpa-stable)
+       (setup wgrep)
      #+end_src
 *** Orderless
     More powerful completion style than the built in.
