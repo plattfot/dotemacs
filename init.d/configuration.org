@@ -1600,9 +1600,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Sudo edit
     Sudo edit the current file
     #+begin_src emacs-lisp
-      (use-package sudo-edit
-        :bind ("C-c C-r" . sudo-edit)
-        :pin melpa)
+      (setup sudo-edit
+        (:global "C-c C-r" sudo-edit))
     #+end_src
 *** Windmove
     Jump between windows using the arrow keys instead of cycling with
