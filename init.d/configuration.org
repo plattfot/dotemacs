@@ -391,11 +391,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                 (ext (file-name-extension file))
                 (project (project-current nil))
                 (filename (format "%s.%s" (file-name-base file) "log"))
-                (other-files (->> (directory-files-recursively
-                                   (car (project-roots project))
-                                   (regexp-quote filename))
-                                  (--filter (string-suffix-p "tests" (directory-file-name
-                                                                      (file-name-directory it)))))))
+                (other-files (seq-filter
+                              (lambda (it)
+                                (string-suffix-p
+                                 "tests"
+                                 (directory-file-name (file-name-directory it))))
+                              (directory-files-recursively
+                               (car (project-roots project))
+                               (regexp-quote filename)))))
            (if other-files
                (view-file (car other-files))
              (error "No %s found" filename))))
