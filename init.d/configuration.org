@@ -1459,11 +1459,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
 
     #+begin_src emacs-lisp
-      (use-package ivy
-        :ensure t
-        :config
-        (setq ivy-count-format "(%d/%d) ")
-        :pin melpa)
+      (setup ivy
+        (:option ivy-count-format "(%d/%d) "))
     #+end_src
 
 **** wgrep
