@@ -1584,13 +1584,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package embark-consult
-        :after (embark consult)
-        :demand t ; only necessary if you have the hook below
+      (setup embark-consult
         ;; if you want to have consult previews as you move around an
         ;; auto-updating embark collect buffer
-        :hook
-        (embark-collect-mode . embark-consult-preview-minor-mode))
+        (:with-mode embark-collect-mode
+          (:hook embark-consult-preview-minor-mode)))
     #+end_src
 *** Tramp
     Set the ssh to be the default method for tramp.
