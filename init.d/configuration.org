@@ -1676,39 +1676,39 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** elfeed
     RSS/Atom reader
     #+begin_src emacs-lisp
-      (use-package elfeed
-        :bind (("C-c n" . 'elfeed)
-               :map elfeed-search-mode-map
-               ;; Make sure the db is saved
-               ("Q" . plt/elfeed-save-db-and-bury)
-               ("q" . plt/elfeed-save-db-and-bury)
-               ;; Use similar bindings as notmuch
-               ("j" . plt/elfeed-jump-popup)
-               ("l" . elfeed-search-untag-all-unread)
-               ("o" . elfeed-search-tag-all-unread)
-               ("t" . (lambda ()
-                        (interactive)
-                        (-each (elfeed-search-selected)
-                          (lambda (entry)
-                            (if (member 'later (elfeed-entry-tags entry))
-                                (elfeed-untag entry 'later)
-                              (elfeed-tag entry 'later))
-                            (elfeed-search-update-entry entry)))))
-               ;; Mark all as read
-               ("L" . (lambda ()
-                        (interactive)
-                        (mark-whole-buffer)
-                        (elfeed-search-untag-all-unread)))
-               ;; Mark all as unread
-               ("O" . (lambda ()
-                        (interactive)
-                        (mark-whole-buffer)
-                        (elfeed-search-tag-all-unread)))
-               ("v" . plt/elfeed-view-mpv)
-               ("A" . plt/elfeed-emms-add-url)
-               ("d" . plt/elfeed-arxiv-download)
-               )
-        :config
+      (setup elfeed
+        (:global "C-c n" 'elfeed)
+        (:with-mode elfeed-search-mode
+          (:bind
+           ;; Make sure the db is saved
+           "Q" plt/elfeed-save-db-and-bury
+           "q" plt/elfeed-save-db-and-bury
+           ;; Use similar bindings as notmuch
+           "j" plt/elfeed-jump-popup
+           "l" elfeed-search-untag-all-unread
+           "o" elfeed-search-tag-all-unread
+           "t" (lambda ()
+                 (interactive)
+                 (seq-each (lambda (entry)
+                             (if (member 'later (elfeed-entry-tags entry))
+                                 (elfeed-untag entry 'later)
+                               (elfeed-tag entry 'later))
+                             (elfeed-search-update-entry entry))
+                           (elfeed-search-selected)))
+           ;; Mark all as read
+           "L" (lambda ()
+                 (interactive)
+                 (mark-whole-buffer)
+                 (elfeed-search-untag-all-unread))
+           ;; Mark all as unread
+           "O" (lambda ()
+                 (interactive)
+                 (mark-whole-buffer)
+                 (elfeed-search-tag-all-unread))
+           "v" plt/elfeed-view-mpv
+           "A" plt/elfeed-emms-add-url
+           "d" plt/elfeed-arxiv-download
+           ))
         (require 'transient)
         (eval-when-compile (require 'elfeed))
         (defun plt/elfeed-youtube-feed (channel-id)
@@ -1734,10 +1734,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
             (error "FEEDS must be a list or a string"))
 
           (let ((tags (if (listp tags) tags (list tags))))
-            (->> feeds
-                 (--map (if (listp it)
-                            `(,(funcall transform (car it)) ,@tags ,@(cdr it))
-                          `(,(funcall transform it) ,@tags))))))
+            (seq-map (lambda (it)
+                       (if (listp it)
+                           `(,(funcall transform (car it)) ,@tags ,@(cdr it))
+                         `(,(funcall transform it) ,@tags)))
+                     feeds)))
 
         ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
         (defun plt/elfeed-save-db-and-bury ()
@@ -1769,14 +1770,15 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                         links for more info about the search query:
                         https://arxiv.org/help/api/user-manual#Architecture
                         https://arxiv.org/help/api/user-manual#query_details"
-          (s-join "&" `(,(format "http://export.arxiv.org/api/query?search_query=%s"
+          (string-join `(,(format "http://export.arxiv.org/api/query?search_query=%s"
                                  (if (listp query)
-                                     (s-join "+" query)
+                                     (string-join query "+")
                                    query))
                         "start=0"
                         ,(format "max_results=%s" max_results)
                         "sortBy=submittedDate"
-                        "sortOrder=descending")))
+                        "sortOrder=descending")
+                       "&"))
 
         (cl-defstruct (arxiv (:constructor make--arxiv))
           "Structure containing information for an ArXiv feed."
@@ -1804,7 +1806,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                                ))
 
         (defun plt/elfeed-search-update-arxiv (&rest args)
-          (mapc
+          (seq-each
            (lambda (it)
              (let ((feed (elfeed-db-get-feed (arxiv-url it))))
                (setf (elfeed-feed-title feed) (arxiv-title it))))
@@ -1817,94 +1819,92 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
           (plt/make-elfeed-set-filter later (format "+later"))
           (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
           (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
-
-        (add-hook 'elfeed-new-entry-hook
-                  (elfeed-make-tagger :before "1 week ago"
-                                      :remove 'unread))
-        (setf elfeed-search-filter "@6-months-ago +unread -paper"
-              elfeed-feeds
-              `(,@(plt/elfeed-group-feeds
-                   :tags 'fun
-                   :feeds '(("https://rebusinla.wordpress.com/feed/" blog)
-                            "https://warpdrive.se/rss/"
-                            "https://xkcd.com/atom.xml"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'cg
-                   :feeds '("https://c0de517e.blogspot.com/feeds/posts/default"
-                            "https://animationphysics.wordpress.com/feed/"
-                            ("https://www.realtimerendering.com/blog/feed/" blog)
-                            "https://www.vfxblog.com/feed/"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'news
-                   :feeds '("https://www.fz.se/rss/fznews_rss20.xml"
-                            "https://rss.slashdot.org/Slashdot/slashdot"
-                            ("https://www.anandtech.com/rss/" nerd)
-                            "https://www.macrumors.com/macrumors.xml"
-                            ("https://www.sweclockers.com/feeds/news.xml" nerd)
-                            ("https://feeds.arstechnica.com/arstechnica/index/" nerd)
-                            "https://www.raspberrypi.org/feed"
-                            ("https://feeds.feedburner.com/TheHackersNews" nerd)))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'linux
-                   :feeds '(("https://www.phoronix.com/rss.php" news)
-                            ("https://lwn.net/headlines/newrss" news)
-                            ("https://www.gnu.org/software/guix/feeds/blog.atom" blog)
-                            "https://www.linuxjournal.com/node/feed"
-                            "https://www.archlinux.org/feeds/news/"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'keebs
-                   :feeds '("https://www.reddit.com/r/MechGroupBuys/.rss"
-                            "https://www.reddit.com/r/ErgoMechKeyboards/.rss"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'photo
-                   :feeds '("https://www.dpreview.com/feeds/news.xml"
-                            "https://nikonrumors.com/feed"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'emacs
-                   :feeds '("https://www.reddit.com/r/emacs/.rss"
-                            "https://karthinks.com/index.xml"
-                            "https://blog.tecosaur.com/tmio/rss.xml"
-                            "https://sachachua.com/blog/category/emacs-news/feed/"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'deals
-                   :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
-                ,@(plt/elfeed-group-feeds
-                   :tags 'youtube
-                   :transform 'plt/elfeed-youtube-feed
-                   :feeds '(("UCyaPf0E-PRRZH3UvvxNPeEw" music) ;; Avatar
-                            ("UCjR-qXRBNkysQ0Threo1Bfg" music) ;; Blackbriar
-                            ("UCMlGfpWw-RUdWX_JbLCukXg" talks) ;; Cppcon
-                            ("UC9NuJImUbaSNKiwF2bdSfAw" talks) ;; Fosdem
-                            ("UChIs72whgZI9w6d6FhwGGHA" news nerd) ;; Gamers Nexus
-                            ("UCAOiVaJJlH0Oduv48NN0mMA" music) ;; Ghost
-                            ("UChGDEluRG9r5kCecRAQTx_Q" talks) ;; HackersOnBoard
-                            ("UCTp0MnlTlmqC3NdrPzD08EA" news vlog) ;; Infidelamsterdam
-                            ("UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog) ;; Intermit.Tech
-                            ("UC1T4KJG1L_kTrP9RcdU5Csw" history) ;; Knyght Errant
-                            ("UCOWcZ6Wicl-1N34H0zZe38w" nerd linux) ;; Level1Linux
-                            ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
-                            ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
-                            ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
-                            ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
-                            ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
-                            ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
-                            ("UCaG4CBbZih6nLzD08bTBGfw" history) ;; Sabaton History
-                            ("UC3WIohkLkH4GFoMrrWVZZFA" history) ;; Skallagrim
-                            ("UCW64r1wPzfj0W1qbzzfCgFg" news nerd) ;; Sweclockers
-                            ("UCfK96bDQdSkKFAdqNv0YOmw" nerd fun) ;; Sweclockers Extra
-                            ("UCs6vRDdkZ8bP8Xt6WHbvrwA" music) ;; The Hu
-                            ("UCoxg3Kml41wE3IPq-PC-LQw" music) ;; Nuclear Blast Records
-                            ("UCnK9PxMozTYs8ELOvgMNKFA" music) ;; Century Media Records
-                            ("UCSldglor1t-5E-Gy2eBdMrA" music) ;; Metal Blade Records
-                            ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
-                            ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
-                            ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
-                            ("UCAiiOTio8Yu69c3XnR7nQBQ" talks emacs) ;; System Crafters
-                            ))
-                ,@(plt/elfeed-group-feeds
-                   :tags '(paper arxiv)
-                   :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
-                )))
+        (:with-mode elfeed-new-entry
+          (:hook (elfeed-make-tagger :before "1 week ago" :remove 'unread)))
+        (:option elfeed-search-filter "@6-months-ago +unread -paper"
+                 elfeed-feeds
+                 `(,@(plt/elfeed-group-feeds
+                      :tags 'fun
+                      :feeds '(("https://rebusinla.wordpress.com/feed/" blog)
+                               "https://warpdrive.se/rss/"
+                               "https://xkcd.com/atom.xml"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'cg
+                      :feeds '("https://c0de517e.blogspot.com/feeds/posts/default"
+                               "https://animationphysics.wordpress.com/feed/"
+                               ("https://www.realtimerendering.com/blog/feed/" blog)
+                               "https://www.vfxblog.com/feed/"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'news
+                      :feeds '("https://www.fz.se/rss/fznews_rss20.xml"
+                               "https://rss.slashdot.org/Slashdot/slashdot"
+                               ("https://www.anandtech.com/rss/" nerd)
+                               "https://www.macrumors.com/macrumors.xml"
+                               ("https://www.sweclockers.com/feeds/news.xml" nerd)
+                               ("https://feeds.arstechnica.com/arstechnica/index/" nerd)
+                               "https://www.raspberrypi.org/feed"
+                               ("https://feeds.feedburner.com/TheHackersNews" nerd)))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'linux
+                      :feeds '(("https://www.phoronix.com/rss.php" news)
+                               ("https://lwn.net/headlines/newrss" news)
+                               ("https://www.gnu.org/software/guix/feeds/blog.atom" blog)
+                               "https://www.linuxjournal.com/node/feed"
+                               "https://www.archlinux.org/feeds/news/"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'keebs
+                      :feeds '("https://www.reddit.com/r/MechGroupBuys/.rss"
+                               "https://www.reddit.com/r/ErgoMechKeyboards/.rss"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'photo
+                      :feeds '("https://www.dpreview.com/feeds/news.xml"
+                               "https://nikonrumors.com/feed"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'emacs
+                      :feeds '("https://www.reddit.com/r/emacs/.rss"
+                               "https://karthinks.com/index.xml"
+                               "https://blog.tecosaur.com/tmio/rss.xml"
+                               "https://sachachua.com/blog/category/emacs-news/feed/"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'deals
+                      :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
+                   ,@(plt/elfeed-group-feeds
+                      :tags 'youtube
+                      :transform 'plt/elfeed-youtube-feed
+                      :feeds '(("UCyaPf0E-PRRZH3UvvxNPeEw" music) ;; Avatar
+                               ("UCjR-qXRBNkysQ0Threo1Bfg" music) ;; Blackbriar
+                               ("UCMlGfpWw-RUdWX_JbLCukXg" talks) ;; Cppcon
+                               ("UC9NuJImUbaSNKiwF2bdSfAw" talks) ;; Fosdem
+                               ("UChIs72whgZI9w6d6FhwGGHA" news nerd) ;; Gamers Nexus
+                               ("UCAOiVaJJlH0Oduv48NN0mMA" music) ;; Ghost
+                               ("UChGDEluRG9r5kCecRAQTx_Q" talks) ;; HackersOnBoard
+                               ("UCTp0MnlTlmqC3NdrPzD08EA" news vlog) ;; Infidelamsterdam
+                               ("UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog) ;; Intermit.Tech
+                               ("UC1T4KJG1L_kTrP9RcdU5Csw" history) ;; Knyght Errant
+                               ("UCOWcZ6Wicl-1N34H0zZe38w" nerd linux) ;; Level1Linux
+                               ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
+                               ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
+                               ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
+                               ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
+                               ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
+                               ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
+                               ("UCaG4CBbZih6nLzD08bTBGfw" history) ;; Sabaton History
+                               ("UC3WIohkLkH4GFoMrrWVZZFA" history) ;; Skallagrim
+                               ("UCW64r1wPzfj0W1qbzzfCgFg" news nerd) ;; Sweclockers
+                               ("UCfK96bDQdSkKFAdqNv0YOmw" nerd fun) ;; Sweclockers Extra
+                               ("UCs6vRDdkZ8bP8Xt6WHbvrwA" music) ;; The Hu
+                               ("UCoxg3Kml41wE3IPq-PC-LQw" music) ;; Nuclear Blast Records
+                               ("UCnK9PxMozTYs8ELOvgMNKFA" music) ;; Century Media Records
+                               ("UCSldglor1t-5E-Gy2eBdMrA" music) ;; Metal Blade Records
+                               ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
+                               ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
+                               ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
+                               ("UCAiiOTio8Yu69c3XnR7nQBQ" talks emacs) ;; System Crafters
+                               ))
+                   ,@(plt/elfeed-group-feeds
+                      :tags '(paper arxiv)
+                      :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
+                   )))
     #+end_src
 
     Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]] and the
