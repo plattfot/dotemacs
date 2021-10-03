@@ -1234,12 +1234,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Buffer move
     Move buffers around between windows
     #+begin_src emacs-lisp
-      (use-package buffer-move
-        :bind ( ("<M-S-up>"    . buf-move-up)
-                ("<M-S-down>"  . buf-move-down)
-                ("<M-S-left>"  . buf-move-left)
-                ("<M-S-right>" . buf-move-right))
-        :pin melpa-stable)
+      (setup buffer-move
+        (:global "<M-S-up>"    buf-move-up
+                 "<M-S-down>"  buf-move-down
+                 "<M-S-left>"  buf-move-left
+                 "<M-S-right>" buf-move-right))
     #+end_src
 *** Dired
     Settings for dired.
