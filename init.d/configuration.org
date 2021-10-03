@@ -1570,15 +1570,12 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package embark
-        :bind
-        (("<f7>" . embark-act)
-         :map embark-buffer-map
-         ("c" . plt/embark-copy-buffer-file-name)
-         ("C" . plt/embark-copy-buffer-file-local-name))
-        :custom
-        (prefix-help-command #'embark-prefix-help-command)
-        :config
+      (setup embark
+        (:global "<f7>" embark-act)
+        (:with-mode embark-buffer
+          (:bind "c" plt/embark-copy-buffer-file-name
+                 "C" plt/embark-copy-buffer-file-local-name))
+        (:option prefix-help-command #'embark-prefix-help-command)
         ;; Hide the mode line of the Embark live/completions buffers
         (add-to-list 'display-buffer-alist
                      '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
