@@ -1365,8 +1365,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 
     #+begin_src emacs-lisp
-      (use-package flyspell-correct
-        :bind ("C-;" . flyspell-correct-wrapper))
+      (setup flyspell-correct
+        (:global "C-;" flyspell-correct-wrapper))
     #+end_src
 *** emms
     Using guix to handle emms, as I need the emms-print-metadata
