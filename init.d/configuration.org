@@ -2061,9 +2061,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
 *** Expand region
     #+begin_src emacs-lisp
-      (use-package expand-region
-       	:bind ("C-=" . er/expand-region)
-       	:pin melpa-stable)
+      (setup expand-region
+        (:global "C-=" er/expand-region))
     #+end_src
 *** Multiple cursors
     Keybindings for the mc package
