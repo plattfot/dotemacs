@@ -2208,10 +2208,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Add some extra functionality to multiple cursors inserting numbers
     and characters.
     #+begin_src emacs-lisp
-      (use-package mc-extra-extra
-        :after (multiple-cursors)
-        :ensure nil
-        :load-path "plugins")
+      (setup mc-extra-extra
+        (:load-from (expand-file-name "plugins" user-emacs-directory))
+        (with-eval-after-load 'multiple-cursors
+          (:require mc-extra-extra)))
     #+end_src
 *** newfile
     Functions for setting up a newfile in c++. I.e create the license
