@@ -425,7 +425,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Python
     Package name is python but the mode is python-mode
-    Set indentation to 2 white spaces.
+    Set indentation to 4 white spaces.
 
     #+begin_src emacs-lisp
       (setup python
