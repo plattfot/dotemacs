@@ -1662,24 +1662,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
            "j" plt/elfeed-jump-popup
            "l" elfeed-search-untag-all-unread
            "o" elfeed-search-tag-all-unread
-           "t" (lambda ()
-                 (interactive)
-                 (seq-each (lambda (entry)
-                             (if (member 'later (elfeed-entry-tags entry))
-                                 (elfeed-untag entry 'later)
-                               (elfeed-tag entry 'later))
-                             (elfeed-search-update-entry entry))
-                           (elfeed-search-selected)))
+           "t" plt/elfeed-toggle-later
            ;; Mark all as read
-           "L" (lambda ()
-                 (interactive)
-                 (mark-whole-buffer)
-                 (elfeed-search-untag-all-unread))
+           "L" plt/elfeed-mark-all-read
            ;; Mark all as unread
-           "O" (lambda ()
-                 (interactive)
-                 (mark-whole-buffer)
-                 (elfeed-search-tag-all-unread))
+           "O" plt/elfeed-mark-all-unread
            "v" plt/elfeed-view-mpv
            "A" plt/elfeed-emms-add-url
            "d" plt/elfeed-arxiv-download
@@ -1688,6 +1675,28 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
           (progn
             (require 'transient)
             (eval-when-compile (require 'elfeed))
+
+            (defun plt/elfeed-mark-all-read ()
+              "Remove the unread tag from all visible entries."
+              (interactive)
+              (mark-whole-buffer)
+              (elfeed-search-untag-all-unread))
+
+            (defun plt/elfeed-mark-all-unread ()
+              "Tag all visible entries as unread."
+              (interactive)
+              (mark-whole-buffer)
+              (elfeed-search-tag-all-unread))
+
+            (defun plt/elfeed-toggle-later ()
+              "Toggle selected elfeed entries with the tag later."
+              (interactive)
+              (seq-each (lambda (entry)
+                          (if (member 'later (elfeed-entry-tags entry))
+                              (elfeed-untag entry 'later)
+                            (elfeed-tag entry 'later))
+                          (elfeed-search-update-entry entry))
+                        (elfeed-search-selected)))
             (defun plt/elfeed-youtube-feed (channel-id)
               "Transform CHANNEL-ID to a youtube feed."
               (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
