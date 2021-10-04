@@ -47,6 +47,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          (load custom-file)))
    #+end_src
 ** Custom plugins
+
+   Add the plugins path to the load path.
+   #+begin_src emacs-lisp
+     (add-to-list 'load-path (expand-file-name "plugins" user-emacs-directory))
+   #+end_src
 *** Dotemacs
     Export a variable if I'm at work or not.
     #+begin_src emacs-lisp
