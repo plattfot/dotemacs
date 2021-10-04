@@ -1998,7 +1998,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
              " ")
            (funcall mood-line-fun)))
         ;; Workaround to fix errors when using emacs@28.1 and emacs-mood-line@1.2.4
-        (setf flymake--mode-line-format flymake-mode-line-format)
+        (with-eval-after-load 'flymake
+          (setf flymake--mode-line-format flymake-mode-line-format))
         (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding)
         (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified)
         (advice-add 'mood-line-segment-modified :around 'plt/mood-line-remote-status))
