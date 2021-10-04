@@ -55,9 +55,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Dotemacs
     Export a variable if I'm at work or not.
     #+begin_src emacs-lisp
-      (setup dotemacs
-        (:load-from (expand-file-name "plugins" user-emacs-directory))
-        (:require dotemacs))
+      (setup (:require dotemacs))
     #+end_src
 ** UI
 *** Maximize work area
@@ -2163,8 +2161,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 ** Packages
 *** home
     #+begin_src emacs-lisp
-      (setup home
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup home)
     #+end_src
 *** bfuture
     #+begin_src emacs-lisp
@@ -2174,15 +2171,13 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** bank
     Functions for handling bank statements
     #+begin_src emacs-lisp
-      (setup bank
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup bank)
     #+end_src
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
     and characters.
     #+begin_src emacs-lisp
       (setup mc-extra-extra
-        (:load-from (expand-file-name "plugins" user-emacs-directory))
         (with-eval-after-load 'multiple-cursors
           (:require mc-extra-extra)))
     #+end_src
@@ -2191,26 +2186,22 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     boilerplate, add the include guard, header for the author etc and
     namespaces based on directory structure.
     #+begin_src emacs-lisp
-      (setup newfile
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup newfile)
     #+end_src
 *** cpreproc
     Functions to help with c/c++ development
     #+begin_src emacs-lisp
-      (setup cpreproc
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup cpreproc)
     #+end_src
 *** training
     Functions for using ledger as a training log.
     #+begin_src emacs-lisp
-      (setup training
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup training)
     #+end_src
 *** tile
     Functions for tiling window managers
     #+begin_src emacs-lisp
-      (setup tile
-        (:load-from (expand-file-name "plugins" user-emacs-directory)))
+      (setup tile)
     #+end_src
 ** Functions
 *** Buffer
@@ -2838,30 +2829,26 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** dd-newfile
      Function that inserts the DD template for a new file
      #+begin_src emacs-lisp
-       (setup dd-newfile
-         (:load-from (expand-file-name "plugins" user-emacs-directory)))
+       (setup dd-newfile)
      #+end_src
 **** houdini
      Houdini related functions, mostly handle houdini versions.
      #+begin_src emacs-lisp
        (when dotemacs-is-work
          (setup houdini
-           (:global "C-x j" hou-insert-version)
-           (:load-from (expand-file-name "plugins" user-emacs-directory))))
+           (:global "C-x j" hou-insert-version)))
      #+end_src
 **** highlight-extra
      Functions for highlighting my shells when building etc
      #+begin_src emacs-lisp
-       (setup (:require highlight-extra)
-         (:load-from (expand-file-name "plugins" user-emacs-directory)))
+       (setup highlight-extra)
      #+end_src
 **** work
 
      Bunch of functions to setup my work area when at work.
      #+begin_src emacs-lisp
        (when dotemacs-is-work
-         (setup (:require work)
-           (:load-from (expand-file-name "plugins" user-emacs-directory))))
+         (setup (:require work)))
      #+end_src
 *** Functions
 **** PID
