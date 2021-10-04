@@ -787,7 +787,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
   Packages that augments emacs.
 *** All the Icons
     #+begin_src emacs-lisp
-    (setup (:require all-the-icons))
+      (setup all-the-icons
+        (autoload 'all-the-icons-material "all-the-icons")
+        (autoload 'all-the-icons-octicon "all-the-icons")
+        (autoload 'all-the-icons-faicon "all-the-icons"))
     #+end_src
 *** Org
 
