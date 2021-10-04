@@ -2825,19 +2825,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
    was the cleanest way I could find doing this.
 
    #+begin_src emacs-lisp
-     (use-package plattfot
-       :init
+     (setup plattfot
        (plattfot-global-mode 1)
        ;; Change to the comint mode to get history search.
-       (add-hook 'comint-mode-hook
-                 (lambda ()
-                   (plattfot-mode 0)
-                   (plattfot-comint-mode 1)))
-       (add-hook 'eshell-mode-hook
-                 (lambda ()
-                   (plattfot-mode 0)
-                   (plattfot-comint-mode 1)))
-       :ensure nil)
+       (:with-mode (comint-mode eshell-mode)
+         (:hook
+          (lambda ()
+            (plattfot-mode 0)
+            (plattfot-comint-mode 1)))))
    #+end_src
 
 *** Macros
