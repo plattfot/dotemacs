@@ -427,10 +427,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Package name is python but the mode is python-mode
     Set indentation to 2 white spaces.
 
-    Set the default for pb2 files (=PROJECT=) to use python.
     #+begin_src emacs-lisp
       (setup python
-        (:file-match "\\.py\\'" "PROJECT$")
         (:hook (lambda ()
                  (setq indent-tabs-mode nil
                        python-indent-offset 4))))
