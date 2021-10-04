@@ -13,6 +13,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
    #+begin_src emacs-lisp
      (require 'setup)
    #+end_src
+** Init time
+   From [[https://blog.d46.us/advanced-emacs-startup/][Advanced Emacs startup]], but using ~emacs-init-time~ instead of
+   computing the time ourselves.
+   #+begin_src emacs-lisp
+     (add-hook 'emacs-startup-hook
+               (lambda ()
+                 (message "Emacs ready in %s with %d garbage collections."
+                          (emacs-init-time)
+                          gcs-done)))
+   #+end_src
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
