@@ -2128,39 +2128,34 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
    has zsh.
 
    #+begin_src emacs-lisp
-     (use-package shell
-       :bind ("<f8>" . clear-shell)
-       :init
+     (setup shell
+       (:global "<f8>" clear-shell)
        (setenv "ESHELL" "bash")
-       :config
        ;; Use the prompts colours instead of ansi-color
-       (set-face-attribute 'comint-highlight-prompt nil
-                           :inherit nil)
-       (add-hook 'shell-mode-hook
-                 (lambda ()
-                   ;; Enable color in shell
-                   (ansi-color-for-comint-mode-on)
-                   ;; Change Color theme in shell
-                   (setq ansi-color-names-vector
-                         ["#4d4d4d"
-                          "#D81860"
-                          "#60FF60"
-                          "#f9fd75"
-                          "#4695c8"
-                          "#a78edb"
-                          "#43afce"
-                          "#f3ebe2"])
-                   (setq ansi-color-map (ansi-color-make-color-map))
-                   ;; Disable yas minor mode
-                   (yas-minor-mode -1)
-                   ;; Add go and goc to the dirtrack, Need tweak the regexp
-                   ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
-                   ))
+       (set-face-attribute 'comint-highlight-prompt nil :inherit nil)
+       (:hook (lambda ()
+                ;; Enable color in shell
+                (ansi-color-for-comint-mode-on)
+                ;; Change Color theme in shell
+                (setq ansi-color-names-vector
+                      ["#4d4d4d"
+                       "#D81860"
+                       "#60FF60"
+                       "#f9fd75"
+                       "#4695c8"
+                       "#a78edb"
+                       "#43afce"
+                       "#f3ebe2"])
+                (setq ansi-color-map (ansi-color-make-color-map))
+                ;; Disable yas minor mode
+                (yas-minor-mode -1)
+                ;; Add go and goc to the dirtrack, Need tweak the regexp
+                ;; (setq shell-cd-regexp "\\(cd\\|goc\\|go\\)")
+                ))
        ;; Easier keybinding for jumping between prompts
-       (add-hook 'shell-mode-hook
-                 (lambda ()
-                   (define-key comint-mode-map (kbd "C-M-p") 'comint-previous-prompt)
-                   (define-key comint-mode-map (kbd "C-M-n") 'comint-next-prompt)))
+       (:hook (lambda ()
+                (define-key comint-mode-map (kbd "C-M-p") 'comint-previous-prompt)
+                (define-key comint-mode-map (kbd "C-M-n") 'comint-next-prompt)))
        (defun clear-shell ()
          "Clear the shell buffer"
          (interactive)
