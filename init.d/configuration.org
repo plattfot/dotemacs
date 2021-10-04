@@ -2878,13 +2878,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          :ensure nil
          :load-path "plugins")
      #+end_src
-**** dd-pybuild2
-     #+begin_src emacs-lisp
-       (use-package dd-pybuild2
-         :if dotemacs-is-work
-         :ensure nil
-         :load-path "plugins")
-     #+end_src
 **** houdini
      Houdini related functions, mostly handle houdini versions.
      #+begin_src emacs-lisp
