@@ -2261,16 +2261,16 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     To sync all open buffers with their respective files on disk.
     Based on [[https://www.emacswiki.org/emacs/RevertBuffer][link]] but skips buffers which file no longer exist.
     #+begin_src emacs-lisp
-        (defun revert-all-buffers ()
-            "Refreshes all open buffers from their respective files."
-            (interactive)
-            (dolist (buf (buffer-list))
-              (with-current-buffer buf
-                (when (and (buffer-file-name)
-                           (not (buffer-modified-p))
-                           (file-exists-p (buffer-file-name)))
-                  (revert-buffer t t t) )))
-            (message "Refreshed open files."))
+      (defun revert-all-buffers ()
+        "Refreshes all open buffers from their respective files."
+        (interactive)
+        (dolist (buf (buffer-list))
+          (with-current-buffer buf
+            (when (and (buffer-file-name)
+                       (not (buffer-modified-p))
+                       (file-exists-p (buffer-file-name)))
+              (revert-buffer t t t) )))
+        (message "Refreshed open files."))
     #+end_src
 **** ibuffer filters
     Similar to projectile's ibuffer filter. Except this isn't locked
