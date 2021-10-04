@@ -1686,15 +1686,17 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
            "A" plt/elfeed-emms-add-url
            "d" plt/elfeed-arxiv-download
            ))
-        (require 'transient)
-        (eval-when-compile (require 'elfeed))
-        (defun plt/elfeed-youtube-feed (channel-id)
-          "Transform CHANNEL-ID to a youtube feed."
-          (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
-            (s-prepend yt-prefix channel-id)))
+        (with-eval-after-load 'elfeed
+          (progn
+            (require 'transient)
+            (eval-when-compile (require 'elfeed))
+            (defun plt/elfeed-youtube-feed (channel-id)
+              "Transform CHANNEL-ID to a youtube feed."
+              (let ((yt-prefix "https://www.youtube.com/feeds/videos.xml?channel_id="))
+                (s-prepend yt-prefix channel-id)))
 
-        (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
-          "Add TAGS to the FEEDS.
+            (cl-defun plt/elfeed-group-feeds (&key tags feeds (transform 'identity))
+              "Add TAGS to the FEEDS.
 
             TAGS is a list of symbols or just one symbol.
 
@@ -1704,184 +1706,184 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
             TRANSFORM procedure that will be called on each url, by default
             this is `identity'."
-          (unless (or (listp tags) (symbolp tags))
-            (error "TAGS must be a list of symbols or a symbol"))
+              (unless (or (listp tags) (symbolp tags))
+                (error "TAGS must be a list of symbols or a symbol"))
 
-          (unless (or (listp feeds) (stringp feeds))
-            (error "FEEDS must be a list or a string"))
+              (unless (or (listp feeds) (stringp feeds))
+                (error "FEEDS must be a list or a string"))
 
-          (let ((tags (if (listp tags) tags (list tags))))
-            (seq-map (lambda (it)
-                       (if (listp it)
-                           `(,(funcall transform (car it)) ,@tags ,@(cdr it))
-                         `(,(funcall transform it) ,@tags)))
-                     feeds)))
+              (let ((tags (if (listp tags) tags (list tags))))
+                (seq-map (lambda (it)
+                           (if (listp it)
+                               `(,(funcall transform (car it)) ,@tags ,@(cdr it))
+                             `(,(funcall transform it) ,@tags)))
+                         feeds)))
 
-        ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
-        (defun plt/elfeed-save-db-and-bury ()
-          "Wrapper to save the elfeed db to disk before burying buffer"
-          (interactive)
-          (elfeed-db-save)
-          (quit-window))
+            ;; Based on https://cestlaz.github.io/posts/using-emacs-29-elfeed/
+            (defun plt/elfeed-save-db-and-bury ()
+              "Wrapper to save the elfeed db to disk before burying buffer"
+              (interactive)
+              (elfeed-db-save)
+              (quit-window))
 
-        (transient-define-prefix plt/elfeed-jump-popup ()
-                                 "Jump to"
-                                 [("o" "Oläst" plt/elfeed-set-filter-unread)
-                                  ("t" "Taggat" plt/elfeed-set-filter-later)
-                                  ("r" "Raporter" plt/elfeed-set-filter-paper)
-                                  ("R" "Alla rapporter" plt/elfeed-set-filter-all-papers)
-                                  ])
+            (transient-define-prefix plt/elfeed-jump-popup ()
+              "Jump to"
+              [("o" "Oläst" plt/elfeed-set-filter-unread)
+               ("t" "Taggat" plt/elfeed-set-filter-later)
+               ("r" "Raporter" plt/elfeed-set-filter-paper)
+               ("R" "Alla rapporter" plt/elfeed-set-filter-all-papers)
+               ])
 
-        (defmacro plt/make-elfeed-set-filter (name filter)
-          "Create function with the prefix NAME to set elfeed FILTER."
-          (list 'defun (intern (format "plt/elfeed-set-filter-%s" name)) ()
-                (format "Set elfeed filter to %s." filter)
-                (list 'interactive)
-                (list 'elfeed-search-set-filter filter)))
+            (defmacro plt/make-elfeed-set-filter (name filter)
+              "Create function with the prefix NAME to set elfeed FILTER."
+              (list 'defun (intern (format "plt/elfeed-set-filter-%s" name)) ()
+                    (format "Set elfeed filter to %s." filter)
+                    (list 'interactive)
+                    (list 'elfeed-search-set-filter filter)))
 
-        (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
-          "Create an arXiv atom feed from QUERY.
+            (cl-defun plt/elfeed-arxiv-feed (query &key (max_results 300))
+              "Create an arXiv atom feed from QUERY.
                         Where QUERY is a list of search terms or just one string.
                         MAX_RESULTS specify the max results in the feed. Search queries
                         can be combined with three booleans AND, OR and ANDNOT. See these
                         links for more info about the search query:
                         https://arxiv.org/help/api/user-manual#Architecture
                         https://arxiv.org/help/api/user-manual#query_details"
-          (string-join `(,(format "http://export.arxiv.org/api/query?search_query=%s"
-                                 (if (listp query)
-                                     (string-join query "+")
-                                   query))
-                        "start=0"
-                        ,(format "max_results=%s" max_results)
-                        "sortBy=submittedDate"
-                        "sortOrder=descending")
-                       "&"))
+              (string-join `(,(format "http://export.arxiv.org/api/query?search_query=%s"
+                                      (if (listp query)
+                                          (string-join query "+")
+                                        query))
+                             "start=0"
+                             ,(format "max_results=%s" max_results)
+                             "sortBy=submittedDate"
+                             "sortOrder=descending")
+                           "&"))
 
-        (cl-defstruct (arxiv (:constructor make--arxiv))
-          "Structure containing information for an ArXiv feed."
-          (url nil :type string)
-          (tags nil :type list)
-          (title nil :type string))
+            (cl-defstruct (arxiv (:constructor make--arxiv))
+              "Structure containing information for an ArXiv feed."
+              (url nil :type string)
+              (tags nil :type list)
+              (title nil :type string))
 
-        (cl-defun make-arxiv (query &key tags title)
-          "Construct an <arxiv> struct.
+            (cl-defun make-arxiv (query &key tags title)
+              "Construct an <arxiv> struct.
                         Transform the QUERY to an url.
                         TAGS and TITLE are sent verbatim to the struct constructor."
-          (make--arxiv :url (plt/elfeed-arxiv-feed query)
-                       ;; E.g. "cat:cs.CG" -> 'cg
-                       :tags (or tags (intern (downcase (file-name-extension query))))
-                       :title title))
+              (make--arxiv :url (plt/elfeed-arxiv-feed query)
+                           ;; E.g. "cat:cs.CG" -> 'cg
+                           :tags (or tags (intern (downcase (file-name-extension query))))
+                           :title title))
 
-        (defconst plt/arxivs `(,(make-arxiv "cat:cs.CG" :title "Computational Geometry")
-                               ,(make-arxiv "cat:cs.DS" :title "Data Structures and Algorithms")
-                               ,(make-arxiv "cat:cs.DM" :title "Discrete Mathematics")
-                               ,(make-arxiv "cat:cs.DC" :title "Distributed, Parallel, and Cluster Computing")
-                               ,(make-arxiv "cat:cs.ML" :title "Machine Learning")
-                               ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
-                               ,(make-arxiv "cat:cs.SE" :title "Software Engineering")
-                               ,(make-arxiv "cat:physics.flu-dyn" :title "Fluid Dynamics")
-                               ))
+            (defconst plt/arxivs `(,(make-arxiv "cat:cs.CG" :title "Computational Geometry")
+                                   ,(make-arxiv "cat:cs.DS" :title "Data Structures and Algorithms")
+                                   ,(make-arxiv "cat:cs.DM" :title "Discrete Mathematics")
+                                   ,(make-arxiv "cat:cs.DC" :title "Distributed, Parallel, and Cluster Computing")
+                                   ,(make-arxiv "cat:cs.ML" :title "Machine Learning")
+                                   ,(make-arxiv "cat:cs.PL" :title "Programming Languages")
+                                   ,(make-arxiv "cat:cs.SE" :title "Software Engineering")
+                                   ,(make-arxiv "cat:physics.flu-dyn" :title "Fluid Dynamics")
+                                   ))
 
-        (defun plt/elfeed-search-update-arxiv (&rest args)
-          (seq-each
-           (lambda (it)
-             (let ((feed (elfeed-db-get-feed (arxiv-url it))))
-               (setf (elfeed-feed-title feed) (arxiv-title it))))
-           plt/arxivs))
+            (defun plt/elfeed-search-update-arxiv (&rest args)
+              (seq-each
+               (lambda (it)
+                 (let ((feed (elfeed-db-get-feed (arxiv-url it))))
+                   (setf (elfeed-feed-title feed) (arxiv-title it))))
+               plt/arxivs))
 
-        (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)
+            (advice-add 'elfeed-search-update :before 'plt/elfeed-search-update-arxiv)
 
-        (let ((time "@6-months-ago"))
-          (plt/make-elfeed-set-filter unread (format "%s +unread -paper" time))
-          (plt/make-elfeed-set-filter later (format "+later"))
-          (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
-          (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
-        (:with-mode elfeed-new-entry
-          (:hook (elfeed-make-tagger :before "1 week ago" :remove 'unread)))
-        (:option elfeed-search-filter "@6-months-ago +unread -paper"
-                 elfeed-feeds
-                 `(,@(plt/elfeed-group-feeds
-                      :tags 'fun
-                      :feeds '(("https://rebusinla.wordpress.com/feed/" blog)
-                               "https://warpdrive.se/rss/"
-                               "https://xkcd.com/atom.xml"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'cg
-                      :feeds '("https://c0de517e.blogspot.com/feeds/posts/default"
-                               "https://animationphysics.wordpress.com/feed/"
-                               ("https://www.realtimerendering.com/blog/feed/" blog)
-                               "https://www.vfxblog.com/feed/"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'news
-                      :feeds '("https://www.fz.se/rss/fznews_rss20.xml"
-                               "https://rss.slashdot.org/Slashdot/slashdot"
-                               ("https://www.anandtech.com/rss/" nerd)
-                               "https://www.macrumors.com/macrumors.xml"
-                               ("https://www.sweclockers.com/feeds/news.xml" nerd)
-                               ("https://feeds.arstechnica.com/arstechnica/index/" nerd)
-                               "https://www.raspberrypi.org/feed"
-                               ("https://feeds.feedburner.com/TheHackersNews" nerd)))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'linux
-                      :feeds '(("https://www.phoronix.com/rss.php" news)
-                               ("https://lwn.net/headlines/newrss" news)
-                               ("https://www.gnu.org/software/guix/feeds/blog.atom" blog)
-                               "https://www.linuxjournal.com/node/feed"
-                               "https://www.archlinux.org/feeds/news/"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'keebs
-                      :feeds '("https://www.reddit.com/r/MechGroupBuys/.rss"
-                               "https://www.reddit.com/r/ErgoMechKeyboards/.rss"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'photo
-                      :feeds '("https://www.dpreview.com/feeds/news.xml"
-                               "https://nikonrumors.com/feed"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'emacs
-                      :feeds '("https://www.reddit.com/r/emacs/.rss"
-                               "https://karthinks.com/index.xml"
-                               "https://blog.tecosaur.com/tmio/rss.xml"
-                               "https://sachachua.com/blog/category/emacs-news/feed/"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'deals
-                      :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
-                   ,@(plt/elfeed-group-feeds
-                      :tags 'youtube
-                      :transform 'plt/elfeed-youtube-feed
-                      :feeds '(("UCyaPf0E-PRRZH3UvvxNPeEw" music) ;; Avatar
-                               ("UCjR-qXRBNkysQ0Threo1Bfg" music) ;; Blackbriar
-                               ("UCMlGfpWw-RUdWX_JbLCukXg" talks) ;; Cppcon
-                               ("UC9NuJImUbaSNKiwF2bdSfAw" talks) ;; Fosdem
-                               ("UChIs72whgZI9w6d6FhwGGHA" news nerd) ;; Gamers Nexus
-                               ("UCAOiVaJJlH0Oduv48NN0mMA" music) ;; Ghost
-                               ("UChGDEluRG9r5kCecRAQTx_Q" talks) ;; HackersOnBoard
-                               ("UCTp0MnlTlmqC3NdrPzD08EA" news vlog) ;; Infidelamsterdam
-                               ("UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog) ;; Intermit.Tech
-                               ("UC1T4KJG1L_kTrP9RcdU5Csw" history) ;; Knyght Errant
-                               ("UCOWcZ6Wicl-1N34H0zZe38w" nerd linux) ;; Level1Linux
-                               ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
-                               ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
-                               ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
-                               ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
-                               ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
-                               ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
-                               ("UCaG4CBbZih6nLzD08bTBGfw" history) ;; Sabaton History
-                               ("UC3WIohkLkH4GFoMrrWVZZFA" history) ;; Skallagrim
-                               ("UCW64r1wPzfj0W1qbzzfCgFg" news nerd) ;; Sweclockers
-                               ("UCfK96bDQdSkKFAdqNv0YOmw" nerd fun) ;; Sweclockers Extra
-                               ("UCs6vRDdkZ8bP8Xt6WHbvrwA" music) ;; The Hu
-                               ("UCoxg3Kml41wE3IPq-PC-LQw" music) ;; Nuclear Blast Records
-                               ("UCnK9PxMozTYs8ELOvgMNKFA" music) ;; Century Media Records
-                               ("UCSldglor1t-5E-Gy2eBdMrA" music) ;; Metal Blade Records
-                               ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
-                               ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
-                               ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
-                               ("UCAiiOTio8Yu69c3XnR7nQBQ" talks emacs) ;; System Crafters
-                               ))
-                   ,@(plt/elfeed-group-feeds
-                      :tags '(paper arxiv)
-                      :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
-                   )))
+            (let ((time "@6-months-ago"))
+              (plt/make-elfeed-set-filter unread (format "%s +unread -paper" time))
+              (plt/make-elfeed-set-filter later (format "+later"))
+              (plt/make-elfeed-set-filter paper (format "%s +paper +unread" time))
+              (plt/make-elfeed-set-filter all-papers (format "%s +paper" time)))
+            (:with-mode elfeed-new-entry
+              (:hook (elfeed-make-tagger :before "1 week ago" :remove 'unread)))
+            (:option elfeed-search-filter "@6-months-ago +unread -paper"
+                     elfeed-feeds
+                     `(,@(plt/elfeed-group-feeds
+                          :tags 'fun
+                          :feeds '(("https://rebusinla.wordpress.com/feed/" blog)
+                                   "https://warpdrive.se/rss/"
+                                   "https://xkcd.com/atom.xml"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'cg
+                          :feeds '("https://c0de517e.blogspot.com/feeds/posts/default"
+                                   "https://animationphysics.wordpress.com/feed/"
+                                   ("https://www.realtimerendering.com/blog/feed/" blog)
+                                   "https://www.vfxblog.com/feed/"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'news
+                          :feeds '("https://www.fz.se/rss/fznews_rss20.xml"
+                                   "https://rss.slashdot.org/Slashdot/slashdot"
+                                   ("https://www.anandtech.com/rss/" nerd)
+                                   "https://www.macrumors.com/macrumors.xml"
+                                   ("https://www.sweclockers.com/feeds/news.xml" nerd)
+                                   ("https://feeds.arstechnica.com/arstechnica/index/" nerd)
+                                   "https://www.raspberrypi.org/feed"
+                                   ("https://feeds.feedburner.com/TheHackersNews" nerd)))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'linux
+                          :feeds '(("https://www.phoronix.com/rss.php" news)
+                                   ("https://lwn.net/headlines/newrss" news)
+                                   ("https://www.gnu.org/software/guix/feeds/blog.atom" blog)
+                                   "https://www.linuxjournal.com/node/feed"
+                                   "https://www.archlinux.org/feeds/news/"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'keebs
+                          :feeds '("https://www.reddit.com/r/MechGroupBuys/.rss"
+                                   "https://www.reddit.com/r/ErgoMechKeyboards/.rss"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'photo
+                          :feeds '("https://www.dpreview.com/feeds/news.xml"
+                                   "https://nikonrumors.com/feed"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'emacs
+                          :feeds '("https://www.reddit.com/r/emacs/.rss"
+                                   "https://karthinks.com/index.xml"
+                                   "https://blog.tecosaur.com/tmio/rss.xml"
+                                   "https://sachachua.com/blog/category/emacs-news/feed/"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'deals
+                          :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
+                       ,@(plt/elfeed-group-feeds
+                          :tags 'youtube
+                          :transform 'plt/elfeed-youtube-feed
+                          :feeds '(("UCyaPf0E-PRRZH3UvvxNPeEw" music) ;; Avatar
+                                   ("UCjR-qXRBNkysQ0Threo1Bfg" music) ;; Blackbriar
+                                   ("UCMlGfpWw-RUdWX_JbLCukXg" talks) ;; Cppcon
+                                   ("UC9NuJImUbaSNKiwF2bdSfAw" talks) ;; Fosdem
+                                   ("UChIs72whgZI9w6d6FhwGGHA" news nerd) ;; Gamers Nexus
+                                   ("UCAOiVaJJlH0Oduv48NN0mMA" music) ;; Ghost
+                                   ("UChGDEluRG9r5kCecRAQTx_Q" talks) ;; HackersOnBoard
+                                   ("UCTp0MnlTlmqC3NdrPzD08EA" news vlog) ;; Infidelamsterdam
+                                   ("UCv7UOhZ2XuPwm9SN5oJsCjA" news vlog) ;; Intermit.Tech
+                                   ("UC1T4KJG1L_kTrP9RcdU5Csw" history) ;; Knyght Errant
+                                   ("UCOWcZ6Wicl-1N34H0zZe38w" nerd linux) ;; Level1Linux
+                                   ("UC4w1YQAJMWOz4qtxinq55LQ" nerd) ;; Level1Techs
+                                   ("UC9pgQfOXRsp4UKrI8q0zjXQ" history) ;; Lindybeige
+                                   ("UCRDQEDxAVuxcsyeEoOpSoRA" nerd) ;; Mark Furneaux
+                                   ("UC2XMr58U7rZnL4AW0n9Ca8g" music) ;; Orbit Culture
+                                   ("UCvWWf-LYjaujE50iYai8WgQ" news nerd) ;; Paul's Hardware
+                                   ("UCjQhd1APsd5NQhiVZV7GYzg" music) ;; Sabaton
+                                   ("UCaG4CBbZih6nLzD08bTBGfw" history) ;; Sabaton History
+                                   ("UC3WIohkLkH4GFoMrrWVZZFA" history) ;; Skallagrim
+                                   ("UCW64r1wPzfj0W1qbzzfCgFg" news nerd) ;; Sweclockers
+                                   ("UCfK96bDQdSkKFAdqNv0YOmw" nerd fun) ;; Sweclockers Extra
+                                   ("UCs6vRDdkZ8bP8Xt6WHbvrwA" music) ;; The Hu
+                                   ("UCoxg3Kml41wE3IPq-PC-LQw" music) ;; Nuclear Blast Records
+                                   ("UCnK9PxMozTYs8ELOvgMNKFA" music) ;; Century Media Records
+                                   ("UCSldglor1t-5E-Gy2eBdMrA" music) ;; Metal Blade Records
+                                   ("UCd4XwUn2Lure2NHHjukoCwA" linux) ;; Linux for Everyone
+                                   ("UC0NpEEcmONWuTU3nfURmyKw" music) ;; A&P Reacts
+                                   ("UC0uTPqBCFIpZxlz_Lv1tk_g" talks emacs) ;; Protesilaos Stavrou
+                                   ("UCAiiOTio8Yu69c3XnR7nQBQ" talks emacs) ;; System Crafters
+                                   ))
+                       ,@(plt/elfeed-group-feeds
+                          :tags '(paper arxiv)
+                          :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
+                       )))))
     #+end_src
 
     Functions based on the blog entry at [[https://joshrollinswrites.com/help-desk-head-desk/20200611/][joshrollinswrites.com]] and the
