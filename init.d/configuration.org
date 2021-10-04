@@ -2099,16 +2099,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     Integrate packages as expand-region with isearch. This function
     comes from issue [[https://github.com/magnars/expand-region.el/issues/17][#17]] on expand-region.el.
     #+begin_src emacs-lisp
-      (use-package isearch
-        :ensure nil
-        :config
+      (setup isearch
+        (:bind "C-o" isearch-yank-selection)
         (defun isearch-yank-selection ()
-        "Put selection from buffer into search string."
-        (interactive)
-        (when (use-region-p)
-          (deactivate-mark))  ;;fully optional, but I don't like unnecesary highlighting
-        (isearch-yank-internal (lambda () (mark))))
-        :bind (:map isearch-mode-map ("C-o" . isearch-yank-selection)))
+          "Put selection from buffer into search string."
+          (interactive)
+          (when (use-region-p)
+            (deactivate-mark))  ;;fully optional, but I don't like unnecesary highlighting
+          (isearch-yank-internal (lambda () (mark)))))
     #+end_src
 ** Nov
    Epub reader mode.
