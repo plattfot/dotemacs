@@ -2091,8 +2091,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** Abbrev
     #+begin_src emacs-lisp
-      (use-package abbrev
-        :delight abbrev-mode)
+      (setup abbrev)
     #+end_src
 
 *** isearch
