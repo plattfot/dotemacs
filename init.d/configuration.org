@@ -2218,9 +2218,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     boilerplate, add the include guard, header for the author etc and
     namespaces based on directory structure.
     #+begin_src emacs-lisp
-      (use-package newfile
-        :ensure nil
-        :load-path "plugins")
+      (setup newfile
+        (:load-from (expand-file-name "plugins" user-emacs-directory)))
     #+end_src
 *** cpreproc
     Functions to help with c/c++ development
