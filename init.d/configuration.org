@@ -712,7 +712,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
 *** pdftools
     #+begin_src emacs-lisp
-      (setup (:require pdf-tools)
+      (setup pdf-tools
+        (autoload 'pdf-view-mode "pdf-view")
         (:with-mode pdf-view-mode
           (:file-match "\\.pdf\\'")
           ;; (:hook pdf-view-midnight-minor-mode)
