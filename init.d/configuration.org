@@ -2165,10 +2165,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 ** guix
    #+begin_src emacs-lisp
      (when dotemacs-guix-installed
-       (use-package guix
-         :ensure nil
-         :bind ("<f3>" . guix)
-         :pin melpa-stable))
+       (setup guix))
    #+end_src
 * Custom
 ** Group
