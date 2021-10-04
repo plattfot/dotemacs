@@ -242,14 +242,14 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
             (lambda ()
               (when (and (buffer-file-name) (not (file-remote-p (buffer-file-name))))
                 (eglot-ensure)))))
-         (:option gc-cons-threshold 100000000
-                  read-process-output-max (* 1024 1024)) ;; 1mb
          (add-to-list 'eglot-server-programs
                       '(c++-mode . ("clangd"
                                     "--background-index"
                                     "--header-insertion=iwyu"
                                     "--pch-storage=memory"
                                     "-j=6"))))
+         ;; (:option gc-cons-threshold 100000000
+         ;;          read-process-output-max (* 1024 1024)) ;; 1mb
      #+end_src
 *** Lint
     Packages that helps inspecting code, report errors etc.
