@@ -2886,10 +2886,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
      Bunch of functions to setup my work area when at work.
      #+begin_src emacs-lisp
-       (use-package work
-         :if dotemacs-is-work
-         :ensure nil
-         :load-path "plugins")
+       (when dotemacs-is-work
+         (setup (:require work)
+           (:load-from (expand-file-name "plugins" user-emacs-directory))))
      #+end_src
 *** Functions
 **** PID
