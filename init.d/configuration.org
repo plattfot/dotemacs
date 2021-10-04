@@ -2000,10 +2000,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** mood-line
     #+begin_src emacs-lisp
-      (use-package mood-line
-        :custom
-        (mood-line-show-encoding-information t)
-        :config
+      (setup mood-line
+        (:option mood-line-show-encoding-information t)
         (mood-line-mode)
         (defun plt/mood-line-unimportant-encoding (mood-line-fun)
           "Set what MOOD-LINE-FUN return as unimportant"
