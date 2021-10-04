@@ -2195,9 +2195,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** bfuture
     #+begin_src emacs-lisp
-      (use-package bfuture
-        :ensure nil
-        :load-path "bfuture.el")
+      (setup bfuture
+        (:load-from (expand-file-name "bfuture.el" user-emacs-directory)))
     #+end_src
 *** bank
     Functions for handling bank statements
