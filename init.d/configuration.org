@@ -2879,9 +2879,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** highlight-extra
      Functions for highlighting my shells when building etc
      #+begin_src emacs-lisp
-       (use-package highlight-extra
-         :ensure nil
-         :load-path "plugins")
+       (setup (:require highlight-extra)
+         (:load-from (expand-file-name "plugins" user-emacs-directory)))
      #+end_src
 **** work
 
