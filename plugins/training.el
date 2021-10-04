@@ -9,6 +9,7 @@
 
 (cl-defstruct exercise name load volume rpe comments)
 
+;;;###autoload
 (defun training-log-to-dat ()
 "Convert old training log to something ledger can understand.
 
@@ -92,6 +93,7 @@ For example:
        "\\([0-9]+\\)x\\([0-9]+\\)" "\\1 reps * \\2 sets"
        volume))))))
 
+;;;###autoload
 (defun training-exercise-history ()
   "Display temporary buffer with history of the exercise."
   (interactive)
@@ -111,18 +113,21 @@ For example:
   ["Gym"
    [("s" "Steve Nash" training-insert-steve-nash)]])
 
+;;;###autoload
 (defun training-indent-and-insert-text (text)
   "Insert TEXT at correct indentation."
   (interactive)
   (indent-for-tab-command)
   (insert text))
 
+;;;###autoload
 (defun training-insert-exercise (&optional exercise)
   "Insert EXERCISE at correct indentation.
 If EXERCISE is empty insert 'Övning:'"
   (interactive)
   (training-indent-and-insert-text (or exercise "Övning:")))
 
+;;;###autoload
 (defun training-insert-steve-nash ()
   "Insert 'Gym:Steve Nash' at correct indentation."
   (interactive)

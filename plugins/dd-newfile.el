@@ -33,6 +33,7 @@ By default this is empty."
 (defvar dd-newfile-history nil
   "History for dd-setup-newfile.")
 
+;;;###autoload
 (defun dd-setup-newfile (modify-namespaces)
   "Add boilerplate, description, namespaces and include guard.
 MODIFY-NAMESPACES are passed on to insert-namespace.  Extra
@@ -85,6 +86,7 @@ found.  For relative it will return nil."
       (error "Workspace not found!"))
     abs_path))
 
+;;;###autoload
 (defun dd-rename-namespaces (modify-namespaces)
   "Update the outer namespaces in the file to the new location.
 
@@ -155,6 +157,7 @@ Only the DD namespace will be replaced."
           (delete-region (region-beginning) (region-end))
           (insert code))))))
 
+;;;###autoload
 (defun dd-rename-include-guard ()
   "Rename the include guard to match the namespaces in the file."
   (interactive)

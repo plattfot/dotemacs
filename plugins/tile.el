@@ -28,11 +28,13 @@
   current-mode)
 (cl-defstruct tile-current-mode width height refresh)
 
+;;;###autoload
 (defun tile-sway-application-info ()
   "Show all applications and what shell they're using in sway."
   (interactive)
   (tile--application-info (tile--shell-command-to-json "swaymsg -t get_tree")))
 
+;;;###autoload
 (defun tile-sway-output-info ()
   "Show all output that sway knows about."
   (interactive)

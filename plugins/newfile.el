@@ -37,6 +37,7 @@ function.
       (insert "\n")
       (forward-line (length namespaces)))))
 
+;;;###autoload
 (defun nf-include-guard-from-namespaces ()
   "Insert #ifdef include guard at point.
 Based on the main namespaces in the file."
@@ -62,6 +63,7 @@ description."
     (insert "\n\n"))
   (nf-insert-description author email))
 
+;;;###autoload
 (defun nf-insert-boilerplate (boilerplate)
   "Insert boilerplate from file BOILERPLATE.
 Read from file to avoid copyright issues.
@@ -77,6 +79,7 @@ Places with ::date:: will be replaced with current year."
       (replace-match (format-time-string "%Y" (current-time))))
     (goto-char current_pos)))
 
+;;;###autoload
 (defun nf-insert-description (author email)
   "Insert description of the file.
 Which is the AUTHOR and EMAIL to the author and the date it was
@@ -92,6 +95,7 @@ created (B Y),"
 		    " */" )
 	      "\n")))
 
+;;;###autoload
 (defun nf-insert-namespace (&optional modify_namespaces workspace_root path)
   "Insert namespace based on the location of the buffer.
 
@@ -154,6 +158,7 @@ Return the namespaces it inserted into the buffer."
       (forward-line -1)
       namespaces))) ;; insert-namespace
 
+;;;###autoload
 (defun nf-modify-namespaces (modify_list namespaces)
   "Using the options in MODIFY_LIST to modify the alist NAMESPACES.
 MODIFY_LIST should contain a list of strings with the following

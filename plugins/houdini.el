@@ -4,6 +4,7 @@
 ;;; Code:
 (require 'cpreproc)
 
+;;;###autoload
 (defun hou-insert-latest-version (version-re)
   "Insert the latest version matching VERSION-RE at point."
   (interactive "sHoudini version regex: ")
@@ -48,36 +49,43 @@ in both the if and else clause.  Example:
 ;; gt -> >
 ;; ge -> >=
 
+;;;###autoload
 (defun hou-insert-if-eq (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and ==."
   (interactive "sHoudini version: ")
   (hou-insert-if version "=="))
 
+;;;###autoload
 (defun hou-insert-if-ne (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and !=."
   (interactive "sHoudini version: ")
   (hou-insert-if version "!="))
 
+;;;###autoload
 (defun hou-insert-if-lt (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and <."
   (interactive "sHoudini version: ")
   (hou-insert-if version "<"))
 
+;;;###autoload
 (defun hou-insert-if-le (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and <=."
   (interactive "sHoudini version: ")
   (hou-insert-if version "<="))
 
+;;;###autoload
 (defun hou-insert-if-gt (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and >."
   (interactive "sHoudini version: ")
   (hou-insert-if version ">"))
 
+;;;###autoload
 (defun hou-insert-if-ge (version)
   "Wrapper for calling `hou-insert-if' with arguments VERSION and >=."
   (interactive "sHoudini version: ")
   (hou-insert-if version ">="))
 
+;;;###autoload
 (defun hou-get-version (&optional version-offset)
   "Return the houdini version that is installed in /tools/package.
 If VERSION-OFFSET is 1 (default) it will return the latest
@@ -101,6 +109,7 @@ versions it will return the oldest version."
       (car(last houdini-versions))
       )))
 
+;;;###autoload
 (defun hou-insert-version (&optional version-offset)
   "Insert the houdini version where the cursor is located.
 If VERSION-OFFSET is 1 (default) it will insert the latest
@@ -110,6 +119,7 @@ versions it will return the oldest version."
   (interactive "p")
   (insert (hou-get-version version-offset)))
 
+;;;###autoload
 (defun hou-open-other-version (version)
   "Will open the same hdk file but for the version specified by VERSION.
 Note only works if the open buffer is an hdk file."

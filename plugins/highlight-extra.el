@@ -47,7 +47,7 @@
 (let ((re-ok "[ ]\\{7\\}OK[ ]\\{1\\}")
       (re-passed "[ ]\\{2\\}PASSED[ ]\\{2\\}")
       (re-failed "[ ]\\{2\\}FAILED[ ]\\{2\\}"))
-
+;;;###autoload
   (defun highlight-gtest()
     "Highlight gtest output"
     (interactive)
@@ -55,6 +55,7 @@
     (highlight-regexp re-passed 'hi-string-green)
     (highlight-regexp re-failed 'hi-crimson))
 
+;;;###autoload
   (defun unhighlight-gtest()
   "Unhighlight gtest output"
   (interactive)
@@ -68,6 +69,7 @@
       (re-error-line "[[:alnum:]_-]+\\.[[:alpha:]]+:[[:digit:]]+")
       (re-undefined-reference "undefined reference to"))
 
+;;;###autoload
   (defun highlight-build()
     "Highlight flags, paranthesis, error, warning and const to
 easier find them when building."
@@ -78,6 +80,7 @@ easier find them when building."
     (highlight-regexp re-error-line 'hi-orange)
     (highlight-regexp re-undefined-reference 'hi-magenta-b))
 
+;;;###autoload
   (defun unhighlight-build()
     "Like the function name applies remove the highlights set by highlight-build."
     (interactive)
@@ -90,6 +93,7 @@ easier find them when building."
 (let ((re-version "%s_VERSION=[[:alnum:]._]+")
       (re-version-path "[[:alnum:]._]+"))
 
+;;;###autoload
   (defun highlight-versions(input)
     "Highlight important versions in INPUT when building with pybuild."
     (interactive "sEnter name of packages to highlight (separated by space) ")
@@ -101,6 +105,7 @@ easier find them when building."
          (concat (file-name-as-directory (downcase word)) re-version-path)
          'hi-green-b))))
 
+;;;###autoload
   (defun unhighlight-versions(input)
     "Unhighlight versions that was highlighted with highlight-versions."
     (interactive "sEnter name of packages to unhighlight (separated by space) ")
@@ -111,6 +116,7 @@ easier find them when building."
         (unhighlight-regexp
          (concat (file-name-as-directory (downcase word)) re-version-path))))))
 
+;;;###autoload
 (defun highlight-usual-vers()
   "Highlight the most common versions; openvdb, boost and houdini."
   (interactive)

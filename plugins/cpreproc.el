@@ -109,6 +109,7 @@ insert
 (defvar cpreproc-if-cplusplus-comp-history nil
   "History for the comp in cpreproc-if-cplusplus.")
 
+;;;###autoload
 (defun cpreproc-if-cplusplus (std comp)
   "Insert preprocessor if clause for __cplusplus (c++ lang standard).
 STD specifies the standard to compare against, e.g c++03, c++11,

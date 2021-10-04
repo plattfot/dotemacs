@@ -10,6 +10,7 @@
 (require 'bfuture)
 (require 'dired)
 
+;;;###autoload
 (cl-defun bank-fix-timestring (file)
   "Fixing time strings on statement files.
 
@@ -45,6 +46,7 @@ e.g. 2020Feb15. and the other is the to date."
                 "." ext)
         file))))
 
+;;;###autoload
 (defun bank-dired-map-rename (func)
   "Apply FUNC on each marked file to rename."
   (interactive "aFunction: ")

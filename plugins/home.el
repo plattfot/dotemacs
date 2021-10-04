@@ -7,6 +7,7 @@
 (require 'dotemacs)
 (require 'seq)
 
+;;;###autoload
 (defun home-setup ()
   "Splits the session into three frames."
   (interactive)
@@ -16,6 +17,7 @@
     (make-frame)
     (make-frame)))
 
+;;;###autoload
 (defun home-mail-refresh ()
   "Run mbsync+notmuch to refresh mail."
   (interactive)
