@@ -23,6 +23,20 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                           (emacs-init-time)
                           gcs-done)))
    #+end_src
+
+   Minimize garbage collection during startup to reduce the init time.
+
+   #+begin_src emacs-lisp
+     (let ((current-gc-cons-threshold gc-cons-threshold))
+       ;; Minimize garbage collection during startup
+       (setq gc-cons-threshold most-positive-fixnum)
+       ;; Restore the gc-cons-threshold
+       (add-hook 'emacs-startup-hook
+                 (lambda ()
+                   (setq gc-cons-threshold current-gc-cons-threshold))))
+   #+end_src
+   From [[https://www.emacswiki.org/emacs/OptimizingEmacsStartup][emacswiki.org]].
+
 ** Customizations
    Set emacs to save the customizations in a separate file to avoid
    having them in the git repo.
