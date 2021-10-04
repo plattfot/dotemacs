@@ -2067,25 +2067,23 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Multiple cursors
     Keybindings for the mc package
     #+begin_src emacs-lisp
-      (use-package multiple-cursors
-        :bind (("C-S-c C-S-c" . mc/edit-lines)
-               ("C->"         . mc/mark-next-like-this)
-               ("C-<"         . mc/mark-previous-like-this)
-               ("C-c C-<"     . mc/mark-all-like-this)
-               ("C-+"         . mc/mark-next-like-this)
-               :map mc/keymap
-               ("C-c m n"     . mc/insert-numbers)
-               ("C-c m c"     . mc/insert-characters)
-               ("C-c m s n"   . mc/insert-same-numbers-per-line)
-               ("C-c m s c"   . mc/insert-same-chars-per-line))
-        :config
-        :pin melpa-stable)
-    #+end_src
-
     #+begin_src emacs-lisp
       (use-package mc-extras
         :after (multiple-cursors)
         :pin melpa-stable)
+      (setup multiple-cursors
+        (:global "C-S-c C-S-c" mc/edit-lines
+                 "C->"         mc/mark-next-like-this
+                 "C-<"         mc/mark-previous-like-this
+                 "C-c C-<"     mc/mark-all-like-this
+                 "C-+"         mc/mark-next-like-this)
+        (defalias 'mc/keymap 'multiple-cursors-mode-map)
+        (:bind "C-c m n"   mc/insert-numbers
+               "C-c m c"   mc/insert-characters
+               "C-c m s n" mc/insert-same-numbers-per-line
+               "C-c m s c" mc/insert-same-chars-per-line))
+    #+end_src
+
     #+end_src
 *** String inflections
     #+begin_src emacs-lisp
