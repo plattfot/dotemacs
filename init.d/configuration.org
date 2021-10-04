@@ -2865,10 +2865,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** dd-newfile
      Function that inserts the DD template for a new file
      #+begin_src emacs-lisp
-       (use-package dd-newfile
-         :after newfile
-         :ensure nil
-         :load-path "plugins")
+       (setup dd-newfile
+         (:load-from (expand-file-name "plugins" user-emacs-directory)))
      #+end_src
 **** houdini
      Houdini related functions, mostly handle houdini versions.
