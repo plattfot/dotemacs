@@ -1850,6 +1850,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                           :feeds '("https://www.reddit.com/r/emacs/.rss"
                                    "https://karthinks.com/index.xml"
                                    "https://blog.tecosaur.com/tmio/rss.xml"
+                                   "https://planet.emacslife.com/atom.xml"
                                    "https://sachachua.com/blog/category/emacs-news/feed/"))
                        ,@(plt/elfeed-group-feeds
                           :tags 'deals
