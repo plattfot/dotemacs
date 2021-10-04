@@ -2284,21 +2284,19 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 
     List all buffers which file no longer exist.
     #+begin_src emacs-lisp
-      (use-package ibuf-ext
-        :ensure nil
-        :after (ibuffer)
-        :config
-        (define-ibuffer-filter dangling-buffer
-            "True if buffer is visiting a file but the file no longer exist."
-          (:reader nil :description "dangling-buffer")
-          (with-current-buffer buf
-            (and (buffer-file-name)
-                 (not (file-exists-p (buffer-file-name))))))
-        (defun ibuffer-dangling-buffers ()
-          (interactive)
-          "Open an ibuffer with buffers which file no longer exist."
-
-          (ibuffer t "*dangling-buffers*" (list (cons 'dangling-buffer "")))))
+      (setup ibuf-ext
+        (with-eval-after-load 'ibuffer
+          (progn
+            (define-ibuffer-filter dangling-buffer
+                "True if buffer is visiting a file but the file no longer exist."
+              (:reader nil :description "dangling-buffer")
+              (with-current-buffer buf
+                (and (buffer-file-name)
+                     (not (file-exists-p (buffer-file-name))))))
+            (defun ibuffer-dangling-buffers ()
+              (interactive)
+              "Open an ibuffer with buffers which file no longer exist."
+              (ibuffer t "*dangling-buffers*" (list (cons 'dangling-buffer "")))))))
     #+end_src
 *** Text
     #+begin_src emacs-lisp
