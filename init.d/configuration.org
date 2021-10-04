@@ -2049,8 +2049,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Rainbow
     Useful when debugging the theme. But is rarely used.
     #+begin_src emacs-lisp
-      (use-package rainbow-mode
-       	:pin gnu)
+      (setup rainbow-mode)
     #+end_src
 *** Move text
     Move line up and down using arrow keys.
