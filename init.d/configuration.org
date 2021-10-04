@@ -2111,9 +2111,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 ** Nov
    Epub reader mode.
    #+begin_src emacs-lisp
-     (use-package nov
-       :mode (("\\.epub\\'" . nov-mode))
-       :pin melpa-stable)
+     (setup nov
+       (:file-match "\\.epub\\'"))
    #+end_src
 ** Shell
    Enable color in shell and define the color theme. Also disable
