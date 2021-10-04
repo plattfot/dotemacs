@@ -2040,14 +2040,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     I'll need to use emojify instead.
 
     #+begin_src emacs-lisp
-      (use-package emojify
-        :after (notmuch)
-        :init
+      (setup emojify
         ;; Enable emojify when searching and reading emails
-        (add-hook 'notmuch-search-mode-hook 'emojify-mode)
-        (add-hook 'notmuch-show-mode-hook 'emojify-mode)
-        (add-hook 'notmuch-message-mode-hook 'emojify-mode)
-        :pin melpa-stable)
+        (:hook-into notmuch-search-mode-hook
+                    notmuch-show-mode-hook
+                    notmuch-message-mode-hook))
     #+end_src
 *** Rainbow
     Useful when debugging the theme. But is rarely used.
