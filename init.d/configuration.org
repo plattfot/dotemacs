@@ -2054,10 +2054,9 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Move text
     Move line up and down using arrow keys.
     #+begin_src emacs-lisp
-      (use-package move-text
-       	:bind (([C-S-up] . move-text-up)
-               ([C-S-down] . move-text-down))
-       	:pin melpa-stable)
+      (setup move-text
+        (:global "<C-S-up>" move-text-up
+                 "<C-S-down>" move-text-down))
     #+end_src
 
 *** Expand region
