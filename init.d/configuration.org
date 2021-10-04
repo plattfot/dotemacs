@@ -2026,7 +2026,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
     #+end_src
 *** w3m
     #+begin_src emacs-lisp
-      (use-package w3m)
+      (setup w3m)
     #+end_src
 ** Text
   Packages for editing and viewing text.
