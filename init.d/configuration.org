@@ -2871,11 +2871,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 **** houdini
      Houdini related functions, mostly handle houdini versions.
      #+begin_src emacs-lisp
-       (use-package houdini
-         :bind ("C-x j" . hou-insert-version)
-         :if dotemacs-is-work
-         :ensure nil
-         :load-path "plugins")
+       (when dotemacs-is-work
+         (setup houdini
+           (:global "C-x j" hou-insert-version)
+           (:load-from (expand-file-name "plugins" user-emacs-directory))))
      #+end_src
 **** highlight-extra
      Functions for highlighting my shells when building etc
