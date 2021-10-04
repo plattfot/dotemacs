@@ -2067,10 +2067,6 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Multiple cursors
     Keybindings for the mc package
     #+begin_src emacs-lisp
-    #+begin_src emacs-lisp
-      (use-package mc-extras
-        :after (multiple-cursors)
-        :pin melpa-stable)
       (setup multiple-cursors
         (:global "C-S-c C-S-c" mc/edit-lines
                  "C->"         mc/mark-next-like-this
@@ -2084,6 +2080,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                "C-c m s c" mc/insert-same-chars-per-line))
     #+end_src
 
+    #+begin_src emacs-lisp
+      (setup mc-extras
+        (with-eval-after-load 'multiple-cursors
+          (require 'mc-extras)))
     #+end_src
 *** String inflections
     #+begin_src emacs-lisp
