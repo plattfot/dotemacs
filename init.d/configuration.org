@@ -519,7 +519,41 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** Markdown
     #+begin_src emacs-lisp
       (setup markdown-mode
-        (:hook dotemacs-show-trailing-whitespace-if-writable))
+        (:hook dotemacs-show-trailing-whitespace-if-writable)
+        (:option markdown-hide-urls nil
+                 markdown-asymmetric-header t
+                 markdown-list-item-bullets '("-")
+                 markdown-marginalize-headers nil)
+        (advice-add 'markdown-fontify-headings :after 'plt/markdown-number-headings))
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (defun plt/markdown-number-headings (last)
+        "Display the atx heading with a prefix of the level.
+
+      For example:
+      # Heading
+      ## Subheading
+      # Another heading
+      Will be displayed as:
+
+      1. Heading
+      2. Subheading
+      1. Another heading
+
+      This is only active when `markdown-hide-markup' is enabled.
+
+      It will look for the heading from point to LAST. Similar to what
+      `markdown-fontify-headings' does."
+        (let* ((level (markdown-outline-level))
+               (left-markup-props
+                `(face markdown-header-delimiter-face display ,(format "%s. " level))))
+          (when (and markdown-hide-markup
+                     ;; Having issues of it picking up issue tags (#[0-9]+)
+                     (string-match-p "#+ " (buffer-substring (match-beginning 4) (match-end 4))))
+            (add-text-properties
+             (match-beginning 4) (match-end 4) left-markup-props)))
+        t)
     #+end_src
 *** Meson
    #+begin_src emacs-lisp
