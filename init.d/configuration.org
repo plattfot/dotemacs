@@ -2188,7 +2188,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** bank
     Functions for handling bank statements
     #+begin_src emacs-lisp
-      (setup bank)
+      (setup (:require bank))
     #+end_src
 *** Multiple cursor extension
     Add some extra functionality to multiple cursors inserting numbers
