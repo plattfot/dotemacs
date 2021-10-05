@@ -2218,7 +2218,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
 *** tile
     Functions for tiling window managers
     #+begin_src emacs-lisp
-      (setup tile)
+      (setup (:require tile))
     #+end_src
 ** Functions
 *** Buffer
