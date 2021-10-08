@@ -2271,6 +2271,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
       (setup ibuf-ext
         (with-eval-after-load 'ibuffer
           (progn
+            (:require ibuf-ext)
             (define-ibuffer-filter dangling-buffer
                 "True if buffer is visiting a file but the file no longer exist."
               (:reader nil :description "dangling-buffer")
