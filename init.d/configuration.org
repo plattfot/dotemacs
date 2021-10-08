@@ -2748,8 +2748,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          (define-key map (kbd "C-c <f5>") 'revert-all-buffers)
          (define-key map (kbd "C-c R") 'rename-current-file-or-buffer)
          (define-key map (kbd "<f5>") 'revert-buffer)
-         ;; Compile from current location and to re-run
-         (define-key map (kbd "<f12>") 'compile)
+         ;; Compile from project root and to re-run
+         (define-key map (kbd "<f12>") 'project-compile)
          (define-key map (kbd "<f11>") 'recompile)
 
          ;; Scrolling
