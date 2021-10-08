@@ -1565,6 +1565,8 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
       (setup embark-consult
         ;; if you want to have consult previews as you move around an
         ;; auto-updating embark collect buffer
+        (with-eval-after-load 'embark
+          (:require embark-consult))
         (:with-mode embark-collect-mode
           (:hook embark-consult-preview-minor-mode)))
     #+end_src
