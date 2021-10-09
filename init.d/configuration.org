@@ -1377,7 +1377,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          (:option ibuffer-expert t ;; Don't ask when closing unmodified buffers
                   ibuffer-show-empty-filter-groups nil
                   ibuffer-saved-filter-groups
-                  '(("default"
+                  `(("default"
                      ("c++" (mode . c++-mode))
                      ("scheme" (mode . scheme-mode))
                      ("make"  (or (mode . makefile-gmake-mode)
@@ -1390,7 +1390,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                      ("docs" (or (mode . rst-mode)
                                  (mode . Man-mode)
                                  (mode . markdown-mode)
-                                 (mode . org-mode)))
+                                 (and (mode . org-mode)
+                                      (not
+                                       (filename . ,(expand-file-name
+                                                     ".*"
+                                                     (regexp-quote org-roam-directory)))))))
                      ("dired" (mode . dired-mode))
                      ("python" (mode . python-mode))
                      ("yaml" (mode . yaml-mode))
@@ -1430,7 +1434,10 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                      ("shell" (mode . shell-mode))
                      ("gdb" (mode . gdb-script-mode))
                      ("elisp" (mode . emacs-lisp-mode))
-                     ("emacs" (name . "^\\*.*?\\*$"))))))
+                     ("emacs" (name . "^\\*.*?\\*$"))
+                     ;; Put roam buffers last as it can open a lot of them
+                     ;; when generating the agenda.
+                     ("roam" (mode . org-mode))))))
      #+end_src
 *** ivy
     Better multi-editing than ag.el.
