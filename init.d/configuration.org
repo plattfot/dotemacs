@@ -1059,7 +1059,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
                   "C-c v i" org-roam-node-insert)
          (:option
           org-roam-v2-ack t
-          org-roam-directory (concat (file-name-as-directory org-directory) "roam")
+          org-roam-directory (expand-file-name "roam" org-directory)
           org-roam-capture-templates
           '(
             ("d" "default" plain "%?"
