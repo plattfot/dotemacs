@@ -864,6 +864,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
          org-hide-emphasis-markers t
          org-link-search-must-match-exact-headline nil
          org-log-into-drawer "LOGBOOK"
+         org-num-face 'org-tag
          org-pretty-entities t
          org-pretty-entities-include-sub-superscripts t
          org-src-fontify-natively t
