@@ -850,6 +850,7 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
         ;; Open links in same frame
         (add-to-list 'org-link-frame-setup (cons 'file 'find-file))
         (:option
+         org-adapt-indentation t
          org-agenda-files (plt/org-fetch-agenda-files)
          org-agenda-restore-windows-after-quit t
          org-agenda-span 'day
