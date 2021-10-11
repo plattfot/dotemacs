@@ -1997,32 +1997,11 @@ Inspired by [[https://github.com/hrs/dotfiles/tree/abc679db03ed7f7e5ec2cf1f893f5
             (arxiv-get-pdf-add-bibtex-entry id plt/paper-bibtex plt/paper-directory)))
         (unless (use-region-p) (forward-line)))
     #+end_src
-*** mood-line
+*** nano modeline
     #+begin_src emacs-lisp
-      (setup mood-line
-        (:option mood-line-show-encoding-information t)
-        (mood-line-mode)
-        (defun plt/mood-line-unimportant-encoding (mood-line-fun)
-          "Set what MOOD-LINE-FUN return as unimportant"
-          (propertize (funcall mood-line-fun) 'face 'mood-line-unimportant))
-        (defun plt/mood-line-shell-modified (mood-line-fun)
-          "Don't show modification on comint derived and vterm buffers."
-          (if (not (derived-mode-p 'comint-mode 'vterm-mode 'erc-mode))
-              (funcall mood-line-fun)
-            "  "))
-        (defun plt/mood-line-remote-status (mood-line-fun)
-          "Show an @ before the modified indicator if the buffer is remote."
-          (concat
-           (if (and default-directory (file-remote-p default-directory))
-               (propertize "@" 'face 'mood-line-unimportant)
-             " ")
-           (funcall mood-line-fun)))
-        ;; Workaround to fix errors when using emacs@28.1 and emacs-mood-line@1.2.4
-        (with-eval-after-load 'flymake
-          (setf flymake--mode-line-format flymake-mode-line-format))
-        (advice-add 'mood-line-segment-encoding :around 'plt/mood-line-unimportant-encoding)
-        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-shell-modified)
-        (advice-add 'mood-line-segment-modified :around 'plt/mood-line-remote-status))
+      (setup nano-modeline
+        (:option nano-modeline-position 'bottom)
+        (nano-modeline-mode 1))
     #+end_src
 *** w3m
     #+begin_src emacs-lisp
