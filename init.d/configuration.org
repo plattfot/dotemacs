@@ -1195,12 +1195,12 @@ everything is in the same file.
   ")
         :unnarrowed t)
        ("t" "task" plain "* TODO ${title}
-    SCHEDULED: %t
-    :PROPERTIES:
-    :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
-    :END:
-    %?
-    %a"
+  SCHEDULED: %t
+  :PROPERTIES:
+  :CATEGORY: %(completing-read \"Category: \" org-agenda-category-icon-alist)
+  :END:
+  %?
+  %a"
         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
   ,#+filetags: :uppgift:
   ")
@@ -1234,14 +1234,14 @@ everything is in the same file.
         :unnarrowed t)
        ("a" "album" plain "
   ,* [[id:2580937e-3dc4-4bc9-ba61-d718655b12ae][Vinyl]]
-    - Artist: %?
-    - Färg: 
-    - Signerad: %^{Signerad: |Nej|Ja}
-    - Inkl CD: %^{Inkl CD: |Nej|Ja}
-    - Skivbolag: 
-    - Typ: %^{Omslagstyp: |Gatefold|Sleeve}
-    - Skivor: 2
-    - Övrigt:
+  - Artist: %?
+  - Färg: 
+  - Signerad: %^{Signerad: |Nej|Ja}
+  - Inkl CD: %^{Inkl CD: |Nej|Ja}
+  - Skivbolag: 
+  - Typ: %^{Omslagstyp: |Gatefold|Sleeve}
+  - Skivor: 2
+  - Övrigt:
   "
         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                            "#+title: ${title}
