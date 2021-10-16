@@ -899,15 +899,6 @@ Major mode for editing nginx.
 
 Packages that augments emacs.
 
-*** All the Icons
-
-#+begin_src emacs-lisp
-  (setup all-the-icons
-    (autoload 'all-the-icons-material "all-the-icons")
-    (autoload 'all-the-icons-octicon "all-the-icons")
-    (autoload 'all-the-icons-faicon "all-the-icons"))
-#+end_src
-
 *** Org
 
 Use a little downward-pointing arrow instead of the usual ellipsis
@@ -1110,20 +1101,34 @@ The org structure template el (expand using <el) is from
                                   (tags . " %i ")
                                   (search . " %i "))
        org-agenda-category-icon-alist
-       `(
-         ("backup" ,(list (all-the-icons-material "backup" :height 1.2)) nil nil :ascent center)
-         ("bug" ,(list (all-the-icons-octicon "bug" :height 1.2)) nil nil :ascent center)
-         ("computer" ,(list (all-the-icons-faicon "server" :height 1.2)) nil nil :ascent center)
-         ("economy" ,(list (all-the-icons-material "euro_symbol" :height 1.2)) nil nil :ascent center)
-         ("emacs" ,(list (all-the-icons-fileicon "emacs" :height 1.2)) nil nil :ascent center)
-         ("exercise" ,(list (all-the-icons-material "fitness_center" :height 1.2)) nil nil :ascent center)
-         ("home" ,(list (all-the-icons-faicon "home" :height 1.2)) nil nil :ascent center)
-         ("keyboard" ,(list (all-the-icons-material "keyboard" :height 1.2)) nil nil :ascent center)
-         ("misc" ,(list (all-the-icons-octicon "inbox" :height 1.2)) nil nil :ascent center)
-         ("photo" ,(list (all-the-icons-material "camera_roll" :height 1.2)) nil nil :ascent center)
-         ("project" ,(list (all-the-icons-faicon "flask" :height 1.2)) nil nil :ascent center)
-         ("task" ,(list (all-the-icons-faicon "question-circle-o" :height 1.2)) nil nil :ascent center)
-         ))))
+       ;; Extracted from all-the-fonts
+       (let* ((set-font-icon (lambda (icon font raise)
+                               (let ((face '(:family font :height 1.4)))
+                                 (propertize icon
+                                             'face face
+                                             'font-lock-face face
+                                             'display `(raise ,raise)
+                                             'rear-nonsticky t
+                                             ))))
+              (set-material-icon (lambda (icon)
+                                   (funcall set-font-icon icon "Material Icons" -0.2)))
+              (set-fontawesome-icon (lambda (icon)
+                                      (funcall set-font-icon icon "FontAwesome" -0.1))))
+         `(
+           ("backup" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("bug" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("computer" ,(list (funcall set-fontawesome-icon "")) nil nil :ascent center)
+           ("economy" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ;; Missing file-icons so I don't have a good icon for emacs
+           ("emacs" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("exercise" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("home" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("keyboard" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("misc" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("photo" ,(list (funcall set-material-icon "")) nil nil :ascent center)
+           ("project" ,(list (funcall set-fontawesome-icon "")) nil nil :ascent center)
+           ("task" ,(list (funcall set-fontawesome-icon "")) nil nil :ascent center)
+           )))))
 #+end_src
 
 **** Super agenda
