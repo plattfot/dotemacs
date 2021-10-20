@@ -149,6 +149,7 @@ relative to the `default-directory'."
   (let ((files (directory-files-recursively (or directory default-directory) regex)))
     (--each files (insert (format "'%s',\n" (file-relative-name it))))))
 
+;;; git
 (defun work-git--fetch-version (change-re version-re error-msg)
   "Extract version change from a diff.
 
