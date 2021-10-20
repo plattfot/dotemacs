@@ -11,7 +11,7 @@
 (require 'json)
 (require 'cl-lib)
 
-;; ============================= Functions ===================================
+;;; Functions
 (defun work-insert-eigen-pretty-printer ()
 "Insert command to add eigen pretty printer for gdb."
 (interactive )
@@ -291,7 +291,7 @@ changed in the manifest.yaml."
    (format "git add manifest.yaml && git commit -m %S"
            (work-git--version-commit-message))))
 
-;; ============================ Registers ====================================
+;;; Registers
 (defvar work-swdevl
   (substitute-in-file-name "$DD_SHOWS_ROOT/DEV01/user/work.$USER/swdevl")
   "Path to my default workspace at work.")
@@ -325,7 +325,7 @@ of CONFIG as the version."
 
 (set-register ?d (cons 'file work-swdevl))
 
-;; ============================== GDB ========================================
+;;; GDB
 (define-prefix-command 'gdb-insert-map)
 
 (defun work-insert-gdb-sourceme (name &optional config use-config-verbatim)
@@ -354,6 +354,8 @@ Useful when debugging."
 
 (define-key gdb-insert-map (kbd "s") 'work-insert-spork-sourceme)
 (define-key gdb-insert-map (kbd "m") 'work-insert-openmesh-sourceme)
+
+
 
 (provide 'work)
 ;;; work.el ends here
