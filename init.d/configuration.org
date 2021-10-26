@@ -1733,6 +1733,16 @@ be a bit faster to use.
   full file name."
     (interactive "bBuffer: ")
     (plt/embark--copy-buffer-file-name buffer 'file-local-name))
+
+  (defun plt/embark-insert-buffer-name-and-line-nr (buffer)
+    "Insert the BUFFER name and the line number the cursor is on."
+    (interactive "bBuffer: ")
+    (let (name
+          line-number)
+      (with-current-buffer buffer
+        (setf name (buffer-name))
+        (setf line-number (line-number-at-pos)))
+      (insert (format "%s:%s" name line-number))))
 #+end_src
 
 #+begin_src emacs-lisp
