@@ -1750,7 +1750,8 @@ be a bit faster to use.
     (:global "<f7>" embark-act)
     (:with-mode embark-buffer
       (:bind "c" plt/embark-copy-buffer-file-name
-             "C" plt/embark-copy-buffer-file-local-name))
+             "C" plt/embark-copy-buffer-file-local-name
+             "l" plt/embark-insert-buffer-name-and-line-nr))
     (:option prefix-help-command #'embark-prefix-help-command)
     ;; Hide the mode line of the Embark live/completions buffers
     (add-to-list 'display-buffer-alist
