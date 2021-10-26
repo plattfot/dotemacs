@@ -1344,6 +1344,26 @@ yas--fallback: yasnippet fallback loop!"
 This can happen when you bind ‘yas-expand’ outside of the
 ‘yas-minor-mode-map’.
 
+**** OrgMDb
+
+#+begin_src emacs-lisp
+  (setup orgmdb)
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun plt/orgmdb-open-imdb-link ()
+    "Open the imdb url using the IMDB-ID property."
+    (interactive)
+    (let* ((properties (org-entry-properties))
+           (imdb-id (alist-get "IMDB-ID" properties nil nil 'string-equal))
+           (item (alist-get "ITEM" properties nil nil 'string-equal)))
+      (if imdb-id
+          (progn
+            (message "Open imdb link for %s" (or item "unknown"))
+            (browse-url (format "https://www.imdb.com/title/%s" imdb-id)))
+        (error "Entry %s does not have an IMDB-ID property" (or item "unknown")))))
+#+end_src
+
 *** Buffer move
 
 Move buffers around between windows
