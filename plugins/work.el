@@ -97,6 +97,11 @@ Works only if the current buffer is a shell."
     (funcall go-hou "hou-test" "fx"))
   (toggle-frame-maximized))
 
+(defun work-vfxplatform ()
+  "Open vfxplatform.com in the *eww* buffer."
+  (interactive)
+  (eww "https://vfxplatform.com"))
+
 (defun work-parse-manifest (manifest-file)
   "Read the manifest and return an alist with the entries.
 
