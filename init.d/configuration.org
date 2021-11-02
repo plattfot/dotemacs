@@ -1701,6 +1701,8 @@ keymaps that defines imenu, easier to just alias the function.
       (:bind "c" plt/embark-copy-buffer-file-name
              "C" plt/embark-copy-buffer-file-local-name
              "l" plt/embark-insert-buffer-name-and-line-nr))
+    (:with-mode embark-file
+      (:bind "F" plt/embark-find-file-and-goto-line))
     (:option prefix-help-command #'embark-prefix-help-command)
     ;; Hide the mode line of the Embark live/completions buffers
     (add-to-list 'display-buffer-alist
@@ -1770,6 +1772,37 @@ be a bit faster to use.
         (setf name (buffer-name))
         (setf line-number (line-number-at-pos)))
       (insert (format "%s:%s" name line-number))))
+#+end_src
+
+**** File extensions
+
+Extension to [[https://github.com/oantolin/embark][embark]] file map to quickly jump to the right location in
+a file when point is on a string with the following syntax:
+=/path/to/file:<line number>[:<column>]=
+
+Useful for example when using ~ag --vimgrep <search>~ in a terminal as
+~consult-ripgrep~ does not work on certain remote locations for me.
+
+You can use ~compilation-minor-mode~, but it has been a bit hit or miss
+for me, for example it cannot parse the output of ~ag --vimgrep~.
+
+#+begin_src emacs-lisp
+(defun plt/embark-find-file-and-goto-line (file)
+  "Find FILE and goto line if the file contain line information.
+
+It assume the line and column indices starts at 1 and not 0."
+  (interactive "bFile: ")
+  (save-match-data
+    ;; Fetch the string again from point before finding the file
+    (let ((string (ffap-string-at-point)))
+      (find-file file)
+      ;; If it contains line and optionally column info jump to the location
+      (when (string-match (rx ":" (group (+ digit)) (? ":" (group (+ digit)))) string)
+        (let ((line (string-to-number (match-string 1 string)))
+              (col (match-string 2 string)))
+          (goto-char (point-min))
+          (forward-line (1- line))
+          (when col (forward-char (1- (string-to-number col)))))))))
 #+end_src
 
 *** Tramp
