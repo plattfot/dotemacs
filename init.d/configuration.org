@@ -1127,7 +1127,7 @@ The org structure template el (expand using <el) is from
            ("misc" ,(list (funcall set-material-icon "")) nil nil :ascent center)
            ("photo" ,(list (funcall set-material-icon "")) nil nil :ascent center)
            ("project" ,(list (funcall set-fontawesome-icon "")) nil nil :ascent center)
-           ("task" ,(list (funcall set-fontawesome-icon "")) nil nil :ascent center)
+           ("task" ,(list (funcall set-material-icon "")) nil nil :ascent center)
            )))))
 #+end_src
 
