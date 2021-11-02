@@ -1694,6 +1694,33 @@ keymaps that defines imenu, easier to just alias the function.
 
 *** Embark
 
+#+begin_src emacs-lisp
+  (setup embark
+    (:global "<f7>" embark-act)
+    (:with-mode embark-buffer
+      (:bind "c" plt/embark-copy-buffer-file-name
+             "C" plt/embark-copy-buffer-file-local-name
+             "l" plt/embark-insert-buffer-name-and-line-nr))
+    (:option prefix-help-command #'embark-prefix-help-command)
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setup embark-consult
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    (with-eval-after-load 'embark
+      (:require embark-consult))
+    (:with-mode embark-collect-mode
+      (:hook embark-consult-preview-minor-mode)))
+#+end_src
+
+**** Buffer extensions
+
 Extension to [[https://github.com/oantolin/embark][embark]] to be able to quickly copy the file name
 associated with a buffer. My old workflow involved =find-file=,
 auto complete the file in question then copy the line. This should
@@ -1743,31 +1770,6 @@ be a bit faster to use.
         (setf name (buffer-name))
         (setf line-number (line-number-at-pos)))
       (insert (format "%s:%s" name line-number))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (setup embark
-    (:global "<f7>" embark-act)
-    (:with-mode embark-buffer
-      (:bind "c" plt/embark-copy-buffer-file-name
-             "C" plt/embark-copy-buffer-file-local-name
-             "l" plt/embark-insert-buffer-name-and-line-nr))
-    (:option prefix-help-command #'embark-prefix-help-command)
-    ;; Hide the mode line of the Embark live/completions buffers
-    (add-to-list 'display-buffer-alist
-                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                   nil
-                   (window-parameters (mode-line-format . none)))))
-#+end_src
-
-#+begin_src emacs-lisp
-  (setup embark-consult
-    ;; if you want to have consult previews as you move around an
-    ;; auto-updating embark collect buffer
-    (with-eval-after-load 'embark
-      (:require embark-consult))
-    (:with-mode embark-collect-mode
-      (:hook embark-consult-preview-minor-mode)))
 #+end_src
 
 *** Tramp
