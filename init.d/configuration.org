@@ -1702,7 +1702,8 @@ keymaps that defines imenu, easier to just alias the function.
              "C" plt/embark-copy-buffer-file-local-name
              "l" plt/embark-insert-buffer-name-and-line-nr))
     (:with-mode embark-file
-      (:bind "F" plt/embark-find-file-and-goto-line))
+      (:bind "f" plt/embark-find-file-and-goto-line
+             "F" find-file))
     (:option prefix-help-command #'embark-prefix-help-command)
     ;; Hide the mode line of the Embark live/completions buffers
     (add-to-list 'display-buffer-alist
