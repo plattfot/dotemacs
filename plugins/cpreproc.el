@@ -37,6 +37,19 @@ Using what seems to be standard format 0x%02x%02x%04x."
                                (">"  . "later than %s")
                                ("<"  . "earlier than %s")))
 
+(defvar cpreproc-insert-if--variable-history nil
+  "History for the std in `cpreproc-insert-if'.")
+
+(defvar cpreproc-insert-if--comp-history nil
+  "History for the comp in `cpreproc-insert-if'.")
+
+(defvar cpreproc-insert-if--version-history nil
+  "History for the version in `cpreproc-insert-if'.")
+
+(defvar cpreproc-insert-if--version-str-history nil
+  "History for the version-str in `cpreproc-insert-if'.")
+
+;;;###autoload
 (defun cpreproc-insert-if (variable comp version &optional version-str no-else)
   "Insert an #if clause.
 In the format of #if (VARIABLE COMP VERSION) // VERSION[-STR].
@@ -62,7 +75,8 @@ If NO-ELSE is true it will not insert an else clause.
 
 If a region is active it will place that in
 both the ifdef and else clause.  Example:
-`(cpreproc-insert-if \"__cplusplus\" \"201103L\" \"==\" nil \"c++11\")'
+
+\(cpreproc-insert-if \"__cplusplus\" \"201103L\" \"==\" \"c++11\" nil)
 will insert
 
 #if (__cplusplus == 201103L) // c++11
@@ -70,30 +84,45 @@ will insert
 #else
 #endif
 
-`(cpreproc-insert-if \"__cplusplus\" \"201103L\" \">=\")' will
-insert
-#if (__cplusplus >= 201103L t) // 201103L or later
+\(cpreproc-insert-if \"__cplusplus\" \"201103L\" \">=\" nil t)
+
+will insert
+
+#if (__cplusplus >= 201103L) // 201103L or later
 <Cursor>
-#endif"
-(let ((str nil))
-  (when (region-active-p)
-    (setq str (buffer-substring-no-properties (region-beginning) (region-end)))
-    (delete-region (region-beginning) (region-end)))
-  (unless version-str
-    (setq version-str version))
-  (let ((format_assoc (assoc comp cpreproc-comp-format)))
-    (unless format_assoc
-      (error (format "%s is not in cpreproc-comp-format." comp)))
+#endif
 
-    (insert (format "#if (%s %s %s) // %s\n"
-                    variable comp version (format (cdr format_assoc) version-str)))
+When called interactively, the universal argument (\\[universal-argument]) will set
+NO-ELSE to t otherwise it will be nil."
+  (interactive
+   (let* ((in-variable (read-string "Variable: " nil 'cpreproc-insert-if--variable-history))
+          (in-comp (read-string "Compare operator: " nil 'cpreproc-insert-if--comp-history))
+          (in-version (read-string "Version: " nil 'cpreproc-insert-if--version-history))
+          (in-version-str (read-string
+                           (format "Version string (default %s): " in-version)
+                           nil
+                           'cpreproc-insert-if--version-str-history
+                           in-version)))
+     (list in-variable in-comp in-version in-version-str)))
+  (let ((str nil))
+    (when (region-active-p)
+      (setq str (buffer-substring-no-properties (region-beginning) (region-end)))
+      (delete-region (region-beginning) (region-end)))
+    (unless version-str
+      (setq version-str version))
+    (let ((format_assoc (assoc comp cpreproc-comp-format)))
+      (unless format_assoc
+        (error (format "%s is not in cpreproc-comp-format." comp)))
 
-    (let ((done (point)))
-      (insert (or str "\n"))
-      (unless no-else
-        (insert "#else\n" (or str "\n")))
-      (insert "#endif\n")
-      (goto-char done)))))
+      (insert (format "#if (%s %s %s) // %s\n"
+                      variable comp version (format (cdr format_assoc) version-str)))
+
+      (let ((done (point)))
+        (insert (or str "\n"))
+        (unless no-else
+          (insert "#else\n" (or str "\n")))
+        (insert "#endif\n")
+        (goto-char done)))))
 
 (defconst cpreproc-cplusplus
   '(("c++98" . "199711L")
