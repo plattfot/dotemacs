@@ -8,6 +8,15 @@
 (require 'subr-x)
 (require 'seq)
 
+(defgroup cpreproc nil
+  "Functions to insert macros in c/c++."
+  :group 'tools)
+
+(defcustom cpreproc-if-cplusplus-std-default nil
+  "Default for the std in `cpreproc-if-cplusplus'."
+  :type 'string
+  :group 'cpreproc)
+
 (defun cpreproc-semver-to-hex (version-string)
   "Convert VERSION-STRING to hex.
 Using what seems to be standard format 0x%02x%02x%04x."
@@ -93,15 +102,6 @@ insert
     ("c++14" . "201402L")
     ("c++17" . "201703L")
     "Alist of what __cplusplus is set to for the different language standards."))
-
-(defgroup cpreproc nil
-  "Functions to insert macros in c/c++"
-  :group 'tools)
-
-(defcustom cpreproc-if-cplusplus-std-default nil
-  "Default for the std in cpreproc-if-cplusplus."
-  :type 'string
-  :group 'cpreproc)
 
 (defvar cpreproc-if-cplusplus-std-history nil
   "History for the std in cpreproc-if-cplusplus.")
