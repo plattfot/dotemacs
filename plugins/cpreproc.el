@@ -103,11 +103,11 @@ insert
     ("c++17" . "201703L")
     "Alist of what __cplusplus is set to for the different language standards."))
 
-(defvar cpreproc-if-cplusplus-std-history nil
-  "History for the std in cpreproc-if-cplusplus.")
+(defvar cpreproc-if-cplusplus--std-history nil
+  "History for the std in `cpreproc-if-cplusplus'.")
 
-(defvar cpreproc-if-cplusplus-comp-history nil
-  "History for the comp in cpreproc-if-cplusplus.")
+(defvar cpreproc-if-cplusplus--comp-history nil
+  "History for the comp in `cpreproc-if-cplusplus'.")
 
 ;;;###autoload
 (defun cpreproc-if-cplusplus (std comp)
@@ -122,10 +122,10 @@ else clause."
                      ((and cpreproc-if-cplusplus-std-default
                            (not (string-empty-p cpreproc-if-cplusplus-std-default)))
                       cpreproc-if-cplusplus-std-default)
-                     ((and cpreproc-if-cplusplus-std-history
+                     ((and cpreproc-if-cplusplus--std-history
                            (not (string-empty-p
-                                 (car cpreproc-if-cplusplus-std-history))))
-                      (car cpreproc-if-cplusplus-std-history)))))
+                                 (car cpreproc-if-cplusplus--std-history))))
+                      (car cpreproc-if-cplusplus--std-history)))))
    (list (read-string
           (if std-default
               (format "%s (default %s): " std-prompt std-default)
