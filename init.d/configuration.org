@@ -2432,8 +2432,7 @@ Create a group to easier keep track of custom variables.
 *** bfuture
 
 #+begin_src emacs-lisp
-  (setup bfuture
-    (:load-from (expand-file-name "bfuture.el" user-emacs-directory)))
+  (setup bfuture)
 #+end_src
 
 *** bank
