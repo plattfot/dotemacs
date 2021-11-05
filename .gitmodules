@@ -4,6 +4,3 @@
 [submodule "themes/plattfot-theme"]
 	path = themes/plattfot-theme
 	url = git@github.com:plattfot/plattfot-theme.el.git
-[submodule "bfuture.el"]
-	path = bfuture.el
-	url = git@github.com:plattfot/bfuture.el.git
