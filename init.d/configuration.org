@@ -715,6 +715,66 @@ Clean the buffer with C-c C.
     (insert (plt/ledger-fetch-previous-payee)))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun plt/ledger-yank-previous-payee-and-increment ()
+    "Insert the payee of the previous xact and if possible increment.
+
+  It will increment if it finds the pattern m#m#w#d#, where # is a
+  number. Which number it increments depends on the
+  `current-prefix-arg'.
+
+  - \\[universal-argument] 4; increment the macro number (first m#).
+
+  - \\[universal-argument] 3; increment the meso number (second m#).
+
+  - \\[universal-argument] or \\[universal-argument] 2; increment the week number (w#).
+
+  - No prefix or any other \\[universal-argument] #; increment the day number (d#)."
+    (interactive)
+    (insert
+     (save-mark-and-excursion
+       (let ((payee (plt/ledger-fetch-previous-payee)))
+         (if (string-match (rx (group "m") (group (+ digit))
+                               (group "m") (group (+ digit))
+                               (group "w") (group (+ digit))
+                               (group "d") (group (+ digit)))
+                           payee)
+             (let ((macro-name (match-string 1 payee))
+                   (macro-number (string-to-number (match-string 2 payee)))
+                   (meso-name (match-string 3 payee))
+                   (meso-number (string-to-number (match-string 4 payee)))
+                   (week-name (match-string 5 payee))
+                   (week-number (string-to-number (match-string 6 payee)))
+                   (day-name (match-string 7 payee))
+                   (day-number (string-to-number (match-string 8 payee)))
+                   (prefix (prefix-numeric-value current-prefix-arg)))
+               (progn
+                 (cond
+                  ;; C-u or C-u 2
+                  ((or (and current-prefix-arg (listp current-prefix-arg))
+                       (eq prefix 2))
+                   (setf week-number (+ 1 week-number)
+                         day-number 1))
+                  ;; C-u 4
+                  ((eq prefix 4)
+                   (setf macro-number (+ 1 macro-number)
+                         meso-number 1
+                         week-number 1
+                         day-number 1))
+                  ;; C-u 3
+                  ((eq prefix 3)
+                   (setf meso-number (+ 1 meso-number)
+                         week-number 1
+                         day-number 1))
+                  (t (setf day-number (+ 1 day-number))))
+                 (concat
+                  macro-name (number-to-string macro-number)
+                  meso-name (number-to-string meso-number)
+                  week-name (number-to-string week-number)
+                  day-name (number-to-string day-number))))
+           payee)))))
+#+end_src
+
 *** direnv
 
 #+begin_src emacs-lisp
