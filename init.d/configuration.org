@@ -693,21 +693,26 @@ Clean the buffer with C-c C.
 #+end_src
 
 #+begin_src emacs-lisp
+  (defun plt/ledger-fetch-previous-payee ()
+    "Return the payee of the previous xact."
+    (save-mark-and-excursion
+      (let ((payee-regex (rx bol
+                             ;; date
+                             (= 4 digit) (= 2 (: (or "/" "-") (= 2 digit)))
+                             ;; clearing status
+                             (+ blank) (: (* (or "+" "-" "*"))) (+ blank)
+                             ;; payee
+                             (group (* not-newline)))))
+        (ledger-navigate-prev-xact-or-directive)
+        (search-forward-regexp payee-regex nil t)
+        (match-string 1))))
+#+end_src
+
+#+begin_src emacs-lisp
   (defun plt/ledger-yank-previous-payee ()
     "Insert the payee of the previous xact."
     (interactive)
-    (insert
-     (save-mark-and-excursion
-       (let ((payee-regex (rx bol
-                              ;; date
-                              (= 4 digit) (= 2 (: (or "/" "-") (= 2 digit)))
-                              ;; clearing status
-                              (+ blank) (: (* (or "+" "-" "*"))) (+ blank)
-                              ;; payee
-                              (group (* not-newline)))))
-         (ledger-navigate-prev-xact-or-directive)
-         (search-forward-regexp payee-regex nil t)
-         (match-string 1)))))
+    (insert (plt/ledger-fetch-previous-payee)))
 #+end_src
 
 *** direnv
