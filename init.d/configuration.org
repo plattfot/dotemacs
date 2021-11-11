@@ -775,6 +775,36 @@ Clean the buffer with C-c C.
            payee)))))
 #+end_src
 
+The ~plt/ledger-yank-previous-payee-and-increment~ is useful when I use
+=ledger= to track my training. E.g.
+
+#+begin_src ledger :tangle no
+2021/11/08 * M9M6W3D4
+    Exercise:Serratus Wall Slide w. Band  (15 reps * 3 sets) @1lbs ; RPE: 7
+    Exercise:Lateral Box Step-up 3-1-5-1  (30 reps * 3 sets) @30lbs ; RPE: 8
+    Exercise:Pushups  (11 reps + 9 reps + 10 reps) @5lbs ; RPE: 9
+    Exercise:DB Bicep Curls  (17 reps * 3 sets) @17.5lbs ; RPE: 9
+    Exercise:90/90 DB Skullcrusher  (24 reps * 3 sets) @22.5lbs ; RPE: 9
+    Gym:Home
+#+end_src
+
+For my next training session I can just place the cursor after the
+block hit ~C-c y~
+
+#+begin_src ledger :tangle no
+2021/11/11 * |
+#+end_src
+
+#+begin_src ledger :tangle no
+2021/11/11 * M9M6W3D5
+#+end_src
+
+Or if I want to start a new training week, I hit ~C-u C-c y~
+
+#+begin_src ledger :tangle no
+2021/11/11 * M9M6W4D1
+#+end_src
+
 *** direnv
 
 #+begin_src emacs-lisp
