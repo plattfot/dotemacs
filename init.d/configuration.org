@@ -645,7 +645,7 @@ Clean the buffer with C-c C.
   (setup ledger-mode
     (:bind "C-c C" ledger-mode-clean-buffer
            "C-c C-C" plt/ledger-clear-all
-           "C-c y" plt/ledger-yank-previous-payee)
+           "C-c y" plt/ledger-yank-previous-payee-and-increment)
     (:file-match "\\.dat\\'")
     (:hook ledger-flymake-enable)
     ;; Workaround for issue described in https://github.com/oantolin/orderless/issues/52
