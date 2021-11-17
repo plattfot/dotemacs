@@ -18,6 +18,16 @@ Enable lexical binding in this config
   (require 'setup)
 #+end_src
 
+#+begin_src emacs-lisp
+  (setup-define :needs
+    (lambda (executable)
+      `(unless (executable-find ,executable)
+         ,(setup-quit)))
+    :documentation "If EXECUTABLE is not in the path, stop here."
+    :repeatable 1)
+#+end_src
+From [[https://www.emacswiki.org/emacs/SetupEl#h5o-12][emacswiki.org]].
+
 ** Init time
 
 From [[https://blog.d46.us/advanced-emacs-startup/][Advanced Emacs startup]], but using ~emacs-init-time~ instead of
