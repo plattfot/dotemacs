@@ -4,7 +4,7 @@
 (require 'multiple-cursors)
 
 (defun mc/insert-dec-numbers (arg)
-  "Insert decreasing numbers for each cursor. 
+  "Insert decreasing numbers for each cursor.
 Starting at number of cursors - 1 or ARG."
   (interactive "P")
   (setq mc--insert-numbers-number (or arg (1- (mc/num-cursors))))
@@ -35,7 +35,7 @@ Cursors on the same line will insert the same number, starts at
   (let ((mc--current-line nil)
 	(mc--insert-numbers-number (or arg (1- (mc/num-cursors))) ))
     (mc/for-each-cursor-ordered
-     (mc/execute-command-for-fake-cursor 
+     (mc/execute-command-for-fake-cursor
       'mc--insert-number-and-decrease-for-diff-lines
       cursor))))
 
@@ -52,25 +52,25 @@ Cursors on the same line will insert the same number, starts at
 (defun mc--insert-number-and-change-for-diff-lines (change)
 "Internal function."
   (interactive)
-  (if (not mc--current-line) 
+  (if (not mc--current-line)
       ;; If first time init mc--current-line
       (progn (setq mc--current-line (line-number-at-pos))
 	     (insert (number-to-string mc--insert-numbers-number)))
     ;; Else compare lines and set accordingly
-    (progn  
+    (progn
       ;; If current-line and the line is it on are different change
       ;; and insert.
       (if (not (= mc--current-line (line-number-at-pos)))
-	  (progn 
+	  (progn
 	    (setq mc--current-line (line-number-at-pos)
-		  mc--insert-numbers-number 
+		  mc--insert-numbers-number
 		  (funcall change mc--insert-numbers-number))
 	    (insert (number-to-string mc--insert-numbers-number)))
 	;; Else insert number.
 	(insert (number-to-string mc--insert-numbers-number)) ))))
 
 (defun mc/insert-characters (char)
-  "Insert increasing character for each cursor.  
+  "Insert increasing character for each cursor.
 It starts from the user specified character."
   (interactive  "cSpecify letter to start from")
   (setq mc--insert-chars-char char)
@@ -133,17 +133,17 @@ It starts from the user specified character."
 
 (defun mc--insert-char-and-change-for-diff-lines ( change )
   (interactive)
-  (if (not mc--current-line) 
+  (if (not mc--current-line)
       ;; If first time init mc--current-line
       (progn (setq mc--current-line (line-number-at-pos))
 	     (insert mc--insert-chars-char))
     ;; Else compare lines and set accordingly.
-    (progn  
+    (progn
       ;; If current-line and the line is it on is different increment
       ;; and insert.
       (if (not (= mc--current-line (line-number-at-pos)))
 	  (progn (setq mc--current-line (line-number-at-pos)
-		       mc--insert-chars-char 
+		       mc--insert-chars-char
 		       (funcall change mc--insert-chars-char))
 		 (insert mc--insert-chars-char))
 	;; Else insert char.

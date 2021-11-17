@@ -35,7 +35,7 @@ for each row."
   (let ((avg_list '())
 	(num_cols 0)  ;; number of columns of the table
 	(num_rows 0)) ;; number of rows of the table
-    
+
     (maphash (lambda (key values)
 	       ;; Compute the number if columns
 	       (setq num_cols (max num_cols (length values)))
@@ -62,13 +62,13 @@ for each row."
     (org-table-next-field)
     ;; Populate header
     (insert first_header)
-    
+
     (let ((count 0))
       (while (< count num_cols)
 	(org-table-next-field)
 	(insert " run " (int-to-string count))
 	(setq count (1+ count))))
-    
+
     ;; Add column for the average value at the end of the table
     (when compute_avg
       (progn
@@ -79,7 +79,7 @@ for each row."
 	(org-table-previous-field)
 	;; Reverse list since we will begin at the top
 	(setq avg_list (nreverse avg_list))
-	(while avg_list 
+	(while avg_list
 	  (org-table-next-row)
 	  (insert (pop avg_list))
 	  )
@@ -100,8 +100,8 @@ for each row."
       (sort-lines nil begin end))
     (newline)))
 
-(defun dd-log-generate-table-with-methods ( name_row name_col methods 
-					    &optional first_header compute_avg) 
+(defun dd-log-generate-table-with-methods ( name_row name_col methods
+					    &optional first_header compute_avg)
   "Generate a table for each method.
 Call from the buffer that contains the dd log.  Generates
 table/tables from that log by extracting the regexp matcing the
@@ -124,7 +124,7 @@ Optional arguments are FIRST_HEADER, which should be the main
 row.  COMPUTE_AVG, set to true and it will compute the average
 for each row."
   (interactive (list (read-string "String that classifies each iteration: ")
-		     (read-string "String to match the result: ")	
+		     (read-string "String to match the result: ")
 		     (read-string "Enter name for each method, separated by comma: ")
 		     (read-string "Enter name for the first column: ")
 		     (y-or-n-p "Compute average? ")))
@@ -151,8 +151,8 @@ for each row."
     ;; populate tables with a hash table for each method
     (dolist (method methods)
       ;; Extract method name
-      (setq method (substring method 
-			      (1+ (string-match "(" method)) 
+      (setq method (substring method
+			      (1+ (string-match "(" method))
 			      (string-match "\\\\)" method)) )
       (puthash method (make-hash-table :test 'str-hash ) tables))
     (goto-char (point-min))
@@ -160,7 +160,7 @@ for each row."
     ;; Based on http://www.emacswiki.org/emacs/DuplicateLines
     (while (re-search-forward (concat "^\\(.*" name_col ".*\n\\)\\1+") (point-max) t)
       (replace-match "\\1"))
-    
+
     (goto-char (point-min))
       (while (not (= (line-beginning-position) (line-end-position)))
 	(let* ((begin (line-beginning-position))
@@ -170,16 +170,16 @@ for each row."
 	       (row) (col))
 	  ;; Need to read in region, parse the row, col and method (if it exist)
 	  ;; and add that to the correct table
-	  
+
 	  ;; Read line from buffer
 	  (string-match name_row input)
 	  (setq row (match-string 1 input))
-	  (string-match name_col input) 
+	  (string-match name_col input)
 	  (setq col (match-string 1 input))
 	  (setq method_used "")
 
 	  (dolist (method methods)
-	    (when(string-match method input) 
+	    (when(string-match method input)
 		(progn (setq method_used (match-string 1 input)) (return))))
 
 	  (when (> (string-width method_used) 0)
@@ -194,7 +194,7 @@ for each row."
 	  (kill-line)))
 
       ;; Iterate over the tables.
-      (maphash (lambda (key table) 
+      (maphash (lambda (key table)
 		 (dd-log-build-table-with-methods key table first_header compute_avg ))
 	       tables)))
 
@@ -209,10 +209,10 @@ for each row."
  "Frame")
 )
 
-(defun dd-log-extract-volumetrics-info () 
+(defun dd-log-extract-volumetrics-info ()
   "Extract info about volumetricss from the DD logger."
   (interactive)
-  (dd-log-generate-table-with-methods 
+  (dd-log-generate-table-with-methods
    "Number of Secondary Grids to raster \\([0-9]+\\)"
    "Finished process Volume rasterization in \\([0-9]+\\.[0-9]+\\)s"
    "Using \\(template specialization\\)\\., Using \\(inheritance\\)\\."
@@ -221,8 +221,8 @@ for each row."
 )
 
 ;; Work in progress
-(defun dd-log-parse-layout (layout type default) 
-  "Parse the input and return the layout in a list. 
+(defun dd-log-parse-layout (layout type default)
+  "Parse the input and return the layout in a list.
 For example LAYOUT = \"I(1,2) R(Test,1)\" type = I, will
 return (1 2), TYPE = R will return (\"Test\" 1) if it fails to
 make sense of the input it will return the DEFAULT"
@@ -261,26 +261,26 @@ make sense of the input it will return the DEFAULT"
   "Convert integers to re groups in the LAYOUT.
 For example 1 -> \\1"
   (mapcar (lambda (l)
-	    (if (numberp l) (concat "\\" (number-to-string l)) 
-	      (replace-regexp-in-string "^\\([0-9]+\\)$" "\\\\1" l))) 
+	    (if (numberp l) (concat "\\" (number-to-string l))
+	      (replace-regexp-in-string "^\\([0-9]+\\)$" "\\\\1" l)))
 	  layout))
 
-(defun dd-log-generate-table-last ( iter_re result_re &optional match_layout) 
+(defun dd-log-generate-table-last ( iter_re result_re &optional match_layout)
   "Same as log-generate-table except this one set CELL-OPERATOR to dd-last.
 
 Which mean that if there are more than one entry per iteration
-the last encounter will be stored. 
+the last encounter will be stored.
 
 ITER_RE regexp expression that classifies each iteration.
 RESULT_RE regexp expression that match the result.
 MATCH_LAYOUT Specifies the layout for the table for the iteration and result type."
-  (interactive 
+  (interactive
    (list (read-string "String that classifies each iteration: ")
-	 (read-string "String to match the result: ")	
+	 (read-string "String to match the result: ")
 	 (read-string "Enter layout (default I(Iteration,1) R(Result,1)): ")))
   (dd-log-generate-table iter_re result_re match_layout 'dd-last ))
 
-(defun dd-log-generate-table ( iter_re result_re &optional match_layout cell-operator) 
+(defun dd-log-generate-table ( iter_re result_re &optional match_layout cell-operator)
   "Generate a table from a DD log buffer.
 
 Call from the buffer that contains the dd log.  Generates a table
@@ -305,9 +305,9 @@ how it will deal with collisions in each cell.  Options are to
 pick the last one, average or sum."
   (interactive
    (list (read-string "String that classifies each iteration: ")
-	 (read-string "String to match the result: ")	
+	 (read-string "String to match the result: ")
 	 (read-string "Enter layout (default I(Iteration,1) R(Result,1)): ")))
-  
+
   ;; Process arguments
   (let ((iter_layout (list "Iteration" 1))
 	(result_layout (list "Result" 1) ))
@@ -326,7 +326,7 @@ pick the last one, average or sum."
     ;; Setup hash table to put the data in.
     (define-hash-table-test 'str-hash 'string-equal 'sxhash)
     (let ((table (make-hash-table :test 'str-hash )))
-      
+
       (let (start end)
 	(goto-char (point-min))
 	(setq start (point))
@@ -346,7 +346,7 @@ pick the last one, average or sum."
 
 	;; Get the header for the iteration
 	(goto-char (point-min))
-	(while (search-forward-regexp iter_re (point-max) t) 
+	(while (search-forward-regexp iter_re (point-max) t)
 	  (let ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 	    (string-match iter_re line)
 	    (setq col_nr (funcall iter_first_func (car iter_layout) line)
@@ -354,14 +354,14 @@ pick the last one, average or sum."
 		  col (gethash col_nr table)))
 
 	  ;; column doesn't exist create it first
-	  (when (not col) (setq col (make-hash-table :test 'equal))) 
+	  (when (not col) (setq col (make-hash-table :test 'equal)))
 
 	  (puthash row_nr data col)
 	  (puthash col_nr col table)
 
 	  (beginning-of-line)
 	  (kill-whole-line)
-	  
+
 	  (let ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 	    (while (string-match result_re line)
 
@@ -370,17 +370,17 @@ pick the last one, average or sum."
 		    col (gethash col_nr table))
 
 	      ;; column doesn't exist create it first
-	      (when (not col) (setq col (make-hash-table :test 'equal))) 
-	      
+	      (when (not col) (setq col (make-hash-table :test 'equal)))
+
 	      (let ((cell (gethash row_nr col)))
 		;; If cell already has a value add the data to it
 		(if cell
 		    (setq cell (funcall cell-operator cell data))
 		  (setq cell data))
 
-		;; update cell 
+		;; update cell
 		(puthash row_nr cell col))
-	      
+
 	      ;; update col
 	      (puthash col_nr col table)
 	      ;; Move to the next line and read that line in and continue
@@ -401,7 +401,7 @@ pick the last one, average or sum."
 (defun dd-last (a b) "Ignore A, return B." b)
 
 (defun dd-log-build-table ( table num_rows)
-  "Build table from the nested hash map TABLE. 
+  "Build table from the nested hash map TABLE.
 NUM_ROWS specifies number of rows in the table"
 ;; Save the state of next-line-add-nelines
 (goto-char (point-min))
@@ -416,7 +416,7 @@ NUM_ROWS specifies number of rows in the table"
 (org-table-align))
 
 (defun dd-log-build-column ( name column num_rows )
-  "Build the column specified by the input.  
+  "Build the column specified by the input.
 NAME will be the header for the column.  COLUMN is the if for the
 column.  NUM_ROWS specifies number of rows in the column."
   (end-of-line)
@@ -436,16 +436,16 @@ column.  NUM_ROWS specifies number of rows in the column."
 
 (defun dd-convert-to-seconds ( start-time )
   "Convert START-TIME to seconds."
-  (let* ((start_s (float-time (date-to-time 
+  (let* ((start_s (float-time (date-to-time
 			       (replace-regexp-in-string "-" " " start-time ))))
-	 (curr_s (float-time (date-to-time 
+	 (curr_s (float-time (date-to-time
 			      (replace-regexp-in-string "-" " " (match-string 1) )))))
     (- curr_s start_s)))
 
-(defun dd-extract-fluid-info () 
+(defun dd-extract-fluid-info ()
   "Extracts the result from a DD fluid log."
   (interactive)
-  (dd-log-generate-table 
+  (dd-log-generate-table
    "Float frame: \\([0-9]+\\)"
    "Finished process \\(.*\\) in \\([0-9]+\\.[0-9]+\\)s"
    "I(Frame,1) R(1,2)")
@@ -460,12 +460,12 @@ column.  NUM_ROWS specifies number of rows in the column."
 
 ;; )
 (defun dd-to-simple-table (name value)
-  "Convert NAME = VALUE to a table.  
+  "Convert NAME = VALUE to a table.
 It expect the buffer to only contain values you want to replace."
 
 ;;(interactive "sName to match: \nsValue to match: ")
-(interactive 
- (list (read-regexp "Name to match: " "volume") 
+(interactive
+ (list (read-regexp "Name to match: " "volume")
        (read-regexp "Value to match: " "\[0-9.\]+")))
 
 ;; "sName to match: \nsValue to match: ")
@@ -476,7 +476,7 @@ It expect the buffer to only contain values you want to replace."
   (while (re-search-forward re (point-max) t) (replace-match "|\\2"))
 
   (goto-char pos)
-  (insert (concat "#+PLOT: title:\"" name 
+  (insert (concat "#+PLOT: title:\"" name
 		  "\" ind:1 type:2d with:lines\n|Frame|" name "|\n|-+-|\n"))
   (let ((count 1))
     (while (search-forward-regexp "^||" (point-max) t)
@@ -494,7 +494,7 @@ It expect the buffer to only contain values you want to replace."
 	       "Finished process \\(?1:Solve linear system\\) in \\(?2:[0-9]+\\.[0-9]+\\)s"
 	       "Finished process \\(?1:Dimension-Reduced pressure solver\\) in \\(?2:[0-9]+\\.[0-9]+\\)s"
 	       )))
-  (dd-log-generate-table-last 
+  (dd-log-generate-table-last
    "Float frame: \\([0-9]+\\)"
    (concat "\\(?:" (mapconcat 'identity types "\\|")"\\)")
    "I(Frame,1) R(1,2))")))
