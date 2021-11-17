@@ -1,6 +1,5 @@
 ;;; tig.el --- Small library for helping with automate git tasks
 ;;; Commentary:
-;; Right now only tested with sway
 ;;; Code:
 (require 'eieio)
 (require 's)
