@@ -1,8 +1,37 @@
-;;; cpreproc.el --- Collection of functions to help with c/c++ development at work
+;;; cpreproc.el --- Easier create cpp macros for C/C++
 
-;; Author: Fredrik Salomonsosn <plattfot@gmail.com>
+;; Copyright (C) 2018-2021 Fredrik Salomonsson
+;; Author: Fredrik Salomonsson <plattfot@posteo.net>
+;; Created: 15 Feb 2020
+;; Package-Requires: ((emacs "27.2") cl-lib seq subr-x)
+;; Keywords: lisp
+;; Version 1.0.0
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Contains function for wrapping a region in a #if macro for C/C++.
+
+;; Convert a semver version to a hex value. As some c++ libraries tend
+;; to pack their version string into an hex value, examples for this
+;; are the houdini developer kit and openvdb.
+
+;; Mapping c++ standards to the long int value defined in c++
+;; preprocessor variable __cplusplus.
 
 ;;; Code:
 (require 'subr-x)
@@ -23,7 +52,7 @@ Using what seems to be standard format 0x%02x%02x%04x."
   ;; Split the string into parts, filtering out the pre
   (let ((vers_parts (split-string version-string "[.]\\|pre[0-9]+" t)))
     (when (seq-empty-p vers_parts)
-      (error "Failed to parse %s as an openvdb version" version-string))
+      (error "Failed to parse %s as a semantic version" version-string))
 
     ;; Convert the parts to integers and then print them out in the
     ;; somewhat standard format.
@@ -117,12 +146,11 @@ NO-ELSE to t otherwise it will be nil."
       (insert (format "#if (%s %s %s) // %s\n"
                       variable comp version (format (cdr format_assoc) version-str)))
 
-      (let ((done (point)))
+      (save-mark-and-excursion
         (insert (or str "\n"))
         (unless no-else
           (insert "#else\n" (or str "\n")))
-        (insert "#endif\n")
-        (goto-char done)))))
+        (insert "#endif\n")))))
 
 (defconst cpreproc-cplusplus
   '(("c++98" . "199711L")
@@ -130,6 +158,7 @@ NO-ELSE to t otherwise it will be nil."
     ("c++11" . "201103L")
     ("c++14" . "201402L")
     ("c++17" . "201703L")
+    ("c++20" . "202002L")
     "Alist of what __cplusplus is set to for the different language standards."))
 
 (defvar cpreproc-if-cplusplus--std-history nil
