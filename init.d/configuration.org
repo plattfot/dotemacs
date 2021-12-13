@@ -660,7 +660,7 @@ Clean the buffer with C-c C.
              ledger-schedule-file "~/projects/bokforing/schedule.ledger"
              ledger-schedule-look-backward 5
              ledger-schedule-look-forward 30
-             ledger-complete-in-steps t
+             ledger-complete-in-steps nil
              ledger-amount-regex
              (concat "\\(  \\|\t\\| \t\\)[ \t]*-?"
                      "(?"
