@@ -1914,7 +1914,22 @@ Set the ssh to be the default method for tramp.
 If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
 #+begin_src emacs-lisp
   (setup tramp
-    (:option tramp-default-method "ssh"))
+    (:option tramp-default-method "ssh")
+    (connection-local-set-profile-variables
+     'tramp-guix-profile
+     `((tramp-remote-path . ("~/.guix-profile/bin"
+                             "~/.guix-profile/sbin"
+                             "~/.guix-home/bin"
+                             "~/.guix-home/sbin"
+                             "~/.config/guix/current/bin"
+                             "/run/current-system/profile/bin"
+                             "/run/current-system/profile/sbin"
+                             tramp-default-remote-path))
+       (tramp-auto-save-directory . ,(expand-file-name "tramp.autosave" user-emacs-directory))))
+    ;; Guix system machines
+    (connection-local-set-profiles
+     '(:application tramp :protocol "ssh" :machine "loke.home") 'tramp-guix-profile)
+    )
 #+end_src
 
 *** Sudo edit
