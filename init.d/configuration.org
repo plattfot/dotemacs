@@ -358,7 +358,7 @@ Having issues with turning off auto balancing, i.e
          scheme-mode
          guile-mode
          emacs-lisp-mode
-         python-mode
+         ;; python-mode
          lisp-interaction-mode)
       (:hook turn-on-smartparens-mode))
     (:bind
