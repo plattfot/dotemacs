@@ -2396,6 +2396,8 @@ to be on =h= instead of original postion =;.=
       ["Window"
        ("d" "Delete" delete-window)
        ("o" "Other" plt/meow-other-window-popup)
+       ("b" "Split below" split-window-below)
+       ("r" "Split right" split-window-right)
        ])
     (transient-define-prefix plt/meow-other-window-popup ()
       "Prefix for handling other windows."
