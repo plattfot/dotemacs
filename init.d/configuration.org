@@ -2382,11 +2382,49 @@ to be on =h= instead of original postion =;.=
 
 #+begin_src emacs-lisp
   (setup meow
+    (transient-define-prefix plt/meow-buffer-popup ()
+      "Prefix for handling buffers."
+      ["Buffer"
+       ("c" "Clone indirect" clone-indirect-buffer)
+       ("e" "Eval" eval-buffer)
+       ("k" "Kill" kill-buffer)
+       ("l" "List" list-buffers)
+       ("s" "Switch" switch-to-buffer)
+       ])
+    (transient-define-prefix plt/meow-window-popup ()
+      "Prefix for handling windows."
+      ["Window"
+       ("d" "Delete" delete-window)
+       ("o" "Other" plt/meow-other-window-popup)
+       ])
+    (transient-define-prefix plt/meow-other-window-popup ()
+      "Prefix for handling other windows."
+      ["Other window(s)"
+       ("d" "Delete" delete-other-windows)
+       ("s" "Switch" other-window)
+       ])
+    (transient-define-prefix plt/meow-frame-popup ()
+      "Prefix for handling frames."
+      ["Frame"
+       ("d" "Delete" delete-frame)
+       ("m" "Make" make-frame)
+       ("o" "Other" plt/meow-other-frame-popup)
+       ])
+    (transient-define-prefix plt/meow-other-frame-popup ()
+      "Prefix for handling other frames."
+      ["Other frame(s)"
+       ("d" "Delete" delete-other-frames)
+       ("s" "Switch" other-frame)
+       ])
     (defun meow-setup ()
       (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
       (meow-motion-overwrite-define-key
        '("<escape>" . ignore))
       (meow-leader-define-key
+       ;; Handling buffers, windows and frames easier
+       '("b" . plt/meow-buffer-popup)
+       '("w" . plt/meow-window-popup)
+       '("f" . plt/meow-frame-popup)
        ;; Use SPC (0-9) for digit arguments.
        '("1" . meow-digit-argument)
        '("2" . meow-digit-argument)
