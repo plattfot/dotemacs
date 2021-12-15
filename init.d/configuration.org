@@ -3286,7 +3286,6 @@ Time will tell if that was a smart idea or not.
       (define-key map (kbd "<C-M-prior>") 'beginning-of-buffer)
 
       (define-key map (kbd "<f2>") 'home-setup)
-      (define-key map (kbd "<f3>") 'work-setup)
       map)
     "Custom keymap for `plattfot-mode'.")
 
