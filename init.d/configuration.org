@@ -2394,28 +2394,17 @@ to be on =h= instead of original postion =;.=
     (transient-define-prefix plt/meow-window-popup ()
       "Prefix for handling windows."
       ["Window"
-       ("d" "Delete" delete-window)
-       ("o" "Other" plt/meow-other-window-popup)
+       ("d" "Delete this" delete-window)
+       ("D" "Delete other windows" delete-other-windows)
        ("b" "Split below" split-window-below)
        ("r" "Split right" split-window-right)
-       ])
-    (transient-define-prefix plt/meow-other-window-popup ()
-      "Prefix for handling other windows."
-      ["Other window(s)"
-       ("d" "Delete" delete-other-windows)
-       ("s" "Switch" other-window)
        ])
     (transient-define-prefix plt/meow-frame-popup ()
       "Prefix for handling frames."
       ["Frame"
-       ("d" "Delete" delete-frame)
+       ("d" "Delete this" delete-frame)
+       ("D" "Delete other frames" delete-other-frames)
        ("m" "Make" make-frame)
-       ("o" "Other" plt/meow-other-frame-popup)
-       ])
-    (transient-define-prefix plt/meow-other-frame-popup ()
-      "Prefix for handling other frames."
-      ["Other frame(s)"
-       ("d" "Delete" delete-other-frames)
        ("s" "Switch" other-frame)
        ])
     (defun meow-setup ()
