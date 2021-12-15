@@ -2412,6 +2412,11 @@ to be on =h= instead of original postion =;.=
       (meow-motion-overwrite-define-key
        '("<escape>" . ignore))
       (meow-leader-define-key
+       '("y" . "M-y")
+       '("}" . "C-}")
+       '("{" . "C-{")
+       '("s" . "C-M-s")
+       '("k" . "C-M-k")
        ;; Handling buffers, windows and frames easier
        '("b" . plt/meow-buffer-popup)
        '("w" . plt/meow-window-popup)
