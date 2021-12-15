@@ -2472,7 +2472,7 @@ to be on =h= instead of original postion =;.=
        '("n" . meow-search)
        '("o" . meow-block)
        '("O" . meow-to-block)
-       '("p" . meow-yank)
+       '("p" . meow-save) ;; mnemonic push to kill ring
        '("q" . meow-quit)
        '("Q" . meow-goto-line)
        '("r" . meow-replace)
@@ -2486,7 +2486,7 @@ to be on =h= instead of original postion =;.=
        '("W" . meow-mark-symbol)
        '("x" . meow-line)
        '("X" . meow-goto-line)
-       '("y" . meow-save)
+       '("y" . meow-yank)
        '("Y" . meow-sync-grab)
        '("z" . meow-pop-selection)
        '("'" . repeat)
