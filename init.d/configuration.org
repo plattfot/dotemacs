@@ -2479,7 +2479,6 @@ to be on =h= instead of original postion =;.=
        '("O" . meow-to-block)
        '("p" . meow-save) ;; mnemonic push to kill ring
        '("q" . meow-quit)
-       '("Q" . meow-goto-line)
        '("r" . meow-replace)
        '("R" . meow-swap-grab)
        '("s" . meow-kill)
