@@ -2421,7 +2421,7 @@ to be on =h= instead of original postion =;.=
        ;; Handling buffers, windows and frames easier
        '("b" . plt/meow-buffer-popup)
        '("w" . plt/meow-window-popup)
-       '("F" . plt/meow-frame-popup)
+       '("f" . plt/meow-frame-popup)
        ;; Use SPC (0-9) for digit arguments.
        '("1" . meow-digit-argument)
        '("2" . meow-digit-argument)
