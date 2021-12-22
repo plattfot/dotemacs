@@ -2385,12 +2385,13 @@ to be on =h= instead of original postion =;.=
     (transient-define-prefix plt/meow-buffer-popup ()
       "Prefix for handling buffers."
       ["Buffer"
-       ("c" "Clone indirect" clone-indirect-buffer)
-       ("e" "Eval" eval-buffer)
-       ("k" "Kill" kill-buffer)
-       ("l" "List" list-buffers)
-       ("s" "Switch" switch-to-buffer)
-       ])
+       [("c" "Clone indirect" clone-indirect-buffer)
+        ("e" "Eval" eval-buffer)
+        ("k" "Kill" kill-buffer)]
+       [("l" "List" list-buffers)
+        ("s" "Switch" switch-to-buffer)
+        ("S" "Switch (in project)" project-switch-to-buffer)]]
+       )
     (transient-define-prefix plt/meow-window-popup ()
       "Prefix for handling windows."
       ["Window"
