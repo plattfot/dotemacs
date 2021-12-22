@@ -2418,6 +2418,7 @@ to be on =h= instead of original postion =;.=
        '("}" . "C-}")
        '("{" . "C-{")
        '("k" . "C-M-k")
+       '("v" . "C-c v")
        ;; Handling buffers, windows and frames easier
        '("b" . plt/meow-buffer-popup)
        '("w" . plt/meow-window-popup)
