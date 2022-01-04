@@ -274,6 +274,15 @@ subdirectory ~build~ in the root of the project.
   export CLANGD_FLAGS="--compile-commands-dir=./build"
 #+end_src
 
+Alternative an easier way if using ~clangd-12+~ is to add a =.clangd= to
+the project and add:
+
+#+begin_src yaml :tangle no
+---
+CompileFlags:
+  CompilationDatabase: "build"
+#+end_src
+
 #+begin_src emacs-lisp
   (setup eglot
     ;; Only run eglot on local buffers, too slow on bad connections.
