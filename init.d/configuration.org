@@ -1723,16 +1723,6 @@ groups to avoid cluttering the ibuffer.
                 ("roam" (mode . org-mode))))))
 #+end_src
 
-*** ivy
-
-Better multi-editing than ag.el.
-See [[https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/][nuclear weapon multi-editing]]
-
-#+begin_src emacs-lisp
-  (setup ivy
-    (:option ivy-count-format "(%d/%d) "))
-#+end_src
-
 **** wgrep
 
 Power editing with =occur= buffer.
