@@ -1668,7 +1668,6 @@ groups to avoid cluttering the ibuffer.
                 ("cmake" (mode . cmake-mode ))
                 ("scripts" (mode . sh-mode))
                 ("ag" (mode . ag-mode ))
-                ("ivy" (name . "^\\*ivy-.*$"))
                 ("erc" (mode . erc-mode))
                 ("docs" (or (mode . rst-mode)
                             (mode . Man-mode)
