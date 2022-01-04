@@ -259,7 +259,7 @@ Tried both ~lsp-mode~ and ~eglot~. And for my use case ~eglot~ is
 better. ~lsp-mode~ involved a lot more tweaking to get it working
 (e.g. make sure ~company-capf~ is first in ~company-backends~).
 Once I got it working the completion menu in company was a lot
-nosier than what I get from ~eglot~.
+noisier than what I get from ~eglot~.
 
 *NOTE:* clangd also accepts arguments from the environment
 variable ~CLANGD_FLAGS~. I'm using that combined with ~direnv~
