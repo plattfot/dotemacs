@@ -1392,51 +1392,53 @@ everything is in the same file.
     (org-roam-db-autosync-mode))
 #+end_src
 
+**** citar
+
+Interface for bibliographic entries, similar to [[https://github.com/tmalsburg/helm-bibtex][ivy-bibtex]] but for
+=vertico=. Works with org-mode's new [[https://orgmode.org/manual/Citations.html][cite engine]].
+
+#+begin_src emacs-lisp
+  (setup citar
+    ;; org-cite-insert is bound to C-c C-x C-@
+    (:global "C-c b" citar-open)
+    (:option citar-library-paths `(,plt/paper-directory)
+             citar-bibliography `(,plt/paper-bibtex)
+             org-cite-global-bibliography `(,plt/paper-bibtex)
+             org-cite-insert-processor 'citar
+             org-cite-follow-processor 'citar
+             org-cite-activate-processor 'citar))
+#+end_src
+
 **** Org-ref
 
-Dependency of =org-ref=, would have just put the settings in the
-=org-ref= block. But if the =:bind= is placed there it will break
-=ivy-bibtex=.
+Need =org-ref= to download papers from arxiv.
 
 #+begin_src emacs-lisp
-  (setup ivy-bibtex
-    (:global "C-c b" ivy-bibtex)
-    (:option bibtex-completion-bibliography `(,plt/paper-bibtex)
-             bibtex-completion-library-path `(,plt/paper-directory)
-             bibtex-completion-notes-path org-roam-directory
-             bibtex-completion-notes-template-multiple-files (format"\
-         ,#+TITLE: ${title}
-         ,#+ROAM_KEY: cite:${=key=}
-         ,* Notes
-         :PROPERTIES:
-         :Custom_ID: ${=key=}
-         :NOTER_DOCUMENT: %s${=key=}.pdf
-         :AUTHOR: ${author-abbrev}
-         :JOURNAL: ${journaltitle}
-         :DATE: ${date}
-         :YEAR: ${year}
-         :DOI: ${doi}
-         :URL: ${url}
-         :END:
+    (setup org-ref
+      (:option org-ref-bibliography-notes org-roam-directory
+               org-ref-default-bibliography `(,plt/paper-bibtex)
+               org-ref-pdf-directory plt/paper-directory
+               reftex-default-bibliography org-ref-default-bibliography
+               bibtex-completion-bibliography `(,plt/paper-bibtex)
+               bibtex-completion-library-path `(,plt/paper-directory)
+               bibtex-completion-notes-path org-roam-directory
+               bibtex-completion-notes-template-multiple-files (format"\
+           ,#+TITLE: ${title}
+           ,#+ROAM_KEY: cite:${=key=}
+           ,* Notes
+           :PROPERTIES:
+           :Custom_ID: ${=key=}
+           :NOTER_DOCUMENT: %s${=key=}.pdf
+           :AUTHOR: ${author-abbrev}
+           :JOURNAL: ${journaltitle}
+           :DATE: ${date}
+           :YEAR: ${year}
+           :DOI: ${doi}
+           :URL: ${url}
+           :END:
 
-         " (file-name-as-directory plt/paper-directory))))
+           " (file-name-as-directory plt/paper-directory))))
 #+end_src
-
-Integrate bibtex handling and other useful technical writing
-features to org-mode.
-
-**NOTE:**
-The =(setf wt/orcb-%-replacement-string orcb-%-replacement-string)=
-Is workaround for some bug in the code when it downloads papers.
-
-#+begin_src emacs-lisp
-  (setup org-ref
-    (:option org-ref-bibliography-notes org-roam-directory
-             org-ref-default-bibliography `(,plt/paper-bibtex)
-             org-ref-pdf-directory plt/paper-directory
-             reftex-default-bibliography org-ref-default-bibliography))
-#+end_src
-Settings based on [[https://rgoswami.me/posts/org-note-workflow/#org-noter][An Orgmode Note Workflow]]
 
 **** Prettify org
 
