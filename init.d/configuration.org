@@ -2492,6 +2492,7 @@ to be on =h= instead of original postion =;.=
        '("W" . meow-mark-symbol)
        '("s" . meow-line)
        '("S" . meow-goto-line)
+       '("x" . execute-extended-command)
        '("y" . meow-yank)
        '("Y" . meow-sync-grab)
        '("z" . meow-pop-selection)
