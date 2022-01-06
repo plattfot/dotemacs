@@ -2404,11 +2404,11 @@ to be on =h= instead of original postion =;.=
     (transient-define-prefix plt/meow-frame-popup ()
       "Prefix for handling frames."
       ["Frame"
-       ("q" "Delete this" delete-frame)
-       ("Q" "Delete other frames" delete-other-frames)
-       ("f" "Find file other frame" find-file-other-frame)
-       ("m" "Make" make-frame)
-       ("o" "Other frame" other-frame)
+       [("f" "Find file other frame" find-file-other-frame)
+        ("m" "Make" make-frame)
+        ("o" "Other frame" other-frame)]
+       [("q" "Delete this" delete-frame)
+        ("Q" "Delete other frames" delete-other-frames)]
        ])
     (defun meow-setup ()
       (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
