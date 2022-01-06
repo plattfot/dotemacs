@@ -2406,6 +2406,7 @@ to be on =h= instead of original postion =;.=
       ["Frame"
        ("q" "Delete this" delete-frame)
        ("Q" "Delete other frames" delete-other-frames)
+       ("f" "Find file other frame" find-file-other-frame)
        ("m" "Make" make-frame)
        ("o" "Other frame" other-frame)
        ])
