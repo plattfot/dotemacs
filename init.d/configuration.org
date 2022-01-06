@@ -2407,7 +2407,7 @@ to be on =h= instead of original postion =;.=
        ("q" "Delete this" delete-frame)
        ("Q" "Delete other frames" delete-other-frames)
        ("m" "Make" make-frame)
-       ("s" "Switch" other-frame)
+       ("o" "Other frame" other-frame)
        ])
     (defun meow-setup ()
       (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
