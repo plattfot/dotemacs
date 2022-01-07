@@ -2008,18 +2008,6 @@ builder.
     (:option reb-re-syntax 'string))
 #+end_src
 
-*** evil
-
-Vim bindings are a lot easier to use on the phone than normal
-emacs bindings. Enable *evil-mode* when it detects android.
-#+begin_src emacs-lisp
-  (when (getenv "ANDROID_ROOT")
-    (setup evil
-      (:with-mode evil-normal-state
-        (:bind "SPC t" 'training-popup))
-      (evil-mode 1)))
-#+end_src
-
 *** elfeed
 
 RSS/Atom reader
