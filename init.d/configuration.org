@@ -2486,6 +2486,7 @@ to be on =h= instead of original postion =;.=
        '("Y" . meow-sync-grab)
        '("z" . meow-pop-selection)
        '("'" . repeat)
+       '("\"" . embark-act)
        '("<escape>" . ignore))
       (add-to-list 'meow-char-thing-table (cons ?{ 'paragraph))
       (add-to-list 'meow-char-thing-table (cons ?} 'paragraph))
