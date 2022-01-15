@@ -1964,6 +1964,8 @@ If tramp hangs and you are using zsh see [[#tramp-hang-workaround][here]].
     ;; Guix system machines
     (connection-local-set-profiles
      '(:application tramp :protocol "ssh" :machine "loke.home") 'tramp-guix-profile)
+    (connection-local-set-profiles
+     '(:application tramp :protocol "ssh" :machine "mimer.home") 'tramp-guix-profile)
     )
 #+end_src
 
