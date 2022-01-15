@@ -827,6 +827,41 @@ Or if I want to start a new training week, I hit ~C-u C-c y~
     (direnv-mode))
 #+end_src
 
+*** dtache
+
+Launch shell commands that are not tied to the emacs session.
+
+#+begin_src emacs-lisp
+  (setup (:require dtache-shell)
+    (:with-mode after-init
+      (:hook dtache-shell-setup))
+    (:bind "<S-return>" dtache-shell-send-input
+           "<C-return>" dtache-shell-attach)
+    (:option dtache-shell-history-file "~/.histfile"
+             dtache-session-directory (expand-file-name "dtache" (temporary-file-directory))
+             dtache-notification-function #'plt/dtache-inactive-session-notification
+             dtache-env "dtache-env"))
+#+end_src
+
+Use a custom notification function that will send the notification via
+dbus instead of echoing it to the mini-buffer.
+
+#+begin_src emacs-lisp
+  (require 'notifications)
+  (defun plt/dtache-inactive-session-notification (session)
+    "Send a notification when SESSION becomes inactive."
+    (let ((status (dtache--session-status session))
+          (title
+           (pcase (dtache--session-status session)
+             ('success "Dtache finished!")
+             ('failure "Dtache failed!"))))
+      (notifications-notify
+       :body (dtache--session-command session)
+       :title title
+       :urgency (pcase status
+                  ('success 'normal)
+                  ('failure 'critical)))))
+#+end_src
 *** Emprise
 
 #+begin_src emacs-lisp
