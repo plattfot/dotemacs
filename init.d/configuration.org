@@ -1043,7 +1043,22 @@ Major mode for editing nginx.
 ** Emacs
 
 Packages that augments emacs.
-
+*** Avy
+#+begin_src emacs-lisp
+  (setup (:require avy)
+    (:option
+     avy-keys
+     '(
+       ;; home row Colemak DH
+       ?t ?n ?s ?e ?r ?i ?o ?a
+       ;; keys below and above home row except pinky
+       ?d ?h ?p ?l ?c ?, ?f ?u ?x ?. ?w ?y
+       ;; middle column
+       ?g ?m ?v ?k ?b ?j
+       ;; pinky
+       ?z ?/ ?q ?\;
+       )))
+#+end_src
 *** Org
 
 Use a little downward-pointing arrow instead of the usual ellipsis
@@ -2455,6 +2470,13 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
         (<AB09> "." ">")
         (<AB10> "/" "?")
         (<LSGT> "-" "_")))
+    (transient-define-prefix plt/meow-switch-popup ()
+      "Prefix for switching."
+      ["Switch"
+       ("t" "To buffer" switch-to-buffer)
+       ("w" "other Window" other-window)
+       ("f" "other Frame" other-frame)
+       ])
     (transient-define-prefix plt/meow-buffer-popup ()
       "Prefix for handling buffers."
       ["Buffer"
@@ -2494,6 +2516,7 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
        '("k" . "C-M-k")
        '("v" . "C-c v")
        ;; Handling buffers, windows and frames easier
+       '("s" . plt/meow-switch-popup)
        '("b" . plt/meow-buffer-popup)
        '("w" . plt/meow-window-popup)
        '("f" . plt/meow-frame-popup)
