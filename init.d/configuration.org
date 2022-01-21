@@ -2511,6 +2511,9 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
        '("<escape>" . ignore))
       (meow-leader-define-key
        '("y" . "M-y")
+       '("p" . "M-p")
+       '("n" . "M-n")
+       '("r" . "M-r")
        '("}" . "C-}")
        '("{" . "C-{")
        '("k" . "C-M-k")
