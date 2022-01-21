@@ -2514,8 +2514,6 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
        '("p" . "M-p")
        '("n" . "M-n")
        '("r" . "M-r")
-       '("}" . "C-}")
-       '("{" . "C-{")
        '("k" . "C-M-k")
        '("v" . "C-c v")
        ;; Handling buffers, windows and frames easier
