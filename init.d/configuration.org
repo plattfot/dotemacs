@@ -2589,7 +2589,7 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
        '("Y" . meow-sync-grab)
        '("z" . meow-pop-selection)
        '("'" . repeat)
-       '("\"" . embark-act)
+       '(";" . embark-act)
        '("h" . avy-goto-char-2)
        '("<escape>" . ignore))
       (add-to-list 'meow-char-thing-table (cons ?{ 'paragraph))
