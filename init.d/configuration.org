@@ -3369,6 +3369,9 @@ Time will tell if that was a smart idea or not.
       (define-key map (kbd "C-r") 'isearch-backward-regexp)
       (define-key map (kbd "C-S-s") 'isearch-forward-symbol-at-point)
       ;; Text edit
+      (define-key map (kbd "M-c") 'capitalize-dwim)
+      (define-key map (kbd "M-u") 'upcase-dwim)
+      (define-key map (kbd "M-l") 'downcase-dwim)
       (define-key map (kbd "M-SPC") 'plt/insert-non-breaking-space)
       (define-key map (kbd "M-r") 'replace-regexp)
       (define-key map (kbd "C-c l") 'duplicate-line)
