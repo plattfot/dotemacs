@@ -2510,12 +2510,6 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
       (meow-motion-overwrite-define-key
        '("<escape>" . ignore))
       (meow-leader-define-key
-       '("y" . "M-y")
-       '("p" . "M-p")
-       '("n" . "M-n")
-       '("r" . "M-r")
-       '("k" . "C-M-k")
-       '("v" . "C-c v")
        ;; Handling buffers, windows and frames easier
        '("s" . plt/meow-switch-popup)
        '("b" . plt/meow-buffer-popup)
