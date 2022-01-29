@@ -302,6 +302,24 @@ CompileFlags:
                                  "-j=6")))))
 #+end_src
 
+*** Edit
+**** puni
+#+begin_src emacs-lisp
+  (setup puni
+    (:with-mode
+        (term-mode
+         comint-mode)
+      (:hook turn-on-smartparens-mode))
+    (:bind
+       "C-)" puni-slurp-forward
+       "C-(" puni-slurp-backward
+       "C-}" puni-barf-forward
+       "C-{" puni-barf-backward
+       "C-M-s" puni-raise
+       )
+    (puni-global-mode))
+#+end_src
+
 *** Lint
 
 Packages that helps inspecting code, report errors etc.
@@ -354,42 +372,6 @@ Settings for programming haskell in emacs
 #+end_src
 
 *** Lisp
-**** Smartparens
-
-Having issues with turning off auto balancing, i.e
-(|) - insert () -> (()|
-#+begin_src emacs-lisp
-  (setup smartparens
-    (:with-mode
-        (;; c-mode-hook
-         ;; c++-mode-hook
-         lisp-mode
-         scheme-mode
-         guile-mode
-         emacs-lisp-mode
-         ;; python-mode
-         lisp-interaction-mode)
-      (:hook turn-on-smartparens-mode))
-    (:bind
-     "C-)" sp-forward-slurp-sexp
-     "C-(" sp-backward-slurp-sexp
-     "C-}" sp-forward-barf-sexp
-     "C-{" sp-backward-barf-sexp
-     "C-M-a" sp-beginning-of-sexp
-     "C-M-e" sp-end-of-sexp
-     "C-M-t" sp-transpose-hybrid-sexp
-     "C-M-s" sp-splice-sexp-killing-around
-     "M-s" sp-split-sexp
-     "M-[" sp-backward-unwrap-sexp
-     "M-]" sp-unwrap-sexp
-     "M-}" sp-splice-sexp-killing-backward
-     "M-{" sp-splice-sexp-killing-forward)
-    ;; Turn off balancing of single and back quote in lisp.
-    (with-eval-after-load 'smartparens
-      (sp-with-modes sp--lisp-modes
-        (sp-local-pair "'" nil :actions nil)
-        (sp-local-pair "`" nil :actions nil))))
-#+end_src
 
 *** Scheme
 
