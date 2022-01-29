@@ -814,15 +814,19 @@ Or if I want to start a new training week, I hit ~C-u C-c y~
 Launch shell commands that are not tied to the emacs session.
 
 #+begin_src emacs-lisp
-  (setup (:require dtache-shell)
+  (setup require
     (:with-mode after-init
-      (:hook dtache-shell-setup))
-    (:bind "<S-return>" dtache-shell-send-input
-           "<C-return>" dtache-shell-attach)
+      (:hook dtache-setup))
+    (:global [remap async-shell-command] dtache-shell-command))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setup (:require dtache-shell)
     (:option dtache-shell-history-file "~/.histfile"
              dtache-session-directory (expand-file-name "dtache" (temporary-file-directory))
              dtache-notification-function #'plt/dtache-inactive-session-notification
-             dtache-env "dtache-env"))
+             dtache-env "dtache-env")
+    (dtache-shell-setup))
 #+end_src
 
 Use a custom notification function that will send the notification via
