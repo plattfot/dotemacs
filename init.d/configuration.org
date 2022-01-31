@@ -193,7 +193,12 @@ in to one directory.
 #+begin_src emacs-lisp
   (let ((backup-dir (expand-file-name "backup" user-emacs-directory))
         (autosave-dir (expand-file-name "autosave" user-emacs-directory)))
-    (setq backup-directory-alist (list (cons ".*" backup-dir))
+    (setq backup-directory-alist `(("." . ,backup-dir))
+          backup-by-copying t
+          delete-old-versions t
+          kept-new-versions 6
+          kept-old-versions 2
+          version-control t
           auto-save-list-file-prefix autosave-dir
           auto-save-file-name-transforms `((".*" ,autosave-dir t))))
 #+end_src
