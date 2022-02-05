@@ -2295,6 +2295,9 @@ RSS/Atom reader
                    ,@(plt/elfeed-group-feeds
                       :tags '(paper arxiv)
                       :feeds (--map (list (arxiv-url it) (arxiv-tags it)) plt/arxivs))
+                   ,@(plt/elfeed-group-feeds
+                      :tags '(paper)
+                      :feeds '(("https://www.physicsbasedanimation.com/feed/")))
                    )))))
 #+end_src
 
