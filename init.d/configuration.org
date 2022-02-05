@@ -1072,7 +1072,7 @@ from computer to computer at the moment.
                              "-e WAIT"
                              "-e CANCELLED"
                              "-e '%%\\(org'"
-                             "-e '^[[:blank:]]+<[[:digit:]]{4}'"
+                             "-e '^[[:blank:]]*<[[:digit:]]{4}'"
                              "--"
                              "%s")
                            " "))
