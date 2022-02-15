@@ -316,11 +316,15 @@ CompileFlags:
          comint-mode)
       (:hook turn-on-smartparens-mode))
     (:bind
-       "C-)" puni-slurp-forward
-       "C-(" puni-slurp-backward
-       "C-}" puni-barf-forward
-       "C-{" puni-barf-backward
-       "C-M-s" puni-raise
+       "C-)" #'puni-slurp-forward
+       "C-(" #'puni-slurp-backward
+       "C-}" #'puni-barf-forward
+       "C-{" #'puni-barf-backward
+       "C-c t" #'puni-transpose
+       "C-c r" #'puni-raise
+       "C-M-s" #'puni-squeeze
+       "C-c |" #'puni-split
+       "C-c \\" #'puni-splice
        )
     (puni-global-mode))
 #+end_src
