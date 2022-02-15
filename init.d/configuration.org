@@ -911,8 +911,8 @@ Using notmuch to index my emails.
 #+begin_src emacs-lisp
   (setup notmuch
     (:needs "notmuch" "msmtp")
-    (:global "C-c m" notmuch
-             "C-c M" home-mail-refresh)
+    (:global "C-c e" notmuch
+             "C-c E" home-mail-refresh)
     (:with-mode notmuch-search-mode
       (:bind "l" (lambda (&optional beg end)
                    "mark thread as read"
