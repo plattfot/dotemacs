@@ -229,6 +229,8 @@ plates etc
 
 #+begin_src emacs-lisp
   (setup corfu
+    (:option
+     corfu-preview-current nil)
     (corfu-global-mode))
 #+end_src
 
