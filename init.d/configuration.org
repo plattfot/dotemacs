@@ -1148,7 +1148,7 @@ from computer to computer at the moment.
      org-display-remote-inline-images 'cache
      org-ellipsis "⤵"
      org-enforce-todo-dependencies t
-     org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+     org-format-latex-options (plist-put org-format-latex-options :scale 1.8)
      org-hide-emphasis-markers t
      org-link-search-must-match-exact-headline nil
      org-log-into-drawer "LOGBOOK"
