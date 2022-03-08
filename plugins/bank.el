@@ -47,6 +47,40 @@ e.g. 2020Feb15. and the other is the to date."
         file))))
 
 ;;;###autoload
+(cl-defun bank-us-to-iso-timestring (file)
+  "Fixing time strings on statement files.
+
+Expected file name to be \"PATH/MMMDDYY XXXXXX.EXT\",
+where XXXXX is the id for the account, MMMDDYY is the date
+e.g. 011221."
+  (let* ((date-re
+          (rx (group (= 2 (any digit)))
+              (group (= 2 (any digit)))
+              (group (= 2 (any digit)))
+              ))
+         (path (file-name-directory file))
+         (name (file-name-base file))
+         (ext (file-name-extension file))
+         (parts (split-string name)))
+    (when (< (length parts) 2)
+      (cl-return-from rbc-fix-timestring file))
+    (let ((date (s-match date-re (nth 0 parts)))
+          (fix-date (lambda (match)
+                      (format-time-string
+                       "%Y-%m-%d"
+                       (date-to-time (format "%s %s %s 00:00:00"
+                                             (nth 3 match)
+                                             (nth 1 match)
+                                             (nth 2 match)))))))
+      (if (and date)
+        (concat (file-name-as-directory path)
+                (funcall fix-date date)
+                " "
+                (nth 1 parts)
+                "." ext)
+        file))))
+
+;;;###autoload
 (defun bank-dired-map-rename (func)
   "Apply FUNC on each marked file to rename."
   (interactive "aFunction: ")
