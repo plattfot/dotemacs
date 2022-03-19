@@ -1042,7 +1042,10 @@ emacs session.
         erc-track-shorten-start 8
         erc-autojoin-channels-alist '(("irc.libera.chat" "#guix" "#emacs"))
         erc-kill-buffer-on-part t
-        erc-auto-query 'bury)
+        erc-auto-query 'bury
+        erc-fill-column 88
+        erc-fill-function #'erc-fill-static
+        erc-fill-static-center 15)
 #+end_src
 
 ** Web
