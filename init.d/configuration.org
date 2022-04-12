@@ -1039,6 +1039,7 @@ emacs session.
 #+begin_src emacs-lisp
   (setq erc-server "irc.libera.chat"
         erc-nick "plattfot"
+        erc-full-name (user-full-name)
         erc-track-shorten-start 8
         erc-autojoin-channels-alist '(("irc.libera.chat" "#guix" "#emacs"))
         erc-kill-buffer-on-part t
@@ -1046,6 +1047,24 @@ emacs session.
         erc-fill-column 88
         erc-fill-function #'erc-fill-static
         erc-fill-static-center 15)
+
+  (defun plt/start-irc ()
+    "Connect to all irc networks that I use."
+    (interactive)
+    (erc-tls :server "irc.libera.chat"
+             :port 6697
+             :nick erc-nick
+             :full-name erc-full-name
+             :client-certificate
+             `(,(expand-file-name "~/.ssl/libera.key")
+               ,(expand-file-name "~/.ssl/libera.cer")))
+    (erc-tls :server "irc.oftc.net"
+             :port 6697
+             :nick erc-nick
+             :full-name erc-full-name
+             :client-certificate
+             `(,(expand-file-name "~/.ssl/oftc.key")
+               ,(expand-file-name "~/.ssl/oftc.cer"))))
 #+end_src
 
 ** Web
