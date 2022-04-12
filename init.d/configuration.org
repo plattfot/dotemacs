@@ -4292,11 +4292,6 @@ To compile FILE run
 
 *** Shell
 
-Stop the shell from echoing the command.
-#+begin_src sh :tangle no
-  stty -echo
-#+end_src
-
 **** Shell script
 ***** Argument parsing
 
