@@ -2311,7 +2311,8 @@ RSS/Atom reader
                                "https://sachachua.com/blog/category/emacs-news/feed/"))
                    ,@(plt/elfeed-group-feeds
                       :tags 'deals
-                      :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"))
+                      :feeds '("https://www.reddit.com/r/bapcsalescanada/.rss"
+                               "https://www.reddit.com/r/MovieDealsCanada/.rss"))
                    ,@(plt/elfeed-group-feeds
                       :tags 'youtube
                       :transform 'plt/elfeed-youtube-feed
