@@ -2696,29 +2696,6 @@ Move line up and down using arrow keys.
     (:global "C-=" er/expand-region))
 #+end_src
 
-*** Multiple cursors
-
-Keybindings for the mc package
-#+begin_src emacs-lisp
-  (setup multiple-cursors
-    (:global "C-S-c C-S-c" mc/edit-lines
-             "C->"         mc/mark-next-like-this
-             "C-<"         mc/mark-previous-like-this
-             "C-c C-<"     mc/mark-all-like-this
-             "C-+"         mc/mark-next-like-this)
-    (defalias 'mc/keymap 'multiple-cursors-mode-map)
-    (:bind "C-c m n"   mc/insert-numbers
-           "C-c m c"   mc/insert-characters
-           "C-c m s n" mc/insert-same-numbers-per-line
-           "C-c m s c" mc/insert-same-chars-per-line))
-#+end_src
-
-#+begin_src emacs-lisp
-  (setup mc-extras
-    (with-eval-after-load 'multiple-cursors
-      (require 'mc-extras)))
-#+end_src
-
 *** String inflections
 
 #+begin_src emacs-lisp
