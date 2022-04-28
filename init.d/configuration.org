@@ -3406,10 +3406,10 @@ Time will tell if that was a smart idea or not.
       (define-key map (kbd "C-c -") 'plt/insert-em-dash)
       (define-key map (kbd "C-c l") 'duplicate-line)
       (define-key map (kbd "C-c ,") 'split-at-comma)
+      ;; Docs
+      (define-key map (kbd "<f5>") 'shortdoc-display-group)
       ;; Buffer functions
-      (define-key map (kbd "C-c <f5>") 'revert-all-buffers)
       (define-key map (kbd "C-c R") 'rename-current-file-or-buffer)
-      (define-key map (kbd "<f5>") 'revert-buffer)
       ;; Compile from project root and to re-run
       (define-key map (kbd "<f12>") 'project-compile)
       (define-key map (kbd "<f11>") 'recompile)
