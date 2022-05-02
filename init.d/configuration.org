@@ -3523,11 +3523,11 @@ Houdini related functions, mostly handle houdini versions.
       (:global "C-x j" hou-insert-version)))
 #+end_src
 
-**** highlight-extra
+**** highlight-dev
 
 Functions for highlighting my shells when building etc
 #+begin_src emacs-lisp
-  (setup highlight-extra)
+  (setup highlight-dev)
 #+end_src
 
 **** work

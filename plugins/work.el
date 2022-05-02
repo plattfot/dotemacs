@@ -3,7 +3,7 @@
 
 ;;; Code:
 
-(require 'highlight-extra)
+(require 'highlight-dev)
 (require 'string-inflection)
 ;; Load libyaml bindings if they exist.
 (require 'libyaml nil t)
@@ -65,10 +65,10 @@ With the names 3ps, cyclone, build and misc"
                      (shell name)
                      (work-run-emacs-shell-command "go dev01 work && cd swdevl")
                      (mapcar (lambda (x) (funcall x)) extra))))
-    (funcall go-swdevl "cyclone" '(highlight-build highlight-gtest))
-    (funcall go-swdevl "misc" '(highlight-build))
-    (funcall go-swdevl "build" '(highlight-build highlight-gtest))
-    (funcall go-swdevl "3ps" '(highlight-build)))
+    (funcall go-swdevl "cyclone" '(highlight-dev-build highlight-dev-gtest))
+    (funcall go-swdevl "misc" '(highlight-dev-build))
+    (funcall go-swdevl "build" '(highlight-dev-build highlight-dev-gtest))
+    (funcall go-swdevl "3ps" '(highlight-dev-build)))
   (toggle-frame-maximized))
 
 (defun work-run-emacs-shell-command (command)
