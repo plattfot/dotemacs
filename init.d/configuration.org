@@ -205,10 +205,8 @@ in to one directory.
 
 ** Theme
 
-Point emacs to where it can find the sunburst theme.
+Load the theme.
 #+begin_src emacs-lisp
-  (add-to-list 'custom-theme-load-path
-               (dotemacs-build-path user-emacs-directory "themes" "plattfot-theme"))
   (load-theme `plattfot t)
 #+end_src
 
