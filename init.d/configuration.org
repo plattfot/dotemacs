@@ -1259,7 +1259,8 @@ Commit a todo change to git using =plt/org-todo-commit-change=
                                   ;; Remove links
                                   (replace-regexp-in-string
                                    (rx "[[" (+? graph) "]["
-                                       (group (+? (any graph blank))) "]]") "\\1")
+                                       (group (+? (any graph blank))) "]]")
+                                   "\\1")
                                   ;; Remove trailing tags
                                   (replace-regexp-in-string
                                    (rx (one-or-more blank) ":" (one-or-more graph) ":" eol) "")))))))))
