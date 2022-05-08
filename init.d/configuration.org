@@ -2806,13 +2806,6 @@ Create a group to easier keep track of custom variables.
   (setup bfuture)
 #+end_src
 
-*** bank
-
-Functions for handling bank statements
-#+begin_src emacs-lisp
-  (setup (:require bank))
-#+end_src
-
 *** Multiple cursor extension
 
 Add some extra functionality to multiple cursors inserting numbers
