@@ -1206,7 +1206,7 @@ Commit a todo change to git using =plt/org-todo-commit-change=
 (incl repeating).
 
 #+begin_src emacs-lisp
-  (require 'tig)
+  (require 'javel)
 
   (defun plt/org-todo-commit--message (diff)
     "Parse DIFF and return commit message.
@@ -1249,7 +1249,7 @@ Commit a todo change to git using =plt/org-todo-commit-change=
     "Commit todo state change"
     (interactive)
     (when-let ((default-directory (car (project-roots (project-current nil)))))
-      (-each (--map (oref it :path) (tig-git-status))
+      (-each (--map (oref it :path) (javel-git-status))
         (lambda (note-file)
           (when-let ((message (plt/org-todo-commit--message
                                (shell-command-to-string (format "git diff %S" note-file)))))
