@@ -1494,9 +1494,9 @@ Interface for bibliographic entries, similar to [[https://github.com/tmalsburg/h
   (setup citar
     ;; org-cite-insert is bound to C-c C-x C-@
     (:global "C-c b" citar-open)
-    (:option citar-library-paths `(,plt/paper-directory)
-             citar-bibliography `(,plt/paper-bibtex)
-             org-cite-global-bibliography `(,plt/paper-bibtex)
+    (:option citar-library-paths `(,plt/paper-directory ,@plt/book-directories)
+             citar-bibliography `(,plt/paper-bibtex ,plt/book-bibtex)
+             org-cite-global-bibliography `(,plt/paper-bibtex ,plt/book-bibtex)
              org-cite-insert-processor 'citar
              org-cite-follow-processor 'citar
              org-cite-activate-processor 'citar))
