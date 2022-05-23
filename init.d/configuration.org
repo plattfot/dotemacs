@@ -207,7 +207,7 @@ in to one directory.
 
 Load the theme.
 #+begin_src emacs-lisp
-  (load-theme `plattfot t)
+  (load-theme `suneater t)
 #+end_src
 
 ** Path
