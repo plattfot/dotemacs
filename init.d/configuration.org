@@ -3385,6 +3385,7 @@ Time will tell if that was a smart idea or not.
       ;; Compile from project root and to re-run
       (define-key map (kbd "<f12>") 'project-compile)
       (define-key map (kbd "<f11>") 'recompile)
+      (define-key map (kbd "<C-f11>") 'ert)
 
       ;; Scrolling
       (define-key map (kbd "<next>") 'plt/scroll-up-command-10)
