@@ -2534,24 +2534,6 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
         ("s" "Switch" switch-to-buffer)
         ("S" "Switch (in project)" project-switch-to-buffer)]]
        )
-    (transient-define-prefix plt/meow-window-popup ()
-      "Prefix for handling windows."
-      ["Window"
-       ("q" "Delete this" delete-window)
-       ("Q" "Delete other windows" delete-other-windows)
-       ("b" "Split below" split-window-below)
-       ("r" "Split right" split-window-right)
-       ("o" "Other window" other-window)
-       ])
-    (transient-define-prefix plt/meow-frame-popup ()
-      "Prefix for handling frames."
-      ["Frame"
-       [("f" "Find file other frame" find-file-other-frame)
-        ("m" "Make" make-frame)
-        ("o" "Other frame" other-frame)]
-       [("q" "Delete this" delete-frame)
-        ("Q" "Delete other frames" delete-other-frames)]
-       ])
     (defun meow-setup ()
       (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak-dh)
       (meow-motion-overwrite-define-key
@@ -2560,8 +2542,6 @@ with the [[https://colemakmods.github.io/mod-dh/][Colemak DH]] layout. The navig
        ;; Handling buffers, windows and frames easier
        '("s" . plt/meow-switch-popup)
        '("b" . plt/meow-buffer-popup)
-       '("w" . plt/meow-window-popup)
-       '("f" . plt/meow-frame-popup)
        ;; Use SPC (0-9) for digit arguments.
        '("1" . meow-digit-argument)
        '("2" . meow-digit-argument)
