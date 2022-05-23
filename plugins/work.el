@@ -10,6 +10,8 @@
 (require 'dash)
 (require 'json)
 (require 'cl-lib)
+(require 'comint)
+(require 'diff-mode)
 
 ;;; Functions
 (defun work-insert-eigen-pretty-printer ()
