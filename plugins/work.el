@@ -170,12 +170,9 @@ message."
     (goto-char (point-min))
     (diff-beginning-of-hunk t)
     (if (re-search-forward change-re nil t)
-        (let ((result (s-match version-re
-                               (buffer-substring-no-properties
-                                (point-at-bol)
-                                (point-at-eol)))))
-          (if result
-              (nth 1 result)
+        (let ((line (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+          (if (string-match version-re line)
+              (match-string 1 line)
             (error error-msg)))
       (error "No changes found"))))
 
