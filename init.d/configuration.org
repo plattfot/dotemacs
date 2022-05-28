@@ -843,45 +843,18 @@ Or if I want to start a new training week, I hit ~C-u C-c y~
     (direnv-mode))
 #+end_src
 
-*** dtache
+*** detached
 
 Launch shell commands that are not tied to the emacs session.
 
 #+begin_src emacs-lisp
-  (setup require
-    (:with-mode after-init
-      (:hook dtache-setup))
-    (:global [remap async-shell-command] dtache-shell-command))
+  (setup detatched
+    (detached-init)
+    (:global [remap async-shell-command] detached-shell-command)
+    (:option detached-shell-history-file "~/.histfile"
+             detached-env "detached-env"))
 #+end_src
 
-#+begin_src emacs-lisp
-  (setup (:require dtache-shell)
-    (:option dtache-shell-history-file "~/.histfile"
-             dtache-session-directory (expand-file-name "dtache" (temporary-file-directory))
-             dtache-notification-function #'plt/dtache-inactive-session-notification
-             dtache-env "dtache-env")
-    (dtache-shell-setup))
-#+end_src
-
-Use a custom notification function that will send the notification via
-dbus instead of echoing it to the mini-buffer.
-
-#+begin_src emacs-lisp
-  (require 'notifications)
-  (defun plt/dtache-inactive-session-notification (session)
-    "Send a notification when SESSION becomes inactive."
-    (let ((status (dtache--session-status session))
-          (title
-           (pcase (dtache--session-status session)
-             ('success "Dtache finished!")
-             ('failure "Dtache failed!"))))
-      (notifications-notify
-       :body (dtache--session-command session)
-       :title title
-       :urgency (pcase status
-                  ('success 'normal)
-                  ('failure 'critical)))))
-#+end_src
 *** Emprise
 
 #+begin_src emacs-lisp
